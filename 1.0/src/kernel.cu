@@ -36,12 +36,12 @@ void cal_pair_len(int* input, int* output, int n) {
 }
 
 __global__
-void generate_pairs(int* indexes, int carry, Int2* outputs, int* inputOffsets, int* outputOffsets, int n) {
+void generate_pairs(int* indexes, Int2* outputs, int* inputOffsets, int* outputOffsets, int n) {
 	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
 	if (tid >= n)
 		return;
 
-	int start = tid == 0 ? carry : inputOffsets[tid - 1];
+	int start = tid == 0 ? 0 : inputOffsets[tid - 1];
 	int end = inputOffsets[tid];
 	int outputIndex = tid == 0 ? 0 : outputOffsets[tid - 1];
 	int outputEnd = outputOffsets[tid];
@@ -113,8 +113,8 @@ void cal_levenshtein(Int3* seq, Int2* index, int distance,
 		return;
 	}
 
-	if (indexPair.x>=seqLen || indexPair.y>=seqLen) {
-		printf("curious case! %d %d\n",indexPair.x,indexPair.y);
+	if (indexPair.x >= seqLen || indexPair.y >= seqLen) {
+		printf("curious case! %d %d\n", indexPair.x, indexPair.y);
 		flagOutput[tid] =  0;
 		return;
 	}
