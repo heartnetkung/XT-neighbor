@@ -58,7 +58,7 @@ std::unordered_set<Triplet, TripletHasher> pairwise_distance(Int3* inputs, int l
     return ans;
 }
 
-int check_intput(std::unordered_set<Triplet, TripletHasher> answer, SymspellOutput output) {
+int check_intput(std::unordered_set<Triplet, TripletHasher> answer, XTNOutput output) {
     if (output.len != answer.size())
         return 0;
 

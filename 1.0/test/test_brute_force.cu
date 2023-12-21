@@ -25,7 +25,7 @@ TEST(check_intput, {
 	int inputsLen = 5;
 	char inputs[inputsLen][6] = {"AQCDE", "AQC", "AQ", "ACQ", "AQCDE"};
 	int outputLen = 6;
-	SymspellOutput output;
+	XTNOutput output;
 
 	Int3 inputs1Temp[inputsLen];
 	for (int i = 0; i < inputsLen; i++)

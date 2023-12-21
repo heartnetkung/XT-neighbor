@@ -1,11 +1,11 @@
 #include <stdio.h>
-#include "symspell.cu"
+#include "xtn.cu"
 #include "brute_force.cu"
 #include <locale.h>
 
-const char VERSION[] = "0.0.1\n";
-const char HELP_TEXT[] = "symspell_gpu\n"
-                         "\t description: perform symspell algorithm for near neighbor search / clustering of T cell receptor's CDR3 sequences\n"
+const char VERSION[] = "1.0.0\n";
+const char HELP_TEXT[] = "xt_neighbor\n"
+                         "\t description: perform xt_neighbor algorithm for near neighbor search of T cell receptor's CDR3 sequences\n"
                          "\t -p or --input-path [str] (required): set the path of input file which is a text file containing one CDR3 sequence per line\n"
                          "\t -n or --input-length [number] (required): set the number of sequences given in the input file\n"
                          "\t -d or --distance [number]: set the distance threshold defining the neighbor\n"
@@ -16,7 +16,7 @@ const char HELP_TEXT[] = "symspell_gpu\n"
                          "\t -h or --help: print the help text of the program then exit\n"
                          "\t -V or --verbose: print extra detail as the program runs for debugging purpose\n";
 
-int parse_args(int argc, char **argv, SymspellArgs* ans) {
+int parse_args(int argc, char **argv, XTNArgs* ans) {
 	char* current;
 
 	for (int i = 1; i < argc; i++) {
@@ -41,7 +41,7 @@ int parse_args(int argc, char **argv, SymspellArgs* ans) {
 		else if (strcmp(current, "-d") == 0 || strcmp(current, "--distance") == 0) {
 			int distance = ans->distance = atoi(argv[++i]);
 			if (distance < 1 || distance > MAX_DISTANCE)
-				return print_err("distance must be a valid number ranging from 1-4");
+				return print_err("distance must be a valid number ranging from 1-2");
 		}
 		else if (strcmp(current, "-n") == 0 || strcmp(current, "--input-length") == 0) {
 			ans->seq1Len = atoi(argv[++i]);
@@ -97,9 +97,9 @@ int parse_file(char* path, Int3* result, int len) {
 }
 
 /**
- * write SymspellOutput to file
+ * write XTNOutput to file
 */
-int write_file(char* path, SymspellOutput output) {
+int write_file(char* path, XTNOutput output) {
 	FILE* file = fopen(path, "w");
 	if (file == NULL)
 		return print_err("file reading failed");
@@ -116,9 +116,9 @@ int write_file(char* path, SymspellOutput output) {
 
 int main(int argc, char **argv) {
 	int returnCode;
-	SymspellArgs args;
+	XTNArgs args;
 	Int3* seq1;
-	SymspellOutput output;
+	XTNOutput output;
 
 	// 1. parse command line arguments
 	returnCode = parse_args(argc, argv, &args);
@@ -137,7 +137,7 @@ int main(int argc, char **argv) {
 
 	// 3. perform algorithm
 	setlocale(LC_ALL, "");
-	symspell_perform(args, seq1, &output);
+	xtn_perform(args, seq1, &output);
 
 	// 4. write output, if requested
 	if (args.outputPath != NULL) {
@@ -158,7 +158,7 @@ int main(int argc, char **argv) {
 
 	// 6. clean up
 	cudaFreeHost(seq1);
-	symspell_free(&output);
+	xtn_free(&output);
 	printf("Success! Number of triplet: %'zu\n", output.len);
 	return 0;
 }

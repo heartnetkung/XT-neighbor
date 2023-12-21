@@ -1,6 +1,5 @@
 const int MAX_INPUT_LENGTH = 18;
-// up to 3060? or 816?
-const int MAX_DISTANCE = 4;
+const int MAX_DISTANCE = 2;
 
 struct Int3 {
 	unsigned int entry[3] = {0, 0, 0};
@@ -18,7 +17,7 @@ struct Int2 {
 	}
 };
 
-struct SymspellArgs {
+struct XTNArgs {
 	int distance = 1;
 	int verbose = 0;
 	char* seq1Path = NULL;
@@ -29,7 +28,7 @@ struct SymspellArgs {
 	// int seq2Len = 0;
 };
 
-struct SymspellOutput {
+struct XTNOutput {
 	Int2* indexPairs = NULL;
 	char* pairwiseDistances = NULL;
 	size_t len = 0;
@@ -37,5 +36,5 @@ struct SymspellOutput {
 
 enum ReturnCode {SUCCESS, ERROR, EXIT};
 
-void symspell_perform(SymspellArgs args, Int3* seq1, SymspellOutput* output);
-void symspell_free(SymspellOutput* output);
+void xtn_perform(XTNArgs args, Int3* seq1, XTNOutput* output);
+void xtn_free(XTNOutput* output);

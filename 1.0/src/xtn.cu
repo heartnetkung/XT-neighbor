@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "symspell_inner.cu"
+#include "xtn_inner.cu"
 
 
-void symspell_perform(SymspellArgs args, Int3* seq1, SymspellOutput* output) {
-	int distance = args.distance, verbose = args.verbose, seq1Len = args.seq1Len, nSegment = args.nSegment;
+void xtn_perform(XTNArgs args, Int3* seq1, XTNOutput* output) {
+	int distance = args.distance, verbose = args.verbose, seq1Len = args.seq1Len;
 	int* deviceInt;
 	cudaMalloc((void**)&deviceInt, sizeof(int));
 
@@ -28,7 +28,7 @@ void symspell_perform(SymspellArgs args, Int3* seq1, SymspellOutput* output) {
 	//=====================================
 	// step 3.1: cal group by offsets
 	//=====================================
-	int* combinationValueOffsets, pairOffsets;
+	int* combinationValueOffsets, *pairOffsets;
 	int offsetLen =
 	    cal_offsets(combinationKeys, combinationValues, combinationValueOffsets,
 	                pairOffsets, combinationLen, deviceInt);
@@ -42,7 +42,7 @@ void symspell_perform(SymspellArgs args, Int3* seq1, SymspellOutput* output) {
 	int pairLen = gen_pairs(combinationValues, combinationValueOffsets,
 	                        pairOffsets, pairs, offsetLen, deviceInt);
 
-	print_tp(verbose, "3.2", pairLength);
+	print_tp(verbose, "3.2", pairLen);
 
 	//=====================================
 	// step 4: postprocessing
@@ -51,7 +51,7 @@ void symspell_perform(SymspellArgs args, Int3* seq1, SymspellOutput* output) {
 	char* distanceOut;
 	int outputLen = postprocessing(seq1Device, pairs, distance,
 	                               pairOut, distanceOut,
-	                               pairLength, deviceInt, seq1Len);
+	                               pairLen, deviceInt, seq1Len);
 
 	print_tp(verbose, "3.2", outputLen);
 
@@ -71,7 +71,7 @@ void symspell_perform(SymspellArgs args, Int3* seq1, SymspellOutput* output) {
 }
 
 
-void symspell_free(SymspellOutput *output) {
+void xtn_free(XTNOutput *output) {
 	if (output->indexPairs) {
 		cudaFreeHost(output->indexPairs);
 		output->indexPairs = NULL;

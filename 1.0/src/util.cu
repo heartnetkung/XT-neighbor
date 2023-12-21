@@ -1,4 +1,4 @@
-#include "symspell.h"
+#include "xtn.h"
 
 int print_err(const char* str) {
 #ifndef TEST_ENV
@@ -15,8 +15,8 @@ void print_int3(Int3* seqs, int len, char prefix) {
 	}
 }
 
-void print_args(SymspellArgs args) {
-	printf("SymspellArgs{\n");
+void print_args(XTNArgs args) {
+	printf("XTNArgs{\n");
 	printf("\tdistance: %d\n", args.distance);
 	printf("\tverbose: %d\n", args.verbose);
 	printf("\tseq1Len: %d\n", args.seq1Len);
