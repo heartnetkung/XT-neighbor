@@ -134,7 +134,7 @@ int main(int argc, char **argv) {
 
 	// 4. perform algorithm
 	setlocale(LC_ALL, "");
-	xtn_perform(args, seq1, &callback);
+	xtn_perform(args, seq1, callback);
 
 	// 5. write output, if requested
 	if (args.outputPath != NULL)
