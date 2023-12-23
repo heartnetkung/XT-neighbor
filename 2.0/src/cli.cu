@@ -2,6 +2,7 @@
 #include <locale.h>
 #include "xtn.cu"
 
+FILE* outputFile = NULL; /*global variable for callback*/
 const char VERSION[] = "2.0.0\n";
 const char HELP_TEXT[] = "xt_neighbor\n"
                          "\t description: perform xt_neighbor algorithm for near neighbor search of T cell receptor's CDR3 sequences\n"
@@ -91,29 +92,21 @@ int parse_file(char* path, Int3* result, int len) {
 	return SUCCESS;
 }
 
-/**
- * write XTNOutput to file
-*/
-int write_file(char* path, XTNOutput output) {
-	FILE* file = fopen(path, "w");
-	if (file == NULL)
-		return print_err("file reading failed");
+void null_handler(XTNOutput output) {}
 
+void file_handler(XTNOutput output) {
 	Int2 current;
 	for (int i = 0; i < output.len; i++) {
 		current = output.indexPairs[i];
-		fprintf(file, "%d %d %d\n", current.x, current.y , output.pairwiseDistances[i]);
+		fprintf(outputFile, "%d %d %d\n", current.x, current.y , output.pairwiseDistances[i]);
 	}
-
-	fclose(file);
-	return SUCCESS;
 }
 
 int main(int argc, char **argv) {
 	int returnCode;
 	XTNArgs args;
 	Int3* seq1;
-	XTNOutput output;
+	void (*callback)(XTNOutput output);
 
 	// 1. parse command line arguments
 	returnCode = parse_args(argc, argv, &args);
@@ -130,20 +123,24 @@ int main(int argc, char **argv) {
 	if (args.verbose)
 		print_args(args);
 
-	// 3. perform algorithm
-	setlocale(LC_ALL, "");
-	xtn_perform(args, seq1, &output);
-
-	// 4. write output, if requested
+	// 3. create a file if need be
+	callback = &null_handler;
 	if (args.outputPath != NULL) {
-		returnCode = write_file(args.outputPath, output);
-		if (returnCode != SUCCESS)
-			print_err("file writing failed");
+		FILE* outputFile = fopen(path, "w");
+		if (outputFile == NULL)
+			return print_err("file reading failed");
+		callback = &file_handler;
 	}
 
-	// 5. clean up
+	// 4. perform algorithm
+	setlocale(LC_ALL, "");
+	xtn_perform(args, seq1, &callback);
+
+	// 5. write output, if requested
+	if (args.outputPath != NULL)
+		fclose(outputFile);
+
+	// 6. clean up
 	cudaFreeHost(seq1);
-	xtn_free(&output);
-	printf("Success! Number of triplet: %'zu\n", output.len);
 	return 0;
 }
