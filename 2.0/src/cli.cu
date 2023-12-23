@@ -126,7 +126,7 @@ int main(int argc, char **argv) {
 	// 3. create a file if need be
 	callback = &null_handler;
 	if (args.outputPath != NULL) {
-		FILE* outputFile = fopen(path, "w");
+		FILE* outputFile = fopen(args.outputPath, "w");
 		if (outputFile == NULL)
 			return print_err("file reading failed");
 		callback = &file_handler;
