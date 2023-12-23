@@ -1,15 +1,13 @@
 #include <stdio.h>
-#include "xtn.cu"
-#include "brute_force.cu"
 #include <locale.h>
+#include "xtn.cu"
 
-const char VERSION[] = "1.0.0\n";
+const char VERSION[] = "2.0.0\n";
 const char HELP_TEXT[] = "xt_neighbor\n"
                          "\t description: perform xt_neighbor algorithm for near neighbor search of T cell receptor's CDR3 sequences\n"
                          "\t -p or --input-path [str] (required): set the path of input file which is a text file containing one CDR3 sequence per line\n"
                          "\t -n or --input-length [number] (required): set the number of sequences given in the input file\n"
                          "\t -d or --distance [number]: set the distance threshold defining the neighbor\n"
-                         "\t -c or --check-output: check if the output is correct using brute force algorithm (very slow!)\n"
                          "\t -o or --output-path [str]: set the path of the output file (default to no output)\n"
                          "\t -v or --version: print the version of the program then exit\n"
                          "\t -h or --help: print the help text of the program then exit\n"
@@ -31,8 +29,6 @@ int parse_args(int argc, char **argv, XTNArgs* ans) {
 		}
 		else if (strcmp(current, "-V") == 0 || strcmp(current, "--verbose") == 0)
 			ans->verbose = 1;
-		else if (strcmp(current, "-c") == 0 || strcmp(current, "--check-output") == 0)
-			ans->checkOutput = 1;
 		else if (strcmp(current, "-p") == 0 || strcmp(current, "--input-path") == 0)
 			ans->seq1Path = argv[++i];
 		else if (strcmp(current, "-o") == 0 || strcmp(current, "--output-path") == 0)
@@ -145,17 +141,7 @@ int main(int argc, char **argv) {
 			print_err("file writing failed");
 	}
 
-	// 5. check output, if requested
-	if (args.checkOutput) {
-		auto answer = pairwise_distance(seq1, args.seq1Len, args.distance);
-		int success = check_intput(answer, output);
-		if (success)
-			printf("output is verrified to be correct\n");
-		else
-			print_err("input checking failed");
-	}
-
-	// 6. clean up
+	// 5. clean up
 	cudaFreeHost(seq1);
 	xtn_free(&output);
 	printf("Success! Number of triplet: %'zu\n", output.len);

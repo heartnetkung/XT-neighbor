@@ -23,7 +23,6 @@ struct XTNArgs {
 	char* seq1Path = NULL;
 	int seq1Len = 0;
 	char* outputPath = NULL;
-	int checkOutput = 0;
 	// Int3* seq2 = NULL;
 	// int seq2Len = 0;
 };

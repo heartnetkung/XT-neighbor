@@ -22,7 +22,6 @@ void print_args(XTNArgs args) {
 	printf("\tseq1Len: %d\n", args.seq1Len);
 	printf("\tseq1Path: \"%s\"\n", args.seq1Path);
 	printf("\toutputPath: \"%s\"\n", args.outputPath);
-	printf("\tcheckOutput: %d\n", args.checkOutput);
 	printf("}\n");
 }
 
