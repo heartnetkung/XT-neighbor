@@ -17,7 +17,7 @@ public:
 template <typename T> class GPUInputStream {
 private:
 	T* _data = NULL;
-	size_t _len = 0, _chunkSize = 0;
+	size_t _len = 0, _chunkSize = 0, _tp;
 
 	void check_input(T* data, size_t len, size_t chunkSize) {
 		if (data == NULL)
@@ -34,6 +34,7 @@ public:
 		_data = data;
 		_len = len;
 		_chunkSize = chunkSize;
+		_tp = len;
 	}
 
 	Chunk<T> read() {
@@ -46,6 +47,10 @@ public:
 		_len -= ans.len;
 		_data += ans.len;
 		return ans;
+	}
+
+	size_t get_throughput() {
+		return _tp;
 	}
 };
 
@@ -109,6 +114,13 @@ public:
 		}
 		return ans;
 	}
+
+	size_t get_throughput() {
+		size_t ans = 0;
+		for (size_t i = 0; i < _len1; i++)
+			ans += _len2[i];
+		return ans;
+	}
 };
 
 /**
@@ -159,6 +171,13 @@ public:
 
 	size_t* get_new_len2() {
 		return _len2;
+	}
+
+	size_t get_throughput() {
+		size_t ans = 0;
+		for (size_t i = 0; i < _len1; i++)
+			ans += _len2[i];
+		return ans;
 	}
 };
 
@@ -269,5 +288,12 @@ public:
 		_cudaFreeHost(_data, _len2);
 		cudaFree(_deviceBuffer);
 		_offsets = NULL;
+	}
+
+	size_t get_throughput() {
+		size_t ans = 0;
+		for (size_t i = 0; i < _len1; i++)
+			ans += _len2[i];
+		return ans;
 	}
 };
