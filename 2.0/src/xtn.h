@@ -35,4 +35,4 @@ struct XTNOutput {
 
 enum ReturnCode {SUCCESS, ERROR, EXIT};
 
-void xtn_perform(XTNArgs args, Int3* seq1, void (*callback)(XTNOutput));
+void xtn_perform(XTNArgs args, Int3* seq1, void callback (XTNOutput));

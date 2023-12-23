@@ -106,9 +106,9 @@ int main(int argc, char **argv) {
 	int returnCode;
 	XTNArgs args;
 	Int3* seq1;
-	void (*callback)(XTNOutput output);
 
 	// 1. parse command line arguments
+	setlocale(LC_ALL, "");
 	returnCode = parse_args(argc, argv, &args);
 	if (returnCode != SUCCESS)
 		return returnCode;
@@ -123,24 +123,18 @@ int main(int argc, char **argv) {
 	if (args.verbose)
 		print_args(args);
 
-	// 3. create a file if need be
-	callback = &null_handler;
+	// 3. perform algorithm
 	if (args.outputPath != NULL) {
 		FILE* outputFile = fopen(args.outputPath, "w");
 		if (outputFile == NULL)
 			return print_err("file reading failed");
-		callback = &file_handler;
+		xtn_perform(args, seq1, file_handler);
+		fclose(outputFile);
+	}else{
+		xtn_perform(args, seq1, null_handler);
 	}
 
-	// 4. perform algorithm
-	setlocale(LC_ALL, "");
-	xtn_perform(args, seq1, callback);
-
-	// 5. write output, if requested
-	if (args.outputPath != NULL)
-		fclose(outputFile);
-
-	// 6. clean up
+	// 4. clean up
 	cudaFreeHost(seq1);
 	return 0;
 }

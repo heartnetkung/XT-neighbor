@@ -1,10 +1,21 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 #include "xtn_inner.cu"
+#include "stream.cu"
 
+const size_t MAX_ARRAY_SIZE = INT_MAX >> 3;
 
-void xtn_perform(XTNArgs args, Int3* seq1, XTNOutput* output) {
+size_t cal_chunksize1(int distance) {
+	size_t ans = MAX_ARRAY_SIZE;
+	for (int i = 0; i < distance; i++)
+		ans /= MAX_INPUT_LENGTH;
+	return ans;
+}
+
+void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 	int distance = args.distance, verbose = args.verbose, seq1Len = args.seq1Len;
+	size_t tp;
 	int* deviceInt;
 	cudaMalloc((void**)&deviceInt, sizeof(int));
 
@@ -12,72 +23,47 @@ void xtn_perform(XTNArgs args, Int3* seq1, XTNOutput* output) {
 	// step 1: transfer input to GPU
 	//=====================================
 	Int3* seq1Device = host_to_device(seq1, seq1Len);
-
 	print_tp(verbose, "1", seq1Len);
 
-	//=====================================
-	// step 2: generate deletion combinations
-	//=====================================
-	Int3* combinationKeys;
-	int* combinationValues;
-	int combinationLen =
-	    gen_combinations(seq1Device, distance, combinationKeys, combinationValues, seq1Len);
+	printf("hello world!");
 
-	print_tp(verbose, "2", combinationLen);
+	// //=====================================
+	// // step 2: generate deletion combinations
+	// //=====================================
+	// size_t chunkSize = cal_chunksize1(distance);
+	// size_t chunkCount = divideCeil(seq1Len, chunkSize);
+	// GPUInputStream<Int3> seq1Stream(seq1Device, seq1Len, chunkSize);
+	// D2Stream<Int3> combKeyStream(chunkCount);
+	// D2Stream<int> combValueStream(chunkCount);
 
-	//=====================================
-	// step 3.1: cal group by offsets
-	//=====================================
-	int* combinationValueOffsets, *pairOffsets;
-	int offsetLen =
-	    cal_offsets(combinationKeys, combinationValues, combinationValueOffsets,
-	                pairOffsets, combinationLen, deviceInt);
+	// Chunk<Int3> seq1Chunk, combKeyChunk;
+	// Chunk<int> combValueChunk;
+	// tp = 0;
+	// while ((seq1Chunk = seq1Stream.read()).not_null()) {
+	// 	stream_handler1(seq1Chunk, combKeyChunk, combValueChunk, distance);
+	// 	combKeyStream.write(combKeyChunk.ptr, combKeyChunk.len);
+	// 	combValueStream.write(combValueChunk.ptr, combValueChunk.len);
+	// 	tp += combKeyChunk.len;
+	// 	// gen histogram
 
-	print_tp(verbose, "3.1", offsetLen);
-
-	//=====================================
-	// step 3.2: perform group by
-	//=====================================
-	Int2* pairs;
-	int pairLen = gen_pairs(combinationValues, combinationValueOffsets,
-	                        pairOffsets, pairs, offsetLen, deviceInt);
-
-	print_tp(verbose, "3.2", pairLen);
-
-	//=====================================
-	// step 4: postprocessing
-	//=====================================
-	Int2* pairOut;
-	char* distanceOut;
-	int outputLen = postprocessing(seq1Device, pairs, distance,
-	                               pairOut, distanceOut,
-	                               pairLen, deviceInt, seq1Len);
-
-	print_tp(verbose, "3.2", outputLen);
+	// }
+	// // sum histogram
+	// size_t** combKeyOffset;
+	// size_t combKeyOffsetLen;
+	// combKeyStream.set_offsets(combKeyOffset, combKeyOffsetLen);
+	// combKeyStream.set_offsets(combKeyOffset, combKeyOffsetLen);
+	// print_tp(verbose, "2", tp);
 
 	//=====================================
-	// step 5: transfer output to GPU
+	// step 3: cal offsets and histograms
 	//=====================================
-	output->len = outputLen;
-	output->indexPairs = device_to_host(pairOut, outputLen);
-	output->pairwiseDistances = device_to_host(distanceOut, outputLen);
+
 
 	//=====================================
-	// step 6: deallocate
+	// step 4: generate pairs and postprocess
 	//=====================================
-	_cudaFree(deviceInt, seq1Device, combinationKeys, combinationValues, combinationValueOffsets, pairs);
-	_cudaFree(pairOut, distanceOut);
 
-}
-
-
-void xtn_free(XTNOutput *output) {
-	if (output->indexPairs) {
-		cudaFreeHost(output->indexPairs);
-		output->indexPairs = NULL;
-	}
-	if (output->pairwiseDistances) {
-		cudaFreeHost(output->pairwiseDistances);
-		output->pairwiseDistances = NULL;
-	}
+	//=====================================
+	// step 5: deallocate
+	//=====================================
 }
