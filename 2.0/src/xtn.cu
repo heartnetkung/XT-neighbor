@@ -23,7 +23,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 	//=====================================
 	Int3* seq1Device = host_to_device(seq1, seq1Len);
 	size_t seq1ChunkSize = cal_chunksize1(distance);
-	size_t seq1ChunkCount = divideCeil(seq1Len, chunkSize);
+	size_t seq1ChunkCount = divideCeil(seq1Len, seq1ChunkSize);
 	GPUInputStream<Int3> seq1Stream(seq1Device, seq1Len, seq1ChunkSize);
 
 	print_tp(verbose, "1", seq1Stream.get_throughput());
