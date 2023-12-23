@@ -1,4 +1,4 @@
-#include "../src/util.cu"
+#include "codec.cu"
 
 /**
  * Chunk represents a unit of data read by the stream
