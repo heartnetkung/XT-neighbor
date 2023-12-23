@@ -162,6 +162,112 @@ public:
 	}
 };
 
-// template <typename T> class D2Stream {
+/**
+ * A 2 dimensional stream where the data is written in row direction and read in column direction.
+ */
+template <typename T> class D2Stream {
+private:
+	T** _data;
+	size_t _len1, _offset_len;
+	size_t _write_index = 0, _read_index = 0;
+	size_t* _len2;
+	size_t** _offsets = NULL;
+	T* _deviceBuffer = NULL;
 
-// }
+	void check_input(size_t len1) {
+		if (len1 <= 0)
+			print_err("D2Stream: len1 <= 0");
+	}
+
+	void check_input_write(T* newData, size_t n) {
+		if ((n != 0) && (newData == NULL))
+			print_err("D2Stream: (n != 0) && (newData == NULL)");
+	}
+
+	void check_input_offsets(size_t** offsets, size_t offset_len) {
+		if (offsets == NULL)
+			print_err("D2Stream: offsets == NULL");
+		for (int i = 0; i < _len1; i++) {
+			if (offsets[i] == NULL)
+				print_err("D2Stream: offsets[i]==NULL");
+			if (offsets[i][offset_len - 1] != _len2[i])
+				print_err("D2Stream: the last offset should cover the whole stream");
+		}
+	}
+
+public:
+	D2Stream(size_t len1) {
+		check_input(len1);
+		_len1 = len1;
+		cudaMallocHost((void**)&_data, sizeof(T*)*len1);
+		cudaMallocHost((void**)&_len2, sizeof(size_t)*len1);
+	}
+
+	void write(T* newData, size_t n) {
+		check_input_write(newData, n);
+		if (_write_index > _len1)
+			print_err("D2Stream: writing more than allocated");
+		if (n > 0) {
+			cudaMallocHost((void**) &_data[_write_index], sizeof(T)*n);
+			cudaMemcpy(_data[_write_index], newData, sizeof(T)*n, cudaMemcpyDeviceToHost);
+		}
+		_len2[_write_index] = n;
+		_write_index++;
+	}
+
+	void set_offsets(size_t** offsets, size_t offset_len) {
+		check_input_offsets(offsets, offset_len);
+		if (_deviceBuffer != NULL)
+			print_err("D2Stream: set_offsets is called more than once");
+
+		_offsets = offsets;
+		_offset_len = offset_len;
+
+		// find minimum size of deviceBuffer and allocate it
+		size_t maxLength = 0;
+		for (size_t i = 0; i < offset_len; i++) {
+			size_t newLength = 0;
+			for (size_t j = 0; j < _len1; j++) {
+				size_t start = i == 0 ? 0 : offsets[j][i - 1];
+				newLength += offsets[j][i] - start;
+			}
+			if (newLength > maxLength)
+				maxLength = newLength;
+		}
+		cudaMalloc((void**)&_deviceBuffer, sizeof(T)*maxLength);
+	}
+
+	Chunk<T> read() {
+		Chunk<T> ans;
+		if (_write_index != _len1)
+			print_err("D2Stream: read is called before fully written");
+		if (_offsets == NULL)
+			print_err("D2Stream: _offsets == NULL");
+		if (_read_index == _offset_len)
+			return ans;
+
+		ans.ptr = _deviceBuffer;
+		T * currentPtr = _deviceBuffer;
+		for (size_t i = 0; i < _len1; i++) {
+			size_t start = _read_index == 0 ? 0 : _offsets[i][_read_index - 1];
+			size_t chunkLen = _offsets[i][_read_index] - start;
+			if (chunkLen <= 0)
+				continue;
+
+			cudaMemcpy(currentPtr, _data[i] + start, sizeof(T)*chunkLen, cudaMemcpyHostToDevice);
+			currentPtr += chunkLen;
+			ans.len += chunkLen;
+		}
+
+		_read_index++;
+		return ans;
+	}
+
+	void deconstruct() {
+		for (int i = 0; i < _write_index; i++)
+			cudaFreeHost(_data[i]);
+		_cudaFreeHost(_data, _len2);
+		cudaFree(_deviceBuffer);
+		_offsets = NULL;
+	}
+};

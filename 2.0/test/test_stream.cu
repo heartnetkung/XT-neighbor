@@ -42,6 +42,7 @@ TEST(RAMStream, {
 	RAMInputStream<int> *istream = new RAMInputStream<int>(input , len, len2, maxReadableSize, deviceBuffer);
 	RAMOutputStream<int> *ostream = new RAMOutputStream<int>(input, len, len2);
 
+	// first write loop
 	Chunk<int> buffer;
 	int chunkCount = 0;
 	while ( (buffer = istream->read()).not_null() ) {
@@ -62,10 +63,10 @@ TEST(RAMStream, {
 		chunkCount++;
 	}
 
+	// check what is written
 	int expected2Len = 3;
 	int expected2Len2[] = {3, 4, 2};
 	int expected2Data[][4] = {{2, 4, 6}, {8, 10, 12, 14}, {16, 18}};
-
 	check(ostream->get_new_len1() == expected2Len);
 	for (int i = 0; i < chunkCount; i++) {
 		check(ostream->get_new_len2()[i] == expected2Len2[i]);
@@ -77,6 +78,7 @@ TEST(RAMStream, {
 	int expected3Len2[] = {7, 2};
 	int expected3Data[][7] = {{2, 4, 6, 8, 10, 12, 14}, {16, 18}};
 
+	// second write loop
 	chunkCount = 0;
 	size_t new_len = ostream->get_new_len1();
 	size_t* new_len2 = ostream->get_new_len2();
@@ -102,14 +104,56 @@ TEST(RAMStream, {
 	}
 	check(chunkCount == expected3Len);
 
+	// check what is written
 	int expected4Len = 2;
 	int expected4Len2[] = {5, 1};
 	int expected4Data[][5] = {{2, 4, 8, 10, 14}, {16}};
-
 	check(ostream->get_new_len1() == expected4Len);
 	for (int i = 0; i < chunkCount; i++) {
 		check(ostream->get_new_len2()[i] == expected4Len2[i]);
 		for (int j = 0; j < len2[i]; j++)
 			check(input[i][j] == expected4Data[i][j]);
 	}
+})
+
+TEST(D2Stream, {
+	size_t len = 4;
+	size_t len2[] = {5, 7, 6, 5};
+	int** input = (int**)malloc(len * sizeof(int*));
+	int count = 0;
+	for (size_t i = 0; i < len; i++) {
+		input[i] = (int*) malloc(len2[i] * sizeof(int));
+		for (size_t j = 0; j < len2[i]; j++)
+			input[i][j] = ++count;
+	}
+	size_t offset_len = 3;
+	size_t** offsets = (size_t**)malloc(len * sizeof(size_t*));
+	for (int i = 0; i < len; i++)
+		offsets[i] = (size_t*)malloc(offset_len * sizeof(size_t));
+	offsets[0][0] = 0; offsets[0][1] = 1; offsets[0][2] = 5;
+	offsets[1][0] = 3; offsets[1][1] = 3; offsets[1][2] = 7;
+	offsets[2][0] = 1; offsets[2][1] = 3; offsets[2][2] = 6;
+	offsets[3][0] = 1; offsets[3][1] = 2; offsets[3][2] = 5;
+	D2Stream<int> stream(len);
+
+	//write
+	for (int i = 0; i < len; i++)
+		stream.write( host_to_device(input[i], len2[i]), len2[i]);
+	stream.set_offsets(offsets, offset_len);
+
+	//expectation
+	int expectedLen[] = {5, 4, 14};
+	int expectedData[][14] = {{6, 7, 8, 13, 19}, {1, 14, 15, 20}, {2, 3, 4, 5, 9, 10, 11, 12, 16, 17, 18, 21, 22, 23}};
+
+	//read
+	Chunk<int> buffer;
+	int chunkCount = 0;
+	while ( (buffer = stream.read()).not_null() ) {
+		int* data = device_to_host(buffer.ptr, buffer.len);
+		check(buffer.len == expectedLen[chunkCount]);
+		for (int i = 0; i < buffer.len; i++)
+			check(data[i] == expectedData[chunkCount][i]);
+		chunkCount++;
+	}
+	stream.deconstruct();
 })
