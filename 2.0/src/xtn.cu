@@ -25,8 +25,6 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 	Int3* seq1Device = host_to_device(seq1, seq1Len);
 	print_tp(verbose, "1", seq1Len);
 
-	printf("hello world!");
-
 	// //=====================================
 	// // step 2: generate deletion combinations
 	// //=====================================
@@ -66,4 +64,21 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 	//=====================================
 	// step 5: deallocate
 	//=====================================
+
+
+	//test file writing
+	XTNOutput out1;
+	out1.len = 2;
+	out1.indexPairs = (Int2*)malloc(sizeof(Int2) * 2);
+	out1.indexPairs[0] = {0, 0}; out1.indexPairs[1] = {0, 1};
+	out1.pairwiseDistances = (char*)malloc(sizeof(char) * 2);
+	out1.pairwiseDistances[0] = 0; out1.pairwiseDistances[1] = 1;
+	callback(out1);
+
+	out1.len = 1;
+	out1.indexPairs = (Int2*)malloc(sizeof(Int2) * 1);
+	out1.indexPairs[0] = {1, 0};
+	out1.pairwiseDistances = (char*)malloc(sizeof(char) * 1);
+	out1.pairwiseDistances[0] = 2;
+	callback(out1);
 }

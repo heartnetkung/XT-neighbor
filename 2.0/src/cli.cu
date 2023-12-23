@@ -125,12 +125,12 @@ int main(int argc, char **argv) {
 
 	// 3. perform algorithm
 	if (args.outputPath != NULL) {
-		FILE* outputFile = fopen(args.outputPath, "w");
+		outputFile = fopen(args.outputPath, "w");
 		if (outputFile == NULL)
 			return print_err("file reading failed");
 		xtn_perform(args, seq1, file_handler);
 		fclose(outputFile);
-	}else{
+	} else {
 		xtn_perform(args, seq1, null_handler);
 	}
 
