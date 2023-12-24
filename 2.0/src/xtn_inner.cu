@@ -2,6 +2,7 @@
 #include "cub.cu"
 #include "kernel.cu"
 #include "codec.cu"
+#include "stream.cu"
 
 const int NUM_THREADS = 256;
 

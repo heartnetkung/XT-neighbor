@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <limits.h>
 #include "xtn_inner.cu"
-#include "stream.cu"
 
 const size_t MAX_ARRAY_SIZE = INT_MAX >> 3;
 
