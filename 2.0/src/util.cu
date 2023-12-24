@@ -7,14 +7,6 @@ int print_err(const char* str) {
 	return ERROR;
 }
 
-void print_int3(Int3* seqs, int len, char prefix) {
-	int n_elements = len < 5 ? len : 5;
-	for (int i = 0; i < n_elements; i++) {
-		unsigned int* entry = seqs[i].entry;
-		printf("%c %08X %08X %08X \n", prefix, entry[0], entry[1], entry[2]);
-	}
-}
-
 void print_args(XTNArgs args) {
 	printf("XTNArgs{\n");
 	printf("\tdistance: %d\n", args.distance);
@@ -23,24 +15,6 @@ void print_args(XTNArgs args) {
 	printf("\tseq1Path: \"%s\"\n", args.seq1Path);
 	printf("\toutputPath: \"%s\"\n", args.outputPath);
 	printf("}\n");
-}
-
-void print_int_arr(int* arr, int n) {
-	for (int i = 0; i < n; i++)
-		printf("%d ", arr[i]);
-	printf("\n");
-}
-
-void print_char_arr(char* arr, int n) {
-	for (int i = 0; i < n; i++)
-		printf("%d ", arr[i]);
-	printf("\n");
-}
-
-void print_int2_arr(Int2* arr, int n) {
-	for (int i = 0; i < n; i++)
-		printf("(%d,%d) ", arr[i].x, arr[i].y);
-	printf("\n");
 }
 
 void _cudaFree(void* a) {
@@ -95,6 +69,11 @@ void _cudaFreeHost(void* a, void* b) {
 	cudaFreeHost(b);
 }
 
+void _free(void* a, void* b) {
+	free(a);
+	free(b);
+}
+
 void _free(void* a, void* b, void* c) {
 	free(a);
 	free(b);
@@ -131,3 +110,51 @@ void print_cuda_error(const char *file, int line) {
 		printf("Cuda error at %s %s %d\n", cudaGetErrorName(code), file, line);
 }
 
+void print_int3_arr(Int3* arr, int n) {
+	printf("[ ");
+	Int3* arr2 = device_to_host(arr, n);
+	for (int i = 0; i < n; i++) {
+		unsigned int* entry = arr2[i].entry;
+		printf("(%08X %08X %08X)", entry[0], entry[1], entry[2]);
+		if (i != n - 1)
+			printf(", ");
+	}
+	printf(" ]\n");
+	cudaFreeHost(arr2);
+}
+
+void print_int_arr(int* arr, int n) {
+	printf("[ ");
+	int* arr2 = device_to_host(arr, n);
+	for (int i = 0; i < n; i++) {
+		printf("%d", arr2[i]);
+		if (i != n - 1)
+			printf(", ");
+	}
+	printf(" ]\n");
+	cudaFreeHost(arr2);
+}
+
+void print_char_arr(char* arr, int n) {
+	printf("[ ");
+	char* arr2 = device_to_host(arr, n);
+	for (int i = 0; i < n; i++) {
+		printf("%d", arr2[i]);
+		if (i != n - 1)
+			printf(", ");
+	}
+	printf(" ]\n");
+	cudaFreeHost(arr2);
+}
+
+void print_int2_arr(Int2 * arr, int n) {
+	printf("[ ");
+	Int2* arr2 = device_to_host(arr, n);
+	for (int i = 0; i < n; i++) {
+		printf("(%d %d)", arr2[i].x, arr2[i].y);
+		if (i != n - 1)
+			printf(", ");
+	}
+	printf(" ]\n");
+	cudaFreeHost(arr2);
+}
