@@ -5,27 +5,6 @@
 
 const int NUM_THREADS = 256;
 
-int gen_combinations(Int3* seq, int distance, Int3* &outputKeys, int* &outputValues, int n) {
-	int *combinationOffsets;
-	int seq1LenBlocks = divideCeil(n, NUM_THREADS);
-
-	// cal combinationOffsets
-	cudaMalloc((void**)&combinationOffsets, sizeof(int)*n);	gpuerr();
-	cal_combination_len <<< seq1LenBlocks, NUM_THREADS >>>(
-	    seq, distance, combinationOffsets, n); gpuerr();
-	inclusive_sum(combinationOffsets, n); gpuerr();
-	int outputLen = transfer_last_element(combinationOffsets, n); gpuerr();
-
-	// generate combinations
-	cudaMalloc(&outputKeys, sizeof(Int3)*outputLen); gpuerr();
-	cudaMalloc(&outputValues, sizeof(int)*outputLen); gpuerr();
-	gen_combination <<< seq1LenBlocks, NUM_THREADS >>> (
-	    seq, combinationOffsets, distance, outputKeys, outputValues, n); gpuerr();
-
-	cudaFree(combinationOffsets); gpuerr();
-	return outputLen;
-}
-
 int cal_offsets(Int3* inputKeys, int* inputValues, int* &inputOffsets, int* &outputOffsets, int n, int* buffer) {
 	// cal valueOffsets
 	cudaMalloc(&inputOffsets, sizeof(int)*n); gpuerr();
@@ -79,4 +58,37 @@ int postprocessing(Int3* seq, Int2* input, int distance,
 	            distanceOutput, buffer, uniqueLen); gpuerr();
 	_cudaFree(uniquePairs, uniqueDistances, flags); gpuerr();
 	return transfer_last_element(buffer, 1);
+}
+
+
+void stream_handler1(Chunk<Int3> input, Chunk<Int3> &output1,
+                     Chunk<int> &output2, int distance) {
+	int *combinationOffsets;
+	int n = input.len;
+	int inputBlocks = divideCeil(n, NUM_THREADS);
+
+	// cal combinationOffsets
+	cudaMalloc((void**)&combinationOffsets, sizeof(int)*n);	gpuerr();
+	cal_combination_len <<< inputBlocks, NUM_THREADS >>>(
+	    input.ptr, distance, combinationOffsets, n); gpuerr();
+	inclusive_sum(combinationOffsets, n); gpuerr();
+	int outputLen = transfer_last_element(combinationOffsets, n); gpuerr();
+
+	// generate combinations
+	cudaMalloc(&output1.ptr, sizeof(Int3)*outputLen); gpuerr();
+	cudaMalloc(&output2.ptr, sizeof(int)*outputLen); gpuerr();
+	gen_combination <<< inputBlocks, NUM_THREADS >>> (
+	    input.ptr, combinationOffsets, distance, output1.ptr, output2.ptr, n); gpuerr();
+
+	cudaFree(combinationOffsets); gpuerr();
+	output1.len = outputLen;
+	output2.len = outputLen;
+}
+
+void stream_handler2() {
+
+}
+
+void stream_handler3() {
+
 }

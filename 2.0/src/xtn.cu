@@ -28,26 +28,35 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 
 	print_tp(verbose, "1", seq1Stream.get_throughput());
 
-	// //=====================================
-	// // step 2: generate deletion combinations
-	// //=====================================
-	// D2Stream<Int3> combKeyStream(chunkCount);
-	// D2Stream<int> combValueStream(chunkCount);
+	//=====================================
+	// step 2: generate deletion combinations
+	//=====================================
+	D2Stream<Int3> combKeyStream(chunkCount);
+	D2Stream<int> combValueStream(chunkCount);
 
-	// Chunk<Int3> seq1Chunk, combKeyChunk;
-	// Chunk<int> combValueChunk;
-	// while ((seq1Chunk = seq1Stream.read()).not_null()) {
-	// 	stream_handler1(seq1Chunk, combKeyChunk, combValueChunk, distance);
-	// 	combKeyStream.write(combKeyChunk.ptr, combKeyChunk.len);
-	// 	combValueStream.write(combValueChunk.ptr, combValueChunk.len);
-	// 	// gen histogram
-	// }
-	// // sum histogram
+	Chunk<Int3> seq1Chunk, combKeyChunk;
+	Chunk<int> combValueChunk;
+	while ((seq1Chunk = seq1Stream.read()).not_null()) {
+		//perform
+		stream_handler1(seq1Chunk, combKeyChunk, combValueChunk, distance);
+
+		// gen histogram
+
+		//simple print
+		print_int3(combKeyChunk.ptr, combKeyChunk.len, ' ');
+		print_int_arr(combValueChunk.ptr, combValueChunk.len);
+
+		//flush
+		combKeyStream.write(combKeyChunk.ptr, combKeyChunk.len);
+		combValueStream.write(combValueChunk.ptr, combValueChunk.len);
+		_cudaFree(combKeyChunk.ptr, combValueChunk.ptr);
+	}
+	// sum histogram
 	// size_t** combKeyOffset;
 	// size_t combKeyOffsetLen;
 	// combKeyStream.set_offsets(combKeyOffset, combKeyOffsetLen);
 	// combKeyStream.set_offsets(combKeyOffset, combKeyOffsetLen);
-	// print_tp(verbose, "2", combKeyStream.get_throughput());
+	print_tp(verbose, "2", combKeyStream.get_throughput());
 
 	//=====================================
 	// step 3: cal offsets and histograms
