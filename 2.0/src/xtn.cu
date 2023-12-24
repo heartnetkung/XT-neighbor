@@ -30,8 +30,8 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 	//=====================================
 	// step 2: generate deletion combinations
 	//=====================================
-	D2Stream<Int3> combKeyStream(chunkCount);
-	D2Stream<int> combValueStream(chunkCount);
+	D2Stream<Int3> combKeyStream(seq1ChunkCount);
+	D2Stream<int> combValueStream(seq1ChunkCount);
 
 	Chunk<Int3> seq1Chunk, combKeyChunk;
 	Chunk<int> combValueChunk;
