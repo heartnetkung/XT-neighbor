@@ -92,6 +92,10 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 	while ( (combKeyChunk = combKeyStream.read()).not_null() ) {
 		combValueChunk = combValueStream.read();
 		sort_key_values(combKeyChunk.ptr, combValueChunk.ptr, combKeyChunk.len);
+
+		print_int3_arr(combKeyChunk.ptr, combKeyChunk.len);
+		print_int_arr(combValueChunk.ptr, combValueChunk.len);
+
 		keyOutStream->write(combKeyChunk.ptr, combKeyChunk.len);
 		valueOutStream->write(combValueChunk.ptr, combValueChunk.len);
 	}
@@ -101,44 +105,49 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 	combValueStream.deconstruct();
 	print_tp(verbose, "3", keyOutStream->get_throughput());
 
-	// //=====================================
-	// // step 4: generate pairs and postprocess
-	// //=====================================
-	// // declare input
-	// RAMInputStream<Int3> *keyInStream;
-	// RAMInputStream<int> *valueInStream;
+	//=====================================
+	// step 4: generate pairs and postprocess
+	//=====================================
+	// declare input
+	RAMInputStream<Int3> *keyInStream;
+	RAMInputStream<int> *valueInStream;
+	printf("9\n");
 
+	size_t maxReadableSize = INT_MAX >> 4;
+	Int3* keyInBuffer;
+	int* valueInBuffer;
+	cudaMalloc((void**)&keyInBuffer, sizeof(Int3)*maxReadableSize);
+	cudaMalloc((void**)&valueInBuffer, sizeof(int)*maxReadableSize);
+	printf("10\n");
 
-	// size_t maxReadableSize = INT_MAX >> 4;
-	// Int3* keyInBuffer;
-	// int* valueInBuffer;
-	// cudaMalloc((void**)&keyInBuffer, sizeof(Int3)*maxReadableSize);
-	// cudaMalloc((void**)&valueInBuffer, sizeof(int)*maxReadableSize);
+	for (int i = 0; i < lowerboundLen; i++) {
+		int lowerbound = lowerbounds[i];
+		size_t new_len = keyOutStream->get_new_len1();
+		size_t* new_len2 = keyOutStream->get_new_len2();
+		keyInStream = new RAMInputStream<int>(input , new_len, new_len2, maxReadableSize, keyInBuffer);
+		valueInStream = new RAMInputStream<int>(input , new_len, new_len2, maxReadableSize, valueInBuffer);
+		keyOutStream = new RAMOutputStream<int>(input, new_len, new_len2);
+		valueOutStream = new RAMOutputStream<int>(input, new_len, new_len2);
+		printf("11\n");
 
-	// for (int i = 0; i < lowerboundLen; i++) {
-	// 	int lowerbound = lowerbounds[i];
-	// 	size_t new_len = keyOutStream->get_new_len1();
-	// 	size_t* new_len2 = keyOutStream->get_new_len2();
-	// 	keyInStream = new RAMInputStream<int>(input , new_len, new_len2, maxReadableSize, keyInBuffer);
-	// 	valueInStream = new RAMInputStream<int>(input , new_len, new_len2, maxReadableSize, valueInBuffer);
-	// 	keyOutStream = new RAMOutputStream<int>(input, new_len, new_len2);
-	// 	valueOutStream = new RAMOutputStream<int>(input, new_len, new_len2);
+		Chunk<Int3> keyInChunk, keyOutChunk;
+		Chunk<int> valueInChunk, valueOutChunk;
+		XTNOutput finalOutput;
+		while ((keyInChunk = keyInStream->read()).not_null()) {
+			valueInChunk = valueInStream->read();
+			printf("12\n");
 
-	// 	Chunk<Int3> keyInChunk, keyOutChunk;
-	// 	Chunk<int> valueInChunk, valueOutChunk;
-	// 	XTNOutput finalOutput;
-	// 	while ((keyInChunk = keyInStream->read()).not_null()) {
-	// 		valueInChunk = valueInStream->read();
+			stream_handler3(keyInChunk, valueInChunk, keyOutChunk, valueOutChunk,
+			                finalOutput, seq1Device, seq1Len, distance, lowerbound, deviceInt);
+			printf("13\n");
 
-	// 		stream_handler3(keyInChunk, valueInChunk, keyOutChunk, valueOutChunk,
-	// 		                finalOutput, seq1Device, seq1Len, distance, lowerbound, deviceInt);
-
-	// 		keyOutStream->write(keyOutChunk.ptr, keyOutChunk.len);
-	// 		valueOutStream->write(valueOutChunk.ptr, valueOutChunk.len);
-	// 		callback(finalOutput);
-	// 		_free(finalOutput.indexPairs, finalOutput.pairwiseDistances);
-	// 	}
-	// }
+			keyOutStream->write(keyOutChunk.ptr, keyOutChunk.len);
+			valueOutStream->write(valueOutChunk.ptr, valueOutChunk.len);
+			callback(finalOutput);
+			_free(finalOutput.indexPairs, finalOutput.pairwiseDistances);
+			printf("14\n");
+		}
+	}
 
 	//=====================================
 	// step 5: deallocate
