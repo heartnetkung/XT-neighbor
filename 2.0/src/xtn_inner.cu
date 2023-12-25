@@ -9,7 +9,8 @@ const int NUM_THREADS = 256;
 int cal_offsets(Int3* inputKeys, int* inputValues, int* &inputOffsets, int* &outputOffsets, int n, int* buffer) {
 	// cal valueOffsets
 	cudaMalloc(&inputOffsets, sizeof(int)*n); gpuerr();
-	sort_key_values(inputKeys, inputValues, n); gpuerr();
+	// assume sorted
+	// sort_key_values(inputKeys, inputValues, n); gpuerr();
 	unique_counts(inputKeys, inputOffsets, buffer, n); gpuerr();
 
 	// cal pairOffsets
@@ -44,7 +45,7 @@ int postprocessing(Int3* seq, Int2* input, int distance,
 	unique(input, uniquePairs, buffer, n); gpuerr();
 
 	// cal levenshtein
-	int uniqueLen = transfer_last_element(buffer, 1);
+	int uniqueLen = transfer_last_element(buffer, 1); gpuerr();
 	int byteRequirement = sizeof(char) * uniqueLen;
 	int uniqueLenBlock = divideCeil(uniqueLen, NUM_THREADS);
 	cudaMalloc(&flags, byteRequirement); gpuerr();
@@ -59,6 +60,31 @@ int postprocessing(Int3* seq, Int2* input, int distance,
 	            distanceOutput, buffer, uniqueLen); gpuerr();
 	_cudaFree(uniquePairs, uniqueDistances, flags); gpuerr();
 	return transfer_last_element(buffer, 1);
+}
+
+void make_output(Int2* pairOut, char* distanceOut, size_t len, XTNOutput &output) {
+	output.indexPairs = device_to_host(pairOut, len); gpuerr();
+	output.distanceOut = device_to_host(distanceOut, len); gpuerr();
+	output.len = len;
+}
+
+void gen_next_chunk(Chunk<Int3> keyInput, Chunk<int> valueInput,
+                    Chunk<Int3> &keyOutput, Chunk<int> &valueOutput,
+                    int* valueOffsets, int offsetLen, int lowerbound, int* buffer) {
+	char* flags;
+	cudaMalloc(&flags, sizeof(char)*valueInput.len); gpuerr();
+	cudaMemset(flags, 1, valueInput.len); gpuerr();
+	int inputBlocks = divideCeil(offsetLen, NUM_THREADS);
+
+	flag_lowerbound <<< inputBlocks, NUM_THREADS>>>(
+	    valueInput.ptr, valueOffsets, flags, lowerbound, offsetLen) gpuerr();
+	double_flag(keyInput.ptr, valueInput.ptr, flags, keyOutput.ptr, valueOutput.ptr,
+	            buffer, keyInput.len); gpuerr();
+
+	int outputLen = transfer_last_element(buffer, 1); gpuerr();
+	keyOutput.len = outputLen;
+	valueOutput.len = outputLen;
+	cudaFree(flags);
 }
 
 
@@ -90,6 +116,27 @@ void stream_handler2() {
 
 }
 
-void stream_handler3() {
+void stream_handler3(Chunk<Int3> keyInput, Chunk<int> valueInput,
+                     Chunk<Int3> &keyOutput, Chunk<int> &valueOutput,
+                     XTNOutput &output, Int3* seq1, int seq1Len,
+                     int distance, int lowerbound, int* buffer) {
 
+	int* combinationValueOffsets, *pairOffsets;
+	int offsetLen =
+	    cal_offsets(keyInput.ptr, valueInput.ptr, combinationValueOffsets,
+	                pairOffsets, keyInput.len, buffer);
+
+	Int2* pairs;
+	int pairLen = gen_pairs(valueInput.ptr, combinationValueOffsets,
+	                        pairOffsets, pairs, offsetLen, buffer);
+
+	Int2* pairOut;
+	char* distanceOut;
+	int outputLen = postprocessing(seq1, pairs, distance,
+	                               pairOut, distanceOut,
+	                               pairLen, buffer, seq1Len);
+
+	make_output(pairOut, distanceOut, outputLen, output);
+	gen_next_chunk(keyInput, valueInput, keyOutput, valueOutput, lowerbound);
+	_cudaFree(combinationValueOffsets, pairOffsets, pairs, pairOut, distanceOut);
 }

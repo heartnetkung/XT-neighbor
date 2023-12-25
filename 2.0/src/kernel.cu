@@ -123,3 +123,53 @@ void cal_levenshtein(Int3* seq, Int2* index, int distance,
 	distanceOutput[tid] = newOutput;
 	flagOutput[tid] =  newOutput <= distance;
 }
+
+__global__
+void columnwise_sum_shift_bit(int** matrix, size_t* output, int nBit, int n_row, int n_column) {
+	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
+	if (tid >= n_column)
+		return;
+
+	size_t ans = 0;
+	for (int i = 0; i < n_row; i++)
+		ans += matrix[i][tid];
+	output[tid] = (ans >> nBit);
+}
+
+__global__
+void select_int3(Int3* input, int* output, int n) {
+	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
+	if (tid >= n)
+		return;
+	output[tid] = input[tid].entry[1];
+}
+
+__global__
+void select_int2(Int2* input, int* output, int n) {
+	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
+	if (tid >= n)
+		return;
+	output[tid] = input[tid].x;
+}
+
+__global__
+void flag_lowerbound(int* valueInput, int* valueOffsets, char* output, int lowerbound, int n) {
+	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
+	if (tid >= n)
+		return;
+
+	int start = tid == 0 ? 0 : valueOffsets[tid - 1];
+	int end = valueOffsets[tid];
+	int validCount = 0;
+
+	for (int i = start; i < end; i++) {
+		if (valueInput[i] > lowerbound)
+			validCount++;
+		else
+			output[i] = 0;
+	}
+
+	if (validCount < 2)
+		for (int i = start; i < end; i++)
+			output[i] = 0;
+}

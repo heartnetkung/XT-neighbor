@@ -2,6 +2,7 @@
 #include <cub/device/device_merge_sort.cuh>
 #include <cub/device/device_run_length_encode.cuh>
 #include <cub/device/device_select.cuh>
+#include <cub/device/device_histogram.cuh>
 #include "codec.cu"
 
 struct Int3Comparator {
@@ -24,12 +25,22 @@ struct Int2Comparator {
 	}
 };
 
-void inclusive_sum(int* input, int n) {
+template <typename T>
+void inclusive_sum(T* input, int n) {
 	void *buffer = NULL;
 	size_t bufferSize = 0;
 	cub::DeviceScan::InclusiveSum(buffer, bufferSize, input, input, n);
 	cudaMalloc(&buffer, bufferSize);
 	cub::DeviceScan::InclusiveSum(buffer, bufferSize, input, input, n);
+	cudaFree(buffer);
+}
+
+void inclusive_sum(int* input, size_t* output, int n) {
+	void *buffer = NULL;
+	size_t bufferSize = 0;
+	cub::DeviceScan::InclusiveSum(buffer, bufferSize, input, output, n);
+	cudaMalloc(&buffer, bufferSize);
+	cub::DeviceScan::InclusiveSum(buffer, bufferSize, input, output, n);
 	cudaFree(buffer);
 }
 
@@ -53,11 +64,12 @@ void sort_int2(Int2* input, int n) {
 	cudaFree(buffer);
 }
 
-void unique_counts(Int3* keys, int* output, int* outputLen, int n) {
+template <typename T>
+void unique_counts(T* keys, int* output, int* outputLen, int n) {
 	void *buffer = NULL;
 	size_t bufferSize = 0;
-	Int3* dummy;
-	cudaMalloc(&dummy, sizeof(Int3)*n);
+	T* dummy;
+	cudaMalloc(&dummy, sizeof(T)*n);
 	cub::DeviceRunLengthEncode::Encode(
 	    buffer, bufferSize, keys, dummy, output, outputLen, n);
 	cudaMalloc(&buffer, bufferSize);
@@ -76,7 +88,8 @@ void unique(Int2* input, Int2* output, int* outputLen, int n) {
 	cudaFree(buffer);
 }
 
-void double_flag(Int2* input1, char* input2, char* flags, Int2* output1, char* output2, int* outputLen, int n) {
+template <typename T1, typename T2>
+void double_flag(T1* input1, T2* input2, char* flags, T1* output1, T2* output2, int* outputLen, int n) {
 	void *buffer = NULL, *buffer2 = NULL;
 	size_t bufferSize = 0, bufferSize2 = 0;
 	cub::DeviceSelect::Flagged(buffer, bufferSize, input1, flags, output1, outputLen, n);
@@ -86,4 +99,16 @@ void double_flag(Int2* input1, char* input2, char* flags, Int2* output1, char* o
 	cudaMalloc(&buffer2, bufferSize2);
 	cub::DeviceSelect::Flagged(buffer2, bufferSize2, input2, flags, output2, outputLen, n);
 	_cudaFree(buffer, buffer2);
+}
+
+template <typename T>
+void histogram(T* input, int* output, int nLevel, T minValue, T maxValue, int n) {
+	void *buffer = NULL;
+	size_t bufferSize = 0;
+	cub::DeviceHistogram::HistogramEven(buffer, bufferSize,
+	                                    input, output, nLevel + 1, minValue, maxValue, n);
+	cudaMalloc(&buffer, bufferSize);
+	cub::DeviceHistogram::HistogramEven(buffer, bufferSize,
+	                                    input, output, nLevel + 1, minValue, maxValue, n);
+	cudaFree(buffer);
 }
