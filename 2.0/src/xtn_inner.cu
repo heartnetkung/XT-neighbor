@@ -115,7 +115,7 @@ void stream_handler1(Chunk<Int3> input, Chunk<Int3> &output1,
 	cudaMalloc(&histogramValue, sizeof(unsigned int)*outputLen);
 	cudaMalloc(&histogramOutput, sizeof(int)*HISTOGRAM_SIZE);
 	select_int3 <<< outputBlocks, NUM_THREADS>>>(
-	    output1, histogramValue, outputLen);
+	    output1.ptr, histogramValue, outputLen);
 	histogram(histogramValue, histogramOutput, HISTOGRAM_SIZE , UINT_MAX , outputLen);
 
 	// boilerplate
