@@ -74,8 +74,8 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 	//=====================================
 	// step 3: cal histograms and sort
 	//=====================================
-	int len = 1;
-	int* len2 = (int*)malloc(len * sizeof(int));
+	size_t len = 1;
+	size_t* len2 = (size_t*)malloc(len * sizeof(size_t));
 	len2[0] = 9999;
 	Int3** keyOutArray = (Int3**)malloc(len * sizeof(Int3*));
 	int** valueOutArray = (int**)malloc(len * sizeof(int*));
