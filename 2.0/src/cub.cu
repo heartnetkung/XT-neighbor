@@ -102,13 +102,13 @@ void double_flag(T1* input1, T2* input2, char* flags, T1* output1, T2* output2, 
 }
 
 template <typename T>
-void histogram(T* input, int* output, int nLevel, T minValue, T maxValue, int n) {
+void histogram(T* input, int* output, int nLevel, T maxValue, int n) {
 	void *buffer = NULL;
 	size_t bufferSize = 0;
 	cub::DeviceHistogram::HistogramEven(buffer, bufferSize,
-	                                    input, output, nLevel + 1, minValue, maxValue, n);
+	                                    input, output, nLevel + 1, 0, maxValue, n);
 	cudaMalloc(&buffer, bufferSize);
 	cub::DeviceHistogram::HistogramEven(buffer, bufferSize,
-	                                    input, output, nLevel + 1, minValue, maxValue, n);
+	                                    input, output, nLevel + 1, 0, maxValue, n);
 	cudaFree(buffer);
 }

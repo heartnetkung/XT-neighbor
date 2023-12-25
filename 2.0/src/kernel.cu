@@ -137,7 +137,7 @@ void columnwise_sum_shift_bit(int** matrix, size_t* output, int nBit, int n_row,
 }
 
 __global__
-void select_int3(Int3* input, int* output, int n) {
+void select_int3(Int3* input, unsigned int* output, int n) {
 	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
 	if (tid >= n)
 		return;

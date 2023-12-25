@@ -3,8 +3,10 @@
 #include "kernel.cu"
 #include "codec.cu"
 #include "stream.cu"
+#include <limits.h>
 
 const int NUM_THREADS = 256;
+const int HISTOGRAM_SIZE = 4096;
 
 int cal_offsets(Int3* inputKeys, int* inputValues, int* &inputOffsets, int* &outputOffsets, int n, int* buffer) {
 	// cal valueOffsets
@@ -87,27 +89,37 @@ void gen_next_chunk(Chunk<Int3> keyInput, Chunk<int> valueInput,
 	cudaFree(flags);
 }
 
-
 void stream_handler1(Chunk<Int3> input, Chunk<Int3> &output1,
-                     Chunk<int> &output2, int distance) {
+                     Chunk<int> &output2, int* &histogramOutput, int distance) {
+	// boilerplate
 	int *combinationOffsets;
-	int n = input.len;
-	int inputBlocks = divide_ceil(n, NUM_THREADS);
+	int inputBlocks = divide_ceil(input.len, NUM_THREADS);
+	unsigned int *histogramValue;
 
 	// cal combinationOffsets
-	cudaMalloc((void**)&combinationOffsets, sizeof(int)*n);	gpuerr();
+	cudaMalloc((void**)&combinationOffsets, sizeof(int)*input.len);	gpuerr();
 	cal_combination_len <<< inputBlocks, NUM_THREADS >>>(
-	    input.ptr, distance, combinationOffsets, n); gpuerr();
-	inclusive_sum(combinationOffsets, n); gpuerr();
-	int outputLen = transfer_last_element(combinationOffsets, n); gpuerr();
+	    input.ptr, distance, combinationOffsets, input.len); gpuerr();
+	inclusive_sum(combinationOffsets, input.len); gpuerr();
+	int outputLen = transfer_last_element(combinationOffsets, input.len); gpuerr();
 
 	// generate combinations
 	cudaMalloc(&output1.ptr, sizeof(Int3)*outputLen); gpuerr();
 	cudaMalloc(&output2.ptr, sizeof(int)*outputLen); gpuerr();
 	gen_combination <<< inputBlocks, NUM_THREADS >>> (
-	    input.ptr, combinationOffsets, distance, output1.ptr, output2.ptr, n); gpuerr();
+	    input.ptr, combinationOffsets, distance,
+	    output1.ptr, output2.ptr, input.len); gpuerr();
 
-	cudaFree(combinationOffsets); gpuerr();
+	// generate histogram
+	int outputBlocks = divide_ceil(outputLen , NUM_THREADS);
+	cudaMalloc(&histogramValue, sizeof(unsigned int)*outputLen);
+	cudaMalloc(&histogramOutput, sizeof(int)*HISTOGRAM_SIZE);
+	select_int3 <<< outputBlocks, NUM_THREADS>>>(
+	    output1, histogramValue, outputLen);
+	histogram(histogramValue, histogramOutput, HISTOGRAM_SIZE , UINT_MAX , outputLen);
+
+	// boilerplate
+	_cudaFree(combinationOffsets, histogramValue); gpuerr();
 	output1.len = outputLen;
 	output2.len = outputLen;
 }
@@ -127,14 +139,15 @@ void stream_handler3(Chunk<Int3> keyInput, Chunk<int> valueInput,
 	                pairOffsets, keyInput.len, buffer);
 
 	Int2* pairs;
-	int pairLen = gen_pairs(valueInput.ptr, combinationValueOffsets,
-	                        pairOffsets, pairs, offsetLen, buffer);
+	int pairLen =
+	    gen_pairs(valueInput.ptr, combinationValueOffsets,
+	              pairOffsets, pairs, offsetLen, buffer);
 
 	Int2* pairOut;
 	char* distanceOut;
-	int outputLen = postprocessing(seq1, pairs, distance,
-	                               pairOut, distanceOut,
-	                               pairLen, buffer, seq1Len);
+	int outputLen =
+	    postprocessing(seq1, pairs, distance, pairOut, distanceOut,
+	                   pairLen, buffer, seq1Len);
 
 	make_output(pairOut, distanceOut, outputLen, output);
 	gen_next_chunk(keyInput, valueInput, keyOutput, valueOutput,

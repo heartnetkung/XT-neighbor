@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <limits.h>
 #include "xtn_inner.cu"
 
 const size_t MAX_ARRAY_SIZE = INT_MAX >> 3;
@@ -16,47 +15,44 @@ size_t cal_stream1_chunk_size(int distance) {
 
 // }
 
+
 void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 	int distance = args.distance, verbose = args.verbose, seq1Len = args.seq1Len;
 	int* deviceInt;
 	cudaMalloc((void**)&deviceInt, sizeof(int));
-	printf("1\n");
 
 	//=====================================
 	// step 1: transfer input to GPU
 	//=====================================
 	Int3* seq1Device = host_to_device(seq1, seq1Len);
 	size_t seq1ChunkSize = cal_stream1_chunk_size(distance);
-	size_t seq1ChunkCount = divideCeil(seq1Len, seq1ChunkSize);
+	size_t seq1ChunkCount = divide_ceil(seq1Len, seq1ChunkSize);
 	GPUInputStream<Int3> seq1Stream(seq1Device, seq1Len, seq1ChunkSize);
 
 	print_tp(verbose, "1", seq1Stream.get_throughput());
-	printf("2\n");
 
 	//=====================================
 	// step 2: generate deletion combinations
 	//=====================================
-	D2Stream<Int3> combKeyStream(seq1ChunkCount);
-	D2Stream<int> combValueStream(seq1ChunkCount);
+	D2Stream<Int3> keyD2Stream(seq1ChunkCount);
+	D2Stream<int> valueD2Stream(seq1ChunkCount);
+	int* histogramOutput;
 
 	Chunk<Int3> seq1Chunk, combKeyChunk;
 	Chunk<int> combValueChunk;
-	printf("3\n");
-
 	while ((seq1Chunk = seq1Stream.read()).not_null()) {
 		//perform
-		stream_handler1(seq1Chunk, combKeyChunk, combValueChunk, distance);
+		stream_handler1(seq1Chunk, combKeyChunk, combValueChunk, histogramOutput, distance);
 
 		// gen histogram
 
 		//simple print
-		//TODO device_to_host
 		print_int3_arr(combKeyChunk.ptr, combKeyChunk.len);
 		print_int_arr(combValueChunk.ptr, combValueChunk.len);
 
 		//flush
-		combKeyStream.write(combKeyChunk.ptr, combKeyChunk.len);
-		combValueStream.write(combValueChunk.ptr, combValueChunk.len);
+		keyD2Stream.write(combKeyChunk.ptr, combKeyChunk.len);
+		valueD2Stream.write(combValueChunk.ptr, combValueChunk.len);
 		_cudaFree(combKeyChunk.ptr, combValueChunk.ptr);
 	}
 	printf("4\n");
@@ -66,9 +62,9 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 	combOffset[0] = (size_t*)malloc(sizeof(size_t));
 	combOffset[0][0] =  combKeyChunk.len;
 	size_t combOffsetLen = 1; //TODO
-	combKeyStream.set_offsets(combOffset, combOffsetLen);
-	combValueStream.set_offsets(combOffset, combOffsetLen);
-	print_tp(verbose, "2", combKeyStream.get_throughput());
+	keyD2Stream.set_offsets(combOffset, combOffsetLen);
+	valueD2Stream.set_offsets(combOffset, combOffsetLen);
+	print_tp(verbose, "2", keyD2Stream.get_throughput());
 	printf("5\n");
 
 	//=====================================
@@ -89,8 +85,8 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 	int lowerboundLen = 1;
 	printf("7\n");
 
-	while ( (combKeyChunk = combKeyStream.read()).not_null() ) {
-		combValueChunk = combValueStream.read();
+	while ( (combKeyChunk = keyD2Stream.read()).not_null() ) {
+		combValueChunk = valueD2Stream.read();
 		sort_key_values(combKeyChunk.ptr, combValueChunk.ptr, combKeyChunk.len);
 
 		print_int3_arr(combKeyChunk.ptr, combKeyChunk.len);
@@ -101,8 +97,8 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 	}
 	printf("8\n");
 
-	combKeyStream.deconstruct();
-	combValueStream.deconstruct();
+	keyD2Stream.deconstruct();
+	valueD2Stream.deconstruct();
 	print_tp(verbose, "3", keyOutStream->get_throughput());
 
 	//=====================================
