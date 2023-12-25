@@ -105,10 +105,11 @@ template <typename T>
 void histogram(T* input, int* output, int nLevel, T maxValue, int n) {
 	void *buffer = NULL;
 	size_t bufferSize = 0;
+	unsigned int minValue = 0;
 	cub::DeviceHistogram::HistogramEven(buffer, bufferSize,
-	                                    input, output, nLevel + 1, 0, maxValue, n);
+	                                    input, output, nLevel + 1, minValue, maxValue, n);
 	cudaMalloc(&buffer, bufferSize);
 	cub::DeviceHistogram::HistogramEven(buffer, bufferSize,
-	                                    input, output, nLevel + 1, 0, maxValue, n);
+	                                    input, output, nLevel + 1, minValue, maxValue, n);
 	cudaFree(buffer);
 }
