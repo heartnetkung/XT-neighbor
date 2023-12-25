@@ -147,7 +147,7 @@ void print_int3_arr(Int3* arr, int n) {
 		if (i != n - 1)
 			printf(", ");
 	}
-	printf(" ]\n");
+	printf(" ] n=%d\n", n);
 	cudaFreeHost(arr2);
 }
 

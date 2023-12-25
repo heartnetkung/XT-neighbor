@@ -118,7 +118,7 @@ void print_int_arr(int* arr, int n) {
 		if (i != n - 1)
 			printf(", ");
 	}
-	printf(" ]\n");
+	printf(" ] n=%d\n", n);
 	cudaFreeHost(arr2);
 }
 
@@ -130,7 +130,7 @@ void print_char_arr(char* arr, int n) {
 		if (i != n - 1)
 			printf(", ");
 	}
-	printf(" ]\n");
+	printf(" ] n=%d\n", n);
 	cudaFreeHost(arr2);
 }
 
@@ -142,6 +142,6 @@ void print_int2_arr(Int2 * arr, int n) {
 		if (i != n - 1)
 			printf(", ");
 	}
-	printf(" ]\n");
+	printf(" ] n=%d\n", n);
 	cudaFreeHost(arr2);
 }
