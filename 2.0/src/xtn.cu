@@ -148,7 +148,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 			valueOutStream->write(valueOutChunk.ptr, valueOutChunk.len);
 
 			callback(finalOutput);
-			// _free(finalOutput.indexPairs, finalOutput.pairwiseDistances); //TODO
+			_cudaFreeHost(finalOutput.indexPairs, finalOutput.pairwiseDistances);
 			printf("14\n");
 		}
 	}
