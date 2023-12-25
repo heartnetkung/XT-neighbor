@@ -139,4 +139,16 @@ Int3 remove_char(Int3 binary, int position) {
 	return ans;
 }
 
+void print_int3_arr(Int3* arr, int n) {
+	printf("[ ");
+	Int3* arr2 = device_to_host(arr, n);
+	for (int i = 0; i < n; i++) {
+		printf("%s", str_decode(arr2[i]));
+		if (i != n - 1)
+			printf(", ");
+	}
+	printf(" ]\n");
+	cudaFreeHost(arr2);
+}
+
 #endif

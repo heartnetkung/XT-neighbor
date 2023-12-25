@@ -110,19 +110,6 @@ void print_cuda_error(const char *file, int line) {
 		printf("Cuda error at %s %s %d\n", cudaGetErrorName(code), file, line);
 }
 
-void print_int3_arr(Int3* arr, int n) {
-	printf("[ ");
-	Int3* arr2 = device_to_host(arr, n);
-	for (int i = 0; i < n; i++) {
-		unsigned int* entry = arr2[i].entry;
-		printf("(%08X %08X %08X)", entry[0], entry[1], entry[2]);
-		if (i != n - 1)
-			printf(", ");
-	}
-	printf(" ]\n");
-	cudaFreeHost(arr2);
-}
-
 void print_int_arr(int* arr, int n) {
 	printf("[ ");
 	int* arr2 = device_to_host(arr, n);
