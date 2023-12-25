@@ -15,7 +15,7 @@ int cal_offsets(Int3* inputKeys, int* inputValues, int* &inputOffsets, int* &out
 
 	// cal pairOffsets
 	int nUnique = transfer_last_element(buffer, 1); gpuerr();
-	int nUniqueBlock = divideCeil(nUnique, NUM_THREADS);
+	int nUniqueBlock = divide_ceil(nUnique, NUM_THREADS);
 	cudaMalloc(&outputOffsets, sizeof(int)*nUnique); gpuerr();
 	cal_pair_len <<< nUniqueBlock, NUM_THREADS>>>(inputOffsets, outputOffsets, nUnique); gpuerr();
 	inclusive_sum(inputOffsets, nUnique); gpuerr();
@@ -26,7 +26,7 @@ int cal_offsets(Int3* inputKeys, int* inputValues, int* &inputOffsets, int* &out
 int gen_pairs(int* input, int* inputOffsets, int* outputOffsets, Int2* &output, int n, int* buffer) {
 	// generate pairs
 	int outputLen = transfer_last_element(outputOffsets, n); gpuerr();
-	int nBlock = divideCeil(n, NUM_THREADS);
+	int nBlock = divide_ceil(n, NUM_THREADS);
 	cudaMalloc(&output, sizeof(Int2)*outputLen); gpuerr();
 	generate_pairs <<< nBlock, NUM_THREADS>>>(input, output,
 	        inputOffsets, outputOffsets, n); gpuerr();
@@ -47,7 +47,7 @@ int postprocessing(Int3* seq, Int2* input, int distance,
 	// cal levenshtein
 	int uniqueLen = transfer_last_element(buffer, 1); gpuerr();
 	int byteRequirement = sizeof(char) * uniqueLen;
-	int uniqueLenBlock = divideCeil(uniqueLen, NUM_THREADS);
+	int uniqueLenBlock = divide_ceil(uniqueLen, NUM_THREADS);
 	cudaMalloc(&flags, byteRequirement); gpuerr();
 	cudaMalloc(&uniqueDistances, byteRequirement); gpuerr();
 	cudaMalloc(&distanceOutput, byteRequirement); gpuerr();
@@ -74,7 +74,7 @@ void gen_next_chunk(Chunk<Int3> keyInput, Chunk<int> valueInput,
 	char* flags;
 	cudaMalloc(&flags, sizeof(char)*valueInput.len); gpuerr();
 	cudaMemset(flags, 1, valueInput.len); gpuerr();
-	int inputBlocks = divideCeil(offsetLen, NUM_THREADS);
+	int inputBlocks = divide_ceil(offsetLen, NUM_THREADS);
 
 	flag_lowerbound <<< inputBlocks, NUM_THREADS>>>(
 	    valueInput.ptr, valueOffsets, flags, lowerbound, offsetLen); gpuerr();
@@ -92,7 +92,7 @@ void stream_handler1(Chunk<Int3> input, Chunk<Int3> &output1,
                      Chunk<int> &output2, int distance) {
 	int *combinationOffsets;
 	int n = input.len;
-	int inputBlocks = divideCeil(n, NUM_THREADS);
+	int inputBlocks = divide_ceil(n, NUM_THREADS);
 
 	// cal combinationOffsets
 	cudaMalloc((void**)&combinationOffsets, sizeof(int)*n);	gpuerr();

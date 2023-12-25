@@ -80,7 +80,7 @@ void _free(void* a, void* b, void* c) {
 	free(c);
 }
 
-int divideCeil(int a, int b) {
+int divide_ceil(int a, int b) {
 	return (a + b - 1) / b;
 }
 
