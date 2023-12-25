@@ -12,9 +12,9 @@ size_t cal_stream1_chunk_size(int distance) {
 	return ans;
 }
 
-size_t cal_stream3_chunk_size() {
+// size_t cal_stream3_chunk_size() {
 
-}
+// }
 
 void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 	int distance = args.distance, verbose = args.verbose, seq1Len = args.seq1Len;
@@ -62,7 +62,9 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 	printf("4\n");
 
 	// sum histogram
-	size_t combOffset[][1] = {{combKeyChunk.len}}; //TODO
+	size_t** combOffset = (size_t**)malloc( sizeof(size_t*)); //TODO
+	combOffset[0] = (size_t*)malloc(sizeof(size_t));
+	combOffset[0][0] =  combKeyChunk.len;
 	size_t combOffsetLen = 1; //TODO
 	combKeyStream.set_offsets(combOffset, combOffsetLen);
 	combValueStream.set_offsets(combOffset, combOffsetLen);
