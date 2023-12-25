@@ -141,10 +141,14 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 			                finalOutput, seq1Device, seq1Len, distance, lowerbound, deviceInt);
 			printf("13\n");
 
+			print_int3_arr(keyOutChunk.ptr, keyOutChunk.len);
+			print_int_arr(valueOutChunk.ptr, valueOutChunk.len);
+
 			keyOutStream->write(keyOutChunk.ptr, keyOutChunk.len);
 			valueOutStream->write(valueOutChunk.ptr, valueOutChunk.len);
+
 			callback(finalOutput);
-			_free(finalOutput.indexPairs, finalOutput.pairwiseDistances);
+			// _free(finalOutput.indexPairs, finalOutput.pairwiseDistances); //TODO
 			printf("14\n");
 		}
 	}
