@@ -71,33 +71,34 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 	print_tp(verbose, "2", combKeyStream.get_throughput());
 	printf("5\n");
 
-	// //=====================================
-	// // step 3: cal histograms and sort
-	// //=====================================
-	// int len = 1;
-	// int len2[] = {9999};
-	// Int3** keyOutArray = (Int3**)malloc(len * sizeof(Int3*));
-	// int** valueOutArray = (int**)malloc(len * sizeof(int*));
-	// keyOutArray[0] = (Int3*)malloc(len2[0] * sizeof(Int3));
-	// valueOutArray[0] = (int*)malloc(len2[0] * sizeof(int));
+	//=====================================
+	// step 3: cal histograms and sort
+	//=====================================
+	int len = 1;
+	int len2[] = {9999};
+	Int3** keyOutArray = (Int3**)malloc(len * sizeof(Int3*));
+	int** valueOutArray = (int**)malloc(len * sizeof(int*));
+	keyOutArray[0] = (Int3*)malloc(len2[0] * sizeof(Int3));
+	valueOutArray[0] = (int*)malloc(len2[0] * sizeof(int));
+	printf("6\n");
 
+	RAMOutputStream<Int3> *keyOutStream = new RAMOutputStream<Int3>(keyOutArray, len, len2);
+	RAMOutputStream<int> *valueOutStream = new RAMOutputStream<int>(valueOutArray, len, len2);
+	int lowerbounds[] = {INT_MAX};
+	int lowerboundLen = 1;
+	printf("7\n");
 
-	// RAMOutputStream<Int3> *keyOutStream = new RAMOutputStream<Int3>(keyOutArray, len, len2);
-	// RAMOutputStream<int> *valueOutStream = new RAMOutputStream<int>(valueOutArray, len, len2);
-	// int lowerbounds[] = {INT_MAX};
-	// int lowerboundLen = 1;
+	while ( (combKeyChunk = combKeyStream.read()).not_null() ) {
+		combValueChunk = combValueStream.read();
+		sort_key_values(combKeyChunk.ptr, combValueChunk.ptr, combKeyChunk.len);
+		keyOutStream.write(combKeyChunk.ptr,combKeyChunk.len);
+		valueOutStream.write(combValueChunk.ptr,combValueChunk.len);
+	}
+	printf("8\n");
 
-	// while ( (combKeyChunk = combKeyStream.read()).not_null() ) {
-	// 	combValueChunk = combValueStream.read();
-	// 	sort_key_values(combKeyChunk.ptr, combValueChunk.ptr, combKeyChunk.len);
-	// 	keyOutStream.write(combKeyChunk.ptr,combKeyChunk.len);
-	// 	valueOutStream.write(combValueChunk.ptr,combValueChunk.len);
-	// }
-
-
-	// combKeyStream.deconstruct();
-	// combValueStream.deconstruct();
-	// print_tp(verbose, "3", keyOutStream.get_throughput());
+	combKeyStream.deconstruct();
+	combValueStream.deconstruct();
+	print_tp(verbose, "3", keyOutStream.get_throughput());
 
 	// //=====================================
 	// // step 4: generate pairs and postprocess
