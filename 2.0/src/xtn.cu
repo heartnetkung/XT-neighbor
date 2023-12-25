@@ -124,10 +124,10 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 		int lowerbound = lowerbounds[i];
 		size_t new_len = keyOutStream->get_new_len1();
 		size_t* new_len2 = keyOutStream->get_new_len2();
-		keyInStream = new RAMInputStream<int>(keyOutArray , new_len, new_len2, maxReadableSize, keyInBuffer);
-		valueInStream = new RAMInputStream<int>(keyOutArray , new_len, new_len2, maxReadableSize, valueInBuffer);
-		keyOutStream = new RAMOutputStream<int>(keyOutArray, new_len, new_len2);
-		valueOutStream = new RAMOutputStream<int>(keyOutArray, new_len, new_len2);
+		keyInStream = new RAMInputStream<Int3>(keyOutArray , new_len, new_len2, maxReadableSize, keyInBuffer);
+		valueInStream = new RAMInputStream<int>(valueOutArray , new_len, new_len2, maxReadableSize, valueInBuffer);
+		keyOutStream = new RAMOutputStream<Int3>(keyOutArray, new_len, new_len2);
+		valueOutStream = new RAMOutputStream<int>(valueOutArray, new_len, new_len2);
 		printf("11\n");
 
 		Chunk<Int3> keyInChunk, keyOutChunk;
