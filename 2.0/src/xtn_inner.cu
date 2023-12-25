@@ -64,7 +64,7 @@ int postprocessing(Int3* seq, Int2* input, int distance,
 
 void make_output(Int2* pairOut, char* distanceOut, size_t len, XTNOutput &output) {
 	output.indexPairs = device_to_host(pairOut, len); gpuerr();
-	output.distanceOut = device_to_host(distanceOut, len); gpuerr();
+	output.pairwiseDistances = device_to_host(distanceOut, len); gpuerr();
 	output.len = len;
 }
 
@@ -77,7 +77,7 @@ void gen_next_chunk(Chunk<Int3> keyInput, Chunk<int> valueInput,
 	int inputBlocks = divideCeil(offsetLen, NUM_THREADS);
 
 	flag_lowerbound <<< inputBlocks, NUM_THREADS>>>(
-	    valueInput.ptr, valueOffsets, flags, lowerbound, offsetLen) gpuerr();
+	    valueInput.ptr, valueOffsets, flags, lowerbound, offsetLen); gpuerr();
 	double_flag(keyInput.ptr, valueInput.ptr, flags, keyOutput.ptr, valueOutput.ptr,
 	            buffer, keyInput.len); gpuerr();
 
@@ -137,6 +137,7 @@ void stream_handler3(Chunk<Int3> keyInput, Chunk<int> valueInput,
 	                               pairLen, buffer, seq1Len);
 
 	make_output(pairOut, distanceOut, outputLen, output);
-	gen_next_chunk(keyInput, valueInput, keyOutput, valueOutput, lowerbound);
+	gen_next_chunk(keyInput, valueInput, keyOutput, valueOutput,
+	               combinationValueOffsets, offsetLen, lowerbound, buffer);
 	_cudaFree(combinationValueOffsets, pairOffsets, pairs, pairOut, distanceOut);
 }
