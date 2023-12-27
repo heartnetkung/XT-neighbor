@@ -105,7 +105,7 @@ size_t solve_bin_packing(int* histograms, size_t* &output,
 	print_int_arr(rowIndex, len2d);
 
 	inclusive_sum_by_key(rowIndex, histograms, histogram_sum, len2d);
-	print_int_arr(histograms, len2d);
+	print_size_t_arr(histogram_sum, len2d);
 
 	gen_assignment <<< inputBlocks2, NUM_THREADS >>>(
 	    histogram_sum, assignment, maxProcessingExponent, n, nLevel);
