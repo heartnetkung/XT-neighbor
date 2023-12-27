@@ -100,6 +100,7 @@ size_t solve_bin_packing(int* histograms, size_t* &output,
 	cudaMalloc((void**) &rowIndex, sizeof(int) * len2d);
 	cudaMalloc((void**) &assignment, sizeof(int) * len2d);
 	cudaMalloc((void**) &histogram_sum, sizeof(size_t) *len2d);
+	cudaMalloc((void**) &output, sizeof(size_t) *len2d);
 
 	make_row_index <<< inputBlocks, NUM_THREADS>>>(rowIndex, n, nLevel);
 	print_int_arr(rowIndex, len2d);
