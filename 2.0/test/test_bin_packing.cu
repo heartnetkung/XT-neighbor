@@ -6,7 +6,7 @@ TEST(bin_packing, {
 	int len = 3, nLevel = 3;
 
 	int* histogramInput;
-	cudaMallocHost(&histogramInput, sizeof(int) * len * nLevel);
+	cudaMallocHost((void**) &histogramInput, sizeof(int) * len * nLevel);
 	histogramInput[0] = 1; histogramInput[1] = 2; histogramInput[2] = 3;
 	histogramInput[3] = 2; histogramInput[4] = 3; histogramInput[5] = 4;
 	histogramInput[6] = 4; histogramInput[7] = 1; histogramInput[8] = 1;

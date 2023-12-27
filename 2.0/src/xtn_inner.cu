@@ -89,7 +89,7 @@ void gen_next_chunk(Chunk<Int3> keyInput, Chunk<int> valueInput,
 	cudaFree(flags);
 }
 
-size_t solve_bin_packing(int** histograms, size_t** &output,
+size_t solve_bin_packing(int** histograms, size_t* &output,
                          int maxProcessingExponent, int n, int nLevel, int* buffer) {
 
 	int* rowIndex;
