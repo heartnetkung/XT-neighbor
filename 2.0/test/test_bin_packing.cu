@@ -16,8 +16,8 @@ TEST(bin_packing, {
 	cudaMalloc((void**)&deviceInt, sizeof(int));
 
 	size_t* output;
-	size_t outputLen =  solve_bin_packing(histogramInput, output, 4, len, nLevel, deviceInt);
+	size_t outputLen =  solve_bin_packing(histogramInput_d, output, 4, len, nLevel, deviceInt);
 
 	printf("outputLen: %lu\n", outputLen);
-	print_size_t_arr(output);
+	print_size_t_arr(output, outputLen);
 })
