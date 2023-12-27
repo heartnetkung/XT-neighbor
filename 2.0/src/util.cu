@@ -134,11 +134,23 @@ void print_char_arr(char* arr, int n) {
 	cudaFreeHost(arr2);
 }
 
-void print_int2_arr(Int2 * arr, int n) {
+void print_int2_arr(Int2* arr, int n) {
 	printf("[ ");
 	Int2* arr2 = device_to_host(arr, n);
 	for (int i = 0; i < n; i++) {
 		printf("(%d %d)", arr2[i].x, arr2[i].y);
+		if (i != n - 1)
+			printf(", ");
+	}
+	printf(" ] n=%d\n", n);
+	cudaFreeHost(arr2);
+}
+
+void print_size_t_arr(size_t* arr, int n) {
+	printf("[ ");
+	Int2* arr2 = device_to_host(arr, n);
+	for (int i = 0; i < n; i++) {
+		printf("%lu", arr2[i]);
 		if (i != n - 1)
 			printf(", ");
 	}

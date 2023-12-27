@@ -25,6 +25,13 @@ struct Int2Comparator {
 	}
 };
 
+struct SizeTMax {
+	CUB_RUNTIME_FUNCTION __forceinline__ __device__
+	T operator()(const size_t &a, const size_t &b) const {
+		return (b > a) ? b : a;
+	}
+};
+
 template <typename T>
 void inclusive_sum(T* input, int n) {
 	void *buffer = NULL;
@@ -114,7 +121,7 @@ void histogram(T* input, int* output, int nLevel, T maxValue, int n) {
 	cudaFree(buffer);
 }
 
-void inclusive_sum_by_key(int* keyIn, int* valueIn, int* valueOut, int n) {
+void inclusive_sum_by_key(int* keyIn, int* valueIn, size_t* valueOut, int n) {
 	void *buffer = NULL;
 	size_t bufferSize = 0;
 	cub::DeviceScan::InclusiveSumByKey(
@@ -123,4 +130,19 @@ void inclusive_sum_by_key(int* keyIn, int* valueIn, int* valueOut, int n) {
 	cub::DeviceScan::InclusiveSumByKey(
 	    buffer, bufferSize, keyIn, valueIn, valueOut, n);
 	cudaFree(buffer);
+}
+
+void max_by_key(int* keyIn, size_t* valueIn, size_t* valueOut, int* outputLen, int n) {
+	void *buffer = NULL;
+	size_t bufferSize = 0;
+	int* dummy;
+	SizeTMax op;
+
+	cub::DeviceReduce::ReduceByKey(buffer, bufferSize, keyIn,
+	                               dummy, valueIn, valueOut, outputLen, op, n);
+	cudaMalloc(&buffer, bufferSize);
+	cudaMalloc(&dummy, sizeof(int)*n);
+	cub::DeviceReduce::ReduceByKey( buffer, bufferSize, keyIn,
+	                                dummy, valueIn, valueOut, outputLen, op, n);
+	_cudaFree(buffer, dummy);
 }

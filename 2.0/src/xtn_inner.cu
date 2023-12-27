@@ -91,42 +91,30 @@ void gen_next_chunk(Chunk<Int3> keyInput, Chunk<int> valueInput,
 
 size_t solve_bin_packing(int* histograms, size_t* &output,
                          int maxProcessingExponent, int n, int nLevel, int* buffer) {
+	int* rowIndex, *assignment;
+	size_t* histogram_sum;
 
-	int* rowIndex;
-	cudaMalloc((void**) &rowIndex, sizeof(int*) * n * nLevel);
+	int len2d = n * nLevel;
 	int inputBlocks = divide_ceil(n, NUM_THREADS);
+	int inputBlocks2 = divide_ceil(nLevel, NUM_THREADS);
+	cudaMalloc((void**) &rowIndex, sizeof(int) * len2d);
+	cudaMalloc((void**) &assignment, sizeof(int) * len2d);
+	cudaMalloc((void**) &histogram_sum, sizeof(size_t) *len2d);
+
 	make_row_index <<< inputBlocks, NUM_THREADS>>>(rowIndex, n, nLevel);
+	print_int_arr(rowIndex, len2d);
 
-	print_int_arr(rowIndex, n * nLevel);
+	inclusive_sum_by_key(rowIndex, histograms, histogram_sum, len2d);
+	print_int_arr(histograms, len2d);
 
-	int* histograms_temp;
-	cudaMalloc((void**) &histograms_temp, sizeof(int) * n * nLevel);
-	inclusive_sum_by_key(rowIndex, histograms, histograms, n*nLevel);
+	gen_assignment <<< inputBlocks2, NUM_THREADS >>>(
+	    histogram_sum, assignment, maxProcessingExponent, n, nLevel);
+	print_int_arr(assignment, len2d);
 
-	print_int_arr(histograms, n * nLevel);
+	max_by_key(assignment, histogram_sum, output, buffer, len2d);
+	print_size_t_arr(output, transfer_last_element(buffer, 1));
 
-	return 0;
-
-
-	// int* input, int* output, int n, int nRepeat
-	// size_t* finalHistogram, *globalAssignment;
-	// cudaMalloc((void**)&finalHistogram, sizeof(size_t)*HISTOGRAM_SIZE);
-	// cudaMalloc((void**)&globalAssignment, sizeof(size_t)*HISTOGRAM_SIZE);
-
-	// //prefix sum
-	// for (int i = 0; i < n; i++)
-	// 	inclusive_sum(histograms[i], nLevels);
-	// //columnwise sum + bit shift
-	// columnwise_sum(histograms, finalHistogram, maxProcessingExponent, n, nLevels);
-	// //length encode
-	// unique_counts(finalHistogram, globalAssignment, buffer, nLevels);
-	// //prefix sum
-	// //cal_length
-
-	// cudaFree(finalHistogram);
-	// cudaFree(globalAssignment);
-	// return transfer_last_element(buffer, 1);
-
+	return transfer_last_element(buffer, 1);
 }
 
 void stream_handler1(Chunk<Int3> input, Chunk<Int3> &output1,
