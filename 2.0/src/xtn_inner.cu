@@ -89,6 +89,37 @@ void gen_next_chunk(Chunk<Int3> keyInput, Chunk<int> valueInput,
 	cudaFree(flags);
 }
 
+size_t solve_bin_packing(int** histograms, size_t** &output,
+                         int maxProcessingExponent, int n, int nLevel, int* buffer) {
+
+	int* rowIndex;
+	cudaMalloc((void**) &rowIndex, sizeof(int*) * n * nLevel);
+	make_row_index(rowIndex, n, nLevel);
+
+	print_int_arr(rowIndex, n * nLevel);
+
+
+	// int* input, int* output, int n, int nRepeat
+	// size_t* finalHistogram, *globalAssignment;
+	// cudaMalloc((void**)&finalHistogram, sizeof(size_t)*HISTOGRAM_SIZE);
+	// cudaMalloc((void**)&globalAssignment, sizeof(size_t)*HISTOGRAM_SIZE);
+
+	// //prefix sum
+	// for (int i = 0; i < n; i++)
+	// 	inclusive_sum(histograms[i], nLevels);
+	// //columnwise sum + bit shift
+	// columnwise_sum(histograms, finalHistogram, maxProcessingExponent, n, nLevels);
+	// //length encode
+	// unique_counts(finalHistogram, globalAssignment, buffer, nLevels);
+	// //prefix sum
+	// //cal_length
+
+	// cudaFree(finalHistogram);
+	// cudaFree(globalAssignment);
+	// return transfer_last_element(buffer, 1);
+
+}
+
 void stream_handler1(Chunk<Int3> input, Chunk<Int3> &output1,
                      Chunk<int> &output2, int* &histogramOutput, int distance) {
 	// boilerplate
@@ -129,20 +160,25 @@ void stream_handler2() {
 }
 
 void stream_handler3(Chunk<Int3> keyInput, Chunk<int> valueInput,
-                     Chunk<Int3> &keyOutput, Chunk<int> &valueOutput,
-                     XTNOutput &output, Int3* seq1, int seq1Len,
-                     int distance, int lowerbound, int* buffer) {
-
+                     Chunk<Int3> &keyOutput, Chunk<int> &valueOutput, Int2* &pairOutput,
+                     int* &histogramOutput, int lowerbound, int* buffer) {
 	int* combinationValueOffsets, *pairOffsets;
 	int offsetLen =
 	    cal_offsets(keyInput.ptr, valueInput.ptr, combinationValueOffsets,
 	                pairOffsets, keyInput.len, buffer);
-
-	Int2* pairs;
 	int pairLen =
 	    gen_pairs(valueInput.ptr, combinationValueOffsets,
-	              pairOffsets, pairs, offsetLen, buffer);
+	              pairOffsets, pairOutput, offsetLen, buffer);
 
+	// generate histogram
+	// take lower bound into account
+
+	gen_next_chunk(keyInput, valueInput, keyOutput, valueOutput,
+	               combinationValueOffsets, offsetLen, lowerbound, buffer);
+	_cudaFree(combinationValueOffsets, pairOffsets);
+}
+
+void stream_handler4(Chunk<Int2> pairInput, XTNOutput &output, Int3* seq1, int seq1Len, int* buffer) {
 	Int2* pairOut;
 	char* distanceOut;
 	int outputLen =
@@ -150,7 +186,5 @@ void stream_handler3(Chunk<Int3> keyInput, Chunk<int> valueInput,
 	                   pairLen, buffer, seq1Len);
 
 	make_output(pairOut, distanceOut, outputLen, output);
-	gen_next_chunk(keyInput, valueInput, keyOutput, valueOutput,
-	               combinationValueOffsets, offsetLen, lowerbound, buffer);
-	_cudaFree(combinationValueOffsets, pairOffsets, pairs, pairOut, distanceOut);
+	_cudaFree(pairOut, distanceOut);
 }

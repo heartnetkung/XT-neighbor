@@ -125,7 +125,7 @@ void cal_levenshtein(Int3* seq, Int2* index, int distance,
 }
 
 __global__
-void columnwise_sum_shift_bit(int** matrix, size_t* output, int nBit, int n_row, int n_column) {
+void gen_(int** matrix, size_t* output, int nBit, int n_row, int n_column) {
 	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
 	if (tid >= n_column)
 		return;
@@ -172,4 +172,14 @@ void flag_lowerbound(int* valueInput, int* valueOffsets, char* output, int lower
 	if (validCount < 2)
 		for (int i = start; i < end; i++)
 			output[i] = 0;
+}
+
+__global__
+void make_row_index(int* output, int n, int nRepeat) {
+	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
+	if (tid >= n)
+		return;
+
+	for (int i = tid * nRepeat; i < tid * nRepeat + nRepeat; i++)
+		output[i] = tid;
 }
