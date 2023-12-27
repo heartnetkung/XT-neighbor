@@ -103,23 +103,10 @@ size_t solve_bin_packing(int* histograms, size_t* &output,
 	cudaMalloc((void**) &output, sizeof(size_t) *len2d);
 
 	make_row_index <<< inputBlocks, NUM_THREADS>>>(rowIndex, n, nLevel);
-	print_int_arr(rowIndex, len2d);
-
 	inclusive_sum_by_key(rowIndex, histograms, histogram_sum, len2d);
-	print_size_t_arr(histogram_sum, len2d);
-
 	gen_assignment <<< inputBlocks2, NUM_THREADS >>>(
 	    histogram_sum, assignment, maxProcessingExponent, n, nLevel);
-	print_int_arr(assignment, len2d);
-
-	printf("1\n");
 	max_by_key(assignment, histogram_sum, output, buffer, len2d);
-	printf("2\n");
-	int outputLen = transfer_last_element(buffer, 1);
-	printf("2.1\n");
-	print_size_t_arr(output, outputLen);
-	printf("3\n");
-
 	return transfer_last_element(buffer, 1);
 }
 

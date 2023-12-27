@@ -18,6 +18,6 @@ TEST(bin_packing, {
 	size_t* output;
 	size_t outputLen =  solve_bin_packing(histogramInput, output, 4, len, nLevel, deviceInt);
 
-	// printf("outputLen: %lu\n", outputLen);
-	// print_size_t_arr(output);
+	printf("outputLen: %lu\n", outputLen);
+	print_size_t_arr(output);
 })
