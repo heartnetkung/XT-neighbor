@@ -99,6 +99,8 @@ size_t solve_bin_packing(int* histograms, size_t* &output,
 
 	print_int_arr(rowIndex, n * nLevel);
 
+	return 0;
+
 
 	// int* input, int* output, int n, int nRepeat
 	// size_t* finalHistogram, *globalAssignment;
