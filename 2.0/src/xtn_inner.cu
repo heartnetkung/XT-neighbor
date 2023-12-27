@@ -114,7 +114,7 @@ size_t solve_bin_packing(int* histograms, size_t* &output,
 	printf("1\n");
 	max_by_key(assignment, histogram_sum, output, buffer, len2d);
 	printf("2\n");
-	print_size_t_arr(output, transfer_last_element(buffer, 1));
+	// print_size_t_arr(output, transfer_last_element(buffer, 1));
 	printf("3\n");
 
 	return transfer_last_element(buffer, 1);
