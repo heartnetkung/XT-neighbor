@@ -100,8 +100,8 @@ size_t solve_bin_packing(int* histograms, size_t* &output,
 	print_int_arr(rowIndex, n * nLevel);
 
 	int* histograms_temp;
-	cudaMalloc((void**) &histograms_temp, sizeof(int*) * n * nLevel);
-	inclusive_sum_by_key(rowIndex, histograms, histograms_temp, n);
+	cudaMalloc((void**) &histograms_temp, sizeof(int) * n * nLevel);
+	inclusive_sum_by_key(rowIndex, histograms, histograms_temp, n*nLevel);
 
 	print_int_arr(histograms_temp, n * nLevel);
 
