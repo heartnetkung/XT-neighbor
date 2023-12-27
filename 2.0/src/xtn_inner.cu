@@ -111,8 +111,11 @@ size_t solve_bin_packing(int* histograms, size_t* &output,
 	    histogram_sum, assignment, maxProcessingExponent, n, nLevel);
 	print_int_arr(assignment, len2d);
 
+	print("1\n");
 	max_by_key(assignment, histogram_sum, output, buffer, len2d);
+	print("2\n");
 	print_size_t_arr(output, transfer_last_element(buffer, 1));
+	print("3\n");
 
 	return transfer_last_element(buffer, 1);
 }
