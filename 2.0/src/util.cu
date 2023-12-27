@@ -152,9 +152,12 @@ void print_size_t_arr(size_t* arr, int n) {
 	size_t* arr2 = device_to_host(arr, n);
 	printf("2.3\n");
 	for (int i = 0; i < n; i++) {
+		printf("2.31\n");
 		printf("%lu", arr2[i]);
+		printf("2.32\n");
 		if (i != n - 1)
 			printf(", ");
+		printf("2.33\n");
 	}
 	printf("2.4\n");
 	printf(" ] n=%d\n", n);
