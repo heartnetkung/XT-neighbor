@@ -147,13 +147,18 @@ void print_int2_arr(Int2* arr, int n) {
 }
 
 void print_size_t_arr(size_t* arr, int n) {
+	printf("2.2\n");
 	printf("[ ");
 	size_t* arr2 = device_to_host(arr, n);
+	printf("2.3\n");
 	for (int i = 0; i < n; i++) {
 		printf("%lu", arr2[i]);
 		if (i != n - 1)
 			printf(", ");
 	}
+	printf("2.4\n");
 	printf(" ] n=%d\n", n);
+	printf("2.5\n");
 	cudaFreeHost(arr2);
+	printf("2.6\n");
 }
