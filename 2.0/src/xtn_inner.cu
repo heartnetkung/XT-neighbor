@@ -94,7 +94,8 @@ size_t solve_bin_packing(int** histograms, size_t** &output,
 
 	int* rowIndex;
 	cudaMalloc((void**) &rowIndex, sizeof(int*) * n * nLevel);
-	make_row_index(rowIndex, n, nLevel);
+	int inputBlocks = divide_ceil(n, NUM_THREADS);
+	make_row_index <<< inputBlocks, NUM_THREADS>>>(rowIndex, n, nLevel);
 
 	print_int_arr(rowIndex, n * nLevel);
 
@@ -159,32 +160,32 @@ void stream_handler2() {
 
 }
 
-void stream_handler3(Chunk<Int3> keyInput, Chunk<int> valueInput,
-                     Chunk<Int3> &keyOutput, Chunk<int> &valueOutput, Int2* &pairOutput,
-                     int* &histogramOutput, int lowerbound, int* buffer) {
-	int* combinationValueOffsets, *pairOffsets;
-	int offsetLen =
-	    cal_offsets(keyInput.ptr, valueInput.ptr, combinationValueOffsets,
-	                pairOffsets, keyInput.len, buffer);
-	int pairLen =
-	    gen_pairs(valueInput.ptr, combinationValueOffsets,
-	              pairOffsets, pairOutput, offsetLen, buffer);
+// void stream_handler3(Chunk<Int3> keyInput, Chunk<int> valueInput,
+//                      Chunk<Int3> &keyOutput, Chunk<int> &valueOutput, Int2* &pairOutput,
+//                      int* &histogramOutput, int lowerbound, int* buffer) {
+// 	int* combinationValueOffsets, *pairOffsets;
+// 	int offsetLen =
+// 	    cal_offsets(keyInput.ptr, valueInput.ptr, combinationValueOffsets,
+// 	                pairOffsets, keyInput.len, buffer);
+// 	int pairLen =
+// 	    gen_pairs(valueInput.ptr, combinationValueOffsets,
+// 	              pairOffsets, pairOutput, offsetLen, buffer);
 
-	// generate histogram
-	// take lower bound into account
+// 	// generate histogram
+// 	// take lower bound into account
 
-	gen_next_chunk(keyInput, valueInput, keyOutput, valueOutput,
-	               combinationValueOffsets, offsetLen, lowerbound, buffer);
-	_cudaFree(combinationValueOffsets, pairOffsets);
-}
+// 	gen_next_chunk(keyInput, valueInput, keyOutput, valueOutput,
+// 	               combinationValueOffsets, offsetLen, lowerbound, buffer);
+// 	_cudaFree(combinationValueOffsets, pairOffsets);
+// }
 
-void stream_handler4(Chunk<Int2> pairInput, XTNOutput &output, Int3* seq1, int seq1Len, int* buffer) {
-	Int2* pairOut;
-	char* distanceOut;
-	int outputLen =
-	    postprocessing(seq1, pairs, distance, pairOut, distanceOut,
-	                   pairLen, buffer, seq1Len);
+// void stream_handler4(Chunk<Int2> pairInput, XTNOutput &output, Int3* seq1, int seq1Len, int* buffer) {
+// 	Int2* pairOut;
+// 	char* distanceOut;
+// 	int outputLen =
+// 	    postprocessing(seq1, pairs, distance, pairOut, distanceOut,
+// 	                   pairLen, buffer, seq1Len);
 
-	make_output(pairOut, distanceOut, outputLen, output);
-	_cudaFree(pairOut, distanceOut);
-}
+// 	make_output(pairOut, distanceOut, outputLen, output);
+// 	_cudaFree(pairOut, distanceOut);
+// }
