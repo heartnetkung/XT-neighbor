@@ -3,6 +3,7 @@
 #include <cub/device/device_run_length_encode.cuh>
 #include <cub/device/device_select.cuh>
 #include <cub/device/device_histogram.cuh>
+#include <cub/device/device_reduce.cuh>
 #include "codec.cu"
 
 struct Int3Comparator {
@@ -27,7 +28,7 @@ struct Int2Comparator {
 
 struct SizeTMax {
 	CUB_RUNTIME_FUNCTION __forceinline__ __device__
-	T operator()(const size_t &a, const size_t &b) const {
+	size_t operator()(const size_t &a, const size_t &b) const {
 		return (b > a) ? b : a;
 	}
 };
