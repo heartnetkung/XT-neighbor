@@ -139,16 +139,16 @@ void max_by_key(int* keyIn, size_t* valueIn, size_t* valueOut, int* outputLen, i
 	int* dummy;
 	SizeTMax op;
 
-	print("1.1\n");
+	printf("1.1\n");
 	cudaMalloc(&dummy, sizeof(int)*n);
-	print("1.2\n");
+	printf("1.2\n");
 	cub::DeviceReduce::ReduceByKey(buffer, bufferSize, keyIn,
 	                               dummy, valueIn, valueOut, outputLen, op, n);
-	print("1.3\n");
+	printf("1.3\n");
 	cudaMalloc(&buffer, bufferSize);
-	print("1.4\n");
+	printf("1.4\n");
 	cub::DeviceReduce::ReduceByKey(buffer, bufferSize, keyIn,
 	                               dummy, valueIn, valueOut, outputLen, op, n);
-	print("1.5\n");
+	printf("1.5\n");
 	_cudaFree(buffer, dummy);
 }
