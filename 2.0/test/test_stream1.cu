@@ -38,6 +38,9 @@ TEST(Stream1, {
 	deletionsOutput = device_to_host(deletionsOutput, outputLen);
 	indexOutput = device_to_host(indexOutput, outputLen);
 
+	print_int3_arr(deletionsOutput,outputLen);
+	print_int_arr(indexOutput,outputLen);
+
 	//check
 	check(outputLen == expectedLen);
 	for (int i = 0; i < expectedLen; i++) {

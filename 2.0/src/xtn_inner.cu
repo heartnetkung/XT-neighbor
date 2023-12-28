@@ -136,6 +136,7 @@ void stream_handler1(Chunk<Int3> input, Int3* &deletionsOutput, int* &indexOutpu
 	select_int3 <<< outputBlocks, NUM_THREADS>>>(
 	    deletionsOutput, histogramValue, outputLen);
 	histogram(histogramValue, histogramOutput, HISTOGRAM_SIZE , UINT_MAX , outputLen);
+	sort_key_values(deletionsOutput, indexOutput, outputLen);
 
 	// boilerplate
 	_cudaFree(combinationOffsets, histogramValue); gpuerr();
