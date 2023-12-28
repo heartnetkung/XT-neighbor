@@ -26,8 +26,8 @@ TEST(Stream1, {
 	int outputLen;
 	stream_handler1(input, deletionsOutput, indexOutput, histogramOutput, outputLen, distance);
 
-	print_int_arr(indexOutput.ptr, indexOutput.len);
-	print_int3_arr(deletionsOutput.ptr, deletionsOutput.len);
+	print_int_arr(indexOutput, outputLen);
+	print_int3_arr(deletionsOutput, outputLen);
 
 	// //expactation
 	// int expectedLen = 5;
