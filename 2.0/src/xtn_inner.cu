@@ -98,7 +98,7 @@ int solve_bin_packing(int* histograms, int* &output,
 	int inputBlocks2 = divide_ceil(nLevel, NUM_THREADS);
 	cudaMalloc((void**) &rowIndex, sizeof(int) * len2d);
 	cudaMalloc((void**) &assignment, sizeof(int) * len2d);
-	cudaMalloc((void**) &output, sizeof(size_t) *len2d);
+	cudaMalloc((void**) &output, sizeof(int) *len2d);
 
 	make_row_index <<< inputBlocks, NUM_THREADS>>>(rowIndex, n, nLevel);
 	inclusive_sum_by_key(rowIndex, histograms, len2d);

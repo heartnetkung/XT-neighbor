@@ -20,5 +20,5 @@ TEST(bin_packing, {
 
 	check(outputLen == 6);
 	printf("outputLen: %lu\n", outputLen);
-	print_size_t_arr(output, outputLen);
+	print_int_arr(output, outputLen);
 })
