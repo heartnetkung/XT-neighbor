@@ -143,7 +143,7 @@ void select_int3(Int3* input, unsigned int* output, int n) {
 	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
 	if (tid >= n)
 		return;
-	output[tid] = input[tid].entry[1];
+	output[tid] = input[tid].entry[0];
 }
 
 __global__
