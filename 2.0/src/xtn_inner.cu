@@ -90,7 +90,7 @@ void gen_next_chunk(Chunk<Int3> keyInput, Chunk<int> valueInput,
 }
 
 int solve_bin_packing(int* histograms, int* &output,
-                         int maxProcessingExponent, int n, int nLevel, int* buffer) {
+                      int maxProcessingExponent, int n, int nLevel, int* buffer) {
 	int* rowIndex, *assignment;
 
 	int len2d = n * nLevel;
@@ -166,12 +166,13 @@ void stream_handler2() {
 // 	_cudaFree(combinationValueOffsets, pairOffsets);
 // }
 
-void stream_handler4(Chunk<Int2> pairInput, XTNOutput &output, Int3* seq1, int seq1Len, int* buffer) {
+void stream_handler4(Chunk<Int2> pairInput, XTNOutput &output, Int3* seq1,
+                     int seq1Len, int distance, int* buffer) {
 	Int2* pairOut;
 	char* distanceOut;
 	int outputLen =
-	    postprocessing(seq1, pairs, distance, pairOut, distanceOut,
-	                   pairLen, buffer, seq1Len);
+	    postprocessing(seq1, pairInput.ptr, distance, pairOut, distanceOut,
+	                   pairInput.len, buffer, seq1Len);
 
 	make_output(pairOut, distanceOut, outputLen, output);
 	_cudaFree(pairOut, distanceOut);

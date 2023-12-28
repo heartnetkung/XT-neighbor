@@ -5,6 +5,7 @@ TEST(Stream4, {
 	int seqLen = 5;
 	char seqs[seqLen][6] = {"CAAA", "CADA", "CAAA", "CDKD", "CAAK"};
 	int pairLen = 10;
+	int distance = 1;
 
 	//allocate inputs
 	Int3 * seq1d, *seq1h;
@@ -32,7 +33,7 @@ TEST(Stream4, {
 	pairInput.ptr = pairs_d;
 	pairInput.len = pairLen;
 
-	stream_handler4(pairInput, output, seq1d, seqLen, deviceInt)
+	stream_handler4(pairInput, output, seq1d, seqLen, distance, deviceInt)
 	print_int2_arr(output.indexPairs, output.len);
 	print_char_arr(output.pairwiseDistances, output.len);
 	printf("len: %d\n", output.len);
