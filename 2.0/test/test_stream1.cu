@@ -8,26 +8,21 @@ TEST(Stream1, {
 	printf("1\n");
 
 	//allocate inputs
-	Int3 * seq1d, *seq1h;
+	Int3* seq1;
 	int* histogramOutput;
-	cudaMalloc((void**)&seq1d, sizeof(Int3)*seqLen);
-	cudaMallocHost((void**)&seq1h, sizeof(Int3)*seqLen);
-	printf("2\n");
+	cudaMalloc((void**)&seq1, sizeof(Int3)*seqLen);
 
 	//make inputs
 	for (int i = 0; i < seqLen; i++)
-		seq1h[i] = str_encode(seqs[i]);
-	seq1d = host_to_device(seq1h, seqLen);
+		seq1[i] = str_encode(seqs[i]);
+	seq1 = host_to_device(seq1, seqLen);
 
 	//do testing
-	Chunk<Int3> input;
-	input.ptr = seq1d;
-	input.len = seqLen;
+	Chunk<Int3> input = {.ptr = seq1, .len = seqLen};
 	int* indexOutput;
 	Int3* deletionsOutput;
 	int outputLen;
 	stream_handler1(input, deletionsOutput, indexOutput, histogramOutput, outputLen, distance);
-	printf("3\n");
 
 	//expactation
 	int expectedLen = 20;
@@ -44,9 +39,7 @@ TEST(Stream1, {
 	//check
 	check(outputLen == expectedLen);
 	for (int i = 0; i < expectedLen; i++) {
-		printf("4\n");
 		checkstr(expectedPairs[i], str_decode(deletionsOutput[i]));
-		printf("5\n");
 		check(expectedIndex[i] == indexOutput[i]);
 	}
 })
