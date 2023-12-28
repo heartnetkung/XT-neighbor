@@ -17,7 +17,7 @@ public:
 template <typename T> class GPUInputStream {
 private:
 	T* _data = NULL;
-	int _len = 0, _chunkSize = 0, _tp; // to int
+	int _len = 0, _chunkSize = 0, _tp;
 
 	void check_input(T* data, int len, int chunkSize) {
 		if (data == NULL)
@@ -187,10 +187,10 @@ public:
 template <typename T> class D2Stream {
 private:
 	T** _data;
-	int _len1, _offset_len; // to int
-	int _write_index = 0, _read_index = 0; // to int
-	int* _len2; // to int
-	int** _offsets = NULL; // to int
+	int _len1, _offset_len;
+	int _write_index = 0, _read_index = 0;
+	int* _len2;
+	int** _offsets = NULL;
 	T* _deviceBuffer = NULL;
 
 	void check_input(int len1) {
