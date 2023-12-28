@@ -15,10 +15,14 @@ TEST(bin_packing, {
 	int* deviceInt;
 	cudaMalloc((void**)&deviceInt, sizeof(int));
 
+	int expectedLen = 6;
+	int expectedOut[] = {3, 6, 5, 9, 5, 6};
+
 	int* output;
 	int outputLen =  solve_bin_packing(histogramInput_d, output, 4, len, nLevel, deviceInt);
+	int* outputHost = device_to_host(output, outputLen);
 
 	check(outputLen == 6);
-	printf("outputLen: %lu\n", outputLen);
-	print_int_arr(output, outputLen);
+	for (int i = 0; i < expectedLen; i++)
+		check(expectedOut[i] == outputHost[i]);
 })
