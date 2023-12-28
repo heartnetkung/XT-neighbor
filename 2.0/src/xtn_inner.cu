@@ -89,24 +89,22 @@ void gen_next_chunk(Chunk<Int3> keyInput, Chunk<int> valueInput,
 	cudaFree(flags);
 }
 
-size_t solve_bin_packing(int* histograms, size_t* &output,
+int solve_bin_packing(int* histograms, int* &output,
                          int maxProcessingExponent, int n, int nLevel, int* buffer) {
 	int* rowIndex, *assignment;
-	size_t* histogram_sum;
 
 	int len2d = n * nLevel;
 	int inputBlocks = divide_ceil(n, NUM_THREADS);
 	int inputBlocks2 = divide_ceil(nLevel, NUM_THREADS);
 	cudaMalloc((void**) &rowIndex, sizeof(int) * len2d);
 	cudaMalloc((void**) &assignment, sizeof(int) * len2d);
-	cudaMalloc((void**) &histogram_sum, sizeof(size_t) *len2d);
 	cudaMalloc((void**) &output, sizeof(size_t) *len2d);
 
 	make_row_index <<< inputBlocks, NUM_THREADS>>>(rowIndex, n, nLevel);
-	inclusive_sum_by_key(rowIndex, histograms, histogram_sum, len2d);
+	inclusive_sum_by_key(rowIndex, histograms, len2d);
 	gen_assignment <<< inputBlocks2, NUM_THREADS >>>(
-	    histogram_sum, assignment, maxProcessingExponent, n, nLevel);
-	max_by_key(assignment, histogram_sum, output, buffer, len2d);
+	    histograms, assignment, maxProcessingExponent, n, nLevel);
+	max_by_key(assignment, histograms, output, buffer, len2d);
 	return transfer_last_element(buffer, 1);
 }
 

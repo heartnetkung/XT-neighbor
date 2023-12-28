@@ -122,18 +122,18 @@ void histogram(T* input, int* output, int nLevel, T maxValue, int n) {
 	cudaFree(buffer);
 }
 
-void inclusive_sum_by_key(int* keyIn, int* valueIn, size_t* valueOut, int n) {
+void inclusive_sum_by_key(int* keyIn, int* valueInOut, int n) {
 	void *buffer = NULL;
 	size_t bufferSize = 0;
 	cub::DeviceScan::InclusiveSumByKey(
-	    buffer, bufferSize, keyIn, valueIn, valueOut, n);
+	    buffer, bufferSize, keyIn, valueInOut, valueInOut, n);
 	cudaMalloc(&buffer, bufferSize);
 	cub::DeviceScan::InclusiveSumByKey(
-	    buffer, bufferSize, keyIn, valueIn, valueOut, n);
+	    buffer, bufferSize, keyIn, valueInOut, valueInOut, n);
 	cudaFree(buffer);
 }
 
-void max_by_key(int* keyIn, size_t* valueIn, size_t* valueOut, int* outputLen, int n) {
+void max_by_key(int* keyIn, int* valueIn, int* valueOut, int* outputLen, int n) {
 	void *buffer = NULL;
 	size_t bufferSize = 0;
 	int* dummy;
