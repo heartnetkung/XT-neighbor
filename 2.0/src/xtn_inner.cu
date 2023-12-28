@@ -108,8 +108,8 @@ int solve_bin_packing(int* histograms, int* &output,
 	return transfer_last_element(buffer, 1);
 }
 
-void stream_handler1(Chunk<Int3> input, Chunk<Int3> &output1,
-                     Chunk<int> &output2, int* &histogramOutput, int distance) {
+void stream_handler1(Chunk<Int3> input, Int3* &deletionsOutput, int* &indexOutput,
+                     int* &histogramOutput, int &outputLen, int distance) {
 	// boilerplate
 	int *combinationOffsets;
 	int inputBlocks = divide_ceil(input.len, NUM_THREADS);
@@ -120,27 +120,25 @@ void stream_handler1(Chunk<Int3> input, Chunk<Int3> &output1,
 	cal_combination_len <<< inputBlocks, NUM_THREADS >>>(
 	    input.ptr, distance, combinationOffsets, input.len); gpuerr();
 	inclusive_sum(combinationOffsets, input.len); gpuerr();
-	int outputLen = transfer_last_element(combinationOffsets, input.len); gpuerr();
+	outputLen = transfer_last_element(combinationOffsets, input.len); gpuerr();
 
 	// generate combinations
-	cudaMalloc(&output1.ptr, sizeof(Int3)*outputLen); gpuerr();
-	cudaMalloc(&output2.ptr, sizeof(int)*outputLen); gpuerr();
+	cudaMalloc(&deletionsOutput, sizeof(Int3)*outputLen); gpuerr();
+	cudaMalloc(&indexOutput, sizeof(int)*outputLen); gpuerr();
 	gen_combination <<< inputBlocks, NUM_THREADS >>> (
 	    input.ptr, combinationOffsets, distance,
-	    output1.ptr, output2.ptr, input.len); gpuerr();
+	    deletionsOutput, indexOutput, input.len); gpuerr();
 
 	// generate histogram
 	int outputBlocks = divide_ceil(outputLen , NUM_THREADS);
 	cudaMalloc(&histogramValue, sizeof(unsigned int)*outputLen);
 	cudaMalloc(&histogramOutput, sizeof(int)*HISTOGRAM_SIZE);
 	select_int3 <<< outputBlocks, NUM_THREADS>>>(
-	    output1.ptr, histogramValue, outputLen);
+	    deletionsOutput, histogramValue, outputLen);
 	histogram(histogramValue, histogramOutput, HISTOGRAM_SIZE , UINT_MAX , outputLen);
 
 	// boilerplate
 	_cudaFree(combinationOffsets, histogramValue); gpuerr();
-	output1.len = outputLen;
-	output2.len = outputLen;
 }
 
 void stream_handler2() {
