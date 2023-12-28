@@ -5,20 +5,22 @@ TEST(Stream1, {
 	int seqLen = 4;
 	char seqs[seqLen][6] = {"CAAA", "CADA", "CAAA", "CDKD"};
 	int distance = 1;
-	printf("1\n");
 
 	//allocate inputs
-	Int3* seq1;
+	Int3 * seq1d, *seq1h;
 	int* histogramOutput;
-	cudaMalloc((void**)&seq1, sizeof(Int3)*seqLen);
+	cudaMalloc((void**)&seq1d, sizeof(Int3)*seqLen);
+	cudaMallocHost((void**)&seq1h, sizeof(Int3)*seqLen);
 
 	//make inputs
 	for (int i = 0; i < seqLen; i++)
-		seq1[i] = str_encode(seqs[i]);
-	seq1 = host_to_device(seq1, seqLen);
+		seq1h[i] = str_encode(seqs[i]);
+	seq1d = host_to_device(seq1h, seqLen);
 
 	//do testing
-	Chunk<Int3> input = {.ptr = seq1, .len = seqLen};
+	Chunk<Int3> input;
+	input.ptr = seq1d;
+	input.len = seqLen;
 	int* indexOutput;
 	Int3* deletionsOutput;
 	int outputLen;
