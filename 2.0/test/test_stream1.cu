@@ -5,12 +5,14 @@ TEST(Stream1, {
 	int seqLen = 4;
 	char seqs[seqLen][6] = {"CAAA", "CADA", "CAAA", "CDKD"};
 	int distance = 1;
+	printf("1\n");
 
 	//allocate inputs
 	Int3 * seq1d, *seq1h;
 	int* histogramOutput;
 	cudaMalloc((void**)&seq1d, sizeof(Int3)*seqLen);
 	cudaMallocHost((void**)&seq1h, sizeof(Int3)*seqLen);
+	printf("2\n");
 
 	//make inputs
 	for (int i = 0; i < seqLen; i++)
@@ -25,6 +27,7 @@ TEST(Stream1, {
 	Int3* deletionsOutput;
 	int outputLen;
 	stream_handler1(input, deletionsOutput, indexOutput, histogramOutput, outputLen, distance);
+	printf("3\n");
 
 	//expactation
 	int expectedLen = 20;
@@ -39,7 +42,9 @@ TEST(Stream1, {
 	//check
 	check(outputLen == expectedLen);
 	for (int i = 0; i < expectedLen; i++) {
+		printf("4\n");
 		checkstr(expectedPairs[i], str_decode(deletionsOutput[i]));
+		printf("5\n");
 		check(expectedIndex[i] == indexOutput[i]);
 	}
 })
