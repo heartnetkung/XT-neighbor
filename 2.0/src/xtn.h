@@ -30,7 +30,7 @@ struct XTNArgs {
 struct XTNOutput {
 	Int2* indexPairs = NULL;
 	char* pairwiseDistances = NULL;
-	size_t len = 0;
+	int len = 0;
 };
 
 enum ReturnCode {SUCCESS, ERROR, EXIT};
