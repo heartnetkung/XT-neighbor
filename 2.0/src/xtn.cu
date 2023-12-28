@@ -19,7 +19,7 @@ size_t cal_stream1_chunk_size(int distance) {
 void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 	int distance = args.distance, verbose = args.verbose, seq1Len = args.seq1Len;
 	int* deviceInt;
-	cudaMalloc((void**)&deviceInt, sizeof(int));
+	cudaMalloc(&deviceInt, sizeof(int));
 
 	//=====================================
 	// step 1: transfer input to GPU
@@ -112,8 +112,8 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 	size_t maxReadableSize = INT_MAX >> 4;
 	Int3* keyInBuffer;
 	int* valueInBuffer;
-	cudaMalloc((void**)&keyInBuffer, sizeof(Int3)*maxReadableSize);
-	cudaMalloc((void**)&valueInBuffer, sizeof(int)*maxReadableSize);
+	cudaMalloc(&keyInBuffer, sizeof(Int3)*maxReadableSize);
+	cudaMalloc(&valueInBuffer, sizeof(int)*maxReadableSize);
 	printf("10\n");
 
 	for (int i = 0; i < lowerboundLen; i++) {

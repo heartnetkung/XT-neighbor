@@ -218,8 +218,8 @@ public:
 	D2Stream(int len1) {
 		check_input(len1);
 		_len1 = len1;
-		cudaMallocHost((void**)&_data, sizeof(T*)*len1);
-		cudaMallocHost((void**)&_len2, sizeof(int)*len1);
+		cudaMallocHost(&_data, sizeof(T*)*len1);
+		cudaMallocHost(&_len2, sizeof(int)*len1);
 	}
 
 	void write(T* newData, int n) {
@@ -227,7 +227,7 @@ public:
 		if (_write_index > _len1)
 			print_err("D2Stream: writing more than allocated");
 		if (n > 0) {
-			cudaMallocHost((void**) &_data[_write_index], sizeof(T)*n);
+			cudaMallocHost(&_data[_write_index], sizeof(T)*n);
 			cudaMemcpy(_data[_write_index], newData, sizeof(T)*n, cudaMemcpyDeviceToHost);
 		}
 		_len2[_write_index] = n;
@@ -253,7 +253,7 @@ public:
 			if (newLength > maxLength)
 				maxLength = newLength;
 		}
-		cudaMalloc((void**)&_deviceBuffer, sizeof(T)*maxLength);
+		cudaMalloc(&_deviceBuffer, sizeof(T)*maxLength);
 	}
 
 	Chunk<T> read() {

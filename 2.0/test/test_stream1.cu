@@ -9,8 +9,8 @@ TEST(Stream1, {
 	//allocate inputs
 	Int3 * seq1d, *seq1h;
 	int* histogramOutput;
-	cudaMalloc((void**)&seq1d, sizeof(Int3)*seqLen);
-	cudaMallocHost((void**)&seq1h, sizeof(Int3)*seqLen);
+	cudaMalloc(&seq1d, sizeof(Int3)*seqLen);
+	cudaMallocHost(&seq1h, sizeof(Int3)*seqLen);
 
 	//make inputs
 	for (int i = 0; i < seqLen; i++)

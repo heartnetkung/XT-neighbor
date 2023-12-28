@@ -96,9 +96,9 @@ int solve_bin_packing(int* histograms, int** &offsetOutput,
 	int len2d = n * nLevel;
 	int inputBlocks = divide_ceil(n, NUM_THREADS);
 	int inputBlocks2 = divide_ceil(nLevel, NUM_THREADS);
-	cudaMalloc((void**) &rowIndex, sizeof(int) * len2d);
-	cudaMalloc((void**) &assignment, sizeof(int) * len2d);
-	cudaMalloc((void**) &output_1d, sizeof(int) * len2d);
+	cudaMalloc(&rowIndex, sizeof(int) * len2d);
+	cudaMalloc(&assignment, sizeof(int) * len2d);
+	cudaMalloc(&output_1d, sizeof(int) * len2d);
 	cudaMallocHost(&offsetOutput, sizeof(int*) * n);
 
 	//solve bin packing
@@ -130,7 +130,7 @@ void stream_handler1(Chunk<Int3> input, Int3* &deletionsOutput, int* &indexOutpu
 	unsigned int *histogramValue;
 
 	// cal combinationOffsets
-	cudaMalloc((void**)&combinationOffsets, sizeof(int)*input.len);	gpuerr();
+	cudaMalloc(&combinationOffsets, sizeof(int)*input.len);	gpuerr();
 	cal_combination_len <<< inputBlocks, NUM_THREADS >>>(
 	    input.ptr, distance, combinationOffsets, input.len); gpuerr();
 	inclusive_sum(combinationOffsets, input.len); gpuerr();

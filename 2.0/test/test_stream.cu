@@ -38,7 +38,7 @@ TEST(RAMStream, {
 
 	int maxReadableSize = 7;
 	int* deviceBuffer;
-	cudaMalloc((void**)&deviceBuffer, sizeof(int)*maxReadableSize);
+	cudaMalloc(&deviceBuffer, sizeof(int)*maxReadableSize);
 	RAMInputStream<int> *istream = new RAMInputStream<int>(input , len, len2, maxReadableSize, deviceBuffer);
 	RAMOutputStream<int> *ostream = new RAMOutputStream<int>(input, len, len2);
 

@@ -6,14 +6,14 @@ TEST(bin_packing, {
 	int len = 3, nLevel = 3;
 
 	int* histogramInput;
-	cudaMallocHost((void**) &histogramInput, sizeof(int) * len * nLevel);
+	cudaMallocHost(&histogramInput, sizeof(int) * len * nLevel);
 	histogramInput[0] = 1; histogramInput[1] = 2; histogramInput[2] = 3;
 	histogramInput[3] = 2; histogramInput[4] = 3; histogramInput[5] = 4;
 	histogramInput[6] = 4; histogramInput[7] = 1; histogramInput[8] = 1;
 	int* histogramInput_d = host_to_device(histogramInput, len * nLevel);
 
 	int* deviceInt;
-	cudaMalloc((void**)&deviceInt, sizeof(int));
+	cudaMalloc(&deviceInt, sizeof(int));
 
 	int expectedOffsetLen = 2;
 	int expectedOut[][2] = {{3, 6}, {5, 9}, {5, 6}};

@@ -114,7 +114,7 @@ int main(int argc, char **argv) {
 		return returnCode;
 
 	// 2. read input
-	cudaMallocHost((void**)&seq1, sizeof(Int3) * args.seq1Len);
+	cudaMallocHost(&seq1, sizeof(Int3) * args.seq1Len);
 	returnCode = parse_file(args.seq1Path, seq1, args.seq1Len);
 	if (returnCode != SUCCESS) {
 		cudaFree(seq1);

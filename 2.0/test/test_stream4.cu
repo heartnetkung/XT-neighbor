@@ -12,11 +12,11 @@ TEST(Stream4, {
 	Int2 * pairs_d, *pairs_h;
 	XTNOutput output;
 	int* deviceInt;
-	cudaMalloc((void**)&deviceInt, sizeof(int));
-	cudaMalloc((void**)&seq1d, sizeof(Int3)*seqLen);
-	cudaMallocHost((void**)&seq1h, sizeof(Int3)*seqLen);
-	cudaMalloc((void**)&pairs_d, sizeof(Int2)*pairLen);
-	cudaMallocHost((void**)&pairs_h, sizeof(Int2)*pairLen);
+	cudaMalloc(&deviceInt, sizeof(int));
+	cudaMalloc(&seq1d, sizeof(Int3)*seqLen);
+	cudaMallocHost(&seq1h, sizeof(Int3)*seqLen);
+	cudaMalloc(&pairs_d, sizeof(Int2)*pairLen);
+	cudaMallocHost(&pairs_h, sizeof(Int2)*pairLen);
 
 	//make inputs
 	for (int i = 0; i < seqLen; i++)
