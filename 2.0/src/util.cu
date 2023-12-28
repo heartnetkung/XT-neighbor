@@ -59,9 +59,9 @@ void _cudaFree(void* a, void* b, void* c, void* d, void* e, void* f, void* g) {
 	cudaFree(g);
 }
 
-void print_tp(int verbose, const char* step, int throughput) {
+void print_tp(int verbose, const char* step, size_t throughput) {
 	if (verbose)
-		printf("step %s completed with throughput: %'d\n", step, throughput);
+		printf("step %s completed with throughput: %'lu\n", step, throughput);
 }
 
 void _cudaFreeHost(void* a, void* b) {
