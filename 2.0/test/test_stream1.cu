@@ -38,6 +38,8 @@ TEST(Stream1, {
 		"DKD", "CKD", "CDD", "CDK", "CDKD",
 	};
 	int expectedIndex[] = {0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3};
+	deletionsOutput = device_to_host(deletionsOutput, outputLen);
+	indexOutput = device_to_host(indexOutput, outputLen);
 
 	//check
 	check(outputLen == expectedLen);
