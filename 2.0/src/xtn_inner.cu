@@ -89,23 +89,37 @@ void gen_next_chunk(Chunk<Int3> keyInput, Chunk<int> valueInput,
 	cudaFree(flags);
 }
 
-int solve_bin_packing(int* histograms, int* &output,
+int solve_bin_packing(int* histograms, int** &offsetOutput,
                       int maxProcessingExponent, int n, int nLevel, int* buffer) {
-	int* rowIndex, *assignment;
+	int* rowIndex, *assignment, *output_1d;
 
 	int len2d = n * nLevel;
 	int inputBlocks = divide_ceil(n, NUM_THREADS);
 	int inputBlocks2 = divide_ceil(nLevel, NUM_THREADS);
 	cudaMalloc((void**) &rowIndex, sizeof(int) * len2d);
 	cudaMalloc((void**) &assignment, sizeof(int) * len2d);
-	cudaMalloc((void**) &output, sizeof(int) *len2d);
+	cudaMalloc((void**) &output_1d, sizeof(int) * len2d);
+	cudaMallocHost(&offsetOutput, sizeof(int*) * n);
 
+	//solve bin packing
 	make_row_index <<< inputBlocks, NUM_THREADS>>>(rowIndex, n, nLevel);
 	inclusive_sum_by_key(rowIndex, histograms, len2d);
 	gen_assignment <<< inputBlocks2, NUM_THREADS >>>(
 	    histograms, assignment, maxProcessingExponent, n, nLevel);
-	max_by_key(assignment, histograms, output, buffer, len2d);
-	return transfer_last_element(buffer, 1);
+	max_by_key(assignment, histograms, output_1d, buffer, len2d);
+
+	//make output
+	int outputLen = transfer_last_element(buffer, 1);
+	if (outputLen % n != 0)
+		print_err("bin_packing outputLen is not divisible by inputLen");
+	int offsetLen = outputLen / n;
+	for (int i = 0; i < n; i++) {
+		offsetOutput[i] = device_to_host(output_1d, offsetLen);
+		output_1d += offsetLen;
+	}
+
+	_cudaFree(rowIndex, assignment, output_1d);
+	return offsetLen;
 }
 
 void stream_handler1(Chunk<Int3> input, Int3* &deletionsOutput, int* &indexOutput,
