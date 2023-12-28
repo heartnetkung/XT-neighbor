@@ -26,21 +26,20 @@ TEST(Stream1, {
 	int outputLen;
 	stream_handler1(input, deletionsOutput, indexOutput, histogramOutput, outputLen, distance);
 
-	print_int_arr(indexOutput, outputLen);
-	print_int3_arr(deletionsOutput, outputLen);
+	//expactation
+	int expectedLen = 20;
+	char expectedPairs[][5] = {
+		"AAA", "CAA", "CAA", "CAA", "CAAA",
+		"ADA", "CDA", "CAA", "CAD", "CADA",
+		"AAA", "CAA", "CAA", "CAA", "CAAA",
+		"DKD", "CKD", "CDD", "CDK", "CDKD",
+	};
+	int expectedIndex[] = {0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3};
 
-	// //expactation
-	// int expectedLen = 5;
-	// Int2 expectedPairs[] = {
-	// 	{.x = 0, .y = 1}, {.x = 0, .y = 2}, {.x = 0, .y = 4}, {.x = 1, .y = 2}, {.x = 2, .y = 4}
-	// };
-	// char expectedDistances[] = {1, 0, 1, 1, 1};
-
-	// //check
-	// check(output.len == expectedLen);
-	// for (int i = 0; i < expectedLen; i++) {
-	// 	check(expectedPairs[i].x == output.indexPairs[i].x);
-	// 	check(expectedPairs[i].y == output.indexPairs[i].y);
-	// 	check(expectedDistances[i] == output.pairwiseDistances[i]);
-	// }
+	//check
+	check(outputLen == expectedLen);
+	for (int i = 0; i < expectedLen; i++) {
+		checkstr(expectedPairs[i], str_decode(deletionsOutput[i]));
+		check(expectedIndex[i] == indexOutput[i]);
+	}
 })
