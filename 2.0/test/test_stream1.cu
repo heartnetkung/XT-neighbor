@@ -29,17 +29,12 @@ TEST(Stream1, {
 	//expactation
 	int expectedLen = 20;
 	char expectedPairs[][5] = {
-		"AAA", "CAA", "CAA", "CAA", "CAAA",
-		"ADA", "CDA", "CAA", "CAD", "CADA",
-		"AAA", "CAA", "CAA", "CAA", "CAAA",
-		"DKD", "CKD", "CDD", "CDK", "CDKD",
+		"AAA", "AAA", "ADA", "CAA", "CAA", "CAA", "CAA", "CAA", "CAA", "CAA",
+		"CAAA", "CAAA", "CAD", "CADA", "CDA", "CDD", "CDK", "CDKD", "CKD", "DKD"
 	};
-	int expectedIndex[] = {0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3};
+	int expectedIndex[] = {0, 2, 1, 0, 0, 0, 1, 2, 2, 2, 0, 2, 1, 1, 1, 3, 3, 3, 3, 3};
 	deletionsOutput = device_to_host(deletionsOutput, outputLen);
 	indexOutput = device_to_host(indexOutput, outputLen);
-
-	print_int3_arr(deletionsOutput,outputLen);
-	print_int_arr(indexOutput,outputLen);
 
 	//check
 	check(outputLen == expectedLen);
