@@ -23,8 +23,8 @@ TEST(GPUInputStream, {
 })
 
 TEST(RAMStream, {
-	size_t len = 4;
-	size_t len2[] = {7, 3, 4, 5};
+	int len = 4;
+	int len2[] = {7, 3, 4, 5};
 	int** input = (int**)malloc(len * sizeof(int*));
 	int count = 0;
 	for (int i = 0; i < len; i++) {
@@ -80,8 +80,8 @@ TEST(RAMStream, {
 
 	// second write loop
 	chunkCount = 0;
-	size_t new_len = ostream->get_new_len1();
-	size_t* new_len2 = ostream->get_new_len2();
+	int new_len = ostream->get_new_len1();
+	int* new_len2 = ostream->get_new_len2();
 	istream = new RAMInputStream<int>(input , new_len, new_len2, maxReadableSize, deviceBuffer);
 	ostream = new RAMOutputStream<int>(input, new_len, new_len2);
 
@@ -117,19 +117,19 @@ TEST(RAMStream, {
 })
 
 TEST(D2Stream, {
-	size_t len = 4;
-	size_t len2[] = {5, 7, 6, 5};
+	int len = 4;
+	int len2[] = {5, 7, 6, 5};
 	int** input = (int**)malloc(len * sizeof(int*));
 	int count = 0;
-	for (size_t i = 0; i < len; i++) {
+	for (int i = 0; i < len; i++) {
 		input[i] = (int*) malloc(len2[i] * sizeof(int));
-		for (size_t j = 0; j < len2[i]; j++)
+		for (int j = 0; j < len2[i]; j++)
 			input[i][j] = ++count;
 	}
-	size_t offset_len = 3;
-	size_t** offsets = (size_t**)malloc(len * sizeof(size_t*));
+	int offset_len = 3;
+	int** offsets = (int**)malloc(len * sizeof(int*));
 	for (int i = 0; i < len; i++)
-		offsets[i] = (size_t*)malloc(offset_len * sizeof(size_t));
+		offsets[i] = (int*)malloc(offset_len * sizeof(int));
 	offsets[0][0] = 0; offsets[0][1] = 1; offsets[0][2] = 5;
 	offsets[1][0] = 3; offsets[1][1] = 3; offsets[1][2] = 7;
 	offsets[2][0] = 1; offsets[2][1] = 3; offsets[2][2] = 6;

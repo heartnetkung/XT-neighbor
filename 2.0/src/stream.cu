@@ -6,7 +6,7 @@
 template <typename T> class Chunk {
 public:
 	T* ptr = NULL;
-	size_t len = 0;
+	int len = 0;
 	bool not_null() {return ptr != NULL;}
 };
 
@@ -17,9 +17,9 @@ public:
 template <typename T> class GPUInputStream {
 private:
 	T* _data = NULL;
-	size_t _len = 0, _chunkSize = 0, _tp;
+	int _len = 0, _chunkSize = 0, _tp; // to int
 
-	void check_input(T* data, size_t len, size_t chunkSize) {
+	void check_input(T* data, int len, int chunkSize) {
 		if (data == NULL)
 			print_err("GPUInputStream: data == NULL");
 		if (len <= 0)
@@ -29,7 +29,7 @@ private:
 	}
 
 public:
-	GPUInputStream(T* data, size_t len, size_t chunkSize) {
+	GPUInputStream(T* data, int len, int chunkSize) {
 		check_input(data, len, chunkSize);
 		_data = data;
 		_len = len;
@@ -63,11 +63,11 @@ public:
 template <typename T> class RAMInputStream {
 private:
 	T** _data = NULL;
-	size_t* _len2 = NULL;
-	size_t _len1 = 0, _maxReadableSize = 0, _index = 0;
 	T* _deviceBuffer = NULL;
+	int* _len2 = NULL;
+	int _len1 = 0, _maxReadableSize = 0, _index = 0;
 
-	void check_input(T** data, size_t len1, size_t* len2, size_t maxReadableSize, T* deviceBuffer) {
+	void check_input(T** data, int len1, int* len2, int maxReadableSize, T* deviceBuffer) {
 		if (len1 <= 0)
 			print_err("RAMInputStream: len1 <= 0");
 		if (maxReadableSize <= 0)
@@ -76,7 +76,7 @@ private:
 			print_err("RAMInputStream: data == NULL");
 		if (deviceBuffer == NULL)
 			print_err("RAMInputStream: deviceBuffer == NULL");
-		for (size_t i = 0; i < len1; i++) {
+		for (int i = 0; i < len1; i++) {
 			if (len2[i] > maxReadableSize)
 				print_err("RAMInputStream: len2[i] > maxReadableSize will lead to infinite loop");
 			if ((data[i] == NULL) && (len2[i] > 0))
@@ -85,7 +85,7 @@ private:
 	}
 
 public:
-	RAMInputStream(T** data, size_t len1, size_t* len2, size_t maxReadableSize, T* deviceBuffer) {
+	RAMInputStream(T** data, int len1, int* len2, int maxReadableSize, T* deviceBuffer) {
 		check_input(data, len1, len2, maxReadableSize, deviceBuffer);
 		_data = data;
 		_len1 = len1;
@@ -102,7 +102,7 @@ public:
 		ans.ptr = _deviceBuffer;
 		T* currentPtr = _deviceBuffer;
 		for (; _index < _len1; _index++) {
-			size_t newLen = _len2[_index];
+			int newLen = _len2[_index];
 			if (ans.len + newLen > _maxReadableSize)
 				break;
 			if (newLen == 0)
@@ -117,7 +117,7 @@ public:
 
 	size_t get_throughput() {
 		size_t ans = 0;
-		for (size_t i = 0; i < _len1; i++)
+		for (int i = 0; i < _len1; i++)
 			ans += _len2[i];
 		return ans;
 	}
@@ -132,30 +132,30 @@ public:
 template <typename T> class RAMOutputStream {
 private:
 	T** _data = NULL;
-	size_t* _len2 = NULL;
-	size_t _len1 = 0, _index = 0;
+	int* _len2 = NULL;
+	int _len1 = 0, _index = 0;
 
-	void check_input(T** data, size_t len1, size_t* len2) {
+	void check_input(T** data, int len1, int* len2) {
 		if (len1 <= 0)
 			print_err("RAMOutputStream: len1 <= 0");
 		if (data == NULL)
 			print_err("RAMOutputStream: data == NULL");
 	}
 
-	void check_input_write(T* newData, size_t n) {
+	void check_input_write(T* newData, int n) {
 		if ((newData == NULL) && (n > 0))
 			print_err("RAMOutputStream: (newData == NULL) && (n > 0)");
 	}
 
 public:
-	RAMOutputStream(T** data, size_t len1, size_t* len2) {
+	RAMOutputStream(T** data, int len1, int* len2) {
 		check_input(data, len1, len2);
 		_data = data;
 		_len1 = len1;
 		_len2 = len2;
 	}
 
-	void write(T* newData, size_t n) {
+	void write(T* newData, int n) {
 		check_input_write(newData, n);
 		if (_index >= _len1)
 			print_err("RAMOutputStream: writing more than allocated");
@@ -165,17 +165,17 @@ public:
 		_index++;
 	}
 
-	size_t get_new_len1() {
+	int get_new_len1() {
 		return _index;
 	}
 
-	size_t* get_new_len2() {
+	int* get_new_len2() {
 		return _len2;
 	}
 
 	size_t get_throughput() {
 		size_t ans = 0;
-		for (size_t i = 0; i < _len1; i++)
+		for (int i = 0; i < _len1; i++)
 			ans += _len2[i];
 		return ans;
 	}
@@ -187,23 +187,23 @@ public:
 template <typename T> class D2Stream {
 private:
 	T** _data;
-	size_t _len1, _offset_len;
-	size_t _write_index = 0, _read_index = 0;
-	size_t* _len2;
-	size_t** _offsets = NULL;
+	int _len1, _offset_len; // to int
+	int _write_index = 0, _read_index = 0; // to int
+	int* _len2; // to int
+	int** _offsets = NULL; // to int
 	T* _deviceBuffer = NULL;
 
-	void check_input(size_t len1) {
+	void check_input(int len1) {
 		if (len1 <= 0)
 			print_err("D2Stream: len1 <= 0");
 	}
 
-	void check_input_write(T* newData, size_t n) {
+	void check_input_write(T* newData, int n) {
 		if ((n != 0) && (newData == NULL))
 			print_err("D2Stream: (n != 0) && (newData == NULL)");
 	}
 
-	void check_input_offsets(size_t** offsets, size_t offset_len) {
+	void check_input_offsets(int** offsets, int offset_len) {
 		if (offsets == NULL)
 			print_err("D2Stream: offsets == NULL");
 		for (int i = 0; i < _len1; i++) {
@@ -215,14 +215,14 @@ private:
 	}
 
 public:
-	D2Stream(size_t len1) {
+	D2Stream(int len1) {
 		check_input(len1);
 		_len1 = len1;
 		cudaMallocHost((void**)&_data, sizeof(T*)*len1);
-		cudaMallocHost((void**)&_len2, sizeof(size_t)*len1);
+		cudaMallocHost((void**)&_len2, sizeof(int)*len1);
 	}
 
-	void write(T* newData, size_t n) {
+	void write(T* newData, int n) {
 		check_input_write(newData, n);
 		if (_write_index > _len1)
 			print_err("D2Stream: writing more than allocated");
@@ -234,7 +234,7 @@ public:
 		_write_index++;
 	}
 
-	void set_offsets(size_t** offsets, size_t offset_len) {
+	void set_offsets(int** offsets, int offset_len) {
 		check_input_offsets(offsets, offset_len);
 		if (_deviceBuffer != NULL)
 			print_err("D2Stream: set_offsets is called more than once");
@@ -243,11 +243,11 @@ public:
 		_offset_len = offset_len;
 
 		// find minimum size of deviceBuffer and allocate it
-		size_t maxLength = 0;
-		for (size_t i = 0; i < offset_len; i++) {
-			size_t newLength = 0;
-			for (size_t j = 0; j < _len1; j++) {
-				size_t start = i == 0 ? 0 : offsets[j][i - 1];
+		int maxLength = 0;
+		for (int i = 0; i < offset_len; i++) {
+			int newLength = 0;
+			for (int j = 0; j < _len1; j++) {
+				int start = i == 0 ? 0 : offsets[j][i - 1];
 				newLength += offsets[j][i] - start;
 			}
 			if (newLength > maxLength)
@@ -267,9 +267,9 @@ public:
 
 		ans.ptr = _deviceBuffer;
 		T * currentPtr = _deviceBuffer;
-		for (size_t i = 0; i < _len1; i++) {
-			size_t start = _read_index == 0 ? 0 : _offsets[i][_read_index - 1];
-			size_t chunkLen = _offsets[i][_read_index] - start;
+		for (int i = 0; i < _len1; i++) {
+			int start = _read_index == 0 ? 0 : _offsets[i][_read_index - 1];
+			int chunkLen = _offsets[i][_read_index] - start;
 			if (chunkLen <= 0)
 				continue;
 
@@ -292,7 +292,7 @@ public:
 
 	size_t get_throughput() {
 		size_t ans = 0;
-		for (size_t i = 0; i < _len1; i++)
+		for (int i = 0; i < _len1; i++)
 			ans += _len2[i];
 		return ans;
 	}
