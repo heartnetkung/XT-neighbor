@@ -33,7 +33,7 @@ TEST(Stream4, {
 	pairInput.ptr = pairs_d;
 	pairInput.len = pairLen;
 
-	stream_handler4(pairInput, output, seq1d, seqLen, distance, deviceInt)
+	stream_handler4(pairInput, output, seq1d, seqLen, distance, deviceInt);
 	print_int2_arr(output.indexPairs, output.len);
 	print_char_arr(output.pairwiseDistances, output.len);
 	printf("len: %d\n", output.len);
