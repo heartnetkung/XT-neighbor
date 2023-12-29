@@ -56,8 +56,8 @@ void generate_pairs(int* indexes, Int2* outputs, int* inputOffsets, int* outputO
 				newValue.x = indexes[j];
 				newValue.y = indexes[i];
 			}
-			if (outputIndex++ < outputEnd)
-				outputs[outputIndex] = newValue;
+			if (outputIndex < outputEnd)
+				outputs[outputIndex++] = newValue;
 			else
 				printf("potential error on generate pairs\n");
 		}
