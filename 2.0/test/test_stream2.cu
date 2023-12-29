@@ -27,11 +27,11 @@ TEST(Stream2, {
 	int expectedLen = 20;
 	char expectedPairs[][5] = {
 		"AAA", "AAA", "ADA", "CAA", "CAA", "CAA", "CAA", "CAA", "CAA", "CAA",
-		"CAAA", "CAAA", "CAD", "CADA", "CDA", "CDD", "CDK", "CDKD", "CKD", "DKD"
+		"CAAA", "CAAA", "CAD", "CADA", "CDA", "CDD", "CDKD", "CKD", "CKD", "DKD"
 	};
 	int expectedIndex[] = {0, 2, 1, 0, 0, 0, 1, 2, 2, 2, 0, 2, 1, 1, 1, 3, 3, 3, 3, 3};
 	int expectedHistogram[] = {17, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0, 0, 1, 0, 0, 0};
-	int* keyOut = device_to_host(keyInOut.ptr, keyInOut.len);
+	Int3* keyOut = device_to_host(keyInOut.ptr, keyInOut.len);
 	int* valueOut = device_to_host(valueInOut.ptr, valueInOut.len);
 	int* histogramOut = device_to_host(histogramOutput, ctx.histogramSize);
 
