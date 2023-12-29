@@ -115,11 +115,11 @@ void cal_histogram(T* input, int* output, int nLevel,T minValue, T maxValue, int
 	void *buffer = NULL;
 	size_t bufferSize = 0;
 	cub::DeviceHistogram::HistogramEven(buffer, bufferSize,
-	                                    input, output, nLevel + 1, minValue, maxValue, n);
-	cudaMalloc(&buffer, bufferSize);
+	                                    input, output, nLevel + 1, minValue, maxValue, n);gpuerr();
+	cudaMalloc(&buffer, bufferSize);gpuerr();
 	cub::DeviceHistogram::HistogramEven(buffer, bufferSize,
-	                                    input, output, nLevel + 1, minValue, maxValue, n);
-	cudaFree(buffer);
+	                                    input, output, nLevel + 1, minValue, maxValue, n);gpuerr();
+	cudaFree(buffer);gpuerr();
 }
 
 void inclusive_sum_by_key(int* keyIn, int* valueInOut, int n) {
