@@ -215,7 +215,7 @@ void stream_handler2(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, int* &histog
 	int start = 0, nChunk;
 	int* inputOffsetsPtr = inputOffsets, *valueLengthsPtr = valueLengths;
 	int nBlock = divide_ceil(HISTOGRAM_SIZE , NUM_THREADS);
-	valueLengthsHost = device_to_host(valueLengthsHost, offsetLen);
+	valueLengthsHost = device_to_host(valueLengths, offsetLen);
 	printf("4\n");
 
 	//histogram loop
