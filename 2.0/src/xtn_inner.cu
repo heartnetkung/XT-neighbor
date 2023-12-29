@@ -173,7 +173,7 @@ void stream_handler1(Chunk<Int3> input, Int3* &deletionsOutput, int* &indexOutpu
 	cudaMalloc(&histogramOutput, sizeof(int)*HISTOGRAM_SIZE);
 	select_int3 <<< outputBlocks, NUM_THREADS>>>(
 	    deletionsOutput, histogramValue, outputLen);
-	cal_histogram(histogramValue, histogramOutput, HISTOGRAM_SIZE , UINT_MAX , outputLen);
+	cal_histogram(histogramValue, histogramOutput, HISTOGRAM_SIZE, 0, UINT_MAX, outputLen);
 	sort_key_values(deletionsOutput, indexOutput, outputLen);
 
 	// boilerplate
@@ -208,7 +208,7 @@ void stream_handler2(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut,
 
 	while ((nChunk = solve_next_bin(valueLengths, start, MAX_MEMORY, offsetLen)) > 0) {
 		int chunkLen = gen_smaller_index(valueInOut.ptr, inputOffsetsPtr, valueLengthsPtr, indexes, nChunk);
-		cal_histogram(indexes, histogram, HISTOGRAM_SIZE , seqLen + 1, chunkLen);
+		cal_histogram(indexes, histogram, HISTOGRAM_SIZE , 0, seqLen + 1, chunkLen);
 		vector_add <<< nBlock, NUM_THREADS>>>(histogramOutput, histogram, HISTOGRAM_SIZE);
 
 		start += nChunk;
