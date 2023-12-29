@@ -36,7 +36,24 @@ void cal_pair_len(int* input, int* output, int n) {
 }
 
 __global__
-void generate_pairs(int* indexes, Int2* outputs, int* inputOffsets, int* outputOffsets, int n) {
+void cal_pair_len_lowerbound(int* indexes, int* inputOffsets, int* outputLengths, int lowerbound, int n) {
+	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
+	if (tid >= n)
+		return;
+
+	int start = tid == 0 ? 0 : inputOffsets[tid - 1];
+	int end = inputOffsets[tid];
+	int invalidCount = 0;
+	for (int i = start; i < end; i++)
+		if (indexes[i] > lowerbound)
+			invalidCount++;
+
+	int groupLen = end - start;
+	outputLengths[tid] = ((groupLen * (groupLen - 1)) - (invalidCount * (invalidCount - 1)) ) / 2;
+}
+
+__global__
+void generate_pairs(int* indexes, Int2* outputs, int* inputOffsets, int* outputOffsets, int lowerbound, int n) {
 	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
 	if (tid >= n)
 		return;
@@ -50,9 +67,13 @@ void generate_pairs(int* indexes, Int2* outputs, int* inputOffsets, int* outputO
 		for (int j = i + 1; j < end; j++) {
 			Int2 newValue;
 			if (indexes[i] < indexes[j]) {
+				if (indexes[i] > lowerbound)
+					continue;
 				newValue.x = indexes[i];
 				newValue.y = indexes[j];
 			} else {
+				if (indexes[j] > lowerbound)
+					continue;
 				newValue.x = indexes[j];
 				newValue.y = indexes[i];
 			}
