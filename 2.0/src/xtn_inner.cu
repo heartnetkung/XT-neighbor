@@ -40,7 +40,7 @@ int gen_pairs(int* input, int* inputOffsets, int* outputLengths, Int2* &output, 
 	return outputLen;
 }
 
-void gen_smaller_index(int* input, int* inputOffsets, int* outputLengths, int* &output, int n) {
+int gen_smaller_index(int* input, int* inputOffsets, int* outputLengths, int* &output, int n) {
 	int* outputOffsets;
 
 	// cal outputOffsets
@@ -183,7 +183,7 @@ int solve_next_bin(int* chunksizes, int start, int maxReadableSize, int n) {
 	int ans = 0, len = 0;
 	for (int i = start; i < n; i++) {
 		int currentChunkSize = chunksizes[i];
-		if (len + currentChunkSize > MAX_MEMORY)
+		if (len + currentChunkSize > maxReadableSize)
 			break;
 		len += currentChunkSize;
 		ans++;
@@ -197,7 +197,7 @@ void stream_handler2(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut,
 
 	sort_key_values(keyInOut.ptr, valueInOut.ptr, keyInOut.len); gpuerr();
 	int offsetLen =
-	    cal_offsets(keyInOut.ptr, &inputOffsets, &valueLengths, keyInOut.len, buffer); gpuerr();
+	    cal_offsets(keyInOut.ptr, inputOffsets, valueLengths, keyInOut.len, buffer); gpuerr();
 
 	// gen_smaller_index
 	int MAX_MEMORY = 100;
@@ -205,8 +205,8 @@ void stream_handler2(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut,
 	int* inputOffsetsPtr = inputOffsets, *valueLengthsPtr = valueLengths, *indexes;
 	int nBlock = divide_ceil(HISTOGRAM_SIZE , NUM_THREADS);
 
-	while ((nChunk = solve_next_bin(valueLengths, start, MAX_MEMORY, outputLen)) > 0) {
-		int chunkLen = gen_smaller_index(valueInOut.ptr, inputOffsetsPtr, valueLengthsPtr, &indexes, nChunk);
+	while ((nChunk = solve_next_bin(valueLengths, start, MAX_MEMORY, offsetLen)) > 0) {
+		int chunkLen = gen_smaller_index(valueInOut.ptr, inputOffsetsPtr, valueLengthsPtr, indexes, nChunk);
 		cal_histogram(indexes, histogram, HISTOGRAM_SIZE , seqLen + 1, chunkLen);
 		vector_add <<< nBlock, NUM_THREADS>>>(histogramOutput, histogram, HISTOGRAM_SIZE);
 

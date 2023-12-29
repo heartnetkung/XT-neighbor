@@ -212,5 +212,5 @@ void vector_add(int* dest, int* src, int n) {
 	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
 	if (tid >= n)
 		return;
-	dest[i] += src[i];
+	dest[tid] += src[tid];
 }

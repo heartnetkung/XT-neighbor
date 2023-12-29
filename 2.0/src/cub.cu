@@ -43,7 +43,8 @@ void inclusive_sum(T* input, int n) {
 	cudaFree(buffer);
 }
 
-void inclusive_sum(int* input, size_t* output, int n) {
+template <typename T>
+void inclusive_sum(int* input, T* output, int n) {
 	void *buffer = NULL;
 	size_t bufferSize = 0;
 	cub::DeviceScan::InclusiveSum(buffer, bufferSize, input, output, n);
