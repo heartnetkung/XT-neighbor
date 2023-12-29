@@ -7,7 +7,7 @@
 
 const int NUM_THREADS = 256;
 const int HISTOGRAM_SIZE = 4096;
-const unsigned int UINT_MIN = 0
+const unsigned int UINT_MIN = 0;
 
 int cal_offsets(Int3* inputKeys, int* &inputOffsets, int* &outputLengths, int n, int* buffer) {
 	// cal inputOffsets
