@@ -2,16 +2,18 @@
 #include "../src/xtn_inner.cu"
 
 TEST(Stream2, {
-	int seqLen = 4, len = 20, distance = 1, memoryConstraint = 100;
+	int seqLen = 4, len = 20, distance = 1;
 	char keys[][5] = {
-		"AAA", "AAA", "ADA", "CAA", "CAA", "CAA", "CAA", "CAA", "CAA", "CAA",
-		"CAAA", "CAAA", "CAD", "CADA", "CDA", "CDD", "CDK", "CDKD", "CKD", "DKD"
+		"AAA", "CAA", "CAA", "CAA", "CAAA", "ADA", "CDA", "CAA", "CAD", "CADA",
+		"AAA", "CAA", "CAA", "CAA", "CAAA", "DKD", "CKD", "CDD", "CKD", "CDKD"
 	};
-	int values[] =  {0, 2, 1, 0, 0, 0, 1, 2, 2, 2, 0, 2, 1, 1, 1, 3, 3, 3, 3, 3};
+	int values[] =  {0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3};
 	int* histogramOutput, *deviceInt;
-	int* histogramOutputHost = (int*)calloc(HISTOGRAM_SIZE, sizeof(int));
+	MemoryContext ctx;
+	ctx.maxThroughput = 100;
+	int* histogramOutputHost = (int*)calloc(ctx.histogramSize, sizeof(int));
 
-	histogramOutput = host_to_device(histogramOutputHost, HISTOGRAM_SIZE);
+	histogramOutput = host_to_device(histogramOutputHost, ctx.histogramSize);
 	cudaMalloc(&deviceInt, sizeof(int));
 	Int3* keysInt3 = (Int3*)malloc(sizeof(Int3) * len);
 	for (int i = 0; i < len; i++)
@@ -22,11 +24,11 @@ TEST(Stream2, {
 
 	printf("hello\n");
 	stream_handler2(keyInOut, valueInOut, histogramOutput,
-	                distance, seqLen, memoryConstraint, deviceInt);
+	                distance, seqLen, deviceInt, ctx);
 
 	print_int3_arr(keyInOut.ptr, keyInOut.len);
 	print_int_arr(valueInOut.ptr, valueInOut.len);
-	print_int_arr(histogramOutput, HISTOGRAM_SIZE);
+	print_int_arr(histogramOutput, ctx.histogramSize);
 	// void stream_handler2(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, int* &histogramOutput,
 	//                  int distance, int seqLen, int memoryConstraint, int* buffer) {
 })
