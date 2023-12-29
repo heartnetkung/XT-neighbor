@@ -216,19 +216,20 @@ void stream_handler2(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, int* &histog
 	int* inputOffsetsPtr = inputOffsets, *valueLengthsPtr = valueLengths;
 	int nBlock = divide_ceil(HISTOGRAM_SIZE , NUM_THREADS);
 	valueLengthsHost = device_to_host(valueLengths, offsetLen); gpuerr();
+	cudaMalloc(&histogram, sizeof(int)*HISTOGRAM_SIZE);
 	printf("4\n");
 
-	int* histogramH = (int*)calloc(HISTOGRAM_SIZE, sizeof(int));
-	int* histogramD = host_to_device(histogramH, HISTOGRAM_SIZE);
+	// int* histogramH = (int*)calloc(HISTOGRAM_SIZE, sizeof(int));
+	// int* histogramD = host_to_device(histogramH, HISTOGRAM_SIZE);
 
 	//histogram loop
 	while ((nChunk = solve_next_bin(valueLengthsHost, start, memoryConstraint, offsetLen)) > 0) {
 		printf("5\n");
 		int chunkLen = gen_smaller_index(valueInOut.ptr, inputOffsetsPtr, valueLengthsPtr, indexes, nChunk); gpuerr();
 		printf("6\n");
-		// cal_histogram(indexes, histogram, HISTOGRAM_SIZE , 0, seqLen, chunkLen); gpuerr();
+		cal_histogram(indexes, histogram, HISTOGRAM_SIZE , 0, seqLen, chunkLen); gpuerr();
 		printf("7\n");
-		vector_add <<< nBlock, NUM_THREADS>>>(histogramOutput, histogramD, HISTOGRAM_SIZE); gpuerr();
+		vector_add <<< nBlock, NUM_THREADS>>>(histogramOutput, histogram, HISTOGRAM_SIZE); gpuerr();
 		printf("8\n");
 
 		start += nChunk; gpuerr();
