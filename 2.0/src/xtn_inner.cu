@@ -6,7 +6,7 @@
 #include <limits.h>
 
 const int NUM_THREADS = 256;
-const int HISTOGRAM_SIZE = 4096;
+const int HISTOGRAM_SIZE = 16; //TODO
 const unsigned int UINT_MIN = 0;
 
 //=====================================

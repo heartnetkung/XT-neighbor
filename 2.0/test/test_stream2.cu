@@ -23,6 +23,10 @@ TEST(Stream2, {
 	printf("hello\n");
 	stream_handler2(keyInOut, valueInOut, histogramOutput,
 	                distance, seqLen, memoryConstraint, deviceInt);
+
+	print_int3_arr(keyInOut.ptr, keyInOut.len);
+	print_int_arr(valueInOut.ptr, valueInOut.len);
+	print_int_arr(histogramOutput, HISTOGRAM_SIZE);
 	// void stream_handler2(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, int* &histogramOutput,
 	//                  int distance, int seqLen, int memoryConstraint, int* buffer) {
 })
