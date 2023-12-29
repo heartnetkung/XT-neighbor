@@ -111,7 +111,7 @@ void double_flag(T1* input1, T2* input2, char* flags, T1* output1, T2* output2, 
 }
 
 template <typename T>
-void cal_histogram(T* input, int* output, int nLevel,T minValue, T maxValue, int n) {
+void cal_histogram(T* input, int* output, int nLevel, T minValue, T maxValue, int n) {
 	void *buffer = NULL;
 	size_t bufferSize = 0;
 	cub::DeviceHistogram::HistogramEven(buffer, bufferSize,

@@ -219,6 +219,8 @@ void stream_handler2(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, int* &histog
 		int chunkLen = gen_smaller_index(valueInOut.ptr, inputOffsetsPtr, valueLengthsPtr, indexes, nChunk);
 
 		print_int_arr(indexes, chunkLen);
+		print_int_arr(inputOffsetsPtr, offsetLen);
+		print_int_arr(valueLengthsPtr, offsetLen);
 
 		cal_histogram(indexes, histogram, ctx.histogramSize , 0, seqLen, chunkLen); gpuerr();
 		vector_add <<< nBlock, NUM_THREADS>>>(histogramOutput, histogram, ctx.histogramSize); gpuerr();
