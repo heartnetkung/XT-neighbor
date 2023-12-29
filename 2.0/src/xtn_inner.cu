@@ -228,10 +228,11 @@ void stream_handler2(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, int* &histog
 		vector_add <<< nBlock, NUM_THREADS>>>(histogramOutput, histogram, HISTOGRAM_SIZE);
 		printf("8\n");
 
-		start += nChunk;
-		inputOffsetsPtr += nChunk;
-		valueLengthsPtr += nChunk;
-		_cudaFree(indexes, histogram); gpuerr();
+		start += nChunk; gpuerr();
+		inputOffsetsPtr += nChunk; gpuerr();
+		valueLengthsPtr += nChunk; gpuerr();
+		cudaFree(indexes); gpuerr();
+		cudaFree(histogram); gpuerr();
 		printf("9\n");
 	}
 	_cudaFree(inputOffsets, valueLengths); gpuerr();
