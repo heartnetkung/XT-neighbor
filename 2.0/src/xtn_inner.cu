@@ -203,7 +203,7 @@ void stream_handler1(Chunk<Int3> input, Int3* &deletionsOutput, int* &indexOutpu
 
 void stream_handler2(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, int* &histogramOutput,
                      int distance, int seqLen, int memoryConstraint, int* buffer) {
-	int* inputOffsets, *valueLengths, *histogram, *indexes;
+	int* inputOffsets, *valueLengths, *histogram, *indexes, *valueLengthsHost;
 
 	printf("1\n");
 	sort_key_values(keyInOut.ptr, valueInOut.ptr, keyInOut.len); gpuerr();
@@ -215,10 +215,11 @@ void stream_handler2(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, int* &histog
 	int start = 0, nChunk;
 	int* inputOffsetsPtr = inputOffsets, *valueLengthsPtr = valueLengths;
 	int nBlock = divide_ceil(HISTOGRAM_SIZE , NUM_THREADS);
+	valueLengthsHost = device_to_host(valueLengthsHost, offsetLen);
 	printf("4\n");
 
 	//histogram loop
-	while ((nChunk = solve_next_bin(valueLengths, start, memoryConstraint, offsetLen)) > 0) {
+	while ((nChunk = solve_next_bin(valueLengthsHost, start, memoryConstraint, offsetLen)) > 0) {
 		printf("5\n");
 		int chunkLen = gen_smaller_index(valueInOut.ptr, inputOffsetsPtr, valueLengthsPtr, indexes, nChunk);
 		printf("6\n");
@@ -234,6 +235,7 @@ void stream_handler2(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, int* &histog
 		printf("9\n");
 	}
 	_cudaFree(inputOffsets, valueLengths); gpuerr();
+	cudaFreeHost(valueLengthsHost); gpuerr();
 }
 
 // void stream_handler3(Chunk<Int3> keyInput, Chunk<int> valueInput,
