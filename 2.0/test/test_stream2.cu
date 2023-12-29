@@ -21,14 +21,26 @@ TEST(Stream2, {
 
 	Chunk<Int3> keyInOut = {.ptr = host_to_device(keysInt3, len), .len = len};
 	Chunk<int> valueInOut = {.ptr = host_to_device(values, len), .len = len};
-
-	printf("hello\n");
 	stream_handler2(keyInOut, valueInOut, histogramOutput,
 	                distance, seqLen, deviceInt, ctx);
 
-	print_int3_arr(keyInOut.ptr, keyInOut.len);
-	print_int_arr(valueInOut.ptr, valueInOut.len);
-	print_int_arr(histogramOutput, ctx.histogramSize);
-	// void stream_handler2(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, int* &histogramOutput,
-	//                  int distance, int seqLen, int memoryConstraint, int* buffer) {
+	int expectedLen = 20;
+	char expectedPairs[][5] = {
+		"AAA", "AAA", "ADA", "CAA", "CAA", "CAA", "CAA", "CAA", "CAA", "CAA",
+		"CAAA", "CAAA", "CAD", "CADA", "CDA", "CDD", "CDK", "CDKD", "CKD", "DKD"
+	};
+	int expectedIndex[] = {0, 2, 1, 0, 0, 0, 1, 2, 2, 2, 0, 2, 1, 1, 1, 3, 3, 3, 3, 3};
+	int expectedHistogram[] = {17, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0, 0, 1, 0, 0, 0};
+	int* keyOut = device_to_host(keyInOut.ptr, keyInOut.len);
+	int* valueOut = device_to_host(valueInOut.ptr, valueInOut.len);
+	int* histogramOut = device_to_host(histogramOutput, ctx.histogramSize);
+
+	check(keyInOut.len == expectedLen);
+	check(valueInOut.len == expectedLen);
+	for (int i = 0; i < expectedLen; i++) {
+		checkstr(expectedPairs[i], str_decode(keyOut[i]));
+		check(expectedIndex[i] == valueOut[i]);
+	}
+	for (int i = 0; i < ctx.histogramSize; i++)
+		check(expectedHistogram[i] == histogramOut[i]);
 })
