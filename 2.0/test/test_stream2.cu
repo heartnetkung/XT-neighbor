@@ -7,7 +7,7 @@ TEST(Stream2, {
 		"AAA", "AAA", "ADA", "CAA", "CAA", "CAA", "CAA", "CAA", "CAA", "CAA",
 		"CAAA", "CAAA", "CAD", "CADA", "CDA", "CDD", "CDK", "CDKD", "CKD", "DKD"
 	};
-	int values =  {0, 2, 1, 0, 0, 0, 1, 2, 2, 2, 0, 2, 1, 1, 1, 3, 3, 3, 3, 3};
+	int values[] =  {0, 2, 1, 0, 0, 0, 1, 2, 2, 2, 0, 2, 1, 1, 1, 3, 3, 3, 3, 3};
 
 	Int3* keysInt3 = (Int3*)malloc(sizeof(Int3) * len);
 	for (int i = 0; i < len; i++)

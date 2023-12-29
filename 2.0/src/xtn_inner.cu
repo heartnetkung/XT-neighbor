@@ -114,14 +114,14 @@ void gen_next_chunk(Chunk<Int3> keyInput, Chunk<int> valueInput,
 
 int solve_bin_packing(int* histograms, int** &offsetOutput,
                       int maxProcessingExponent, int n, int nLevel, int* buffer) {
-	int* rowIndex, *assignment, *output_1d;
+	int* rowIndex, *assignment, *output1d, *output1dPtr;
 
 	int len2d = n * nLevel;
 	int inputBlocks = divide_ceil(n, NUM_THREADS);
 	int inputBlocks2 = divide_ceil(nLevel, NUM_THREADS);
 	cudaMalloc(&rowIndex, sizeof(int) * len2d); gpuerr();
 	cudaMalloc(&assignment, sizeof(int) * len2d); gpuerr();
-	cudaMalloc(&output_1d, sizeof(int) * len2d); gpuerr();
+	cudaMalloc(&output1d, sizeof(int) * len2d); gpuerr();
 	cudaMallocHost(&offsetOutput, sizeof(int*) * n); gpuerr();
 
 	//solve bin packing
@@ -129,19 +129,20 @@ int solve_bin_packing(int* histograms, int** &offsetOutput,
 	inclusive_sum_by_key(rowIndex, histograms, len2d); gpuerr();
 	gen_assignment <<< inputBlocks2, NUM_THREADS >>>(
 	    histograms, assignment, maxProcessingExponent, n, nLevel); gpuerr();
-	max_by_key(assignment, histograms, output_1d, buffer, len2d); gpuerr();
+	max_by_key(assignment, histograms, output1d, buffer, len2d); gpuerr();
 
 	//make output
 	int outputLen = transfer_last_element(buffer, 1); gpuerr();
 	if (outputLen % n != 0)
 		print_err("bin_packing outputLen is not divisible by inputLen");
 	int offsetLen = outputLen / n;
+	output1dPtr = output1d;
 	for (int i = 0; i < n; i++) {
-		offsetOutput[i] = device_to_host(output_1d, offsetLen); gpuerr();
-		output_1d += offsetLen;
+		offsetOutput[i] = device_to_host(output1dPtr, offsetLen); gpuerr();
+		output1dPtr += offsetLen;
 	}
 
-	_cudaFree(rowIndex, assignment, output_1d); gpuerr();
+	_cudaFree(rowIndex, assignment, output1d); gpuerr();
 	return offsetLen;
 }
 
