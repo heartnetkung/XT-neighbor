@@ -31,7 +31,7 @@ int gen_pairs(int* input, int* inputOffsets, int* outputLengths, Int2* &output, 
 	int* outputOffsets;
 
 	// cal outputOffsets
-	cudaMalloc(&outputOffsets, n * sizeof(int));
+	cudaMalloc(&outputOffsets, n * sizeof(int)); gpuerr();
 	inclusive_sum(outputLengths, outputOffsets, n); gpuerr();
 	int outputLen = transfer_last_element(outputOffsets, n); gpuerr();
 
@@ -41,7 +41,7 @@ int gen_pairs(int* input, int* inputOffsets, int* outputLengths, Int2* &output, 
 	generate_pairs <<< nBlock, NUM_THREADS>>>(input, output,
 	        inputOffsets, outputOffsets, n); gpuerr();
 
-	cudaFree(outputOffsets);
+	cudaFree(outputOffsets); gpuerr();
 	return outputLen;
 }
 
@@ -49,7 +49,7 @@ int gen_smaller_index(int* input, int* inputOffsets, int* outputLengths, int* &o
 	int* outputOffsets;
 
 	// cal outputOffsets
-	cudaMalloc(&outputOffsets, n * sizeof(int));
+	cudaMalloc(&outputOffsets, n * sizeof(int)); gpuerr();
 	inclusive_sum(outputLengths, outputOffsets, n); gpuerr();
 	int outputLen = transfer_last_element(outputOffsets, n); gpuerr();
 
@@ -59,7 +59,7 @@ int gen_smaller_index(int* input, int* inputOffsets, int* outputLengths, int* &o
 	generate_smaller_index <<< nBlock, NUM_THREADS>>>(input, output,
 	        inputOffsets, outputOffsets, n); gpuerr();
 
-	cudaFree(outputOffsets);
+	cudaFree(outputOffsets); gpuerr();
 	return outputLen;
 }
 
@@ -89,7 +89,8 @@ int postprocessing(Int3* seq, Int2* input, int distance,
 	double_flag(uniquePairs, uniqueDistances, flags, pairOutput,
 	            distanceOutput, buffer, uniqueLen); gpuerr();
 	_cudaFree(uniquePairs, uniqueDistances, flags); gpuerr();
-	return transfer_last_element(buffer, 1);
+	int outputLen = transfer_last_element(buffer, 1); gpuerr();
+	return outputLen;
 }
 
 void make_output(Int2* pairOut, char* distanceOut, size_t len, XTNOutput &output) {
@@ -169,7 +170,6 @@ int solve_bin_packing(int* histograms, int** &offsetOutput,
 
 void stream_handler1(Chunk<Int3> input, Int3* &deletionsOutput, int* &indexOutput,
                      int* &histogramOutput, int &outputLen, int distance) {
-	// boilerplate
 	int *combinationOffsets;
 	unsigned int *histogramValue;
 	int inputBlocks = divide_ceil(input.len, NUM_THREADS);
@@ -190,14 +190,13 @@ void stream_handler1(Chunk<Int3> input, Int3* &deletionsOutput, int* &indexOutpu
 
 	// generate histogram
 	int outputBlocks = divide_ceil(outputLen , NUM_THREADS);
-	cudaMalloc(&histogramValue, sizeof(unsigned int)*outputLen);
-	cudaMalloc(&histogramOutput, sizeof(int)*HISTOGRAM_SIZE);
+	cudaMalloc(&histogramValue, sizeof(unsigned int)*outputLen); gpuerr();
+	cudaMalloc(&histogramOutput, sizeof(int)*HISTOGRAM_SIZE); gpuerr();
 	select_int3 <<< outputBlocks, NUM_THREADS>>>(
-	    deletionsOutput, histogramValue, outputLen);
-	cal_histogram(histogramValue, histogramOutput, HISTOGRAM_SIZE, UINT_MIN, UINT_MAX, outputLen);
-	sort_key_values(deletionsOutput, indexOutput, outputLen);
+	    deletionsOutput, histogramValue, outputLen); gpuerr();
+	cal_histogram(histogramValue, histogramOutput, HISTOGRAM_SIZE, UINT_MIN, UINT_MAX, outputLen); gpuerr();
+	sort_key_values(deletionsOutput, indexOutput, outputLen); gpuerr();
 
-	// boilerplate
 	_cudaFree(combinationOffsets, histogramValue); gpuerr();
 }
 
@@ -205,47 +204,35 @@ void stream_handler2(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, int* &histog
                      int distance, int seqLen, int memoryConstraint, int* buffer) {
 	int* inputOffsets, *valueLengths, *histogram, *indexes, *valueLengthsHost;
 
-	printf("1\n");
 	sort_key_values(keyInOut.ptr, valueInOut.ptr, keyInOut.len); gpuerr();
-	printf("2\n");
 	int offsetLen =
-	    cal_offsets(keyInOut.ptr, inputOffsets, valueLengths, keyInOut.len, buffer); gpuerr();
-	printf("3\n");
+	    cal_offsets(keyInOut.ptr, inputOffsets, valueLengths, keyInOut.len, buffer);
 
 	int start = 0, nChunk;
 	int* inputOffsetsPtr = inputOffsets, *valueLengthsPtr = valueLengths;
 	int nBlock = divide_ceil(HISTOGRAM_SIZE , NUM_THREADS);
 	valueLengthsHost = device_to_host(valueLengths, offsetLen); gpuerr();
-	cudaMalloc(&histogram, sizeof(int)*HISTOGRAM_SIZE);
-	printf("4\n");
-
-	// int* histogramH = (int*)calloc(HISTOGRAM_SIZE, sizeof(int));
-	// int* histogramD = host_to_device(histogramH, HISTOGRAM_SIZE);
+	cudaMalloc(&histogram, sizeof(int)*HISTOGRAM_SIZE); gpuerr();
 
 	//histogram loop
 	while ((nChunk = solve_next_bin(valueLengthsHost, start, memoryConstraint, offsetLen)) > 0) {
-		printf("5\n");
-		int chunkLen = gen_smaller_index(valueInOut.ptr, inputOffsetsPtr, valueLengthsPtr, indexes, nChunk); gpuerr();
-		printf("6\n");
+		int chunkLen = gen_smaller_index(valueInOut.ptr, inputOffsetsPtr, valueLengthsPtr, indexes, nChunk);
 		cal_histogram(indexes, histogram, HISTOGRAM_SIZE , 0, seqLen, chunkLen); gpuerr();
-		printf("7\n");
 		vector_add <<< nBlock, NUM_THREADS>>>(histogramOutput, histogram, HISTOGRAM_SIZE); gpuerr();
-		printf("8\n");
 
-		start += nChunk; gpuerr();
-		inputOffsetsPtr += nChunk; gpuerr();
-		valueLengthsPtr += nChunk; gpuerr();
+		start += nChunk;
+		inputOffsetsPtr += nChunk;
+		valueLengthsPtr += nChunk;
 		cudaFree(indexes); gpuerr();
-		cudaFree(histogram); gpuerr();
-		printf("9\n");
 	}
-	_cudaFree(inputOffsets, valueLengths); gpuerr();
+
+	_cudaFree(inputOffsets, valueLengths, histogram); gpuerr();
 	cudaFreeHost(valueLengthsHost); gpuerr();
 }
 
-// void stream_handler3(Chunk<Int3> keyInput, Chunk<int> valueInput,
-//                      Chunk<Int3> &keyOutput, Chunk<int> &valueOutput, Int2* &pairOutput,
-//                      int* &histogramOutput, int lowerbound, int* buffer) {
+// void stream_handler3(Chunk<Int3> keyInput, Chunk<int> valueInput, Int3* &keyOutput,
+//                      int* &valueOutput, Int2* &pairOutput, int* &histogramOutput,
+//                      int lowerbound, int seqLen, int memoryConstraint, int* buffer) {
 // 	int* combinationValueOffsets, *pairOffsets;
 // 	int offsetLen =
 // 	    cal_offsets(keyInput.ptr, valueInput.ptr, combinationValueOffsets,
@@ -259,6 +246,7 @@ void stream_handler2(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, int* &histog
 
 // 	gen_next_chunk(keyInput, valueInput, keyOutput, valueOutput,
 // 	               combinationValueOffsets, offsetLen, lowerbound, buffer);
+
 // 	_cudaFree(combinationValueOffsets, pairOffsets);
 // }
 
@@ -271,5 +259,5 @@ void stream_handler4(Chunk<Int2> pairInput, XTNOutput &output, Int3* seq1,
 	                   pairInput.len, buffer, seq1Len);
 
 	make_output(pairOut, distanceOut, outputLen, output);
-	_cudaFree(pairOut, distanceOut);
+	_cudaFree(pairOut, distanceOut); gpuerr();
 }
