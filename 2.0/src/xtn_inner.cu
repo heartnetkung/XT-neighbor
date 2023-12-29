@@ -215,17 +215,17 @@ void stream_handler2(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, int* &histog
 	int start = 0, nChunk;
 	int* inputOffsetsPtr = inputOffsets, *valueLengthsPtr = valueLengths;
 	int nBlock = divide_ceil(HISTOGRAM_SIZE , NUM_THREADS);
-	valueLengthsHost = device_to_host(valueLengths, offsetLen);
+	valueLengthsHost = device_to_host(valueLengths, offsetLen); gpuerr();
 	printf("4\n");
 
 	//histogram loop
 	while ((nChunk = solve_next_bin(valueLengthsHost, start, memoryConstraint, offsetLen)) > 0) {
 		printf("5\n");
-		int chunkLen = gen_smaller_index(valueInOut.ptr, inputOffsetsPtr, valueLengthsPtr, indexes, nChunk);
+		int chunkLen = gen_smaller_index(valueInOut.ptr, inputOffsetsPtr, valueLengthsPtr, indexes, nChunk); gpuerr();
 		printf("6\n");
-		cal_histogram(indexes, histogram, HISTOGRAM_SIZE , 0, seqLen, chunkLen);
+		cal_histogram(indexes, histogram, HISTOGRAM_SIZE , 0, seqLen, chunkLen); gpuerr();
 		printf("7\n");
-		vector_add <<< nBlock, NUM_THREADS>>>(histogramOutput, histogram, HISTOGRAM_SIZE);
+		vector_add <<< nBlock, NUM_THREADS>>>(histogramOutput, histogram, HISTOGRAM_SIZE); gpuerr();
 		printf("8\n");
 
 		start += nChunk; gpuerr();
