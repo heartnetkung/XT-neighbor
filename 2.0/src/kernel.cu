@@ -77,8 +77,8 @@ void generate_smaller_index(int* indexes, int* outputs, int* inputOffsets, int* 
 
 	for (int i = start; i < end; i++) {
 		for (int j = i + 1; j < end; j++) {
-			if (outputIndex++ < outputEnd)
-				outputs[outputIndex] = indexes[i] < indexes[j] ? indexes[i] : indexes[j];
+			if (outputIndex < outputEnd)
+				outputs[outputIndex++] = indexes[i] < indexes[j] ? indexes[i] : indexes[j];
 			else
 				printf("potential error on generate pairs\n");
 		}
