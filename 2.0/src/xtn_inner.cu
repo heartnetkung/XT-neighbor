@@ -205,24 +205,33 @@ void stream_handler2(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, int* &histog
                      int distance, int seqLen, int memoryConstraint, int* buffer) {
 	int* inputOffsets, *valueLengths, *histogram, *indexes;
 
+	printf("1\n");
 	sort_key_values(keyInOut.ptr, valueInOut.ptr, keyInOut.len); gpuerr();
+	printf("2\n");
 	int offsetLen =
 	    cal_offsets(keyInOut.ptr, inputOffsets, valueLengths, keyInOut.len, buffer); gpuerr();
+	printf("3\n");
 
 	int start = 0, nChunk;
 	int* inputOffsetsPtr = inputOffsets, *valueLengthsPtr = valueLengths;
 	int nBlock = divide_ceil(HISTOGRAM_SIZE , NUM_THREADS);
+	printf("4\n");
 
 	//histogram loop
 	while ((nChunk = solve_next_bin(valueLengths, start, memoryConstraint, offsetLen)) > 0) {
+		printf("5\n");
 		int chunkLen = gen_smaller_index(valueInOut.ptr, inputOffsetsPtr, valueLengthsPtr, indexes, nChunk);
+		printf("6\n");
 		cal_histogram(indexes, histogram, HISTOGRAM_SIZE , 0, seqLen, chunkLen);
+		printf("7\n");
 		vector_add <<< nBlock, NUM_THREADS>>>(histogramOutput, histogram, HISTOGRAM_SIZE);
+		printf("8\n");
 
 		start += nChunk;
 		inputOffsetsPtr += nChunk;
 		valueLengthsPtr += nChunk;
 		_cudaFree(indexes, histogram); gpuerr();
+		printf("9\n");
 	}
 	_cudaFree(inputOffsets, valueLengths); gpuerr();
 }
