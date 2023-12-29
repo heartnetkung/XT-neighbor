@@ -28,7 +28,7 @@ int cal_offsets(Int3* inputKeys, int* &inputOffsets, int* &outputLengths, int n,
 }
 
 int cal_offsets_lowerbound(Int3* inputKeys, int* inputValues, int* &inputOffsets,
-                           int* &outputLengths, int lowerbound int n, int* buffer) {
+                           int* &outputLengths, int lowerbound, int n, int* buffer) {
 	// cal inputOffsets
 	cudaMalloc(&inputOffsets, sizeof(int)*n); gpuerr();
 	unique_counts(inputKeys, inputOffsets, buffer, n); gpuerr();
