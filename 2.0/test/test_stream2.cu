@@ -9,9 +9,9 @@ TEST(Stream2, {
 	};
 	int values[] =  {0, 2, 1, 0, 0, 0, 1, 2, 2, 2, 0, 2, 1, 1, 1, 3, 3, 3, 3, 3};
 	int* histogramOutput, *deviceInt;
+	int* histogramOutputHost = (int*)calloc(HISTOGRAM_SIZE, sizeof(int));
 
-	cudaMalloc(&histogramOutput, sizeof(int)*HISTOGRAM_SIZE);
-	cudaMemset(histogramOutput, 0, sizeof(int)*HISTOGRAM_SIZE);
+	histogramOutput = host_to_device(histogramOutputHost, HISTOGRAM_SIZE);
 	cudaMalloc(&deviceInt, sizeof(int));
 	Int3* keysInt3 = (Int3*)malloc(sizeof(Int3) * len);
 	for (int i = 0; i < len; i++)

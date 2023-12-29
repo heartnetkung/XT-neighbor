@@ -55,7 +55,7 @@ int gen_smaller_index(int* input, int* inputOffsets, int* outputLengths, int* &o
 
 	//generate pairs
 	int nBlock = divide_ceil(n, NUM_THREADS);
-	cudaMalloc(&output, sizeof(Int2)*outputLen); gpuerr();
+	cudaMalloc(&output, sizeof(int)*outputLen); gpuerr();
 	generate_smaller_index <<< nBlock, NUM_THREADS>>>(input, output,
 	        inputOffsets, outputOffsets, n); gpuerr();
 
