@@ -7,6 +7,7 @@
 
 const int NUM_THREADS = 256;
 const int HISTOGRAM_SIZE = 4096;
+const unsigned int UINT_MIN = 0
 
 int cal_offsets(Int3* inputKeys, int* &inputOffsets, int* &outputLengths, int n, int* buffer) {
 	// cal inputOffsets
@@ -173,7 +174,7 @@ void stream_handler1(Chunk<Int3> input, Int3* &deletionsOutput, int* &indexOutpu
 	cudaMalloc(&histogramOutput, sizeof(int)*HISTOGRAM_SIZE);
 	select_int3 <<< outputBlocks, NUM_THREADS>>>(
 	    deletionsOutput, histogramValue, outputLen);
-	cal_histogram(histogramValue, histogramOutput, HISTOGRAM_SIZE, 0, UINT_MAX, outputLen);
+	cal_histogram(histogramValue, histogramOutput, HISTOGRAM_SIZE, UINT_MIN, UINT_MAX, outputLen);
 	sort_key_values(deletionsOutput, indexOutput, outputLen);
 
 	// boilerplate
