@@ -64,6 +64,27 @@ void generate_pairs(int* indexes, Int2* outputs, int* inputOffsets, int* outputO
 	}
 }
 
+__global__
+void generate_smaller_index(int* indexes, int* outputs, int* inputOffsets, int* outputOffsets, int n) {
+	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
+	if (tid >= n)
+		return;
+
+	int start = tid == 0 ? 0 : inputOffsets[tid - 1];
+	int end = inputOffsets[tid];
+	int outputIndex = tid == 0 ? 0 : outputOffsets[tid - 1];
+	int outputEnd = outputOffsets[tid];
+
+	for (int i = start; i < end; i++) {
+		for (int j = i + 1; j < end; j++) {
+			if (outputIndex++ < outputEnd)
+				outputs[outputIndex] = indexes[i] < indexes[j] ? indexes[i] : indexes[j];
+			else
+				printf("potential error on generate pairs\n");
+		}
+	}
+}
+
 #define MIN3(a, b, c) ((a) < (b) ? ((a) < (c) ? (a) : (c)) : ((b) < (c) ? (b) : (c)))
 
 __device__
@@ -184,4 +205,12 @@ void make_row_index(int* output, int n, int nRepeat) {
 
 	for (int i = tid * nRepeat; i < tid * nRepeat + nRepeat; i++)
 		output[i] = tid;
+}
+
+__global__
+void vector_add(int* dest, int* src, int n) {
+	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
+	if (tid >= n)
+		return;
+	dest[i] += src[i];
 }
