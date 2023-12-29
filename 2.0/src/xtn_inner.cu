@@ -9,6 +9,10 @@ const int NUM_THREADS = 256;
 const int HISTOGRAM_SIZE = 4096;
 const unsigned int UINT_MIN = 0;
 
+//=====================================
+// Private Functions
+//=====================================
+
 int cal_offsets(Int3* inputKeys, int* &inputOffsets, int* &outputLengths, int n, int* buffer) {
 	// cal inputOffsets
 	cudaMalloc(&inputOffsets, sizeof(int)*n); gpuerr();
@@ -99,7 +103,7 @@ void gen_next_chunk(Chunk<Int3> keyInput, Chunk<int> valueInput,
                     int* valueOffsets, int offsetLen, int lowerbound, int* buffer) {
 	char* flags;
 	cudaMalloc(&flags, sizeof(char)*valueInput.len); gpuerr();
-	cudaMemset(flags, 1, valueInput.len); gpuerr();
+	cudaMemset(flags, 1, sizeof(char)*valueInput.len); gpuerr();
 	int inputBlocks = divide_ceil(offsetLen, NUM_THREADS);
 
 	flag_lowerbound <<< inputBlocks, NUM_THREADS>>>(
@@ -112,6 +116,22 @@ void gen_next_chunk(Chunk<Int3> keyInput, Chunk<int> valueInput,
 	valueOutput.len = outputLen;
 	cudaFree(flags); gpuerr();
 }
+
+int solve_next_bin(int* chunksizes, int start, int maxReadableSize, int n) {
+	int ans = 0, len = 0;
+	for (int i = start; i < n; i++) {
+		int currentChunkSize = chunksizes[i];
+		if (len + currentChunkSize > maxReadableSize)
+			break;
+		len += currentChunkSize;
+		ans++;
+	}
+	return ans;
+}
+
+//=====================================
+// Public Functions
+//=====================================
 
 int solve_bin_packing(int* histograms, int** &offsetOutput,
                       int maxProcessingExponent, int n, int nLevel, int* buffer) {
@@ -181,35 +201,22 @@ void stream_handler1(Chunk<Int3> input, Int3* &deletionsOutput, int* &indexOutpu
 	_cudaFree(combinationOffsets, histogramValue); gpuerr();
 }
 
-int solve_next_bin(int* chunksizes, int start, int maxReadableSize, int n) {
-	int ans = 0, len = 0;
-	for (int i = start; i < n; i++) {
-		int currentChunkSize = chunksizes[i];
-		if (len + currentChunkSize > maxReadableSize)
-			break;
-		len += currentChunkSize;
-		ans++;
-	}
-	return ans;
-}
-
-void stream_handler2(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut,
-                     int* &histogramOutput, int distance, int seqLen, int* buffer) {
-	int* inputOffsets, *valueLengths, *histogram;
+void stream_handler2(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, int* &histogramOutput,
+                     int distance, int seqLen, int memoryConstraint, int* buffer) {
+	int* inputOffsets, *valueLengths, *histogram, *indexes;
 
 	sort_key_values(keyInOut.ptr, valueInOut.ptr, keyInOut.len); gpuerr();
 	int offsetLen =
 	    cal_offsets(keyInOut.ptr, inputOffsets, valueLengths, keyInOut.len, buffer); gpuerr();
 
-	// gen_smaller_index
-	int MAX_MEMORY = 100;
 	int start = 0, nChunk;
-	int* inputOffsetsPtr = inputOffsets, *valueLengthsPtr = valueLengths, *indexes;
+	int* inputOffsetsPtr = inputOffsets, *valueLengthsPtr = valueLengths;
 	int nBlock = divide_ceil(HISTOGRAM_SIZE , NUM_THREADS);
 
-	while ((nChunk = solve_next_bin(valueLengths, start, MAX_MEMORY, offsetLen)) > 0) {
+	//histogram loop
+	while ((nChunk = solve_next_bin(valueLengths, start, memoryConstraint, offsetLen)) > 0) {
 		int chunkLen = gen_smaller_index(valueInOut.ptr, inputOffsetsPtr, valueLengthsPtr, indexes, nChunk);
-		cal_histogram(indexes, histogram, HISTOGRAM_SIZE , 0, seqLen + 1, chunkLen);
+		cal_histogram(indexes, histogram, HISTOGRAM_SIZE , 0, seqLen, chunkLen);
 		vector_add <<< nBlock, NUM_THREADS>>>(histogramOutput, histogram, HISTOGRAM_SIZE);
 
 		start += nChunk;
