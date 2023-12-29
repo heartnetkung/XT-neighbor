@@ -27,6 +27,14 @@ struct XTNArgs {
 	// int seq2Len = 0;
 };
 
+struct MemoryContext {
+	size_t gpuSize = 99999;
+	size_t ramSize = 99999;
+	int histogramSize = 16;
+	int maxThroughput = 32;
+	int maxThroughputExponent = 5;
+};
+
 struct XTNOutput {
 	Int2* indexPairs = NULL;
 	char* pairwiseDistances = NULL;

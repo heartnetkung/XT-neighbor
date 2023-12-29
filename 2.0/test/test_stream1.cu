@@ -11,6 +11,7 @@ TEST(Stream1, {
 	int* histogramOutput;
 	cudaMalloc(&seq1d, sizeof(Int3)*seqLen);
 	cudaMallocHost(&seq1h, sizeof(Int3)*seqLen);
+	MemoryContext ctx;
 
 	//make inputs
 	for (int i = 0; i < seqLen; i++)
@@ -24,7 +25,7 @@ TEST(Stream1, {
 	int* indexOutput;
 	Int3* deletionsOutput;
 	int outputLen;
-	stream_handler1(input, deletionsOutput, indexOutput, histogramOutput, outputLen, distance);
+	stream_handler1(input, deletionsOutput, indexOutput, histogramOutput, outputLen, distance, ctx);
 
 	//expactation
 	int expectedLen = 20;

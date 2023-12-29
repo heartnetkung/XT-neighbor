@@ -14,12 +14,15 @@ TEST(bin_packing, {
 
 	int* deviceInt;
 	cudaMalloc(&deviceInt, sizeof(int));
+	MemoryContext ctx;
+	ctx.maxThroughputExponent = 4;
+
 
 	int expectedOffsetLen = 2;
 	int expectedOut[][2] = {{3, 6}, {5, 9}, {5, 6}};
 
 	int** output;
-	int offsetLen =  solve_bin_packing(histogramInput_d, output, 4, len, nLevel, deviceInt);
+	int offsetLen =  solve_bin_packing(histogramInput_d, output, len, nLevel, deviceInt, ctx);
 
 	check(offsetLen == expectedOffsetLen);
 	for (int i = 0; i < len; i++)
