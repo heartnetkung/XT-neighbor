@@ -254,7 +254,7 @@ void stream_handler2(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, int* &histog
 
 void stream_handler3(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, D2Stream<Int2> &pairOut,
                      int* &histogramOutput, int lowerbound, int seqLen, int* buffer, MemoryContext ctx) {
-	int* inputOffsets, *valueLengths, *valueLengthsHost, *histogram;
+	int* inputOffsets, *valueLengths, *valueLengthsHost, *histogram, *lesserIndex;
 	Int2* pairOutput;
 
 	int offsetLen = cal_offsets_lowerbound(
@@ -272,13 +272,17 @@ void stream_handler3(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, D2Stream<Int
 		int chunkLen = gen_pairs(valueInOut.ptr, inputOffsetsPtr, valueLengthsPtr,
 		                         pairOutput, lowerbound, nChunk);
 		pairOut.write(pairOutput, chunkLen);
-		cal_histogram(pairOutput, histogram, ctx.histogramSize , 0, seqLen, chunkLen); gpuerr();
+
+		int nBlock2 = divide_ceil(chunkLen, NUM_THREADS);
+		cudaMalloc(&lesserIndex, sizeof(int)*chunkLen); gpuerr();
+		select_int2 <<< nBlock2, NUM_THREADS>>>(pairOutput, lesserIndex, chunkLen);
+		cal_histogram(lesserIndex, histogram, ctx.histogramSize , 0, seqLen, chunkLen); gpuerr();
 		vector_add <<< nBlock, NUM_THREADS>>>(histogramOutput, histogram, ctx.histogramSize); gpuerr();
 
 		start += nChunk;
 		inputOffsetsPtr += nChunk;
 		valueLengthsPtr += nChunk;
-		cudaFree(pairOutput); gpuerr();
+		_cudaFree(pairOutput, lesserIndex); gpuerr();
 	}
 
 	gen_next_chunk(keyInOut, valueInOut, inputOffsets, offsetLen, lowerbound, buffer);
