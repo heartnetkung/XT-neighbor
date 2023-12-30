@@ -6,13 +6,13 @@ void callback(Int2* pairOut, int len) {
 	Int2 expectedPairs[] = {
 		{.x = 0, .y = 2}, {.x = 0, .y = 0}, {.x = 0, .y = 0}, {.x = 0, .y = 1}, {.x = 0, .y = 2},
 		{.x = 0, .y = 2}, {.x = 0, .y = 2}, {.x = 0, .y = 0}, {.x = 0, .y = 1}, {.x = 0, .y = 2},
-		{.x = 0, .y = 2}, {.x = 0, .y = 2}, {.x = 0, .y = 1}, {.x = 0, .y = 2}, {.x = 0, .y = 2}, 
+		{.x = 0, .y = 2}, {.x = 0, .y = 2}, {.x = 0, .y = 1}, {.x = 0, .y = 2}, {.x = 0, .y = 2},
 		{.x = 0, .y = 2}, {.x = 1, .y = 2}, {.x = 1, .y = 2}, {.x = 1, .y = 2}, {.x = 0, .y = 2}
 	};
 	Int2* pairOut2 = device_to_host(pairOut, len);
 
 	check(len == expectedLen);
-	for (int i = 0; i < expectedLen; i++){
+	for (int i = 0; i < expectedLen; i++) {
 		check(pairOut2[i].x == expectedPairs[i].x);
 		check(pairOut2[i].y == expectedPairs[i].y);
 	}
@@ -53,7 +53,7 @@ TEST(Stream3, {
 	check(valueIn.len == expectedLen);
 	for (int i = 0; i < expectedLen; i++) {
 		check(expectedValue[i] == valueOut[i]);
-		checkstr(str_decode(expectedKey[i]), keyOut[i]);
+		checkstr(expectedKey[i], str_decode(keyOut[i]));
 	}
 	for (int i = 0; i < ctx.histogramSize; i++)
 		check(expectedHistogram[i] == histogramOutput2[i]);
