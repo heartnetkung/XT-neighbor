@@ -19,7 +19,7 @@ TEST(Stream3, {
 	Chunk<Int3> keyIn = {.ptr = host_to_device(pairInput, len), .len = len};
 	Chunk<int> valueIn = {.ptr = host_to_device(indexInput, len), .len = len};
 	histogramOutput = host_to_device(histogramOutputHost, ctx.histogramSize);
-	D2Stream<int> *stream = new D2Stream<int>(1);
+	D2Stream<Int2> stream(1);
 
 	stream_handler3(keyIn, valueIn, stream,
 	                histogramOutput, lowerbound, seqLen, deviceInt, ctx);
