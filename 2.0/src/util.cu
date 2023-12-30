@@ -1,4 +1,5 @@
 #include "xtn.h"
+#include <sys/sysinfo.h>
 
 int print_err(const char* str) {
 #ifndef TEST_ENV
@@ -156,4 +157,16 @@ void print_size_t_arr(size_t* arr, int n) {
 	}
 	printf(" ] n=%d\n", n);
 	cudaFreeHost(arr2);
+}
+
+void print_gpu_memory() {
+	size_t mf, ma;
+	cudaMemGetInfo(&mf, &ma);
+	printf("Available GPU Memory: %'lu Total GPU Memory: %'lu\n", mf, ma);
+}
+
+void print_main_memory() {
+	struct sysinfo si;
+	sysinfo (&si);
+	printf("Available RAM: %'lu Total RAM: %'lu\n", si.freeram, si.totalram);
 }
