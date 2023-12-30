@@ -12,8 +12,10 @@ void callback(Int2* pairOut, int len) {
 	Int2* pairOut2 = device_to_host(pairOut, len);
 
 	check(len == expectedLen);
-	for (int i = 0; i < expectedLen; i++)
-		check(pairOut2[i] == expectedPairs[i]);
+	for (int i = 0; i < expectedLen; i++){
+		check(pairOut2[i].x == expectedPairs[i].x);
+		check(pairOut2[i].y == expectedPairs[i].y);
+	}
 }
 
 TEST(Stream3, {
