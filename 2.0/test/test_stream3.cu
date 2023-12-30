@@ -2,8 +2,18 @@
 #include "../src/xtn_inner.cu"
 
 void callback(Int2* pairOut, int len) {
-	printf("hello\n");
-	print_int2_arr(pairOut, len);
+	int expectedLen = 20;
+	Int2 expectedPairs[] = {
+		{.x = 0, .y = 2}, {.x = 0, .y = 0}, {.x = 0, .y = 0}, {.x = 0, .y = 1}, {.x = 0, .y = 2},
+		{.x = 0, .y = 2}, {.x = 0, .y = 2}, {.x = 0, .y = 0}, {.x = 0, .y = 1}, {.x = 0, .y = 2},
+		{.x = 0, .y = 2}, {.x = 0, .y = 2}, {.x = 0, .y = 1}, {.x = 0, .y = 2}, {.x = 0, .y = 2}, 
+		{.x = 0, .y = 2}, {.x = 1, .y = 2}, {.x = 1, .y = 2}, {.x = 1, .y = 2}, {.x = 0, .y = 2}
+	};
+	Int2* pairOut2 = device_to_host(pairOut, len);
+
+	check(len == expectedLen)
+	for (int i = 0; i < expectedLen; i++)
+		check(pairOut2[i] == expectedPairs[i]);
 }
 
 TEST(Stream3, {
@@ -28,7 +38,21 @@ TEST(Stream3, {
 	stream_handler3(keyIn, valueIn, callback,
 	                histogramOutput, lowerbound, seqLen, deviceInt, ctx);
 
-	print_int3_arr(keyIn.ptr, keyIn.len);
-	print_int_arr(valueIn.ptr, valueIn.len);
-	print_int_arr(histogramOutput, ctx.histogramSize);
+	int expectedLen = 5;
+	int expectedHistogram[] = {17, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	char expectedKey[][5] = {"CAA", "CAA", "CAA", "CKD", "CKD"};
+	int expectedValue[] = {2, 2, 2, 3, 3};
+
+	Int3* keyOut = device_to_host(keyIn.ptr, keyIn.len);
+	int valueOut = device_to_host(valueIn.ptr, valueIn.len);
+	int* histogramOutput2 = device_to_host(histogramOutput, ctx.histogramSize);
+
+	check(keyIn.len == expectedLen);
+	check(valueIn.len == expectedLen);
+	for (int i = 0; i < expectedLen; i++) {
+		check(expectedValue[i] == valueOut[i]);
+		checkstr(str_decode(expectedKey[i]), keyOut[i]);
+	}
+	for (int i = 0; i < ctx.histogramSize; i++)
+		check(expectedHistogram[i] == histogramOutput2[i]);
 })
