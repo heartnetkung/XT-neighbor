@@ -27,7 +27,7 @@ TEST(Stream3, {
 	};
 	int indexInput[] = {0, 2, 1, 0, 0, 0, 1, 2, 2, 2, 0, 2, 1, 1, 1, 3, 3, 3, 3, 3};
 	Int3* pairInput = (Int3*)malloc(sizeof(Int3) * len);
-	int* deviceInt, *histogramOutput;
+	int* deviceInt, *histogramOutput, *hBuffer;
 	int* histogramOutputHost = (int*)calloc(ctx.histogramSize, sizeof(int));
 
 	for (int i = 0; i < len; i++)
@@ -35,10 +35,12 @@ TEST(Stream3, {
 	cudaMalloc(&deviceInt, sizeof(int));
 	Chunk<Int3> keyIn = {.ptr = host_to_device(pairInput, len), .len = len};
 	Chunk<int> valueIn = {.ptr = host_to_device(indexInput, len), .len = len};
-	histogramOutput = host_to_device(histogramOutputHost, ctx.histogramSize);
+	cudaMalloc(&histogramOutput, sizeof(int)*ctx.histogramSize);
+	cudaMemset(histogramOutput, 0, sizeof(int)*ctx.histogramSize);
+	cudaMalloc(&hBuffer, sizeof(int)*ctx.histogramSize);
 
 	stream_handler3(keyIn, valueIn, callback,
-	                histogramOutput, lowerbound, seqLen, deviceInt, ctx);
+	                histogramOutput, lowerbound, seqLen, deviceInt, hBuffer, ctx);
 
 	int expectedLen = 5;
 	int expectedHistogram[] = {17, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
