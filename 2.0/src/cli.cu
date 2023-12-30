@@ -125,6 +125,8 @@ int main(int argc, char **argv) {
 
 	// 3. perform algorithm
 	if (args.outputPath != NULL) {
+		if (outputFile != NULL)
+			return print_err("output file has already been allocated, possibly due to concurrency");
 		outputFile = fopen(args.outputPath, "w");
 		if (outputFile == NULL)
 			return print_err("file reading failed");
