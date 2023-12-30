@@ -20,7 +20,7 @@ void expand_values(int index, int* output, int start, int end) {
 __host__
 #endif
 __device__
-void expand_keys(Int3 seq, int distance, Int3* output, int start, int end) {
+void expand_keys(Int3 seq, int distance, Int3* output, unsigned int* firstKeys, int start, int end) {
 	int len = len_decode(seq);
 	const int effectiveDistance = distance < len ? distance : len;
 
@@ -39,6 +39,7 @@ void expand_keys(Int3 seq, int distance, Int3* output, int start, int end) {
 	for (int i = start; i < end - 1; i++) {
 		// printStack(indexStack, stackPos);
 		output[i] = seqStack[stackPos];
+		firstKeys[i] = seqStack[stackPos].entry[0];
 
 		//pop
 		if (indexStack[stackPos] == len) {
@@ -62,6 +63,7 @@ void expand_keys(Int3 seq, int distance, Int3* output, int start, int end) {
 
 	// last step
 	output[end - 1] = seqStack[0];
+	firstKeys[end - 1] = seqStack[0].entry[0];
 }
 
 /**
@@ -73,7 +75,7 @@ void expand_keys(Int3 seq, int distance, Int3* output, int start, int end) {
 */
 __global__
 void gen_combination(Int3* seqs, int* combinationOffsets, int distance,
-                     Int3* combinationKeys, int* combinationValues, int n) {
+                     Int3* combinationKeys, int* combinationValues, unsigned int* firstKeys, int n) {
 	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
 	if (tid >= n)
 		return;
@@ -82,5 +84,5 @@ void gen_combination(Int3* seqs, int* combinationOffsets, int distance,
 	int end = combinationOffsets[tid];
 
 	expand_values(tid, combinationValues, start, end);
-	expand_keys(seqs[tid], distance, combinationKeys, start, end);
+	expand_keys(seqs[tid], distance, combinationKeys, firstKeys, start, end);
 }

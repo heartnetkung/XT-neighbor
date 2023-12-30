@@ -53,7 +53,8 @@ void cal_pair_len_lowerbound(int* indexes, int* inputOffsets, int* outputLengths
 }
 
 __global__
-void generate_pairs(int* indexes, Int2* outputs, int* inputOffsets, int* outputOffsets, int lowerbound, int n) {
+void generate_pairs(int* indexes, Int2* outputs, int* inputOffsets, int* outputOffsets,
+                    int* lesserIndex, int lowerbound, int n) {
 	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
 	if (tid >= n)
 		return;
@@ -77,9 +78,10 @@ void generate_pairs(int* indexes, Int2* outputs, int* inputOffsets, int* outputO
 				newValue.x = indexes[j];
 				newValue.y = indexes[i];
 			}
-			if (outputIndex < outputEnd)
-				outputs[outputIndex++] = newValue;
-			else
+			if (outputIndex < outputEnd) {
+				outputs[outputIndex] = newValue;
+				lesserIndex[outputIndex++] = newValue.x;
+			} else
 				printf("potential error on generate pairs\n");
 		}
 	}
@@ -178,22 +180,6 @@ void gen_assignment(int* matrix, int* output, int nBit, int n_row, int n_column)
 	ans = (ans >> nBit);
 	for (int i = 0; i < n_row; i++)
 		output[i * n_column + tid] = ans;
-}
-
-__global__
-void select_int3(Int3* input, unsigned int* output, int n) {
-	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
-	if (tid >= n)
-		return;
-	output[tid] = input[tid].entry[0];
-}
-
-__global__
-void select_int2(Int2* input, int* output, int n) {
-	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
-	if (tid >= n)
-		return;
-	output[tid] = input[tid].x;
 }
 
 __global__

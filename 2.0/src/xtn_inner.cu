@@ -45,7 +45,8 @@ int cal_offsets_lowerbound(Int3* inputKeys, int* inputValues, int* &inputOffsets
 	return nUnique;
 }
 
-int gen_pairs(int* input, int* inputOffsets, int* outputLengths, Int2* &output, int lowerbound, int n) {
+int gen_pairs(int* input, int* inputOffsets, int* outputLengths, Int2* &output,
+              int* &lesserIndex, int lowerbound, int n) {
 	int* outputOffsets;
 
 	// cal outputOffsets
@@ -55,8 +56,9 @@ int gen_pairs(int* input, int* inputOffsets, int* outputLengths, Int2* &output, 
 
 	//generate pairs
 	cudaMalloc(&output, sizeof(Int2)*outputLen); gpuerr();
+	cudaMalloc(&lesserIndex, sizeof(int)*outputLen); gpuerr();
 	generate_pairs <<< NUM_BLOCK(n), NUM_THREADS>>>(input, output,
-	        inputOffsets, outputOffsets, lowerbound, n); gpuerr();
+	        inputOffsets, outputOffsets, lesserIndex, lowerbound, n); gpuerr();
 
 	cudaFree(outputOffsets); gpuerr();
 	return outputLen;
@@ -201,15 +203,13 @@ void stream_handler1(Chunk<Int3> input, Int3* &deletionsOutput, int* &indexOutpu
 	// generate combinations
 	cudaMalloc(&deletionsOutput, sizeof(Int3)*outputLen); gpuerr();
 	cudaMalloc(&indexOutput, sizeof(int)*outputLen); gpuerr();
+	cudaMalloc(&histogramValue, sizeof(unsigned int)*outputLen); gpuerr();
 	gen_combination <<< NUM_BLOCK(input.len), NUM_THREADS >>> (
 	    input.ptr, combinationOffsets, distance,
-	    deletionsOutput, indexOutput, input.len); gpuerr();
+	    deletionsOutput, indexOutput, histogramValue, input.len); gpuerr();
 
 	// generate histogram
-	cudaMalloc(&histogramValue, sizeof(unsigned int)*outputLen); gpuerr();
 	cudaMalloc(&histogramOutput, sizeof(int)*ctx.histogramSize); gpuerr();
-	select_int3 <<< NUM_BLOCK(outputLen), NUM_THREADS>>>(
-	    deletionsOutput, histogramValue, outputLen); gpuerr();
 	cal_histogram(histogramValue, histogramOutput, ctx.histogramSize, UINT_MIN, UINT_MAX, outputLen); gpuerr();
 	sort_key_values(deletionsOutput, indexOutput, outputLen); gpuerr();
 
@@ -264,11 +264,8 @@ void stream_handler3(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, D2Stream<Int
 	// generate pairs
 	while ((nChunk = solve_next_bin(valueLengthsHost, start, ctx.maxThroughput, offsetLen)) > 0) {
 		int chunkLen = gen_pairs(valueInOut.ptr, inputOffsetsPtr, valueLengthsPtr,
-		                         pairOutput, lowerbound, nChunk);
+		                         pairOutput, lesserIndex, lowerbound, nChunk);
 		pairOut.write(pairOutput, chunkLen);
-
-		cudaMalloc(&lesserIndex, sizeof(int)*chunkLen); gpuerr();
-		select_int2 <<< NUM_BLOCK(chunkLen), NUM_THREADS>>>(pairOutput, lesserIndex, chunkLen);
 		cal_histogram(lesserIndex, histogram, ctx.histogramSize , 0, seqLen, chunkLen); gpuerr();
 		vector_add <<< nBlock, NUM_THREADS>>>(histogramOutput, histogram, ctx.histogramSize); gpuerr();
 
