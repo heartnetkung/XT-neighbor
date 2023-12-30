@@ -14,7 +14,7 @@ const unsigned int UINT_MIN = 0;
 //=====================================
 
 int NUM_BLOCK(int len) {
-	return divide_ceil(nUnique, NUM_THREADS);
+	return divide_ceil(len, NUM_THREADS);
 }
 
 int cal_offsets(Int3* inputKeys, int* &inputOffsets, int* &outputLengths, int n, int* buffer) {
