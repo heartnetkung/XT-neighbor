@@ -28,11 +28,15 @@ struct XTNArgs {
 };
 
 struct MemoryContext {
-	size_t gpuSize = 99999;
-	size_t ramSize = 99999;
+	size_t gpuSize;
+	size_t ramSize;
+#ifdef TEST_ENV
 	int histogramSize = 16;
-	int maxThroughput = 32;
-	int maxThroughputExponent = 5;
+#else
+	int histogramSize = 4096;
+#endif
+	int maxThroughput = 1024*1024;
+	int maxThroughputExponent = 20;
 };
 
 struct XTNOutput {
