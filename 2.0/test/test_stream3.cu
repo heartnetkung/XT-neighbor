@@ -44,7 +44,7 @@ TEST(Stream3, {
 	int expectedValue[] = {2, 2, 2, 3, 3};
 
 	Int3* keyOut = device_to_host(keyIn.ptr, keyIn.len);
-	int valueOut = device_to_host(valueIn.ptr, valueIn.len);
+	int* valueOut = device_to_host(valueIn.ptr, valueIn.len);
 	int* histogramOutput2 = device_to_host(histogramOutput, ctx.histogramSize);
 
 	check(keyIn.len == expectedLen);
