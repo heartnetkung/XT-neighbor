@@ -1,6 +1,11 @@
 #include "test_util.cu"
 #include "../src/xtn_inner.cu"
 
+void callback(Int2* pairOut, int len) {
+	printf("hello\n");
+	print_int2_arr(pairOut, len);
+}
+
 TEST(Stream3, {
 	MemoryContext ctx;
 	int seqLen = 4, len = 20, lowerbound = 1;
@@ -19,9 +24,8 @@ TEST(Stream3, {
 	Chunk<Int3> keyIn = {.ptr = host_to_device(pairInput, len), .len = len};
 	Chunk<int> valueIn = {.ptr = host_to_device(indexInput, len), .len = len};
 	histogramOutput = host_to_device(histogramOutputHost, ctx.histogramSize);
-	D2Stream<Int2> stream(1);
 
-	stream_handler3(keyIn, valueIn, stream,
+	stream_handler3(keyIn, valueIn, callback,
 	                histogramOutput, lowerbound, seqLen, deviceInt, ctx);
 
 	print_int3_arr(keyIn.ptr, keyIn.len);
