@@ -12,8 +12,9 @@ TEST(test_generate_combination, {
 		"CEFG", "CDG", "CDF", "CDFG",
 		"CDE", "CDEG", "CDEF", "CDEFG"
 	};
+	unsigned int firstKeys[outputLen];
 
-	expand_keys(str_encode(input), distance, output, 0, outputLen);
+	expand_keys(str_encode(input), distance, output, firstKeys, 0, outputLen);
 	for (int i = 0; i < outputLen; i++)
 		checkstr(str_decode(output[i]), expected[i]);
 })
@@ -26,8 +27,9 @@ TEST(test_generate_combination2, {
 	char expected[outputLen][3] = {
 		"", "D", "C", "CD"
 	};
+	unsigned int firstKeys[outputLen];
 
-	expand_keys(str_encode(input), distance, output, 0, outputLen);
+	expand_keys(str_encode(input), distance, output, firstKeys, 0, outputLen);
 	for (int i = 0; i < outputLen; i++)
 		checkstr(str_decode(output[i]), expected[i]);
 })
