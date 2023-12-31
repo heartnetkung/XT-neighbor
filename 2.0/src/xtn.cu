@@ -18,7 +18,7 @@ MemoryContext cal_memory_stream1(int distance) {
 	                 sizeof(int) + //int *combinationOffsets
 	                 deletionMultiplier * (sizeof(Int3) + sizeof(int)); //Int3* &deletionsOutput int* &indexOutput
 	ans.chunkSize = (ans.gpuSize) / (2 * multiplier);
-	ans.chunkCount = divide_ceil(ans.gpuSize, 2 * multiplier);
+	ans.chunkCount = (ans.gpuSize + 2 * multiplier - 1) / (2 * multiplier);
 	return ans;
 }
 
