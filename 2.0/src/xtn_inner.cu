@@ -188,9 +188,10 @@ int solve_bin_packing(int* histograms, int** &offsetOutput,
 }
 
 void stream_handler1(Chunk<Int3> input, Int3* &deletionsOutput, int* &indexOutput,
-                     int* &histogramOutput, int &outputLen, int distance, int* hBuffer, MemoryContext ctx) {
+                     std::vector<int*> &histogramOutput, int &outputLen, int distance, MemoryContext ctx) {
 	int *combinationOffsets;
 	unsigned int *histogramValue;
+	int* histogram;
 
 	// cal combinationOffsets
 	cudaMalloc(&combinationOffsets, sizeof(int)*input.len);	gpuerr();
@@ -209,16 +210,15 @@ void stream_handler1(Chunk<Int3> input, Int3* &deletionsOutput, int* &indexOutpu
 
 	// generate histogram
 	sort_key_values(deletionsOutput, indexOutput, outputLen); gpuerr();
-	cal_histogram(histogramValue, hBuffer, ctx.histogramSize, UINT_MIN, UINT_MAX, outputLen); gpuerr();
-	vector_add <<< NUM_BLOCK(ctx.histogramSize), NUM_THREADS>>>(
-	    histogramOutput, hBuffer, ctx.histogramSize); gpuerr();
+	cal_histogram(histogramValue, histogram, ctx.histogramSize, UINT_MIN, UINT_MAX, outputLen); gpuerr();
+	histogramOutput.push_back(histogram);
 
 	_cudaFree(combinationOffsets, histogramValue); gpuerr();
 }
 
-void stream_handler2(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, int* &histogramOutput,
-                     int distance, int seqLen, int* buffer, int* hBuffer, MemoryContext ctx) {
-	int* inputOffsets, *valueLengths, *indexes, *valueLengthsHost;
+void stream_handler2(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, std::vector<int*> &histogramOutput,
+                     int distance, int seqLen, int* buffer, MemoryContext ctx) {
+	int* inputOffsets, *valueLengths, *indexes, *valueLengthsHost, *histogram;
 
 	sort_key_values(keyInOut.ptr, valueInOut.ptr, keyInOut.len); gpuerr();
 	int offsetLen =
@@ -232,8 +232,8 @@ void stream_handler2(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, int* &histog
 	//histogram loop
 	while ((nChunk = solve_next_bin(valueLengthsHost, start, ctx.maxThroughput, offsetLen)) > 0) {
 		int chunkLen = gen_smaller_index(valueInOut.ptr, inputOffsetsPtr, valueLengthsPtr, indexes, nChunk);
-		cal_histogram(indexes, hBuffer, ctx.histogramSize , 0, seqLen, chunkLen); gpuerr();
-		vector_add <<< nBlock, NUM_THREADS>>>(histogramOutput, hBuffer, ctx.histogramSize); gpuerr();
+		cal_histogram(indexes, histogram, ctx.histogramSize , 0, seqLen, chunkLen); gpuerr();
+		histogramOutput.push_back(histogram);
 
 		start += nChunk;
 		inputOffsetsPtr += nChunk;
@@ -246,8 +246,8 @@ void stream_handler2(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, int* &histog
 }
 
 void stream_handler3(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, void callback(Int2*, int),
-                     int* &histogramOutput, int lowerbound, int seqLen, int* buffer, int* hBuffer, MemoryContext ctx) {
-	int* inputOffsets, *valueLengths, *valueLengthsHost, *lesserIndex;
+                     std::vector<int*> &histogramOutput, int lowerbound, int seqLen, int* buffer, MemoryContext ctx) {
+	int* inputOffsets, *valueLengths, *valueLengthsHost, *lesserIndex, *histogram;
 	Int2* pairOutput;
 
 	int offsetLen = cal_offsets_lowerbound(
@@ -257,15 +257,14 @@ void stream_handler3(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, void callbac
 	int start = 0, nChunk;
 	int* inputOffsetsPtr = inputOffsets, *valueLengthsPtr = valueLengths;
 	valueLengthsHost = device_to_host(valueLengths, offsetLen); gpuerr();
-	int nBlock = divide_ceil(ctx.histogramSize, NUM_THREADS);
 
 	// generate pairs
 	while ((nChunk = solve_next_bin(valueLengthsHost, start, ctx.maxThroughput, offsetLen)) > 0) {
 		int chunkLen = gen_pairs(valueInOut.ptr, inputOffsetsPtr, valueLengthsPtr,
 		                         pairOutput, lesserIndex, lowerbound, nChunk);
 		callback(pairOutput, chunkLen);
-		cal_histogram(lesserIndex, hBuffer, ctx.histogramSize , 0, seqLen, chunkLen); gpuerr();
-		vector_add <<< nBlock, NUM_THREADS>>>(histogramOutput, hBuffer, ctx.histogramSize); gpuerr();
+		cal_histogram(lesserIndex, histogram, ctx.histogramSize , 0, seqLen, chunkLen); gpuerr();
+		histogramOutput.push_back(histogram);
 
 		start += nChunk;
 		inputOffsetsPtr += nChunk;

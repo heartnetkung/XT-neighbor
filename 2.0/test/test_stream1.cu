@@ -8,14 +8,12 @@ TEST(Stream1, {
 
 	//allocate inputs
 	Int3 * seq1d, *seq1h;
-	int* histogramOutput, *hBuffer;
+	int* hBuffer;
+	std::vector<int*> histogramOutput;
 	MemoryContext ctx;
 
 	cudaMalloc(&seq1d, sizeof(Int3)*seqLen);
-	cudaMalloc(&histogramOutput, sizeof(int)*ctx.histogramSize);
-	cudaMalloc(&hBuffer, sizeof(int)*ctx.histogramSize);
 	cudaMallocHost(&seq1h, sizeof(Int3)*seqLen);
-	cudaMemset(histogramOutput, 0, sizeof(int)*ctx.histogramSize);
 
 	//make inputs
 	for (int i = 0; i < seqLen; i++)
@@ -29,7 +27,7 @@ TEST(Stream1, {
 	int* indexOutput;
 	Int3* deletionsOutput;
 	int outputLen;
-	stream_handler1(input, deletionsOutput, indexOutput, histogramOutput, outputLen, distance, hBuffer, ctx);
+	stream_handler1(input, deletionsOutput, indexOutput, histogramOutput, outputLen, distance, ctx);
 
 	//expactation
 	int expectedLen = 20;

@@ -27,20 +27,17 @@ TEST(Stream3, {
 	};
 	int indexInput[] = {0, 2, 1, 0, 0, 0, 1, 2, 2, 2, 0, 2, 1, 1, 1, 3, 3, 3, 3, 3};
 	Int3* pairInput = (Int3*)malloc(sizeof(Int3) * len);
-	int* deviceInt, *histogramOutput, *hBuffer;
-	int* histogramOutputHost = (int*)calloc(ctx.histogramSize, sizeof(int));
+	int* deviceInt;
+	std::vector<int*> histogramOutput;
 
 	for (int i = 0; i < len; i++)
 		pairInput[i] = str_encode(pairCharInput[i]);
 	cudaMalloc(&deviceInt, sizeof(int));
 	Chunk<Int3> keyIn = {.ptr = host_to_device(pairInput, len), .len = len};
 	Chunk<int> valueIn = {.ptr = host_to_device(indexInput, len), .len = len};
-	cudaMalloc(&histogramOutput, sizeof(int)*ctx.histogramSize);
-	cudaMemset(histogramOutput, 0, sizeof(int)*ctx.histogramSize);
-	cudaMalloc(&hBuffer, sizeof(int)*ctx.histogramSize);
 
 	stream_handler3(keyIn, valueIn, callback,
-	                histogramOutput, lowerbound, seqLen, deviceInt, hBuffer, ctx);
+	                histogramOutput, lowerbound, seqLen, deviceInt, ctx);
 
 	int expectedLen = 5;
 	int expectedHistogram[] = {17, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -49,7 +46,7 @@ TEST(Stream3, {
 
 	Int3* keyOut = device_to_host(keyIn.ptr, keyIn.len);
 	int* valueOut = device_to_host(valueIn.ptr, valueIn.len);
-	int* histogramOutput2 = device_to_host(histogramOutput, ctx.histogramSize);
+	int* histogramOutput2 = device_to_host(histogramOutput[0], ctx.histogramSize);
 
 	check(keyIn.len == expectedLen);
 	check(valueIn.len == expectedLen);

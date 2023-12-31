@@ -213,11 +213,3 @@ void make_row_index(int* output, int n, int nRepeat) {
 	for (int i = tid * nRepeat; i < tid * nRepeat + nRepeat; i++)
 		output[i] = tid;
 }
-
-__global__
-void vector_add(int* dest, int* src, int n) {
-	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
-	if (tid >= n)
-		return;
-	dest[tid] += src[tid];
-}
