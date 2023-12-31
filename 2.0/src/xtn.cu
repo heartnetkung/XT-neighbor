@@ -101,14 +101,14 @@ int* concat_clear_histograms(std::vector<int*> histograms, MemoryContext ctx) {
 	for (int* histogram : histograms) {
 		cudaMemcpy(ansPtr, histogram, memsize, cudaMemcpyDeviceToDevice);
 		cudaFree(histogram);
-		ans += ctx.histogramSize;
+		ansPtr += ctx.histogramSize;
 	}
 	histograms.clear();
 	return ans;
 }
 
 template <typename T1, typename T2>
-int** set_d2_offsets(std::vector<int*> histograms, D2Stream<T1> s1, D2Stream<T2> s2,
+int** set_d2_offsets(std::vector<int*> histograms, D2Stream<T1> *s1, D2Stream<T2> *s2,
                      int* buffer, int &offsetLen, MemoryContext ctx) {
 	int** offsets;
 	int* fullHistograms;
