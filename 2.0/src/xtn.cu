@@ -1,156 +1,233 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 #include "xtn_inner.cu"
 
-const size_t MAX_ARRAY_SIZE = INT_MAX >> 3;
+D2Stream<Int2> *b3 = NULL; /*global variable for callback*/
 
-size_t cal_stream1_chunk_size(int distance) {
-	size_t ans = MAX_ARRAY_SIZE;
-	for (int i = 0; i < distance; i++)
-		ans /= MAX_INPUT_LENGTH;
+//=====================================
+// Private Functions
+//=====================================
+
+MemoryContext cal_memory_stream1(int distance) {
+	MemoryContext ans;
+	ans.gpuSize = get_gpu_memory();
+
+	int deletionMultiplier = (distance == 1) ? (18 + 1) : (153 + 18 + 1);
+	int multiplier = sizeof(int) + //input
+	                 sizeof(int) + //int *combinationOffsets
+	                 deletionMultiplier * (sizeof(Int3) + sizeof(int)); //Int3* &deletionsOutput int* &indexOutput
+	ans.chunkSize = (ans.gpuSize) / (2 * multiplier);
+	ans.chunkCount = divide_ceil(ans.gpuSize, 2 * multiplier);
 	return ans;
 }
 
-// size_t cal_stream3_chunk_size() {
+MemoryContext cal_memory_stream2() {
+	MemoryContext ans;
+	ans.gpuSize = get_gpu_memory();
+	ans.maxThroughput;//TODO
+	ans.maxThroughputExponent;//TODO
+	return ans;
+}
 
-// }
+MemoryContext cal_memory_stream3() {
+	MemoryContext ans;
+	ans.gpuSize = get_gpu_memory();
+	ans.maxThroughput;//TODO
+	return ans;
+}
 
+MemoryContext cal_memory_stream4() {
+	MemoryContext ans;
+	ans.gpuSize = get_gpu_memory();
+
+	// memory usage is from
+	// Int2* uniquePairs; char* uniqueDistances, *flags;
+	int multiplier = sizeof(Int2) + //input
+	                 sizeof(Int2) + //Int2* uniquePairs
+	                 2 * sizeof(char) + //char* uniqueDistances, *flags
+	                 sizeof(Int2) + //Int2* &pairOutput
+	                 sizeof(char);// char* &distanceOutput
+	ans.chunkSize = (ans.gpuSize) / (2 * multiplier);
+	ans.chunkCount = divide_ceil(ans.gpuSize, 2 * multiplier);
+	ans.maxThroughputExponent;//TODO
+	return ans;
+}
+
+void cal_lowerbounds(int* &lowerbounds, int &lbLen) {
+	lowerbounds = {999999}; //TODO
+	lbLen = 1;
+}
+
+void write_b3(Int2* pairOutput, int pairLen) {
+	b3->write(pairOutput, pairLen);
+}
+
+int* concat_clear_histograms(std::vector<int*> histograms, MemoryContext ctx) {
+	int* ans, *ansPtr;
+	int len = histograms.size();
+	int memsize = sizeof(int*) * ctx.histogramSize;
+	cudaMalloc(&ans, sizeof(int)*len * ctx.histogramSize);
+	ansPtr = ans;
+
+	for (int* histogram : histograms) {
+		cudaMemcpy(ansPtr, histogram, memsize, cudaMemcpyDeviceToDevice);
+		cudaFree(histogram);
+		ans += ctx.histogramSize;
+	}
+	histograms.clear();
+	return ans;
+}
+
+template <typename T1, typename T2>
+int** set_d2_offsets(std::vector<int*> histograms, D2Stream<T1> s1, D2Stream<T2> s2,
+                     int* buffer, MemoryContext ctx) {
+	int** offsets;
+	int* fullHistograms;
+	int len, offsetLen;
+
+	len = histograms.size();
+	fullHistograms = concat_clear_histograms(histograms, ctx);
+	offsetLen = solve_bin_packing(fullHistograms, offsets, len, ctx.histogramSize, buffer, ctx);
+	s1->set_offsets(offsets, offsetLen);
+	if (s2 != NULL)
+		s2->set_offsets(offsets, offsetLen);
+
+	cudaFree(fullHistograms);
+	return offsets;
+}
+
+//=====================================
+// Public Functions
+//=====================================
 
 void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
+
+	int* deviceInt, *lowerbounds;
+	Int3* seq1Device;
+	MemoryContext ctx0;
+	std::vector<int*> histograms;
+	int** offsets;
+	int lowerboundsLen;
 	int distance = args.distance, verbose = args.verbose, seq1Len = args.seq1Len;
-	int* deviceInt;
-	cudaMalloc(&deviceInt, sizeof(int));
+	printf("1\n");
+
+	GPUInputStream<Int3> *b0;
+	D2Stream<Int3> *b1key;
+	D2Stream<int> *b1value;
+	RAMInputStream<Int3> *b2keyInput;
+	RAMInputStream<int> *b2valueInput;
+	RAMOutputStream<Int3> *b2keyOutput;
+	RAMOutputStream<int> *b2valueOutput;
+	Chunk<Int3> b0Chunk, b1keyChunk, b2keyChunk;
+	Chunk<Int2> b3Chunk;
+	Chunk<int> b1valueChunk, b2valueChunk;
+	Int3* b1keyOut;
+	int* b1valueOut;
+	printf("2\n");
+
+	cudaMalloc(&deviceInt, sizeof(int)); gpuerr();
+	seq1Device = host_to_device(seq1, seq1Len); gpuerr();
+	printf("3\n");
 
 	//=====================================
-	// step 1: transfer input to GPU
+	// stream 1: generate deletions
 	//=====================================
-	Int3* seq1Device = host_to_device(seq1, seq1Len);
-	size_t seq1ChunkSize = cal_stream1_chunk_size(distance);
-	size_t seq1ChunkCount = divide_ceil(seq1Len, seq1ChunkSize);
-	GPUInputStream<Int3> seq1Stream(seq1Device, seq1Len, seq1ChunkSize);
 
-	print_tp(verbose, "1", seq1Stream.get_throughput());
+	MemoryContext ctx1 = cal_memory_stream1(distance);
+	int outputLen;
 
-	//=====================================
-	// step 2: generate deletion combinations
-	//=====================================
-	D2Stream<Int3> keyD2Stream(seq1ChunkCount);
-	D2Stream<int> valueD2Stream(seq1ChunkCount);
-	int* histogramOutput;
-
-	Chunk<Int3> seq1Chunk, combKeyChunk;
-	Chunk<int> combValueChunk;
-	while ((seq1Chunk = seq1Stream.read()).not_null()) {
-		//perform
-		stream_handler1(seq1Chunk, combKeyChunk, combValueChunk, histogramOutput, distance);
-
-		// gen histogram
-
-		//simple print
-		print_int3_arr(combKeyChunk.ptr, combKeyChunk.len);
-		print_int_arr(combValueChunk.ptr, combValueChunk.len);
-
-		//flush
-		keyD2Stream.write(combKeyChunk.ptr, combKeyChunk.len);
-		valueD2Stream.write(combValueChunk.ptr, combValueChunk.len);
-		_cudaFree(combKeyChunk.ptr, combValueChunk.ptr);
-	}
+	b0 = new GPUInputStream<Int3>(seq1Device, seq1Len, ctx1.chunkSize);
+	b1key = new D2Stream<Int3>(ctx1.chunkCount);
+	b1value = new D2Stream<int>(ctx1.chunkCount);
 	printf("4\n");
 
-	// sum histogram
-	size_t** combOffset = (size_t**)malloc( sizeof(size_t*)); //TODO
-	combOffset[0] = (size_t*)malloc(sizeof(size_t));
-	combOffset[0][0] =  combKeyChunk.len;
-	size_t combOffsetLen = 1; //TODO
-	keyD2Stream.set_offsets(combOffset, combOffsetLen);
-	valueD2Stream.set_offsets(combOffset, combOffsetLen);
-	print_tp(verbose, "2", keyD2Stream.get_throughput());
+	while ((b0Chunk = b0->read()).not_null()) {
+		stream_handler1(b0Chunk, b1keyOut, b1valueOut, histograms,
+		                outputLen, distance, ctx1);
+		b1key->write(b1keyOut, outputLen);
+		b1value->write(b1valueOut, outputLen);
+		_cudaFree(b1keyOut, b1valueOut); gpuerr();
+	}
+
 	printf("5\n");
 
-	//=====================================
-	// step 3: cal histograms and sort
-	//=====================================
-	size_t len = 1;
-	size_t* len2 = (size_t*)malloc(len * sizeof(size_t));
-	len2[0] = 9999;
-	Int3** keyOutArray = (Int3**)malloc(len * sizeof(Int3*));
-	int** valueOutArray = (int**)malloc(len * sizeof(int*));
-	keyOutArray[0] = (Int3*)malloc(len2[0] * sizeof(Int3));
-	valueOutArray[0] = (int*)malloc(len2[0] * sizeof(int));
-	printf("6\n");
 
-	RAMOutputStream<Int3> *keyOutStream = new RAMOutputStream<Int3>(keyOutArray, len, len2);
-	RAMOutputStream<int> *valueOutStream = new RAMOutputStream<int>(valueOutArray, len, len2);
-	int lowerbounds[] = {INT_MAX};
-	int lowerboundLen = 1;
-	printf("7\n");
+	// //=====================================
+	// // stream 2: group key values
+	// //=====================================
 
-	while ( (combKeyChunk = keyD2Stream.read()).not_null() ) {
-		combValueChunk = valueD2Stream.read();
-		sort_key_values(combKeyChunk.ptr, combValueChunk.ptr, combKeyChunk.len);
+	// MemoryContext ctx2 = cal_memory_stream2();
 
-		print_int3_arr(combKeyChunk.ptr, combKeyChunk.len);
-		print_int_arr(combValueChunk.ptr, combValueChunk.len);
+	// offsets = set_d2_offsets(histograms, b1key, b1value, deviceInt, ctx2);
+	// b2keyOutput = new RAMOutputStream<Int3>();//(input, len, len2);
+	// b2valueOutput = new RAMOutputStream<int>();//(input, len, len2);
 
-		keyOutStream->write(combKeyChunk.ptr, combKeyChunk.len);
-		valueOutStream->write(combValueChunk.ptr, combValueChunk.len);
-	}
-	printf("8\n");
+	// while ((b1keyChunk = b1key->read()).not_null()) {
+	// 	b1valueChunk = b1value->read();
+	// 	stream_handler2(b1keyChunk, b1valueChunk, histograms,
+	// 	                distance, seq1Len, deviceInt, ctx2);
+	// 	b2keyOutput->write(b1keyChunk, b1keyChunk.len);
+	// 	b2valueOutput->write(b1valueChunk, b1valueChunk.len);
+	// 	_cudaFree(b1keyOut, b1valueOut); gpuerr();
+	// }
 
-	keyD2Stream.deconstruct();
-	valueD2Stream.deconstruct();
-	print_tp(verbose, "3", keyOutStream->get_throughput());
+	// b1key->deconstruct();
+	// b1value->deconstruct();
+	// _cudaFreeHost2D(offsets);
 
-	//=====================================
-	// step 4: generate pairs and postprocess
-	//=====================================
-	// declare input
-	RAMInputStream<Int3> *keyInStream;
-	RAMInputStream<int> *valueInStream;
-	printf("9\n");
+	// //=====================================
+	// // loop: lower bound
+	// //=====================================
 
-	size_t maxReadableSize = INT_MAX >> 4;
-	Int3* keyInBuffer;
-	int* valueInBuffer;
-	cudaMalloc(&keyInBuffer, sizeof(Int3)*maxReadableSize);
-	cudaMalloc(&valueInBuffer, sizeof(int)*maxReadableSize);
-	printf("10\n");
+	// cal_lowerbounds(lowerbounds, lowerboundsLen);
+	// for (int i = 0; i < lowerboundsLen; i++) {
+	// 	int lowerbound = lowerbounds[i];
 
-	for (int i = 0; i < lowerboundLen; i++) {
-		int lowerbound = lowerbounds[i];
-		size_t new_len = keyOutStream->get_new_len1();
-		size_t* new_len2 = keyOutStream->get_new_len2();
-		keyInStream = new RAMInputStream<Int3>(keyOutArray , new_len, new_len2, maxReadableSize, keyInBuffer);
-		valueInStream = new RAMInputStream<int>(valueOutArray , new_len, new_len2, maxReadableSize, valueInBuffer);
-		keyOutStream = new RAMOutputStream<Int3>(keyOutArray, new_len, new_len2);
-		valueOutStream = new RAMOutputStream<int>(valueOutArray, new_len, new_len2);
-		printf("11\n");
+	// 	//=====================================
+	// 	// stream 3: generate pairs
+	// 	//=====================================
 
-		Chunk<Int3> keyInChunk, keyOutChunk;
-		Chunk<int> valueInChunk, valueOutChunk;
-		XTNOutput finalOutput;
-		while ((keyInChunk = keyInStream->read()).not_null()) {
-			valueInChunk = valueInStream->read();
-			printf("12\n");
+	// 	MemoryContext ctx3 = cal_memory_stream3();
 
-			stream_handler3(keyInChunk, valueInChunk, keyOutChunk, valueOutChunk,
-			                finalOutput, seq1Device, seq1Len, distance, lowerbound, deviceInt);
-			printf("13\n");
+	// 	b3 = new D2Stream<Int2>(int len1); //TODO
+	// 	b2keyInput = new RAMInputStream<Int3>();//input , len, len2, maxReadableSize, deviceBuffer
+	// 	b2valueInput = new RAMInputStream<int>();//input , len, len2, maxReadableSize, deviceBuffer
+	// 	b2keyOutput = new RAMOutputStream<Int3>();//(input, len, len2);
+	// 	b2valueOutput = new RAMOutputStream<int>();//(input, len, len2);
 
-			print_int3_arr(keyOutChunk.ptr, keyOutChunk.len);
-			print_int_arr(valueOutChunk.ptr, valueOutChunk.len);
+	// 	while ((b2keyChunk = b2keyInput->read()).not_null()) {
+	// 		b2valueChunk = b2valueInput->read();
+	// 		stream_handler3(b2keyChunk, b2valueChunk, write_b3, histograms,
+	// 		                lowerbound, seq1Len, deviceInt, ctx3);
+	// 		b2keyOutput->write(b2keyChunk, b2keyChunk.len);
+	// 		b2valueOutput->write(b2valueChunk, b2valueChunk.len);
+	// 	}
 
-			keyOutStream->write(keyOutChunk.ptr, keyOutChunk.len);
-			valueOutStream->write(valueOutChunk.ptr, valueOutChunk.len);
+	// 	fullHistograms = concat_clear_histograms(histograms, ctx0);
+	// 	cudaFree(fullHistograms);
 
-			callback(finalOutput);
-			_cudaFreeHost(finalOutput.indexPairs, finalOutput.pairwiseDistances);
-			printf("14\n");
-		}
-	}
+	// 	//=====================================
+	// 	// stream 4: postprocessing
+	// 	//=====================================
 
-	//=====================================
-	// step 5: deallocate
-	//=====================================
+	// 	MemoryContext ctx4 = cal_memory_stream4();
 
+	// 	offsets = set_d2_offsets(histograms, b3, NULL, deviceInt, ctx4);
+	// 	XTNOutput finalOutput;
+
+	// 	while ((b3Chunk = b3->read()).not_null()) {
+	// 		stream_handler4(b3Chunk, finalOutput, seq1Device, seq1Len, distance, deviceInt);
+	// 		callback(finalOutput);
+	// 	}
+
+	// 	b3->deconstruct();
+	// 	_cudaFreeHost2D(offsets);
+	// }
+
+	// //=====================================
+	// // boilerplate: deallocalte
+	// //=====================================
+	// cudaFreeHost(lowerbounds); gpuerr();
+	// _cudaFree(deviceInt, seq1Device); gpuerr();
 }
