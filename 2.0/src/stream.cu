@@ -162,8 +162,10 @@ public:
 		check_input_write(newData, n);
 		if (_index >= _len1)
 			print_err("RAMOutputStream: writing more than allocated");
-		if (n > 0)
+		if (n > 0) {
+			cudaMallocHost(&_data[_index], sizeof(T)*n); gpuerr();
 			cudaMemcpy(_data[_index], newData, sizeof(T)*n, cudaMemcpyDeviceToHost); gpuerr();
+		}
 		_len2[_index] = n;
 		_index++;
 	}
