@@ -34,8 +34,8 @@ struct MemoryContext {
 	int chunkSize = 0;
 #ifdef TEST_ENV
 	int histogramSize = 16;
-	int maxThroughput = 0;
-	int maxThroughputExponent = 0;
+	int maxThroughput = 128;
+	int maxThroughputExponent = 7;
 #else
 	int histogramSize = 4096;
 	int maxThroughput = 1024 * 1024;
