@@ -110,7 +110,7 @@ public:
 			if (newLen == 0)
 				continue;
 
-			cudaMemcpy(currentPtr, _data[_index], sizeof(T)*newLen, cudaMemcpyHostToDevice);
+			cudaMemcpy(currentPtr, _data[_index], sizeof(T)*newLen, cudaMemcpyHostToDevice); gpuerr();
 			currentPtr += newLen;
 			ans.len += newLen;
 			ans.nRead++;
@@ -163,7 +163,7 @@ public:
 		if (_index >= _len1)
 			print_err("RAMOutputStream: writing more than allocated");
 		if (n > 0)
-			cudaMemcpy(_data[_index], newData, sizeof(T)*n, cudaMemcpyDeviceToHost);
+			cudaMemcpy(_data[_index], newData, sizeof(T)*n, cudaMemcpyDeviceToHost); gpuerr();
 		_len2[_index] = n;
 		_index++;
 	}
@@ -244,7 +244,7 @@ public:
 			if (newLength > maxLength)
 				maxLength = newLength;
 		}
-		cudaMalloc(&_deviceBuffer, sizeof(T)*maxLength);
+		cudaMalloc(&_deviceBuffer, sizeof(T)*maxLength); gpuerr();
 	}
 
 	Chunk<T> read() {
@@ -263,7 +263,7 @@ public:
 			if (chunkLen <= 0)
 				continue;
 
-			cudaMemcpy(currentPtr, _data[i] + start, sizeof(T)*chunkLen, cudaMemcpyHostToDevice);
+			cudaMemcpy(currentPtr, _data[i] + start, sizeof(T)*chunkLen, cudaMemcpyHostToDevice); gpuerr();
 			currentPtr += chunkLen;
 			ans.len += chunkLen;
 			ans.nRead++;
@@ -275,10 +275,10 @@ public:
 
 	void deconstruct() {
 		for (T* rowData : _data)
-			cudaFreeHost(rowData);
+			cudaFreeHost(rowData); gpuerr();
 		_data.clear();
 		_len2.clear();
-		cudaFree(_deviceBuffer);
+		cudaFree(_deviceBuffer); gpuerr();
 		_offsets = NULL; /*do not free offset as it can be shared across buffers*/
 	}
 
