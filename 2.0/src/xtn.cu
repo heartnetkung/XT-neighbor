@@ -94,13 +94,13 @@ void write_b3(Int2* pairOutput, int pairLen) {
 int* concat_clear_histograms(std::vector<int*> histograms, MemoryContext ctx) {
 	int* ans, *ansPtr;
 	int len = histograms.size();
-	int memsize = sizeof(int*) * ctx.histogramSize;
-	cudaMalloc(&ans, sizeof(int)*len * ctx.histogramSize);
+	int memsize = sizeof(int) * ctx.histogramSize;
+	cudaMalloc(&ans, sizeof(int)*len * ctx.histogramSize); gpuerr();
 	ansPtr = ans;
 
 	for (int* histogram : histograms) {
-		cudaMemcpy(ansPtr, histogram, memsize, cudaMemcpyDeviceToDevice);
-		cudaFree(histogram);
+		cudaMemcpy(ansPtr, histogram, memsize, cudaMemcpyDeviceToDevice); gpuerr();
+		cudaFree(histogram); gpuerr();
 		ansPtr += ctx.histogramSize;
 	}
 	histograms.clear();
@@ -121,7 +121,7 @@ int** set_d2_offsets(std::vector<int*> histograms, D2Stream<T1> *s1, D2Stream<T2
 	if (s2 != NULL)
 		s2->set_offsets(offsets, len, offsetLen);
 
-	cudaFree(fullHistograms);
+	cudaFree(fullHistograms); gpuerr();
 	return offsets;
 }
 
