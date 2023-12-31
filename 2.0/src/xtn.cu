@@ -191,27 +191,35 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 	MemoryContext ctx2 = cal_memory_stream2();
 	int chunkCount, offsetLen;
 
+	printf("6\n");
+
 	offsetLen = histograms.size();
 	offsets = set_d2_offsets(histograms, b1key, b1value, deviceInt, chunkCount, ctx2);
+	printf("7\n");
 	cudaMalloc(&keyStorage, sizeof(Int3*)*chunkCount);
 	cudaMalloc(&valueStorage, sizeof(int*)*chunkCount);
 	cudaMalloc(&keyStorageLen, sizeof(int)*chunkCount);
 	cudaMalloc(&valueStorageLen, sizeof(int)*chunkCount);
 	b2keyOutput = new RAMOutputStream<Int3>(keyStorage, chunkCount, keyStorageLen);
 	b2valueOutput = new RAMOutputStream<int>(valueStorage, chunkCount, valueStorageLen);
+	printf("8\n");
 
 	while ((b1keyChunk = b1key->read()).not_null()) {
 		b1valueChunk = b1value->read();
+		printf("9\n");
 		stream_handler2(b1keyChunk, b1valueChunk, histograms,
 		                distance, seq1Len, deviceInt, ctx2);
+		printf("10\n");
 		b2keyOutput->write(b1keyChunk.ptr, b1keyChunk.len);
 		b2valueOutput->write(b1valueChunk.ptr, b1valueChunk.len);
 		_cudaFree(b1keyOut, b1valueOut); gpuerr();
 	}
 
+	printf("11\n");
 	b1key->deconstruct();
 	b1value->deconstruct();
 	_cudaFreeHost2D(offsets, offsetLen);
+	printf("12\n");
 
 	// //=====================================
 	// // loop: lower bound
