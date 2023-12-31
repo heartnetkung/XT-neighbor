@@ -25,15 +25,15 @@ MemoryContext cal_memory_stream1(int distance) {
 MemoryContext cal_memory_stream2() {
 	MemoryContext ans;
 	ans.gpuSize = get_gpu_memory();
-	ans.maxThroughput;//TODO
-	ans.maxThroughputExponent;//TODO
+	// ans.maxThroughput;//TODO
+	// ans.maxThroughputExponent;//TODO
 	return ans;
 }
 
 MemoryContext cal_memory_stream3() {
 	MemoryContext ans;
 	ans.gpuSize = get_gpu_memory();
-	ans.maxThroughput;//TODO
+	// ans.maxThroughput;//TODO
 	return ans;
 }
 
@@ -50,13 +50,14 @@ MemoryContext cal_memory_stream4() {
 	                 sizeof(char);// char* &distanceOutput
 	ans.chunkSize = (ans.gpuSize) / (2 * multiplier);
 	ans.chunkCount = divide_ceil(ans.gpuSize, 2 * multiplier);
-	ans.maxThroughputExponent;//TODO
+	// ans.maxThroughputExponent;//TODO
 	return ans;
 }
 
 void cal_lowerbounds(int* &lowerbounds, int &lbLen) {
-	lowerbounds = {999999}; //TODO
 	lbLen = 1;
+	cudaMallocHost(&lowerbounds, sizeof(int)*lbLen);
+	lowerbounds[0] = 999999
 }
 
 void write_b3(Int2* pairOutput, int pairLen) {
