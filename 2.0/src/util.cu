@@ -70,6 +70,12 @@ void _cudaFreeHost(void* a, void* b) {
 	cudaFreeHost(b);
 }
 
+void _cudaFreeHost2D(void* a, int n) {
+	for (int i = 0; i < n; i++)
+		cudaFreeHost(a[i]);
+	cudaFreeHost(a);
+}
+
 void _free(void* a, void* b) {
 	free(a);
 	free(b);
@@ -169,4 +175,16 @@ void print_main_memory() {
 	struct sysinfo si;
 	sysinfo (&si);
 	printf("Available RAM: %'lu Total RAM: %'lu\n", si.freeram, si.totalram);
+}
+
+size_t get_gpu_memory() {
+	size_t mf, ma;
+	cudaMemGetInfo(&mf, &ma);
+	return mf;
+}
+
+size_t get_main_memory() {
+	struct sysinfo si;
+	sysinfo (&si);
+	return si.freeram;
 }
