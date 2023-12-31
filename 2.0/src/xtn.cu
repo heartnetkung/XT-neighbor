@@ -109,7 +109,7 @@ int* concat_clear_histograms(std::vector<int*> histograms, MemoryContext ctx) {
 
 template <typename T1, typename T2>
 int** set_d2_offsets(std::vector<int*> histograms, D2Stream<T1> s1, D2Stream<T2> s2,
-                     int* buffer, int* &offsetLen, MemoryContext ctx) {
+                     int* buffer, int &offsetLen, MemoryContext ctx) {
 	int** offsets;
 	int* fullHistograms;
 	int len;
@@ -165,7 +165,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 	// stream 1: generate deletions
 	//=====================================
 
-	MemoryContext ctx1 = cal_memory_stream1(distance);
+	MemoryContext ctx1 = cal_memory_stream1(seq1Len, distance);
 	int outputLen;
 
 	b0 = new GPUInputStream<Int3>(seq1Device, seq1Len, ctx1.chunkSize);
@@ -189,8 +189,9 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 	//=====================================
 
 	MemoryContext ctx2 = cal_memory_stream2();
-	int chunkCount;
+	int chunkCount, offsetLen;
 
+	offsetLen = histograms.size();
 	offsets = set_d2_offsets(histograms, b1key, b1value, deviceInt, chunkCount, ctx2);
 	cudaMalloc(&keyStorage, sizeof(Int3*)*chunkCount);
 	cudaMalloc(&valueStorage, sizeof(int*)*chunkCount);
@@ -203,14 +204,14 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 		b1valueChunk = b1value->read();
 		stream_handler2(b1keyChunk, b1valueChunk, histograms,
 		                distance, seq1Len, deviceInt, ctx2);
-		b2keyOutput->write(b1keyChunk, b1keyChunk.len);
-		b2valueOutput->write(b1valueChunk, b1valueChunk.len);
+		b2keyOutput->write(b1keyChunk.ptr, b1keyChunk.len);
+		b2valueOutput->write(b1valueChunk.ptr, b1valueChunk.len);
 		_cudaFree(b1keyOut, b1valueOut); gpuerr();
 	}
 
 	b1key->deconstruct();
 	b1value->deconstruct();
-	_cudaFreeHost2D(offsets);
+	_cudaFreeHost2D(offsets, offsetLen);
 
 	// //=====================================
 	// // loop: lower bound
