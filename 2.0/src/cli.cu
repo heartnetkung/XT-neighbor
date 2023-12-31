@@ -3,6 +3,7 @@
 #include "xtn.cu"
 
 FILE* outputFile = NULL; /*global variable for callback*/
+size_t totalOutputLen = 0; /*global variable for callback*/
 const char VERSION[] = "2.0.0\n";
 const char HELP_TEXT[] = "xt_neighbor\n"
                          "\t description: perform xt_neighbor algorithm for near neighbor search of T cell receptor's CDR3 sequences\n"
@@ -92,7 +93,9 @@ int parse_file(char* path, Int3* result, int len) {
 	return SUCCESS;
 }
 
-void null_handler(XTNOutput output) {}
+void null_handler(XTNOutput output) {
+	totalOutputLen += output.len;
+}
 
 void file_handler(XTNOutput output) {
 	Int2 current;
@@ -100,6 +103,7 @@ void file_handler(XTNOutput output) {
 		current = output.indexPairs[i];
 		fprintf(outputFile, "%d %d %d\n", current.x, current.y , output.pairwiseDistances[i]);
 	}
+	totalOutputLen += output.len;
 }
 
 int main(int argc, char **argv) {
@@ -135,6 +139,8 @@ int main(int argc, char **argv) {
 	} else {
 		xtn_perform(args, seq1, null_handler);
 	}
+	if (args.verbose)
+		printf("total output length: %'lu\n", totalOutputLen);
 
 	// 4. clean up
 	cudaFreeHost(seq1);
