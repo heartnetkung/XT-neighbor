@@ -70,7 +70,7 @@ void _cudaFreeHost(void* a, void* b) {
 	cudaFreeHost(b);
 }
 
-void _cudaFreeHost2D(void* a, int n) {
+void _cudaFreeHost2D(void** a, int n) {
 	for (int i = 0; i < n; i++)
 		cudaFreeHost(a[i]);
 	cudaFreeHost(a);
