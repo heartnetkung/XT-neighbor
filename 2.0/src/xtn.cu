@@ -57,7 +57,7 @@ MemoryContext cal_memory_stream4() {
 void cal_lowerbounds(int* &lowerbounds, int &lbLen) {
 	lbLen = 1;
 	cudaMallocHost(&lowerbounds, sizeof(int)*lbLen);
-	lowerbounds[0] = 999999
+	lowerbounds[0] = 999999;
 }
 
 void write_b3(Int2* pairOutput, int pairLen) {
