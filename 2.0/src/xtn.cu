@@ -196,10 +196,10 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 	offsetLen = histograms.size();
 	offsets = set_d2_offsets(histograms, b1key, b1value, deviceInt, chunkCount, ctx2);
 	printf("7\n");
-	cudaMalloc(&keyStorage, sizeof(Int3*)*chunkCount);
-	cudaMalloc(&valueStorage, sizeof(int*)*chunkCount);
-	cudaMalloc(&keyStorageLen, sizeof(int)*chunkCount);
-	cudaMalloc(&valueStorageLen, sizeof(int)*chunkCount);
+	cudaMallocHost(&keyStorage, sizeof(Int3*)*chunkCount);
+	cudaMallocHost(&valueStorage, sizeof(int*)*chunkCount);
+	cudaMallocHost(&keyStorageLen, sizeof(int)*chunkCount);
+	cudaMallocHost(&valueStorageLen, sizeof(int)*chunkCount);
 	b2keyOutput = new RAMOutputStream<Int3>(keyStorage, chunkCount, keyStorageLen);
 	b2valueOutput = new RAMOutputStream<int>(valueStorage, chunkCount, valueStorageLen);
 	printf("8\n");
