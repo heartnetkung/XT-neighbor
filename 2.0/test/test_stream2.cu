@@ -12,16 +12,19 @@ TEST(Stream2, {
 	std::vector<int*> histogramOutput;
 	MemoryContext ctx;
 	int* histogramOutputHost = (int*)calloc(ctx.histogramSize, sizeof(int));
+	printf("1\n");
 
 	cudaMalloc(&deviceInt, sizeof(int));
 	Int3* keysInt3 = (Int3*)malloc(sizeof(Int3) * len);
 	for (int i = 0; i < len; i++)
 		keysInt3[i] = str_encode(keys[i]);
+	printf("2\n");
 
 	Chunk<Int3> keyInOut = {.ptr = host_to_device(keysInt3, len), .len = len};
 	Chunk<int> valueInOut = {.ptr = host_to_device(values, len), .len = len};
 	stream_handler2(keyInOut, valueInOut, histogramOutput,
 	                distance, seqLen, deviceInt, ctx);
+	printf("3\n");
 
 	int expectedLen = 20;
 	char expectedPairs[][5] = {
@@ -30,16 +33,20 @@ TEST(Stream2, {
 	};
 	int expectedIndex[] = {0, 2, 1, 0, 0, 0, 1, 2, 2, 2, 0, 2, 1, 1, 1, 3, 3, 3, 3, 3};
 	int expectedHistogram[] = {17, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0, 0, 1, 0, 0, 0};
+	printf("4\n");
 	Int3* keyOut = device_to_host(keyInOut.ptr, keyInOut.len);
 	int* valueOut = device_to_host(valueInOut.ptr, valueInOut.len);
 	int* histogramOut = device_to_host(histogramOutput[0], ctx.histogramSize);
+	printf("5\n");
 
 	check(keyInOut.len == expectedLen);
 	check(valueInOut.len == expectedLen);
+	printf("6\n");
 	for (int i = 0; i < expectedLen; i++) {
 		checkstr(expectedPairs[i], str_decode(keyOut[i]));
 		check(expectedIndex[i] == valueOut[i]);
 	}
+	printf("7\n");
 	for (int i = 0; i < ctx.histogramSize; i++)
 		check(expectedHistogram[i] == histogramOut[i]);
 })
