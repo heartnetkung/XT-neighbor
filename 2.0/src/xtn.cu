@@ -90,9 +90,9 @@ int** set_d2_offsets(std::vector<int*> histograms, D2Stream<T1> s1, D2Stream<T2>
 	len = histograms.size();
 	fullHistograms = concat_clear_histograms(histograms, ctx);
 	offsetLen = solve_bin_packing(fullHistograms, offsets, len, ctx.histogramSize, buffer, ctx);
-	s1->set_offsets(offsets, offsetLen);
+	s1->set_offsets(offsets, len, offsetLen);
 	if (s2 != NULL)
-		s2->set_offsets(offsets, offsetLen);
+		s2->set_offsets(offsets, len, offsetLen);
 
 	cudaFree(fullHistograms);
 	return offsets;
@@ -140,8 +140,8 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 	printf("%lu %d %d\n", ctx1.gpuSize, ctx1.chunkCount, ctx1.chunkSize);
 
 	b0 = new GPUInputStream<Int3>(seq1Device, seq1Len, ctx1.chunkSize);
-	b1key = new D2Stream<Int3>(ctx1.chunkCount);
-	b1value = new D2Stream<int>(ctx1.chunkCount);
+	b1key = new D2Stream<Int3>();
+	b1value = new D2Stream<int>();
 	printf("4\n");
 
 	while ((b0Chunk = b0->read()).not_null()) {
@@ -192,7 +192,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 
 	// 	MemoryContext ctx3 = cal_memory_stream3();
 
-	// 	b3 = new D2Stream<Int2>(int len1); //TODO
+	// 	b3 = new D2Stream<Int2>(); //TODO
 	// 	b2keyInput = new RAMInputStream<Int3>();//input , len, len2, maxReadableSize, deviceBuffer
 	// 	b2valueInput = new RAMInputStream<int>();//input , len, len2, maxReadableSize, deviceBuffer
 	// 	b2keyOutput = new RAMOutputStream<Int3>();//(input, len, len2);

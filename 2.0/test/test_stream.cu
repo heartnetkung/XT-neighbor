@@ -134,12 +134,13 @@ TEST(D2Stream, {
 	offsets[1][0] = 3; offsets[1][1] = 3; offsets[1][2] = 7;
 	offsets[2][0] = 1; offsets[2][1] = 3; offsets[2][2] = 6;
 	offsets[3][0] = 1; offsets[3][1] = 2; offsets[3][2] = 5;
-	D2Stream<int> stream(len);
+	D2Stream<int> *stream = new D2Stream<int>();
 
 	//write
-	for (int i = 0; i < len; i++)
-		stream.write( host_to_device(input[i], len2[i]), len2[i]);
-	stream.set_offsets(offsets, offset_len);
+	for (int i = 0; i < len; i++) {
+		stream->write(host_to_device(input[i], len2[i]), len2[i]);
+	}
+	stream->set_offsets(offsets, len, offset_len);
 
 	//expectation
 	int expectedLen[] = {5, 4, 14};
@@ -148,12 +149,12 @@ TEST(D2Stream, {
 	//read
 	Chunk<int> buffer;
 	int chunkCount = 0;
-	while ( (buffer = stream.read()).not_null() ) {
+	while ( (buffer = stream->read()).not_null() ) {
 		int* data = device_to_host(buffer.ptr, buffer.len);
 		check(buffer.len == expectedLen[chunkCount]);
 		for (int i = 0; i < buffer.len; i++)
 			check(data[i] == expectedData[chunkCount][i]);
 		chunkCount++;
 	}
-	stream.deconstruct();
+	stream->deconstruct();
 })
