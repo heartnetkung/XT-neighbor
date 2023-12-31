@@ -49,7 +49,7 @@ MemoryContext cal_memory_stream4() {
 	                 sizeof(Int2) + //Int2* &pairOutput
 	                 sizeof(char);// char* &distanceOutput
 	ans.chunkSize = (ans.gpuSize) / (2 * multiplier);
-	ans.chunkCount = divide_ceil(ans.gpuSize, 2 * multiplier);
+	ans.chunkCount = (ans.gpuSize + 2 * multiplier - 1) / (2 * multiplier);
 	// ans.maxThroughputExponent;//TODO
 	return ans;
 }
@@ -137,7 +137,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 
 	MemoryContext ctx1 = cal_memory_stream1(distance);
 	int outputLen;
-	printf("%lu %d %d\n",ctx1.gpuSize,ctx1.chunkCount,ctx1.chunkSize);
+	printf("%lu %d %d\n", ctx1.gpuSize, ctx1.chunkCount, ctx1.chunkSize);
 
 	b0 = new GPUInputStream<Int3>(seq1Device, seq1Len, ctx1.chunkSize);
 	b1key = new D2Stream<Int3>(ctx1.chunkCount);
