@@ -210,6 +210,7 @@ void stream_handler1(Chunk<Int3> input, Int3* &deletionsOutput, int* &indexOutpu
 
 	// generate histogram
 	sort_key_values(deletionsOutput, indexOutput, outputLen); gpuerr();
+	cudaMalloc(&histogram, sizeof(int)*ctx.histogramSize);	gpuerr();
 	cal_histogram(histogramValue, histogram, ctx.histogramSize, UINT_MIN, UINT_MAX, outputLen); gpuerr();
 	histogramOutput.push_back(histogram);
 
@@ -232,6 +233,7 @@ void stream_handler2(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, std::vector<
 	//histogram loop
 	while ((nChunk = solve_next_bin(valueLengthsHost, start, ctx.maxThroughput, offsetLen)) > 0) {
 		int chunkLen = gen_smaller_index(valueInOut.ptr, inputOffsetsPtr, valueLengthsPtr, indexes, nChunk);
+		cudaMalloc(&histogram, sizeof(int)*ctx.histogramSize);	gpuerr();
 		cal_histogram(indexes, histogram, ctx.histogramSize , 0, seqLen, chunkLen); gpuerr();
 		histogramOutput.push_back(histogram);
 
@@ -263,6 +265,7 @@ void stream_handler3(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, void callbac
 		int chunkLen = gen_pairs(valueInOut.ptr, inputOffsetsPtr, valueLengthsPtr,
 		                         pairOutput, lesserIndex, lowerbound, nChunk);
 		callback(pairOutput, chunkLen);
+		cudaMalloc(&histogram, sizeof(int)*ctx.histogramSize);	gpuerr();
 		cal_histogram(lesserIndex, histogram, ctx.histogramSize , 0, seqLen, chunkLen); gpuerr();
 		histogramOutput.push_back(histogram);
 

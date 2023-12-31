@@ -8,7 +8,6 @@ TEST(Stream1, {
 
 	//allocate inputs
 	Int3 * seq1d, *seq1h;
-	int* hBuffer;
 	std::vector<int*> histogramOutput;
 	MemoryContext ctx;
 
