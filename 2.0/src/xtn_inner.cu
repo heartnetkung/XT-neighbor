@@ -140,7 +140,6 @@ void gen_next_chunk(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut,
 }
 
 int solve_next_bin(int* chunksizes, int start, int maxReadableSize, int n) {
-	printf("maxReadableSize %d \n",maxReadableSize);
 	int ans = 0, len = 0;
 	for (int i = start; i < n; i++) {
 		int currentChunkSize = chunksizes[i];
@@ -166,9 +165,6 @@ int solve_bin_packing_lowerbounds(int* histograms, int* &lowerboundsOutput,
 	cudaMalloc(&key, sizeof(int) * nLevel); gpuerr();
 	cudaMalloc(&value, sizeof(int) * nLevel); gpuerr();
 
-	printf("len level: %d %d\n", len2d, nLevel);
-	printf("histogramSize maxThroughputExponent: %d %d\n", ctx.histogramSize, ctx.maxThroughputExponent);
-
 	make_row_index <<< NUM_BLOCK(n), NUM_THREADS>>>(rowIndex, n, nLevel); gpuerr();
 	inclusive_sum_by_key(rowIndex, histograms, len2d); gpuerr();
 	gen_bounds <<< NUM_BLOCK(nLevel), NUM_THREADS >>>(
@@ -191,17 +187,11 @@ int solve_bin_packing_offsets(int* histograms, int** &offsetOutput,
 	cudaMalloc(&output1d, sizeof(int) * len2d); gpuerr();
 	cudaMallocHost(&offsetOutput, sizeof(int*) * n); gpuerr();
 
-	printf("len level: %d %d\n", len2d, nLevel);
-	printf("histogramSize maxThroughputExponent bandwidth: %d %d %lu\n", ctx.histogramSize, ctx.maxThroughputExponent,ctx.bandwidth1);
-
 	//solve bin packing
 	make_row_index <<< NUM_BLOCK(n), NUM_THREADS>>>(rowIndex, n, nLevel); gpuerr();
 	inclusive_sum_by_key(rowIndex, histograms, len2d); gpuerr();
 	gen_assignment <<< NUM_BLOCK(nLevel), NUM_THREADS >>>(
 	    histograms, assignment, ctx.maxThroughputExponent, n, nLevel); gpuerr();
-	print_int_arr(histograms, len2d);
-	print_int_arr(assignment, len2d);
-
 	max_by_key(assignment, histograms, output1d, buffer, len2d); gpuerr();
 
 	//make output
@@ -263,7 +253,6 @@ void stream_handler2(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, std::vector<
 
 	//histogram loop
 	while ((nChunk = solve_next_bin(valueLengthsHost, start, ctx.bandwidth2, offsetLen)) > 0) {
-		printf("stream_handler2() %d %lu %d\n",start,ctx.bandwidth2,offsetLen);
 		int chunkLen = gen_smaller_index(valueInOut.ptr, inputOffsetsPtr, valueLengthsPtr, indexes, nChunk);
 		cudaMalloc(&histogram, sizeof(int)*ctx.histogramSize);	gpuerr();
 		cal_histogram(indexes, histogram, ctx.histogramSize , 0, seqLen, chunkLen); gpuerr();
