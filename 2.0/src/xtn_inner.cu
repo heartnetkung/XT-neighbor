@@ -171,6 +171,7 @@ int solve_bin_packing_lowerbounds(int* histograms, int* &lowerboundsOutput,
 	inclusive_sum_by_key(rowIndex, histograms, len2d); gpuerr();
 	printf("b\n");
 	print_int_arr(histograms, len2d);
+	printf("maxThroughputExponent seqLen n nLevel: %d %d %d %d\n",ctx.maxThroughputExponent, seqLen, n, nLevel);
 	gen_bounds <<< NUM_BLOCK(nLevel), NUM_THREADS >>>(
 	    histograms, key, value, ctx.maxThroughputExponent, seqLen, n, nLevel); gpuerr();
 	printf("c\n");
