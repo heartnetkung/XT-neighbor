@@ -301,22 +301,4 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 	cudaFreeHost(lowerbounds); gpuerr();
 	_cudaFree(deviceInt, seq1Device); gpuerr();
 	printf("22\n");
-
-	//test file writing
-	XTNOutput out1;
-	out1.len = 2;
-	out1.indexPairs = (Int2*)malloc(sizeof(Int2) * 2);
-	out1.indexPairs[0] = {0, 0}; out1.indexPairs[1] = {0, 1};
-	out1.pairwiseDistances = (char*)malloc(sizeof(char) * 2);
-	out1.pairwiseDistances[0] = 0; out1.pairwiseDistances[1] = 1;
-	callback(out1);
-
-	out1.len = 1;
-	out1.indexPairs = (Int2*)malloc(sizeof(Int2) * 1);
-	out1.indexPairs[0] = {1, 0};
-	out1.pairwiseDistances = (char*)malloc(sizeof(char) * 1);
-	out1.pairwiseDistances[0] = 2;
-	callback(out1);
-	printf("23\n");
-
 }
