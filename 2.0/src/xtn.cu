@@ -79,12 +79,6 @@ MemoryContext cal_memory_stream4() {
 // Other Private Functions
 //=====================================
 
-void cal_lowerbounds(int* &lowerbounds, int &lbLen) {
-	lbLen = 1;
-	cudaMallocHost(&lowerbounds, sizeof(int)*lbLen);
-	lowerbounds[0] = 999999;
-}
-
 void write_b3(Int2* pairOutput, int pairLen) {
 	b3->write(pairOutput, pairLen);
 }
@@ -114,6 +108,23 @@ int cal_max_exponent(unsigned int input) {
 	return ans;
 }
 
+int cal_lowerbounds(std::vector<int*> histograms, int* &lowerbounds, int seqLen, int* buffer) {
+	int* fullHistograms;
+	int len, outputLen;
+	size_t bandwidth;
+	MemoryContext ctx;
+
+	len = histograms.size();
+	ctx.ramSize = get_main_memory();
+	bandwidth = 7 * ctx.ramSize / (sizeof(Int2) * 10);
+	ctx.maxThroughputExponent = cal_max_exponent(bandwidth);
+	fullHistograms = concat_clear_histograms(histograms, ctx);
+	outputLen = solve_bin_packing_lowerbounds(fullHistograms, lowerbounds, len, seqLen, buffer, ctx);
+
+	cudaFree(fullHistograms); gpuerr();
+	return outputLen;
+}
+
 template <typename T1, typename T2>
 int** set_d2_offsets(std::vector<int*> histograms, D2Stream<T1> *s1, D2Stream<T2> *s2,
                      int* buffer, int &offsetLen, MemoryContext ctx) {
@@ -125,7 +136,7 @@ int** set_d2_offsets(std::vector<int*> histograms, D2Stream<T1> *s1, D2Stream<T2
 	fullHistograms = concat_clear_histograms(histograms, ctx);
 	ctx.maxThroughputExponent = cal_max_exponent(ctx.bandwidth1);
 	offsetLen = solve_bin_packing_offsets(
-	                fullHistograms, offsets, len, ctx.histogramSize, buffer, ctx);
+	                fullHistograms, offsets, len, buffer, ctx);
 	s1->set_offsets(offsets, len, offsetLen);
 	if (s2 != NULL)
 		s2->set_offsets(offsets, len, offsetLen);
@@ -237,8 +248,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 	// loop: lower bound
 	//=====================================
 
-	histograms.clear(); //TODO
-	cal_lowerbounds(lowerbounds, lowerboundsLen);
+	lowerboundsLen = cal_lowerbounds(histograms, lowerbounds, seq1Len, deviceInt);
 	for (int i = 0; i < lowerboundsLen; i++) {
 		int lowerbound = lowerbounds[i];
 		printf("13\n");
