@@ -272,29 +272,33 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 		printf("18\n");
 		_cudaFree(keyReadBuffer, valueReadBuffer);
 
-		// //=====================================
-		// // stream 4: postprocessing
-		// //=====================================
+		//=====================================
+		// stream 4: postprocessing
+		//=====================================
 
-		// MemoryContext ctx4 = cal_memory_stream4();
+		MemoryContext ctx4 = cal_memory_stream4();
 
-		// offsets = set_d2_offsets(histograms, b3, NULL, deviceInt, ctx4);
-		// XTNOutput finalOutput;
+		offsets = set_d2_offsets(histograms, b3, NULL, deviceInt, ctx4);
+		XTNOutput finalOutput;
+		printf("19\n");
 
-		// while ((b3Chunk = b3->read()).not_null()) {
-		// 	stream_handler4(b3Chunk, finalOutput, seq1Device, seq1Len, distance, deviceInt);
-		// 	callback(finalOutput);
-		// }
+		while ((b3Chunk = b3->read()).not_null()) {
+			stream_handler4(b3Chunk, finalOutput, seq1Device, seq1Len, distance, deviceInt);
+			callback(finalOutput);
+			printf("20\n");
+		}
 
-		// b3->deconstruct();
-		// _cudaFreeHost2D(offsets);
+		b3->deconstruct();
+		_cudaFreeHost2D(offsets);
+		printf("21\n");
 	}
 
-	// //=====================================
-	// // boilerplate: deallocalte
-	// //=====================================
-	// cudaFreeHost(lowerbounds); gpuerr();
-	// _cudaFree(deviceInt, seq1Device); gpuerr();
+	//=====================================
+	// boilerplate: deallocalte
+	//=====================================
+	cudaFreeHost(lowerbounds); gpuerr();
+	_cudaFree(deviceInt, seq1Device); gpuerr();
+	printf("22\n");
 
 	//test file writing
 	XTNOutput out1;
@@ -311,5 +315,6 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 	out1.pairwiseDistances = (char*)malloc(sizeof(char) * 1);
 	out1.pairwiseDistances[0] = 2;
 	callback(out1);
+	printf("23\n");
 
 }
