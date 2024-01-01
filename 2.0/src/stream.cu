@@ -179,7 +179,7 @@ public:
 
 	size_t get_throughput() {
 		size_t ans = 0;
-		for (int i = 0; i < _len1; i++)
+		for (int i = 0; i < _index; i++)
 			ans += _len2[i];
 		return ans;
 	}
