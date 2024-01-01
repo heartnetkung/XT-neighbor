@@ -106,9 +106,10 @@ int* concat_clear_histograms(std::vector<int*> histograms, MemoryContext ctx) {
 }
 
 // black magic way to calculate floor(log2(n))
-int cal_max_exponent(unsigned int intput) {
+int cal_max_exponent(unsigned int input) {
+	unsigned input2 = input;
 	int ans = 0;
-	while (input >>= 1)
+	while (input2 >>= 1)
 		ans++;
 	return ans;
 }
@@ -242,7 +243,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 
 		MemoryContext ctx3 = cal_memory_stream3();
 		int len = b2keyOutput->get_new_len1();
-		int* len2 = b2keyOutput->get_new_len1();
+		int* len2 = b2keyOutput->get_new_len2();
 		int bandwidth1 = ctx3.bandwidth1;
 		Int3* keyReadBuffer;
 		int* valueReadBuffer;
