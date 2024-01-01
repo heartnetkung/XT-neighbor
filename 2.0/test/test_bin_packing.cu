@@ -49,6 +49,8 @@ TEST(cal_lowerbounds, {
 
 	for (int i = 0; i < offsetLen; i++)
 		printf("%d ", output[i]);
+	printf("offsetLen: %d", offsetLen);
+
 
 	// int expectedOffsetLen = 2;
 	// int expectedOut[][2] = {{3, 6}, {5, 9}, {5, 6}};
