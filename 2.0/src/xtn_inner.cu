@@ -155,11 +155,11 @@ int solve_next_bin(int* chunksizes, int start, int maxReadableSize, int n) {
 // Public Functions
 //=====================================
 
-int cal_lowerbounds(int* histograms, int* &lowerboundsOutput,
-                    int n, int nLevel, int seqLen, int* buffer, MemoryContext ctx) {
+int solve_bin_packing_lowerbounds(int* histograms, int* &lowerboundsOutput,
+                                  int n, int seqLen, int* buffer, MemoryContext ctx) {
 	int* rowIndex, *output, *key, *value ;
 
-	int len2d = n * nLevel;
+	int nLevel = ctx.histogramSize, len2d = n * nLevel;
 	cudaMalloc(&rowIndex, sizeof(int) * len2d); gpuerr();
 	cudaMalloc(&output, sizeof(int) * nLevel); gpuerr();
 	cudaMalloc(&key, sizeof(int) * nLevel); gpuerr();
@@ -177,11 +177,11 @@ int cal_lowerbounds(int* histograms, int* &lowerboundsOutput,
 	return outputLen;
 }
 
-int solve_bin_packing(int* histograms, int** &offsetOutput,
-                      int n, int nLevel, int* buffer, MemoryContext ctx) {
+int solve_bin_packing_offsets(int* histograms, int** &offsetOutput,
+                              int n, int* buffer, MemoryContext ctx) {
 	int* rowIndex, *assignment, *output1d, *output1dPtr;
 
-	int len2d = n * nLevel;
+	int nLevel = ctx.histogramSize, len2d = n * nLevel;
 	cudaMalloc(&rowIndex, sizeof(int) * len2d); gpuerr();
 	cudaMalloc(&assignment, sizeof(int) * len2d); gpuerr();
 	cudaMalloc(&output1d, sizeof(int) * len2d); gpuerr();

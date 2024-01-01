@@ -124,7 +124,8 @@ int** set_d2_offsets(std::vector<int*> histograms, D2Stream<T1> *s1, D2Stream<T2
 	len = histograms.size();
 	fullHistograms = concat_clear_histograms(histograms, ctx);
 	ctx.maxThroughputExponent = cal_max_exponent(ctx.bandwidth1);
-	offsetLen = solve_bin_packing(fullHistograms, offsets, len, ctx.histogramSize, buffer, ctx);
+	offsetLen = solve_bin_packing_offsets(
+	                fullHistograms, offsets, len, ctx.histogramSize, buffer, ctx);
 	s1->set_offsets(offsets, len, offsetLen);
 	if (s2 != NULL)
 		s2->set_offsets(offsets, len, offsetLen);

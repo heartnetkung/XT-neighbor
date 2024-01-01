@@ -2,7 +2,7 @@
 #include "test_util.cu"
 #include "../src/xtn_inner.cu"
 
-TEST(bin_packing, {
+TEST(bin_packing_offsets, {
 	int len = 3, nLevel = 3;
 
 	int* histogramInput;
@@ -16,9 +16,10 @@ TEST(bin_packing, {
 	cudaMalloc(&deviceInt, sizeof(int));
 	MemoryContext ctx;
 	ctx.maxThroughputExponent = 4;
+	ctx.histogramSize = nLevel;
 
 	int** output;
-	int offsetLen =  solve_bin_packing(histogramInput_d, output, len, nLevel, deviceInt, ctx);
+	int offsetLen =  solve_bin_packing_offsets(histogramInput_d, output, len, deviceInt, ctx);
 
 	int expectedOffsetLen = 2;
 	int expectedOut[][2] = {{3, 6}, {5, 9}, {5, 6}};
@@ -29,7 +30,7 @@ TEST(bin_packing, {
 			check(expectedOut[i][j] == output[i][j]);
 })
 
-TEST(cal_lowerbounds, {
+TEST(bin_packing_lowerbounds, {
 	int len = 3, nLevel = 3, seqLen = 35;
 
 	int* histogramInput;
@@ -43,9 +44,10 @@ TEST(cal_lowerbounds, {
 	cudaMalloc(&deviceInt, sizeof(int));
 	MemoryContext ctx;
 	ctx.maxThroughputExponent = 4;
+	ctx.histogramSize = nLevel;
 
 	int* output;
-	int offsetLen =  cal_lowerbounds(histogramInput_d, output, len, nLevel, seqLen, deviceInt, ctx);
+	int offsetLen =  solve_bin_packing_lowerbounds(histogramInput_d, output, len, seqLen, deviceInt, ctx);
 
 	int expectedOffsetLen = 2;
 	int expectedOut[] = {22, 34};
