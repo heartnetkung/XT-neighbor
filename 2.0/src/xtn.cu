@@ -219,7 +219,6 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 		printf("10\n");
 		b2keyOutput->write(b1keyChunk.ptr, b1keyChunk.len);
 		b2valueOutput->write(b1valueChunk.ptr, b1valueChunk.len);
-		// _cudaFree(b1keyChunk.ptr, b1valueChunk.ptr); gpuerr();
 	}
 
 	printf("11\n");
