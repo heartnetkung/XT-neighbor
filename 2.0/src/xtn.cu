@@ -90,7 +90,7 @@ int* concat_clear_histograms(std::vector<int*> histograms, MemoryContext ctx) {
 	cudaMalloc(&ans, sizeof(int)*len * ctx.histogramSize); gpuerr();
 	ansPtr = ans;
 
-	printf("concat_clear_histograms len memsize: %d %d\n",len,memsize);
+	printf("concat_clear_histograms len memsize: %d %d\n", len, memsize);
 
 	for (int* histogram : histograms) {
 		cudaMemcpy(ansPtr, histogram, memsize, cudaMemcpyDeviceToDevice); gpuerr();
@@ -186,6 +186,8 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 	// stream 1: generate deletions
 	//=====================================
 
+	printf("1 histograms size %lu\n", histograms.size());
+
 	MemoryContext ctx1 = cal_memory_stream1(seq1Len, distance);
 	int outputLen;
 
@@ -203,6 +205,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 	}
 
 	printf("5\n");
+	printf("2 histograms size %lu\n", histograms.size());
 
 
 	//=====================================
@@ -217,6 +220,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 	offsetLen = histograms.size();
 	offsets = set_d2_offsets(histograms, b1key, b1value, deviceInt, chunkCount, ctx2);
 	printf("7\n");
+	printf("3 histograms size %lu\n", histograms.size());
 	cudaMallocHost(&keyStorage, sizeof(Int3*)*chunkCount); gpuerr();
 	cudaMallocHost(&valueStorage, sizeof(int*)*chunkCount); gpuerr();
 	cudaMallocHost(&keyStorageLen, sizeof(int)*chunkCount); gpuerr();
@@ -245,6 +249,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 	b1value->deconstruct();
 	_cudaFreeHost2D(offsets, offsetLen); gpuerr();
 	printf("12\n");
+	printf("4 histograms size %lu\n", histograms.size());
 
 	//=====================================
 	// loop: lower bound
