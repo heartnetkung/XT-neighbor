@@ -122,7 +122,7 @@ int** set_d2_offsets(std::vector<int*> histograms, D2Stream<T1> *s1, D2Stream<T2
 
 	len = histograms.size();
 	fullHistograms = concat_clear_histograms(histograms, ctx);
-	ctx.maxThroughputExponent = cal_max_exponent(bandwidth1);
+	ctx.maxThroughputExponent = cal_max_exponent(ctx.bandwidth1);
 	offsetLen = solve_bin_packing(fullHistograms, offsets, len, ctx.histogramSize, buffer, ctx);
 	s1->set_offsets(offsets, len, offsetLen);
 	if (s2 != NULL)
@@ -249,8 +249,8 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 		printf("13.5\n");
 
 		b3 = new D2Stream<Int2>();
-		keyReadBuffer = cudaMalloc(&keyReadBuffer, sizeof(Int3) * bandwidth1);
-		valueReadBuffer = cudaMalloc(&valueReadBuffer, sizeof(int) * bandwidth1);
+		cudaMalloc(&keyReadBuffer, sizeof(Int3) * bandwidth1);
+		cudaMalloc(&valueReadBuffer, sizeof(int) * bandwidth1);
 		b2keyInput = new RAMInputStream<Int3>(keyStorage, len, len2, bandwidth1, keyReadBuffer);
 		b2valueInput = new RAMInputStream<int>(valueStorage, len, len2, bandwidth1, valueReadBuffer);
 		b2keyOutput = new RAMOutputStream<Int3>(keyStorage, len, len2);
@@ -263,8 +263,8 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 			stream_handler3(b2keyChunk, b2valueChunk, write_b3, histograms,
 			                lowerbound, seq1Len, deviceInt, ctx3);
 			printf("16\n");
-			b2keyOutput->write(b2keyChunk, b2keyChunk.len);
-			b2valueOutput->write(b2valueChunk, b2valueChunk.len);
+			b2keyOutput->write(b2keyChunk.ptr, b2keyChunk.len);
+			b2valueOutput->write(b2valueChunk.ptr, b2valueChunk.len);
 			printf("17\n");
 		}
 
