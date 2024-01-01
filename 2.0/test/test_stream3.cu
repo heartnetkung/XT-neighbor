@@ -35,6 +35,7 @@ TEST(Stream3, {
 	cudaMalloc(&deviceInt, sizeof(int));
 	Chunk<Int3> keyIn = {.ptr = host_to_device(pairInput, len), .len = len};
 	Chunk<int> valueIn = {.ptr = host_to_device(indexInput, len), .len = len};
+	ctx.bandwidth2 = 100;
 
 	stream_handler3(keyIn, valueIn, callback,
 	                histogramOutput, lowerbound, seqLen, deviceInt, ctx);

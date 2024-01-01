@@ -20,6 +20,7 @@ TEST(Stream2, {
 	for (int i = 0; i < len; i++)
 		keysInt3[i] = str_encode(keys[i]);
 	printf("3\n");
+	ctx.bandwidth2 = 100;
 
 	Chunk<Int3> keyInOut = {.ptr = host_to_device(keysInt3, len), .len = len};
 	Chunk<int> valueInOut = {.ptr = host_to_device(values, len), .len = len};
@@ -39,7 +40,7 @@ TEST(Stream2, {
 	printf("4.2\n");
 	int* valueOut = device_to_host(valueInOut.ptr, valueInOut.len);
 	printf("4.3\n");
-	printf("size: %d\n", histogramOutput.size());
+	printf("size: %lu\n", histogramOutput.size());
 	int* histogramOut = device_to_host(histogramOutput[0], ctx.histogramSize);
 	printf("5\n");
 
