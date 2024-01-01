@@ -39,6 +39,7 @@ TEST(Stream2, {
 	printf("4.2\n");
 	int* valueOut = device_to_host(valueInOut.ptr, valueInOut.len);
 	printf("4.3\n");
+	printf("size: %d\n", histogramOutput.size());
 	int* histogramOut = device_to_host(histogramOutput[0], ctx.histogramSize);
 	printf("5\n");
 
