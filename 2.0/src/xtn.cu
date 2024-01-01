@@ -90,6 +90,8 @@ int* concat_clear_histograms(std::vector<int*> histograms, MemoryContext ctx) {
 	cudaMalloc(&ans, sizeof(int)*len * ctx.histogramSize); gpuerr();
 	ansPtr = ans;
 
+	printf("concat_clear_histograms len memsize: %d %d\n",len,memsize);
+
 	for (int* histogram : histograms) {
 		cudaMemcpy(ansPtr, histogram, memsize, cudaMemcpyDeviceToDevice); gpuerr();
 		cudaFree(histogram); gpuerr();
