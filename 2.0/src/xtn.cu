@@ -207,6 +207,11 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 	cudaMallocHost(&valueStorage, sizeof(int*)*chunkCount); gpuerr();
 	cudaMallocHost(&keyStorageLen, sizeof(int)*chunkCount); gpuerr();
 	cudaMallocHost(&valueStorageLen, sizeof(int)*chunkCount); gpuerr();
+	for (int i = 0; i < chunkCount; i++) {
+		keyStorage[i] = NULL;
+		valueStorage[i] = NULL;
+	}
+
 	b2keyOutput = new RAMOutputStream<Int3>(keyStorage, chunkCount, keyStorageLen);
 	b2valueOutput = new RAMOutputStream<int>(valueStorage, chunkCount, valueStorageLen);
 	printf("8\n");
@@ -300,5 +305,6 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 	//=====================================
 	cudaFreeHost(lowerbounds); gpuerr();
 	_cudaFree(deviceInt, seq1Device); gpuerr();
+	_cudaFreeHost(keyStorage, valueStorage, keyStorageLen, valueStorageLen) gpuerr();
 	printf("22\n");
 }

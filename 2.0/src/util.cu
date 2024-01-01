@@ -70,6 +70,19 @@ void _cudaFreeHost(void* a, void* b) {
 	cudaFreeHost(b);
 }
 
+void _cudaFreeHost(void* a, void* b, void* c) {
+	cudaFreeHost(a);
+	cudaFreeHost(b);
+	cudaFreeHost(c);
+}
+
+void _cudaFreeHost(void* a, void* b, void* c, void* d) {
+	cudaFreeHost(a);
+	cudaFreeHost(b);
+	cudaFreeHost(c);
+	cudaFreeHost(d);
+}
+
 template <typename T>
 void _cudaFreeHost2D(T** a, int n) {
 	for (int i = 0; i < n; i++)
