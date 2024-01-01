@@ -169,17 +169,31 @@ void cal_levenshtein(Int3* seq, Int2* index, int distance,
 }
 
 __global__
-void gen_assignment(int* matrix, int* output, int nBit, int n_row, int n_column) {
+void gen_assignment(int* matrix, int* output, int nBit, int nRow, int nColumn) {
 	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
-	if (tid >= n_column)
+	if (tid >= nColumn)
 		return;
 
 	size_t ans = 0;
-	for (int i = 0; i < n_row; i++)
-		ans += matrix[i * n_column + tid];
+	for (int i = 0; i < nRow; i++)
+		ans += matrix[i * nColumn + tid];
 	ans = (ans >> nBit);
-	for (int i = 0; i < n_row; i++)
-		output[i * n_column + tid] = ans;
+	for (int i = 0; i < nColumn; i++)
+		output[i * nColumn + tid] = ans;
+}
+
+__global__
+void gen_bounds(int* matrix, int*keyOut, int* valueOut, int nBit, int valueMax, int nRow, int nColumn) {
+	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
+	if (tid >= nColumn)
+		return;
+
+	valueOut[tid] = (valueMax + tid - 1) / tid; // divide_ceil
+
+	size_t ans = 0;
+	for (int i = 0; i < nRow; i++)
+		ans += matrix[i * nColumn + tid];
+	keyOut[tid] = (ans >> nBit);
 }
 
 __global__
