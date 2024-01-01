@@ -83,7 +83,7 @@ void write_b3(Int2* pairOutput, int pairLen) {
 	b3->write(pairOutput, pairLen);
 }
 
-int* concat_clear_histograms(std::vector<int*> histograms, MemoryContext ctx) {
+int* concat_histograms(std::vector<int*> histograms, MemoryContext ctx) {
 	int* ans, *ansPtr;
 	int len = histograms.size();
 	int memsize = sizeof(int) * ctx.histogramSize;
@@ -97,7 +97,6 @@ int* concat_clear_histograms(std::vector<int*> histograms, MemoryContext ctx) {
 		cudaFree(histogram); gpuerr();
 		ansPtr += ctx.histogramSize;
 	}
-	histograms.clear();
 	return ans;
 }
 
@@ -120,7 +119,7 @@ int cal_lowerbounds(std::vector<int*> histograms, int* &lowerbounds, int seqLen,
 	ctx.ramSize = get_main_memory();
 	bandwidth = 7 * ctx.ramSize / (sizeof(Int2) * 10);
 	ctx.maxThroughputExponent = cal_max_exponent(bandwidth);
-	fullHistograms = concat_clear_histograms(histograms, ctx);
+	fullHistograms = concat_histograms(histograms, ctx);
 	outputLen = solve_bin_packing_lowerbounds(fullHistograms, lowerbounds, len, seqLen, buffer, ctx);
 
 	cudaFree(fullHistograms); gpuerr();
@@ -135,7 +134,7 @@ int** set_d2_offsets(std::vector<int*> histograms, D2Stream<T1> *s1, D2Stream<T2
 	int len;
 
 	len = histograms.size();
-	fullHistograms = concat_clear_histograms(histograms, ctx);
+	fullHistograms = concat_histograms(histograms, ctx);
 	ctx.maxThroughputExponent = cal_max_exponent(ctx.bandwidth1);
 	offsetLen = solve_bin_packing_offsets(
 	                fullHistograms, offsets, len, buffer, ctx);
@@ -219,6 +218,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 
 	offsetLen = histograms.size();
 	offsets = set_d2_offsets(histograms, b1key, b1value, deviceInt, chunkCount, ctx2);
+	histograms.clear();
 	printf("7\n");
 	printf("3 histograms size %lu\n", histograms.size());
 	cudaMallocHost(&keyStorage, sizeof(Int3*)*chunkCount); gpuerr();
@@ -256,6 +256,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 	//=====================================
 
 	lowerboundsLen = cal_lowerbounds(histograms, lowerbounds, seq1Len, deviceInt);
+	histograms.clear();
 	for (int i = 0; i < lowerboundsLen; i++) {
 		int lowerbound = lowerbounds[i];
 		printf("13\n");
@@ -304,6 +305,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 
 		offsetLen = histograms.size();
 		offsets = set_d2_offsets(histograms, b3, dummy, deviceInt, chunkCount, ctx4);
+		histograms.clear();
 		XTNOutput finalOutput;
 		printf("19\n");
 
