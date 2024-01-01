@@ -60,7 +60,6 @@ MemoryContext cal_memory_stream1(int seq1Len, int distance) {
 MemoryContext cal_memory_stream2() {
 	MemoryContext ans;
 	cal_bandwidth_stream2(ans);
-	// ans.maxThroughputExponent;//TODO
 	return ans;
 }
 
@@ -73,7 +72,6 @@ MemoryContext cal_memory_stream3() {
 MemoryContext cal_memory_stream4() {
 	MemoryContext ans;
 	cal_bandwidth_stream4(ans);
-	// ans.maxThroughputExponent;//TODO
 	return ans;
 }
 
@@ -107,6 +105,14 @@ int* concat_clear_histograms(std::vector<int*> histograms, MemoryContext ctx) {
 	return ans;
 }
 
+// black magic way to calculate floor(log2(n))
+int cal_max_exponent(unsigned int intput) {
+	int ans = 0;
+	while (input >>= 1)
+		ans++;
+	return ans;
+}
+
 template <typename T1, typename T2>
 int** set_d2_offsets(std::vector<int*> histograms, D2Stream<T1> *s1, D2Stream<T2> *s2,
                      int* buffer, int &offsetLen, MemoryContext ctx) {
@@ -116,6 +122,7 @@ int** set_d2_offsets(std::vector<int*> histograms, D2Stream<T1> *s1, D2Stream<T2
 
 	len = histograms.size();
 	fullHistograms = concat_clear_histograms(histograms, ctx);
+	ctx.maxThroughputExponent = cal_max_exponent(bandwidth1);
 	offsetLen = solve_bin_packing(fullHistograms, offsets, len, ctx.histogramSize, buffer, ctx);
 	s1->set_offsets(offsets, len, offsetLen);
 	if (s2 != NULL)
