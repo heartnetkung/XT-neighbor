@@ -26,9 +26,9 @@ struct Int2Comparator {
 	}
 };
 
-struct SizeTMax {
+struct IntMax {
 	CUB_RUNTIME_FUNCTION __forceinline__ __device__
-	size_t operator()(const size_t &a, const size_t &b) const {
+	int operator()(const int &a, const int &b) const {
 		return (b > a) ? b : a;
 	}
 };
@@ -137,7 +137,7 @@ void max_by_key(int* keyIn, int* valueIn, int* valueOut, int* outputLen, int n) 
 	void *buffer = NULL;
 	size_t bufferSize = 0;
 	int* dummy;
-	SizeTMax op;
+	IntMax op;
 
 	cudaMalloc(&dummy, sizeof(int)*n);
 	cub::DeviceReduce::ReduceByKey(buffer, bufferSize, keyIn,
