@@ -7,7 +7,6 @@ template <typename T> class Chunk {
 public:
 	T* ptr = NULL;
 	int len = 0;
-	int nRead = 0;
 	bool not_null() {return ptr != NULL;}
 };
 
@@ -45,7 +44,6 @@ public:
 
 		ans.ptr = _data;
 		ans.len = _chunkSize > _len ? _len : _chunkSize;
-		ans.nRead = 1;
 		_len -= ans.len;
 		_data += ans.len;
 		return ans;
@@ -113,7 +111,6 @@ public:
 			cudaMemcpy(currentPtr, _data[_index], sizeof(T)*newLen, cudaMemcpyHostToDevice); gpuerr();
 			currentPtr += newLen;
 			ans.len += newLen;
-			ans.nRead++;
 		}
 		return ans;
 	}
@@ -270,7 +267,6 @@ public:
 			cudaMemcpy(currentPtr, _data[i] + start, sizeof(T)*chunkLen, cudaMemcpyHostToDevice); gpuerr();
 			currentPtr += chunkLen;
 			ans.len += chunkLen;
-			ans.nRead++;
 		}
 
 		_read_index++;
