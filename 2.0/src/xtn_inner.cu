@@ -187,6 +187,9 @@ int solve_bin_packing_offsets(int* histograms, int** &offsetOutput,
 	cudaMalloc(&output1d, sizeof(int) * len2d); gpuerr();
 	cudaMallocHost(&offsetOutput, sizeof(int*) * n); gpuerr();
 
+	printf("len level: %d %d\n", len2d, nLevel);
+	printf("histogramSize maxThroughputExponent: %d %d\n", ctx.histogramSize, ctx.maxThroughputExponent);
+
 	//solve bin packing
 	make_row_index <<< NUM_BLOCK(n), NUM_THREADS>>>(rowIndex, n, nLevel); gpuerr();
 	inclusive_sum_by_key(rowIndex, histograms, len2d); gpuerr();
