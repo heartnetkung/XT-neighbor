@@ -141,7 +141,6 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 
 	int* deviceInt, *lowerbounds;
 	Int3* seq1Device;
-	MemoryContext ctx0;
 	std::vector<int*> histograms;
 	int** offsets;
 	int lowerboundsLen;
