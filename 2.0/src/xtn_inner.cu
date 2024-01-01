@@ -165,6 +165,9 @@ int solve_bin_packing_lowerbounds(int* histograms, int* &lowerboundsOutput,
 	cudaMalloc(&key, sizeof(int) * nLevel); gpuerr();
 	cudaMalloc(&value, sizeof(int) * nLevel); gpuerr();
 
+	printf("len level: %d %d\n", len2d, nLevel);
+	printf("histogramSize maxThroughputExponent: %d %d\n", ctx.histogramSize, ctx.maxThroughputExponent);
+
 	make_row_index <<< NUM_BLOCK(n), NUM_THREADS>>>(rowIndex, n, nLevel); gpuerr();
 	inclusive_sum_by_key(rowIndex, histograms, len2d); gpuerr();
 	gen_bounds <<< NUM_BLOCK(nLevel), NUM_THREADS >>>(
