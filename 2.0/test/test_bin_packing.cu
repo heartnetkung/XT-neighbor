@@ -30,7 +30,7 @@ TEST(bin_packing, {
 })
 
 TEST(cal_lowerbounds, {
-	int len = 3, nLevel = 3, seqLen = 34;
+	int len = 3, nLevel = 3, seqLen = 35;
 
 	int* histogramInput;
 	cudaMallocHost(&histogramInput, sizeof(int) * len * nLevel);
