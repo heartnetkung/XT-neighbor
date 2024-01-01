@@ -140,6 +140,7 @@ void gen_next_chunk(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut,
 }
 
 int solve_next_bin(int* chunksizes, int start, int maxReadableSize, int n) {
+	printf("maxReadableSize %d \n",maxReadableSize);
 	int ans = 0, len = 0;
 	for (int i = start; i < n; i++) {
 		int currentChunkSize = chunksizes[i];
@@ -262,6 +263,7 @@ void stream_handler2(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, std::vector<
 
 	//histogram loop
 	while ((nChunk = solve_next_bin(valueLengthsHost, start, ctx.bandwidth2, offsetLen)) > 0) {
+		printf("stream_handler2() %d %d %d\n");
 		int chunkLen = gen_smaller_index(valueInOut.ptr, inputOffsetsPtr, valueLengthsPtr, indexes, nChunk);
 		cudaMalloc(&histogram, sizeof(int)*ctx.histogramSize);	gpuerr();
 		cal_histogram(indexes, histogram, ctx.histogramSize , 0, seqLen, chunkLen); gpuerr();
