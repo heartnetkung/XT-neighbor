@@ -277,7 +277,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 		//=====================================
 
 		MemoryContext ctx4 = cal_memory_stream4();
-		D2Stream<int> dummy = NULL;
+		D2Stream<int> *dummy = NULL;
 
 		offsetLen = histograms.size();
 		offsets = set_d2_offsets(histograms, b3, dummy, deviceInt, chunkCount, ctx4);
