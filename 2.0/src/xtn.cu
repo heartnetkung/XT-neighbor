@@ -17,7 +17,16 @@ MemoryContext initMemory(int seq1Len, bool isGPU) {
 		ans.ramSize = get_main_memory();
 	if (ans.histogramSize > seq1Len)
 		ans.histogramSize = seq1Len;
-	return ans
+	return ans;
+}
+
+// black magic way to calculate floor(log2(n))
+int cal_max_exponent(unsigned int input) {
+	unsigned input2 = input;
+	int ans = 0;
+	while (input2 >>= 1)
+		ans++;
+	return ans;
 }
 
 MemoryContext cal_memory_stream1(int seq1Len, int distance) {
@@ -95,15 +104,6 @@ int* concat_histograms(std::vector<int*> histograms, MemoryContext ctx) {
 		cudaFree(histogram); gpuerr();
 		ansPtr += ctx.histogramSize;
 	}
-	return ans;
-}
-
-// black magic way to calculate floor(log2(n))
-int cal_max_exponent(unsigned int input) {
-	unsigned input2 = input;
-	int ans = 0;
-	while (input2 >>= 1)
-		ans++;
 	return ans;
 }
 
