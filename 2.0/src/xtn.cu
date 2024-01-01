@@ -118,6 +118,7 @@ int cal_lowerbounds(std::vector<int*> histograms, int* &lowerbounds, int seqLen,
 	bandwidth = 7 * ctx.ramSize / (sizeof(Int2) * 10);
 	ctx.maxThroughputExponent = cal_max_exponent(bandwidth);
 	fullHistograms = concat_histograms(histograms, ctx);
+	printf("bandwidth maxThroughputExponent len seqLen %lu %d %d %d \n",bandwidth,ctx.maxThroughputExponent,len,seqLen);
 	outputLen = solve_bin_packing_lowerbounds(fullHistograms, lowerbounds, len, seqLen, buffer, ctx);
 
 	cudaFree(fullHistograms); gpuerr();
