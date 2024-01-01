@@ -34,8 +34,11 @@ TEST(Stream2, {
 	};
 	int expectedIndex[] = {0, 2, 1, 0, 0, 0, 1, 2, 2, 2, 0, 2, 1, 1, 1, 3, 3, 3, 3, 3};
 	int expectedHistogram[] = {17, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0, 0, 1, 0, 0, 0};
+	printf("4.1\n");
 	Int3* keyOut = device_to_host(keyInOut.ptr, keyInOut.len);
+	printf("4.2\n");
 	int* valueOut = device_to_host(valueInOut.ptr, valueInOut.len);
+	printf("4.3\n");
 	int* histogramOut = device_to_host(histogramOutput[0], ctx.histogramSize);
 	printf("5\n");
 
