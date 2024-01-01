@@ -132,7 +132,7 @@ void gen_next_chunk(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut,
 	            buffer, valueInOut.len); gpuerr();
 
 	int outputLen = transfer_last_element(buffer, 1); gpuerr();
-	_cudaFree(flags, keyInOut.ptr, valueInOut.ptr); gpuerr();
+	_cudaFree(flags); gpuerr();
 	keyInOut.ptr = keyOut;
 	keyInOut.len = outputLen;
 	valueInOut.ptr = valueOut;
