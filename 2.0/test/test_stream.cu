@@ -25,10 +25,11 @@ TEST(GPUInputStream, {
 TEST(RAMStream, {
 	int len = 4;
 	int len2[] = {7, 3, 4, 5};
-	int** input = (int**)malloc(len * sizeof(int*));
+	int** input;
+	cudaMallocHost(&input, sizeof(int*)*len);
 	int count = 0;
 	for (int i = 0; i < len; i++) {
-		input[i] = (int*)malloc(len2[i] * sizeof(int));
+		cudaMallocHost(&input[i], sizeof(int)*len2[i]);
 		for (int j = 0; j < len2[i]; j++)
 			input[i][j] = ++count;
 	}
