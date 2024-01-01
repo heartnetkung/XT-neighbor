@@ -250,6 +250,11 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 
 	lowerboundsLen = cal_lowerbounds(histograms, lowerbounds, seq1Len, deviceInt);
 	histograms.clear();
+
+	printf("lowerboundsLen %d\n", lowerboundsLen);
+	for (int i = 0; i < lowerboundsLen; i++)
+		printf("lowerbounds %d\n", lowerbounds[i]);
+
 	for (int i = 0; i < lowerboundsLen; i++) {
 		int lowerbound = lowerbounds[i];
 		printf("13\n");
