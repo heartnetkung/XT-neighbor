@@ -204,10 +204,10 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 	offsetLen = histograms.size();
 	offsets = set_d2_offsets(histograms, b1key, b1value, deviceInt, chunkCount, ctx2);
 	printf("7\n");
-	cudaMallocHost(&keyStorage, sizeof(Int3*)*chunkCount);
-	cudaMallocHost(&valueStorage, sizeof(int*)*chunkCount);
-	cudaMallocHost(&keyStorageLen, sizeof(int)*chunkCount);
-	cudaMallocHost(&valueStorageLen, sizeof(int)*chunkCount);
+	cudaMallocHost(&keyStorage, sizeof(Int3*)*chunkCount); gpuerr();
+	cudaMallocHost(&valueStorage, sizeof(int*)*chunkCount); gpuerr();
+	cudaMallocHost(&keyStorageLen, sizeof(int)*chunkCount); gpuerr();
+	cudaMallocHost(&valueStorageLen, sizeof(int)*chunkCount); gpuerr();
 	b2keyOutput = new RAMOutputStream<Int3>(keyStorage, chunkCount, keyStorageLen);
 	b2valueOutput = new RAMOutputStream<int>(valueStorage, chunkCount, valueStorageLen);
 	printf("8\n");
@@ -225,13 +225,14 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 	printf("11\n");
 	b1key->deconstruct();
 	b1value->deconstruct();
-	_cudaFreeHost2D(offsets, offsetLen);
+	_cudaFreeHost2D(offsets, offsetLen); gpuerr();
 	printf("12\n");
 
 	//=====================================
 	// loop: lower bound
 	//=====================================
 
+	histograms.clear(); //TODO
 	cal_lowerbounds(lowerbounds, lowerboundsLen);
 	for (int i = 0; i < lowerboundsLen; i++) {
 		int lowerbound = lowerbounds[i];
@@ -250,8 +251,8 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 		printf("13.5\n");
 
 		b3 = new D2Stream<Int2>();
-		cudaMalloc(&keyReadBuffer, sizeof(Int3) * bandwidth1);
-		cudaMalloc(&valueReadBuffer, sizeof(int) * bandwidth1);
+		cudaMalloc(&keyReadBuffer, sizeof(Int3) * bandwidth1); gpuerr();
+		cudaMalloc(&valueReadBuffer, sizeof(int) * bandwidth1); gpuerr();
 		b2keyInput = new RAMInputStream<Int3>(keyStorage, len, len2, bandwidth1, keyReadBuffer);
 		b2valueInput = new RAMInputStream<int>(valueStorage, len, len2, bandwidth1, valueReadBuffer);
 		b2keyOutput = new RAMOutputStream<Int3>(keyStorage, len, len2);
@@ -270,7 +271,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 		}
 
 		printf("18\n");
-		_cudaFree(keyReadBuffer, valueReadBuffer);
+		_cudaFree(keyReadBuffer, valueReadBuffer); gpuerr();
 
 		//=====================================
 		// stream 4: postprocessing
@@ -291,7 +292,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 		}
 
 		b3->deconstruct();
-		_cudaFreeHost2D(offsets, offsetLen);
+		_cudaFreeHost2D(offsets, offsetLen); gpuerr();
 		printf("21\n");
 	}
 
