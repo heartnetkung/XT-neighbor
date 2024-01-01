@@ -178,7 +178,7 @@ void gen_assignment(int* matrix, int* output, int nBit, int nRow, int nColumn) {
 	for (int i = 0; i < nRow; i++)
 		ans += matrix[i * nColumn + tid];
 	ans = (ans >> nBit);
-	for (int i = 0; i < nColumn; i++)
+	for (int i = 0; i < nRow; i++)
 		output[i * nColumn + tid] = ans;
 }
 
