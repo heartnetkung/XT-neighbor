@@ -169,7 +169,7 @@ int cal_lowerbounds(int* histograms, int* &lowerboundsOutput,
 	inclusive_sum_by_key(rowIndex, histograms, len2d); gpuerr();
 	gen_bounds <<< NUM_BLOCK(nLevel), NUM_THREADS >>>(
 	    histograms, key, value, ctx.maxThroughputExponent, seqLen, n, nLevel); gpuerr();
-	max_by_key(key, value, output, buffer, len2d); gpuerr();
+	max_by_key(key, value, output, buffer, nLevel); gpuerr();
 
 	print_int_arr(key, nLevel);
 	print_int_arr(value, nLevel);
