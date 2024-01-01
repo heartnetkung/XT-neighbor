@@ -4,6 +4,7 @@
 #include "xtn_inner.cu"
 
 D2Stream<Int2> *b3 = NULL; /*global variable for callback*/
+const int MAX_PROCESSING = 1 << 30;
 
 //=====================================
 // Private Memory Functions
@@ -37,7 +38,9 @@ MemoryContext cal_memory_stream1(int seq1Len, int distance) {
 	    sizeof(int) + //int *combinationOffsets
 	    //Int3* &deletionsOutput int* &indexOutput unsigned int *histogramValue;
 	    deletionMultiplier * (sizeof(Int3) + 2 * sizeof(int));
-	ans.bandwidth1 = (7 * ans.gpuSize) / (10 * multiplier);
+
+	size_t temp = (7 * ans.gpuSize) / (10 * multiplier);
+	ans.bandwidth1 = (temp > MAX_PROCESSING) ? MAX_PROCESSING : temp;
 	ans.chunkSize = (seq1Len < ans.bandwidth1) ? seq1Len : ans.bandwidth1;
 	return ans;
 }
@@ -47,8 +50,11 @@ MemoryContext cal_memory_stream2(int seq1Len) {
 	int multiplier =
 	    sizeof(Int3) + sizeof(int) + //input
 	    2 * sizeof(int); // int* &inputOffsets, int* &outputLengths
-	ans.bandwidth1 = ans.gpuSize / (20 * multiplier);
-	ans.bandwidth2 = ans.bandwidth1 * 13;
+
+	size_t temp = ans.gpuSize / (20 * multiplier);
+	ans.bandwidth1 = (temp > MAX_PROCESSING) ? MAX_PROCESSING : temp;
+	temp *= 13;
+	ans.bandwidth2 = (temp > MAX_PROCESSING) ? MAX_PROCESSING : temp;
 	ans.maxThroughputExponent = cal_max_exponent(ans.bandwidth1);
 	return ans;
 }
@@ -59,8 +65,11 @@ MemoryContext cal_memory_stream3(int seq1Len) {
 	    sizeof(Int3) + sizeof(int) + //input
 	    2 * sizeof(int) + // int* &inputOffsets, int* &outputLengths
 	    sizeof(char) + sizeof(Int3) + sizeof(int); //char* flags Int3* keyOut int* valueOut;
-	ans.bandwidth1 = ans.gpuSize / (10 * multiplier);
-	ans.bandwidth2 = ans.bandwidth1 * 6;
+
+	size_t temp = ans.gpuSize / (10 * multiplier);
+	ans.bandwidth1 = (temp > MAX_PROCESSING) ? MAX_PROCESSING : temp;
+	temp *= 6;
+	ans.bandwidth2 = (temp > MAX_PROCESSING) ? MAX_PROCESSING : temp;
 	return ans;
 }
 
@@ -72,14 +81,18 @@ MemoryContext cal_memory_stream4(int seq1Len) {
 	    2 * sizeof(char) + //char* uniqueDistances, *flags
 	    sizeof(Int2) + //Int2* &pairOutput
 	    sizeof(char);// char* &distanceOutput
-	ans.bandwidth1 = (7 * ans.gpuSize) / (10 * multiplier);
+
+	size_t temp = (7 * ans.gpuSize) / (10 * multiplier);
+	ans.bandwidth1 = (temp > MAX_PROCESSING) ? MAX_PROCESSING : temp;
 	ans.maxThroughputExponent = cal_max_exponent(ans.bandwidth1);
 	return ans;
 }
 
 MemoryContext cal_memory_lowerbound(int seq1Len) {
 	MemoryContext ans = initMemory(seq1Len, false);
-	ans.bandwidth1 = 7 * ans.ramSize / (sizeof(Int2) * 10);
+
+	size_t temp = 7 * ans.ramSize / (sizeof(Int2) * 10);
+	ans.bandwidth1 = (temp > MAX_PROCESSING) ? MAX_PROCESSING : temp;
 	ans.maxThroughputExponent = cal_max_exponent(ans.bandwidth1);
 	return ans;
 }

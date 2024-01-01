@@ -30,15 +30,15 @@ struct XTNArgs {
 struct MemoryContext {
 	size_t gpuSize = 0;
 	size_t ramSize = 0;
-	size_t bandwidth1 = 0;
-	size_t bandwidth2 = 0;
+	int bandwidth1 = 0;
+	int bandwidth2 = 0;
 	int chunkSize = 0;
 #ifdef TEST_ENV
 	int histogramSize = 16;
 	int maxThroughputExponent = 7;
 #else
 	int histogramSize = 4096;
-	int maxThroughputExponent = 20;
+	int maxThroughputExponent = 0;
 #endif
 };
 

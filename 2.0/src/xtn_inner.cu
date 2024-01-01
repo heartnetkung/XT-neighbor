@@ -109,7 +109,7 @@ int postprocessing(Int3* seq, Int2* input, int distance,
 	return outputLen;
 }
 
-void make_output(Int2* pairOut, char* distanceOut, size_t len, XTNOutput &output) {
+void make_output(Int2* pairOut, char* distanceOut, int len, XTNOutput &output) {
 	output.indexPairs = device_to_host(pairOut, len); gpuerr();
 	output.pairwiseDistances = device_to_host(distanceOut, len); gpuerr();
 	output.len = len;
