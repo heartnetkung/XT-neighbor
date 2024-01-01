@@ -166,20 +166,10 @@ int solve_bin_packing_lowerbounds(int* histograms, int* &lowerboundsOutput,
 	cudaMalloc(&value, sizeof(int) * nLevel); gpuerr();
 
 	make_row_index <<< NUM_BLOCK(n), NUM_THREADS>>>(rowIndex, n, nLevel); gpuerr();
-	printf("a\n");
-	print_int_arr(rowIndex, len2d);
 	inclusive_sum_by_key(rowIndex, histograms, len2d); gpuerr();
-	printf("b\n");
-	print_int_arr(histograms, len2d);
-	printf("maxThroughputExponent seqLen n nLevel: %d %d %d %d\n",ctx.maxThroughputExponent, seqLen, n, nLevel);
 	gen_bounds <<< NUM_BLOCK(nLevel), NUM_THREADS >>>(
 	    histograms, key, value, ctx.maxThroughputExponent, seqLen, n, nLevel); gpuerr();
-	printf("c\n");
-	print_int_arr(key, len2d);
-	print_int_arr(value, len2d);
 	max_by_key(key, value, output, buffer, nLevel); gpuerr();
-	printf("d\n");
-	print_int_arr(output, len2d);
 
 	int outputLen = transfer_last_element(buffer, 1); gpuerr();
 	lowerboundsOutput = device_to_host(output, outputLen); gpuerr();
