@@ -171,6 +171,9 @@ int cal_lowerbounds(int* histograms, int* &lowerboundsOutput,
 	    histograms, key, value, ctx.maxThroughputExponent, seqLen, n, nLevel); gpuerr();
 	max_by_key(key, value, output, buffer, len2d); gpuerr();
 
+	print_int_arr(key, nLevel);
+	print_int_arr(value, nLevel);
+
 	int outputLen = transfer_last_element(buffer, 1); gpuerr();
 	lowerboundsOutput  = device_to_host(output, outputLen); gpuerr();
 	_cudaFree(rowIndex, output, key, value); gpuerr();
