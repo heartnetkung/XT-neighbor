@@ -270,7 +270,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 		}
 
 		printf("18\n");
-		_cudaFree(keyReadBuffer, valueReadBuffer); gpuerr();
+		// _cudaFree(keyReadBuffer, valueReadBuffer); gpuerr();
 
 		//=====================================
 		// stream 4: postprocessing
