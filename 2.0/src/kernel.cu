@@ -188,7 +188,8 @@ void gen_bounds(int* matrix, int*keyOut, int* valueOut, int nBit, int valueMax, 
 	if (tid >= nColumn)
 		return;
 
-	valueOut[tid] = (valueMax + tid - 1) / tid; // divide_ceil
+	int reverseTid = nColumn - tid;
+	valueOut[tid] = (valueMax + reverseTid - 1) / (reverseTid); // divide_ceil
 
 	size_t ans = 0;
 	for (int i = 0; i < nRow; i++)
