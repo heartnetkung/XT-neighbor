@@ -9,69 +9,69 @@ D2Stream<Int2> *b3 = NULL; /*global variable for callback*/
 // Private Memory Functions
 //=====================================
 
-void cal_bandwidth_stream1(MemoryContext &ctx, int distance) {
-	ctx.gpuSize = get_gpu_memory();
+MemoryContext initMemory(int seq1Len, bool isGPU) {
+	MemoryContext ans;
+	if (isGPU)
+		ans.gpuSize = get_gpu_memory();
+	else
+		ans.ramSize = get_main_memory();
+	if (ans.histogramSize > seq1Len)
+		ans.histogramSize = seq1Len;
+	return ans
+}
+
+MemoryContext cal_memory_stream1(int seq1Len, int distance) {
+	MemoryContext ans = initMemory(seq1Len, true);
 	int deletionMultiplier = (distance == 1) ? (18 + 1) : (153 + 18 + 1);
 	int multiplier =
 	    sizeof(int) + //input
 	    sizeof(int) + //int *combinationOffsets
 	    //Int3* &deletionsOutput int* &indexOutput unsigned int *histogramValue;
 	    deletionMultiplier * (sizeof(Int3) + 2 * sizeof(int));
-	ctx.bandwidth1 = (7 * ctx.gpuSize) / (10 * multiplier);
+	ans.bandwidth1 = (7 * ans.gpuSize) / (10 * multiplier);
+	ans.chunkSize = (seq1Len < ans.bandwidth1) ? seq1Len : ans.bandwidth1;
+	return ans;
 }
 
-void cal_bandwidth_stream2(MemoryContext &ctx) {
-	ctx.gpuSize = get_gpu_memory();
+MemoryContext cal_memory_stream2(int seq1Len) {
+	MemoryContext ans = initMemory(seq1Len, true);
 	int multiplier =
 	    sizeof(Int3) + sizeof(int) + //input
 	    2 * sizeof(int); // int* &inputOffsets, int* &outputLengths
-	ctx.bandwidth1 = ctx.gpuSize / (20 * multiplier);
-	ctx.bandwidth2 = ctx.bandwidth1 * 13;
+	ans.bandwidth1 = ans.gpuSize / (20 * multiplier);
+	ans.bandwidth2 = ans.bandwidth1 * 13;
+	ans.maxThroughputExponent = cal_max_exponent(ans.bandwidth1);
+	return ans;
 }
 
-void cal_bandwidth_stream3(MemoryContext &ctx) {
-	ctx.gpuSize = get_gpu_memory();
+MemoryContext cal_memory_stream3(int seq1Len) {
+	MemoryContext ans = initMemory(seq1Len, true);
 	int multiplier =
 	    sizeof(Int3) + sizeof(int) + //input
 	    2 * sizeof(int) + // int* &inputOffsets, int* &outputLengths
 	    sizeof(char) + sizeof(Int3) + sizeof(int); //char* flags Int3* keyOut int* valueOut;
-	ctx.bandwidth1 = ctx.gpuSize / (10 * multiplier);
-	ctx.bandwidth2 = ctx.bandwidth1 * 6;
+	ans.bandwidth1 = ans.gpuSize / (10 * multiplier);
+	ans.bandwidth2 = ans.bandwidth1 * 6;
+	return ans;
 }
 
-void cal_bandwidth_stream4(MemoryContext &ctx) {
-	ctx.gpuSize = get_gpu_memory();
+MemoryContext cal_memory_stream4(int seq1Len) {
+	MemoryContext ans = initMemory(seq1Len, true);
 	int multiplier =
 	    sizeof(Int2) + //input
 	    sizeof(Int2) + //Int2* uniquePairs
 	    2 * sizeof(char) + //char* uniqueDistances, *flags
 	    sizeof(Int2) + //Int2* &pairOutput
 	    sizeof(char);// char* &distanceOutput
-	ctx.bandwidth1 = (7 * ctx.gpuSize) / (10 * multiplier);
-}
-
-MemoryContext cal_memory_stream1(int seq1Len, int distance) {
-	MemoryContext ans;
-	cal_bandwidth_stream1(ans, distance);
-	ans.chunkSize = (seq1Len < ans.bandwidth1) ? seq1Len : ans.bandwidth1;
+	ans.bandwidth1 = (7 * ans.gpuSize) / (10 * multiplier);
+	ans.maxThroughputExponent = cal_max_exponent(ans.bandwidth1);
 	return ans;
 }
 
-MemoryContext cal_memory_stream2() {
-	MemoryContext ans;
-	cal_bandwidth_stream2(ans);
-	return ans;
-}
-
-MemoryContext cal_memory_stream3() {
-	MemoryContext ans;
-	cal_bandwidth_stream3(ans);
-	return ans;
-}
-
-MemoryContext cal_memory_stream4() {
-	MemoryContext ans;
-	cal_bandwidth_stream4(ans);
+MemoryContext cal_memory_lowerbound(int seq1Len) {
+	MemoryContext ans = initMemory(seq1Len, false);
+	ans.bandwidth1 = 7 * ans.ramSize / (sizeof(Int2) * 10);
+	ans.maxThroughputExponent = cal_max_exponent(ans.bandwidth1);
 	return ans;
 }
 
@@ -109,17 +109,14 @@ int cal_max_exponent(unsigned int input) {
 
 int cal_lowerbounds(std::vector<int*> histograms, int* &lowerbounds, int seqLen, int* buffer) {
 	int* fullHistograms;
-	int len, outputLen;
+	int outputLen;
 	size_t bandwidth;
 	MemoryContext ctx;
 
-	len = histograms.size();
-	ctx.ramSize = get_main_memory();
-	bandwidth = 7 * ctx.ramSize / (sizeof(Int2) * 10);
-	ctx.maxThroughputExponent = cal_max_exponent(bandwidth);
+	ctx = cal_memory_lowerbound(seqLen);
 	fullHistograms = concat_histograms(histograms, ctx);
-	printf("bandwidth maxThroughputExponent len seqLen %lu %d %d %d \n",bandwidth,ctx.maxThroughputExponent,len,seqLen);
-	outputLen = solve_bin_packing_lowerbounds(fullHistograms, lowerbounds, len, seqLen, buffer, ctx);
+	outputLen = solve_bin_packing_lowerbounds(
+	                fullHistograms, lowerbounds, histograms.size(), seqLen, buffer, ctx);
 
 	cudaFree(fullHistograms); gpuerr();
 	return outputLen;
@@ -134,7 +131,6 @@ int** set_d2_offsets(std::vector<int*> histograms, D2Stream<T1> *s1, D2Stream<T2
 
 	len = histograms.size();
 	fullHistograms = concat_histograms(histograms, ctx);
-	ctx.maxThroughputExponent = cal_max_exponent(ctx.bandwidth1);
 	offsetLen = solve_bin_packing_offsets(
 	                fullHistograms, offsets, len, buffer, ctx);
 	s1->set_offsets(offsets, len, offsetLen);
@@ -206,7 +202,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 	// stream 2: group key values
 	//=====================================
 
-	MemoryContext ctx2 = cal_memory_stream2();
+	MemoryContext ctx2 = cal_memory_stream2(seq1Len);
 	int chunkCount, offsetLen;
 
 	printf("6\n");
@@ -264,7 +260,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 		// stream 3: generate pairs
 		//=====================================
 
-		MemoryContext ctx3 = cal_memory_stream3();
+		MemoryContext ctx3 = cal_memory_stream3(seq1Len);
 		int len = b2keyOutput->get_new_len1();
 		int* len2 = b2keyOutput->get_new_len2();
 		int bandwidth1 = ctx3.bandwidth1;
@@ -299,7 +295,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 		// stream 4: postprocessing
 		//=====================================
 
-		MemoryContext ctx4 = cal_memory_stream4();
+		MemoryContext ctx4 = cal_memory_stream4(seq1Len);
 		D2Stream<int> *dummy = NULL;
 
 		offsetLen = histograms.size();
