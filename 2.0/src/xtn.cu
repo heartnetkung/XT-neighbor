@@ -227,54 +227,67 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 	_cudaFreeHost2D(offsets, offsetLen);
 	printf("12\n");
 
-	// //=====================================
-	// // loop: lower bound
-	// //=====================================
+	//=====================================
+	// loop: lower bound
+	//=====================================
 
-	// cal_lowerbounds(lowerbounds, lowerboundsLen);
-	// for (int i = 0; i < lowerboundsLen; i++) {
-	// 	int lowerbound = lowerbounds[i];
+	cal_lowerbounds(lowerbounds, lowerboundsLen);
+	for (int i = 0; i < lowerboundsLen; i++) {
+		int lowerbound = lowerbounds[i];
+		printf("13\n");
 
-	// 	//=====================================
-	// 	// stream 3: generate pairs
-	// 	//=====================================
+		//=====================================
+		// stream 3: generate pairs
+		//=====================================
 
-	// 	MemoryContext ctx3 = cal_memory_stream3();
+		MemoryContext ctx3 = cal_memory_stream3();
+		int len = b2keyOutput->get_new_len1();
+		int* len2 = b2keyOutput->get_new_len1();
+		int bandwidth1 = ctx3.bandwidth1;
+		Int3* keyReadBuffer;
+		int* valueReadBuffer;
+		printf("13.5\n");
 
-	// 	b3 = new D2Stream<Int2>(); //TODO
-	// 	b2keyInput = new RAMInputStream<Int3>();//input , len, len2, maxReadableSize, deviceBuffer
-	// 	b2valueInput = new RAMInputStream<int>();//input , len, len2, maxReadableSize, deviceBuffer
-	// 	b2keyOutput = new RAMOutputStream<Int3>();//(input, len, len2);
-	// 	b2valueOutput = new RAMOutputStream<int>();//(input, len, len2);
+		b3 = new D2Stream<Int2>();
+		keyReadBuffer = cudaMalloc(&keyReadBuffer, sizeof(Int3) * bandwidth1);
+		valueReadBuffer = cudaMalloc(&valueReadBuffer, sizeof(int) * bandwidth1);
+		b2keyInput = new RAMInputStream<Int3>(keyStorage, len, len2, bandwidth1, keyReadBuffer);
+		b2valueInput = new RAMInputStream<int>(valueStorage, len, len2, bandwidth1, valueReadBuffer);
+		b2keyOutput = new RAMOutputStream<Int3>(keyStorage, len, len2);
+		b2valueOutput = new RAMOutputStream<int>(valueStorage, len, len2);
+		printf("14\n");
 
-	// 	while ((b2keyChunk = b2keyInput->read()).not_null()) {
-	// 		b2valueChunk = b2valueInput->read();
-	// 		stream_handler3(b2keyChunk, b2valueChunk, write_b3, histograms,
-	// 		                lowerbound, seq1Len, deviceInt, ctx3);
-	// 		b2keyOutput->write(b2keyChunk, b2keyChunk.len);
-	// 		b2valueOutput->write(b2valueChunk, b2valueChunk.len);
-	// 	}
+		while ((b2keyChunk = b2keyInput->read()).not_null()) {
+			b2valueChunk = b2valueInput->read();
+			printf("15\n");
+			stream_handler3(b2keyChunk, b2valueChunk, write_b3, histograms,
+			                lowerbound, seq1Len, deviceInt, ctx3);
+			printf("16\n");
+			b2keyOutput->write(b2keyChunk, b2keyChunk.len);
+			b2valueOutput->write(b2valueChunk, b2valueChunk.len);
+			printf("17\n");
+		}
 
-	// 	fullHistograms = concat_clear_histograms(histograms, ctx0);
-	// 	cudaFree(fullHistograms);
+		printf("18\n");
+		_cudaFree(keyReadBuffer, valueReadBuffer);
 
-	// 	//=====================================
-	// 	// stream 4: postprocessing
-	// 	//=====================================
+		// //=====================================
+		// // stream 4: postprocessing
+		// //=====================================
 
-	// 	MemoryContext ctx4 = cal_memory_stream4();
+		// MemoryContext ctx4 = cal_memory_stream4();
 
-	// 	offsets = set_d2_offsets(histograms, b3, NULL, deviceInt, ctx4);
-	// 	XTNOutput finalOutput;
+		// offsets = set_d2_offsets(histograms, b3, NULL, deviceInt, ctx4);
+		// XTNOutput finalOutput;
 
-	// 	while ((b3Chunk = b3->read()).not_null()) {
-	// 		stream_handler4(b3Chunk, finalOutput, seq1Device, seq1Len, distance, deviceInt);
-	// 		callback(finalOutput);
-	// 	}
+		// while ((b3Chunk = b3->read()).not_null()) {
+		// 	stream_handler4(b3Chunk, finalOutput, seq1Device, seq1Len, distance, deviceInt);
+		// 	callback(finalOutput);
+		// }
 
-	// 	b3->deconstruct();
-	// 	_cudaFreeHost2D(offsets);
-	// }
+		// b3->deconstruct();
+		// _cudaFreeHost2D(offsets);
+	}
 
 	// //=====================================
 	// // boilerplate: deallocalte
