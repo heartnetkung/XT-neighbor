@@ -305,6 +305,6 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 	//=====================================
 	cudaFreeHost(lowerbounds); gpuerr();
 	_cudaFree(deviceInt, seq1Device); gpuerr();
-	_cudaFreeHost(keyStorage, valueStorage, keyStorageLen, valueStorageLen) gpuerr();
+	_cudaFreeHost(keyStorage, valueStorage, keyStorageLen, valueStorageLen); gpuerr();
 	printf("22\n");
 }
