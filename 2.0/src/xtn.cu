@@ -292,6 +292,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 		while ((b3Chunk = b3->read()).not_null()) {
 			stream_handler4(b3Chunk, finalOutput, seq1Device, seq1Len, distance, deviceInt);
 			callback(finalOutput);
+			_cudaFreeHost(finalOutput.indexPairs, finalOutput.pairwiseDistances);
 			printf("20\n");
 		}
 
