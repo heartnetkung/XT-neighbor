@@ -278,7 +278,8 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 
 		MemoryContext ctx4 = cal_memory_stream4();
 
-		offsets = set_d2_offsets(histograms, b3, NULL, deviceInt, ctx4);
+		offsetLen = histograms.size();
+		offsets = set_d2_offsets(histograms, b3, NULL, deviceInt, chunkCount, ctx4);
 		XTNOutput finalOutput;
 		printf("19\n");
 
@@ -289,7 +290,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 		}
 
 		b3->deconstruct();
-		_cudaFreeHost2D(offsets);
+		_cudaFreeHost2D(offsets, offsetLen);
 		printf("21\n");
 	}
 
