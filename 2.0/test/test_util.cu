@@ -5,8 +5,10 @@
 
 std::vector<std::string> descriptions {};
 std::vector<int> results {};
+int successCount = 0;
 
 void check(int result) {
+	successCount++;
 	if (results.back() && !result) {
 		results.pop_back();
 		results.push_back(0);
@@ -30,22 +32,17 @@ int main() {
 	int allSuccess = 1, countSuccess = 0, current;
 	for (int i = 0; i < results.size(); i++) {
 		current = results.at(i);
-		if (current)
-			countSuccess++;
-		else
+		if (!current)
 			allSuccess = 0;
 	}
 
 	if (allSuccess) {
-		printf("\033[0;32mAll %lu tests passed \033[0m\n", results.size());
+		printf("\033[0;32mAll %lu tests passed \033[0m\n", successCount);
 		return 0;
 	}
 
-	for (int i = 0; i < results.size(); i++) {
+	for (int i = 0; i < results.size(); i++)
 		if (!results.at(i))
-			printf("\033[1;31m%d. %s \033[0m\n", i + 1, descriptions.at(i).c_str());
-	}
-
-	printf("\033[1;31mOnly %d/%lu tests passed \033[0m\n", countSuccess, results.size());
+			printf("\033[1;31m%d. %s failed!\033[0m\n", i + 1, descriptions.at(i).c_str());
 	return 1;
 }
