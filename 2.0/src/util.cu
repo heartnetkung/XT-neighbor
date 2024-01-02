@@ -140,7 +140,8 @@ void print_int_arr(int* arr, int n) {
 			printf(", ");
 	}
 	printf(" ] n=%d\n", n);
-	cudaFreeHost(arr2);
+	if (n > 0)
+		cudaFreeHost(arr2);
 }
 
 void print_char_arr(char* arr, int n) {
@@ -152,7 +153,8 @@ void print_char_arr(char* arr, int n) {
 			printf(", ");
 	}
 	printf(" ] n=%d\n", n);
-	cudaFreeHost(arr2);
+	if (n > 0)
+		cudaFreeHost(arr2);
 }
 
 void print_int2_arr(Int2* arr, int n) {
@@ -164,7 +166,8 @@ void print_int2_arr(Int2* arr, int n) {
 			printf(", ");
 	}
 	printf(" ] n=%d\n", n);
-	cudaFreeHost(arr2);
+	if (n > 0)
+		cudaFreeHost(arr2);
 }
 
 void print_size_t_arr(size_t* arr, int n) {
