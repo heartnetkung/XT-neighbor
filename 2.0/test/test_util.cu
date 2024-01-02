@@ -37,7 +37,7 @@ int main() {
 	}
 
 	if (allSuccess) {
-		printf("\033[0;32mAll %lu tests passed \033[0m\n", successCount);
+		printf("\033[0;32mAll %d tests passed \033[0m\n", successCount);
 		return 0;
 	}
 
