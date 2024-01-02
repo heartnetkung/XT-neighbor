@@ -16,7 +16,7 @@ digraph "src/cub.cu"
   Node0 -> Node6 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
   Node6 [label="cub/device/device_reduce.cuh",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled"];
   Node0 -> Node7 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
-  Node7 [label="codec.cu",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$codec_8cu.html"];
+  Node7 [label="codec.cu",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$codec_8cu.html",tooltip="A collection of conversion operations turning CDR3 strings into numerical representation. Also includes utilities to directly edit the representation. "];
   Node7 -> Node8 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
   Node8 [label="util.cu",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled"];
   Node7 -> Node9 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
