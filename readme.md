@@ -1,4 +1,5 @@
 ## Description
+XT-neighbor is a fast scalable computational method for nearest neighbor search of T-cell receptors (TCR) using GPU. In simple terms, our inputs are CDR3 regions of TCR represented as a string of amino acids and the algorithm find all pairs of TCR such that their similarity is within the specified Levenshtein distance threshold. The key feature of our algorithm is orders of magnitude faster and more scalable than the current fastest method thanks to algorithmic advancemence, GPU adaptation, and memory optimization techniques. To read more about XT-neighbor, the research paper is available on [arxiv website](https://arxiv.org/abs/1706.03762).
 
 ## Requirement
 - CUDA SDK version 11.0+
@@ -22,7 +23,7 @@ cd 2.0; mkdir build; cd build; cmake .. -DBUILD_CUB=ON -DBUILD_NON_CUB=ON -DBUIL
 cd 2.0/build; ./test_codec
 
 # update doc
-# follow instruction in 2.0/make_doc.sh
+# follow instructions in 2.0/make_doc.sh
 ```
 
 ## Citation
