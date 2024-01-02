@@ -5,6 +5,12 @@
 #include "stream.cu"
 #include <limits.h>
 
+/**
+ * @file
+ * @brief The core algorithm on the high-level abstraction
+ * concerning data manupulation operations in all 4 stream.
+ */
+
 const int NUM_THREADS = 256;
 const unsigned int UINT_MIN = 0;
 

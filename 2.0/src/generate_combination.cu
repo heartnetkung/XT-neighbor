@@ -1,5 +1,11 @@
 #include "codec.cu"
 
+/**
+ * @file
+ * @brief A single method which generates all possible deletions
+ * of a CDR3 string within a given Levenshtein threshold.
+ */
+
 #ifdef TEST_ENV
 __host__
 #endif

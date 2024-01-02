@@ -3,6 +3,12 @@
 #include <math.h>
 #include "xtn_inner.cu"
 
+/**
+ * @file
+ * @brief The core algorithm on a low-level abstraction concerning how buffers,
+ * streamings, and memory management techniques fit together.
+ */
+
 D2Stream<Int2> *b3 = NULL; /*global variable for callback*/
 const int MAX_PROCESSING = 1 << 30;
 

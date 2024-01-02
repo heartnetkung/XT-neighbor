@@ -4,6 +4,12 @@
 #include "util.cu"
 #include <string.h>
 
+/**
+ * @file
+ * @brief A collection of conversion operations turning CDR3 strings into numerical representation.
+ * Also includes utilities to directly edit the representation.
+ */
+
 // A CDEFGHI KLMN PQRST VW Y
 const int A_CHAR = (int)'A';
 const int BEFORE_A_CHAR = A_CHAR - 1;

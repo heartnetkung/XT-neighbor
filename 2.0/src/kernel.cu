@@ -1,5 +1,11 @@
 #include "codec.cu"
 
+/**
+ * @file
+ * @brief A collection of most GPU parallel primitives that is implemented as CUDA kernel
+ * (most map and expand operations). Follows Facade design pattern.
+ */
+
 int transfer_last_element(int* deviceArr, int n) {
 	int ans[1];
 	cudaMemcpy(ans, deviceArr + n - 1, sizeof(int), cudaMemcpyDeviceToHost);

@@ -6,6 +6,12 @@
 #include <cub/device/device_reduce.cuh>
 #include "codec.cu"
 
+/**
+ * @file
+ * @brief Listing of all GPU parallel primitives that use CUB library
+ * (everything other than map and expand). Follows Facade design pattern.
+ */
+
 struct Int3Comparator {
 	CUB_RUNTIME_FUNCTION __forceinline__ __device__
 	bool operator()(const Int3 &lhs, const Int3 &rhs) {
@@ -115,11 +121,11 @@ void cal_histogram(T* input, int* output, int nLevel, T minValue, T maxValue, in
 	void *buffer = NULL;
 	size_t bufferSize = 0;
 	cub::DeviceHistogram::HistogramEven(buffer, bufferSize,
-	                                    input, output, nLevel + 1, minValue, maxValue, n);gpuerr();
-	cudaMalloc(&buffer, bufferSize);gpuerr();
+	                                    input, output, nLevel + 1, minValue, maxValue, n); gpuerr();
+	cudaMalloc(&buffer, bufferSize); gpuerr();
 	cub::DeviceHistogram::HistogramEven(buffer, bufferSize,
-	                                    input, output, nLevel + 1, minValue, maxValue, n);gpuerr();
-	cudaFree(buffer);gpuerr();
+	                                    input, output, nLevel + 1, minValue, maxValue, n); gpuerr();
+	cudaFree(buffer); gpuerr();
 }
 
 void inclusive_sum_by_key(int* keyIn, int* valueInOut, int n) {

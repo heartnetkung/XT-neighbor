@@ -1,6 +1,12 @@
 #include "codec.cu"
 
 /**
+ * @file
+ * @brief Listing of low-level streaming and buffering module.
+ * It concerns how to read/write data to GPU, RAM, and filesystem with throughput constraints.
+ */
+
+/**
  * Chunk represents a unit of data read by the stream
  */
 template <typename T> class Chunk {
