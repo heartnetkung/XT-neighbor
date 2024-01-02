@@ -16,7 +16,6 @@ if(BUILD_CUB)
 	add_executable(test_stream2 test/test_stream2.cu)
 	add_executable(test_stream3 test/test_stream3.cu)
 	add_executable(test_stream4 test/test_stream4.cu)
-	add_executable(test_memory test/test_memory.cu)
 endif(BUILD_CUB)
 
 if(BUILD_NON_CUB)
