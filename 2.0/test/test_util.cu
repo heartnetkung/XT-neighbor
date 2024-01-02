@@ -29,7 +29,7 @@ int _append(std::string name, void (*func)()) {
 #define TEST(name, ...) void test_##name() { __VA_ARGS__ } int temp_##name = _append(#name,test_##name)?0:1;
 
 int main() {
-	int allSuccess = 1, countSuccess = 0, current;
+	int allSuccess = 1, current;
 	for (int i = 0; i < results.size(); i++) {
 		current = results.at(i);
 		if (!current)
