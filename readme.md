@@ -20,6 +20,9 @@ cd 2.0; mkdir build; cd build; cmake .. -DBUILD_CUB=ON -DBUILD_NON_CUB=ON -DBUIL
 
 # run test
 cd 2.0/build; ./test_codec
+
+# update doc
+# follow instruction in 2.0/make_doc.sh
 ```
 
 ## Citation
