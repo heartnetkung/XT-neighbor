@@ -314,8 +314,8 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 		print_v(verbose, "21");
 	}
 
-	b2key->swap();
-	b2value->swap();
+	b2key->print_size();
+	b2value->print_size();
 
 	//=====================================
 	// boilerplate: deallocalte

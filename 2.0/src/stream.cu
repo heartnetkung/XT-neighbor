@@ -160,6 +160,10 @@ public:
 	void deconstruct() {
 		cudaFree(_deviceBuffer); gpuerr();
 	}
+
+	void print_size() {
+		printf("left over size: %'lu %'lu\n", _writing_data.size(), _reading_data.size());
+	}
 };
 
 /**
