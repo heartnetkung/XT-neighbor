@@ -209,9 +209,11 @@ int solve_bin_packing_offsets(int* histograms, int** &offsetOutput,
 
 	//make output
 	int outputLen = transfer_last_element(buffer, 1); gpuerr();
-	printf("=====aac %d %d %d\n", outputLen, n, nLevel);
+	printf("=====aac %d %d %d %d\n", outputLen, n, nLevel, ctx.maxThroughputExponent);
 	print_int_arr(histograms, len2d);
+	printf("=====\n");
 	print_int_arr(assignment, len2d);
+	printf("=====\n");
 	print_int_arr(output1d, outputLen);
 	if (outputLen % n != 0)
 		print_err("bin_packing outputLen is not divisible by inputLen");
