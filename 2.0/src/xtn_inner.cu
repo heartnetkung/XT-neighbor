@@ -45,6 +45,9 @@ int cal_offsets_lowerbound(Int3* inputKeys, int* inputValues, int* &inputOffsets
 
 	// cal outputLengths
 	cudaMalloc(&outputLengths, sizeof(int)*nUnique); gpuerr();
+	print_gpu_memory();
+	print_main_memory();
+	printf("%d %d\n", nUnique, n);
 	cal_pair_len_lowerbound <<< NUM_BLOCK(nUnique), NUM_THREADS>>>(
 	    inputValues, inputOffsets, outputLengths, lowerbound, nUnique); gpuerr();
 	return nUnique;
@@ -133,6 +136,9 @@ void gen_next_chunk(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut,
 	cudaMalloc(&keyOut, sizeof(Int3)*valueInOut.len); gpuerr();
 	cudaMalloc(&valueOut, sizeof(int)*valueInOut.len); gpuerr();
 
+	print_gpu_memory();
+	print_main_memory();
+	printf("%d %d\n", offsetLen, valueInOut.len);
 	flag_lowerbound <<< NUM_BLOCK(offsetLen), NUM_THREADS>>>(
 	    valueInOut.ptr, valueOffsets, flags, lowerbound, offsetLen); gpuerr();
 	double_flag(keyInOut.ptr, valueInOut.ptr, flags, keyOut, valueOut,
