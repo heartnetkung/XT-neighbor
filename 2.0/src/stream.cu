@@ -162,7 +162,13 @@ public:
 	}
 
 	void print_size() {
-		printf("left over size: %'lu %'lu\n", _writing_data.size(), _reading_data.size());
+		size_t totalLenWrite = 0, totalLenRead = 0;
+		for (int len : _writing_len2)
+			totalLenWrite += len;
+		for (int len : _reading_len2)
+			totalLenRead += len;
+		printf("left over size: %'lu %'lu %'lu %'lu\n",
+		       _writing_data.size(), totalLenWrite, _reading_data.size(), totalLenRead);
 	}
 };
 
