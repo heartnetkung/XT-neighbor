@@ -58,11 +58,6 @@ void _cudaFree(void* a, void* b, void* c, void* d, void* e, void* f, void* g) {
 	cudaFree(g);
 }
 
-void print_tp(int verbose, const char* step, size_t throughput) {
-	if (verbose)
-		printf("step %s completed with throughput: %'lu\n", step, throughput);
-}
-
 void _cudaFreeHost(void* a, void* b) {
 	cudaFreeHost(a);
 	cudaFreeHost(b);
@@ -183,13 +178,21 @@ void print_size_t_arr(size_t* arr, int n) {
 void print_gpu_memory() {
 	size_t mf, ma;
 	cudaMemGetInfo(&mf, &ma);
-	printf("Available GPU Memory: %'lu Total GPU Memory: %'lu\n", mf, ma);
+	printf("GPU Memory: %'lu / %'lu\n", mf, ma);
 }
 
 void print_main_memory() {
 	struct sysinfo si;
 	sysinfo (&si);
-	printf("Available RAM: %'lu Total RAM: %'lu\n", si.freeram, si.totalram);
+	printf("Main Memory: %'lu / %'lu\n", si.freeram, si.totalram);
+}
+
+void print_tp(int verbose, const char* step, size_t throughput) {
+	if (verbose){
+		printf("step %s completed with throughput: %'lu\n", step, throughput);
+		print_gpu_memory();
+		print_main_memory();
+	}
 }
 
 size_t get_gpu_memory() {
