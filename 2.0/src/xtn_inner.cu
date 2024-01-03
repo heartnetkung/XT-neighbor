@@ -191,7 +191,7 @@ int solve_bin_packing_lowerbounds(int* histograms, int* &lowerboundsOutput,
 
 int solve_bin_packing_offsets(int* histograms, int** &offsetOutput,
                               int n, int* buffer, MemoryContext ctx) {
-	int* rowIndex, *assignment, *output1d, *output1dPtr;
+	int* rowIndex, *assignment, *output1d;
 	int offsetLen;
 
 	int nLevel = ctx.histogramSize, len2d = n * nLevel;
@@ -216,7 +216,14 @@ int solve_bin_packing_offsets(int* histograms, int** &offsetOutput,
 	printf("=====\n");
 	print_int_arr(output1d, outputLen);
 
-	if (outputLen == 1) {
+	if (outputLen % n == 0) {
+		offsetLen = outputLen / n;
+		int* output1dPtr = output1d;
+		for (int i = 0; i < n; i++) {
+			offsetOutput[i] = device_to_host(output1dPtr, offsetLen); gpuerr();
+			output1dPtr += offsetLen;
+		}
+	} else if (outputLen == 1) {
 		for (int i = 0; i < n; i++) {
 			int* singleInt;
 			cudaMallocHost(&singleInt, sizeof(int)); gpuerr();
@@ -224,13 +231,6 @@ int solve_bin_packing_offsets(int* histograms, int** &offsetOutput,
 			offsetOutput[i] = singleInt;
 		}
 		offsetLen = 1;
-	} else if (outputLen % n == 0) {
-		offsetLen = outputLen / n;
-		output1dPtr = output1d;
-		for (int i = 0; i < n; i++) {
-			offsetOutput[i] = device_to_host(output1dPtr, offsetLen); gpuerr();
-			output1dPtr += offsetLen;
-		}
 	} else
 		print_err("bin_packing outputLen is not divisible by inputLen");
 
