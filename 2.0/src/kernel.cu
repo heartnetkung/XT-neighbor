@@ -88,7 +88,7 @@ void generate_pairs(int* indexes, Int2* outputs, int* inputOffsets, int* outputO
 				outputs[outputIndex] = newValue;
 				lesserIndex[outputIndex++] = newValue.x;
 			} else
-				printf("potential error on generate pairs\n");
+				printf("[1]potential error on generate pairs %d %d\n",outputIndex,outputEnd);
 		}
 	}
 }
@@ -109,7 +109,7 @@ void generate_smaller_index(int* indexes, int* outputs, int* inputOffsets, int* 
 			if (outputIndex < outputEnd)
 				outputs[outputIndex++] = indexes[i] < indexes[j] ? indexes[i] : indexes[j];
 			else
-				printf("potential error on generate pairs\n");
+				printf("[2]potential error on generate pairs %d %d\n",outputIndex,outputEnd);
 		}
 	}
 }
