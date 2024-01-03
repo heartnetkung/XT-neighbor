@@ -2,9 +2,7 @@
 #include <sys/sysinfo.h>
 
 int print_err(const char* str) {
-#ifndef TEST_ENV
 	fprintf(stderr, "Error: %s\n", str);
-#endif
 	return ERROR;
 }
 
