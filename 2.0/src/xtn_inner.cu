@@ -183,6 +183,7 @@ int solve_bin_packing_lowerbounds(int* histograms, int* &lowerboundsOutput,
 	_cudaFree(rowIndex, output, key, value); gpuerr();
 
 	printf("aa %d\n", seqLen);
+	print_int_arr(histograms, len2d);
 	print_int_arr(lowerboundsOutput, outputLen);
 	return outputLen;
 }
