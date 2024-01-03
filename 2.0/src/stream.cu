@@ -83,7 +83,7 @@ public:
 		check_readable_input(maxReadableSize);
 		_maxReadableSize = maxReadableSize;
 		if (_deviceBuffer != NULL)
-			cudaFree(_deviceBuffer);
+			cudaFree(_deviceBuffer); gpuerr();
 		cudaMalloc(&_deviceBuffer, sizeof(T)*maxReadableSize); gpuerr();
 	}
 
@@ -118,17 +118,15 @@ public:
 
 		// when len exceed _maxReadableSize, enlarge the readable size, and faithfully read with warning
 		if ((totalLen == 0) && !_reading_data.empty()) {
-			int len = _reading_len2.back();
-			set_max_readable_size(len);
+			int totalLen = _reading_len2.back();
+			set_max_readable_size(totalLen);
 
 			T* dataHost = _reading_data.back();
-			cudaMemcpy(ptr, dataHost, sizeof(T)*len , cudaMemcpyHostToDevice); gpuerr();
+			cudaMemcpy(_deviceBuffer, dataHost, sizeof(T)*totalLen , cudaMemcpyHostToDevice); gpuerr();
 			_reading_data.pop_back();
 			_reading_len2.pop_back();
 
 			cudaFreeHost(dataHost); gpuerr();
-			ptr += len;
-			totalLen += len;
 		}
 
 		ans.ptr = _deviceBuffer;
