@@ -61,31 +61,17 @@ public:
 	}
 };
 
-int solve_next_bin(int* chunksizes, int start, int maxSize, int n) {
-	int ans = 0, len = 0;
-	for (int i = start; i < n; i++) {
-		int currentChunkSize = chunksizes[i];
-		if (len + currentChunkSize > maxSize)
-			break;
-		len += currentChunkSize;
-		ans++;
-	}
-	return ans;
-}
-
 template <typename T> class RAMSwapStream {
 private:
 	std::vector<T*> _writing_data, _reading_data;
 	std::vector<int> _writing_len2, _reading_len2;
 	size_t throughput = 0;
-	int _maxReadableSize = 0, _maxWritableSize = 1 << 25 /*32M*/;
+	int _maxReadableSize = 0;
 	T* _deviceBuffer = NULL;
 
 	void check_readable_input(int maxReadableSize) {
 		if (maxReadableSize <= 0)
 			print_err("RAMSwapStream: maxReadableSize <= 0");
-		if (maxReadableSize < _maxWritableSize)
-			print_err("RAMSwapStream: maxReadableSize less than maxWritableSize will lead to infinite loop");
 	}
 
 public:
@@ -99,13 +85,6 @@ public:
 		if (_deviceBuffer != NULL)
 			cudaFree(_deviceBuffer);
 		cudaMalloc(&_deviceBuffer, sizeof(T)*maxReadableSize); gpuerr();
-	}
-
-	/*Do not call this method. It's for testing purpose.*/
-	void set_max_writable_size(int maxWritableSize) {
-		if (maxWritableSize <= 0)
-			print_err("RAMSwapStream: maxWritableSize <= 0");
-		_maxWritableSize = maxWritableSize;
 	}
 
 	Chunk<T> read() {
@@ -124,7 +103,7 @@ public:
 				break;
 
 			int len = _reading_len2.back();
-			if (totalLen + len >= _maxReadableSize)
+			if (totalLen + len > _maxReadableSize)
 				break;
 
 			T* dataHost = _reading_data.back();
@@ -136,43 +115,31 @@ public:
 			ptr += len;
 			totalLen += len;
 		}
+
+		// when len exceed _maxReadableSize, enlarge the readable size, and faithfully read with warning
+		if ((totalLen == 0) && !_reading_data.empty()) {
+			int len = _reading_len2.back();
+			set_max_readable_size(len);
+
+			T* dataHost = _reading_data.back();
+			cudaMemcpy(ptr, dataHost, sizeof(T)*len , cudaMemcpyHostToDevice); gpuerr();
+			_reading_data.pop_back();
+			_reading_len2.pop_back();
+
+			cudaFreeHost(dataHost); gpuerr();
+			ptr += len;
+			totalLen += len;
+		}
+
 		ans.ptr = _deviceBuffer;
 		ans.len = totalLen;
-
 		return ans;
 	}
 
-	void write(T* newData, int n, int* histogram, int histogramSize) {
-		if (_maxWritableSize <= 0)
-			print_err("RAMSwapStream: _maxWritableSize <= 0");
-
-		for (int i = 0; i < histogramSize; i++)
-			printf("%d ", histogram[i]);
-		printf("histogram %d\n", n);
-
-		T* ptr = newData;
-		int start = 0, nChunk, totalLen = 0;
-		while ((nChunk = solve_next_bin(histogram, start, _maxWritableSize, histogramSize)) > 0) {
-			int len = 0, end = start + nChunk;
-			for (int i = start; i < end; i++)
-				len += histogram[i];
-
-			T* dataHost;
-			cudaMallocHost(&dataHost, sizeof(T)*len); gpuerr();
-			cudaMemcpy(dataHost, ptr, sizeof(T)*len, cudaMemcpyDeviceToHost); gpuerr();
-
-			_writing_data.push_back(dataHost);
-			_writing_len2.push_back(len);
-
-			start += nChunk;
-			totalLen += len;
-			ptr += len;
-			printf("aa %d %d\n", start, totalLen);
-		}
-
-		printf("bb %d %d\n", n, totalLen);
-		if (totalLen != n)
-			print_err("RAMSwapStream: totalLen != n");
+	void write(T* newData, int n) {
+		T* dataHost = device_to_host(newData, n); gpuerr();
+		_writing_data.push_back(dataHost);
+		_writing_len2.push_back(n);
 		throughput += n;
 	}
 

@@ -2,22 +2,19 @@
 #include "../src/stream.cu"
 
 TEST(RAMSwapStream, {
-	int input[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
-	int len = 9;
-	int histogram[] = {2, 2, 1, 1, 3};
-	int histogramSize = 5;
+	int input[] = {1, 2, 3, 4, 5, 6};
+	int len = 6;
 
 	int* input_d = host_to_device(input, len);
 	RAMSwapStream<int> *stream = new RAMSwapStream<int>();
-	stream->set_max_writable_size(3);
 	stream->set_max_readable_size(4);
 
-	stream->write(input_d, len, histogram, histogramSize);
+	stream->write(input_d, len);
 	stream->swap();
 
-	int expectedData[][3] = {{1, 2}, {3, 4, 5}, {6}, {7, 8, 9}};
-	int expectedLen2[] = {2, 3, 1, 3};
-	int expectedLen = 4;
+	int expectedData[][6] = {{1, 2, 3, 4, 5, 6}};
+	int expectedLen2[] = {6};
+	int expectedLen = 1;
 
 	Chunk<int> data;
 	int count = 0;
@@ -29,6 +26,30 @@ TEST(RAMSwapStream, {
 		count++;
 	}
 	check(count == expectedLen);
+
+	int input2[][4] = {{10, 11}, {12}, {13, 14}, {15, 16, 17, 18}};
+	int len22[] = {2, 1, 2, 4};
+	int len2 = 4;
+
+	for (int i = 0; i < len2; i++) {
+		input_d = host_to_device(input2[i], len22[i]);
+		stream->write(input_d, len22[i]);
+	}
+	stream->swap();
+
+	int expectedData2[][5] = {{10, 11, 12, 13, 14}, {15, 16, 17, 18}};
+	int expectedLen22[] = {5, 4};
+	int expectedLen21 = 2;
+
+	count = 0;
+	while ((data = stream->read()).not_null()) {
+		check(data.len == expectedLen22[count]);
+		int* hostPtr = device_to_host(data.ptr, data.len);
+		for (int i = 0; i < data.len; i++)
+			check(expectedData2[count][i] == hostPtr[i]);
+		count++;
+	}
+	check(count == expectedLen21);
 })
 
 
