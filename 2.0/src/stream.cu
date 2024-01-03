@@ -184,8 +184,10 @@ private:
 		for (int i = 0; i < nRow; i++) {
 			if (offsets[i] == NULL)
 				print_err("D2Stream: offsets[i]==NULL");
-			if (offsets[i][nColumn - 1] != _len2[i])
+			if (offsets[i][nColumn - 1] != _len2[i]) {
+				printf("%d %d \n", offsets[i][nColumn - 1], _len2[i]);
 				print_err("D2Stream: the last offset should cover the whole stream");
+			}
 		}
 	}
 

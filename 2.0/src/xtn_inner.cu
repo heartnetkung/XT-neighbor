@@ -227,11 +227,12 @@ int solve_bin_packing_offsets(int* histograms, int** &offsetOutput,
 	} else if (outputLen == 1) {
 		printf("=====yy\n");
 		for (int i = 0; i < n; i++) {
-			print_int_arr(histograms + (i * nLevel), nLevel);
-			int* singleInt;
-			cudaMallocHost(&singleInt, sizeof(int)); gpuerr();
-			cudaMemcpy(singleInt, histograms + (i * nLevel) - 1, sizeof(int), cudaMemcpyDeviceToHost); gpuerr();
-			offsetOutput[i] = singleInt;
+			// print_int_arr(histograms + (i * nLevel), nLevel);
+			// int* singleInt;
+			// cudaMallocHost(&singleInt, sizeof(int)); gpuerr();
+			// cudaMemcpy(singleInt, histograms + (i * nLevel) - 1, sizeof(int), cudaMemcpyDeviceToHost); gpuerr();
+			// cudaDeviceSynchronize();
+			offsetOutput[i] = device_to_host( histograms + (i * nLevel) + nLevel - 1, 1); gpuerr();
 		}
 		offsetLen = 1;
 	} else

@@ -10,7 +10,7 @@ void print_args(XTNArgs args) {
 	printf("XTNArgs{\n");
 	printf("\tdistance: %d\n", args.distance);
 	printf("\tverbose: %d\n", args.verbose);
-	printf("\tseq1Len: %d\n", args.seq1Len);
+	printf("\tseq1Len: %'d\n", args.seq1Len);
 	printf("\tseq1Path: \"%s\"\n", args.seq1Path);
 	printf("\toutputPath: \"%s\"\n", args.outputPath);
 	printf("}\n");
