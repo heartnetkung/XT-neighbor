@@ -1,4 +1,5 @@
 #include "codec.cu"
+#include <algorithm>
 
 /**
  * @file
@@ -60,134 +61,127 @@ public:
 	}
 };
 
-/**
- * A 1 dimensional stream where the original data resides in the RAM
- * and a chunk is transfered to GPU memory one at a time.
- *
- * Note that the RAM backend is designed to be shared with RAMOutputStream.
- */
-template <typename T> class RAMInputStream {
-private:
-	T** _data = NULL;
-	T* _deviceBuffer = NULL;
-	int* _len2 = NULL;
-	int _len1 = 0, _maxReadableSize = 0, _index = 0;
+int solve_next_bin(int* chunksizes, int start, int maxSize, int n) {
+	int ans = 0, len = 0;
+	for (int i = start; i < n; i++) {
+		int currentChunkSize = chunksizes[i];
+		if (len + currentChunkSize > maxSize)
+			break;
+		len += currentChunkSize;
+		ans++;
+	}
+	return ans;
+}
 
-	void check_input(T** data, int len1, int* len2, int maxReadableSize, T* deviceBuffer) {
-		if (len1 <= 0)
-			print_err("RAMInputStream: len1 <= 0");
+template <typename T> class RAMSwapStream {
+private:
+	std::vector<T*> _writing_data, _reading_data;
+	std::vector<int> _writing_len2, _reading_len2;
+	size_t throughput = 0;
+	int _maxReadableSize = 0, _maxWritableSize = 1 << 25 /*32M*/;
+	T* _deviceBuffer = NULL;
+
+	void check_readable_input(int maxReadableSize) {
 		if (maxReadableSize <= 0)
-			print_err("RAMInputStream: maxReadableSize <= 0");
-		if (data == NULL)
-			print_err("RAMInputStream: data == NULL");
-		if (deviceBuffer == NULL)
-			print_err("RAMInputStream: deviceBuffer == NULL");
-		for (int i = 0; i < len1; i++) {
-			if (len2[i] > maxReadableSize)
-				print_err("RAMInputStream: len2[i] > maxReadableSize will lead to infinite loop");
-			if ((data[i] == NULL) && (len2[i] > 0))
-				print_err("RAMInputStream: (data[i] == NULL) && (len2[i] > 0)");
-		}
+			print_err("RAMSwapStream: maxReadableSize <= 0");
+		if (maxReadableSize < _maxWritableSize)
+			print_err("RAMSwapStream: maxReadableSize less than maxWritableSize will lead to infinite loop");
 	}
 
 public:
-	RAMInputStream(T** data, int len1, int* len2, int maxReadableSize, T* deviceBuffer) {
-		check_input(data, len1, len2, maxReadableSize, deviceBuffer);
-		_data = data;
-		_len1 = len1;
-		_len2 = len2;
+	size_t get_throughput() {
+		return throughput;
+	}
+
+	void set_max_readable_size(int maxReadableSize) {
+		check_readable_input(maxReadableSize);
 		_maxReadableSize = maxReadableSize;
-		_deviceBuffer = deviceBuffer;
+		cudaMalloc(&_deviceBuffer, sizeof(T)*maxReadableSize); gpuerr();
+	}
+
+	/*Do not call this method. It's for testing purpose.*/
+	void set_max_writable_size(int maxWritableSize) {
+		if (maxWritableSize <= 0)
+			print_err("RAMSwapStream: maxWritableSize <= 0");
+		_maxWritableSize = maxWritableSize;
 	}
 
 	Chunk<T> read() {
 		Chunk<T> ans;
-		if (_index == _len1)
+		if (_reading_data.empty())
 			return ans;
+		if (_deviceBuffer == NULL) {
+			print_err("RAMSwapStream: _deviceBuffer == NULL");
+			return ans;
+		}
 
-		ans.ptr = _deviceBuffer;
-		T* currentPtr = _deviceBuffer;
-		for (; _index < _len1; _index++) {
-			int newLen = _len2[_index];
-			if (ans.len + newLen > _maxReadableSize)
+		int totalLen = 0;
+		T* ptr = _deviceBuffer;
+		while (true) {
+			if (_reading_data.empty())
 				break;
-			if (newLen == 0)
-				continue;
 
-			cudaMemcpy(currentPtr, _data[_index], sizeof(T)*newLen, cudaMemcpyHostToDevice); gpuerr();
-			currentPtr += newLen;
-			ans.len += newLen;
+			int len = _reading_len2.back();
+			if (totalLen + len >= _maxReadableSize)
+				break;
+
+			T* dataHost = _reading_data.back();
+			cudaMemcpy(ptr, dataHost, sizeof(T)*len , cudaMemcpyHostToDevice); gpuerr();
+			_reading_data.pop_back();
+			_reading_len2.pop_back();
+
+			cudaFreeHost(dataHost); gpuerr();
+			ptr += len;
+			totalLen += len;
 		}
+		ans.ptr = _deviceBuffer;
+		ans.len = totalLen;
+
 		return ans;
 	}
 
-	size_t get_throughput() {
-		size_t ans = 0;
-		for (int i = 0; i < _len1; i++)
-			ans += _len2[i];
-		return ans;
-	}
-};
+	void write(T* newData, int n, int* histogram, int histogramSize) {
+		if (_maxWritableSize <= 0)
+			print_err("RAMSwapStream: _maxWritableSize <= 0");
 
-/**
- * A 1 dimensional stream where the original data resides in the RAM
- * and a chunk is written from GPU memory one at a time.
- *
- * Note that the RAM backend is designed to be shared with RAMInputStream.
- */
-template <typename T> class RAMOutputStream {
-private:
-	T** _data = NULL;
-	int* _len2 = NULL;
-	int _len1 = 0, _index = 0;
+		T* ptr = newData;
+		int start = 0, nChunk, totalLen = 0;
+		while ((nChunk = solve_next_bin(histogram, start, _maxWritableSize, histogramSize)) > 0) {
+			int len = 0, end = start + nChunk;
+			for (int i = start; i < end; i++)
+				len += histogram[i];
 
-	void check_input(T** data, int len1, int* len2) {
-		if (len1 <= 0)
-			print_err("RAMOutputStream: len1 <= 0");
-		if (data == NULL)
-			print_err("RAMOutputStream: data == NULL");
-	}
+			T* dataHost;
+			cudaMallocHost(&dataHost, sizeof(T)*len); gpuerr();
+			cudaMemcpy(dataHost, ptr, sizeof(T)*len, cudaMemcpyDeviceToHost); gpuerr();
 
-	void check_input_write(T* newData, int n) {
-		if ((newData == NULL) && (n > 0))
-			print_err("RAMOutputStream: (newData == NULL) && (n > 0)");
-	}
+			_writing_data.push_back(dataHost);
+			_writing_len2.push_back(len);
 
-public:
-	RAMOutputStream(T** data, int len1, int* len2) {
-		check_input(data, len1, len2);
-		_data = data;
-		_len1 = len1;
-		_len2 = len2;
-	}
-
-	void write(T* newData, int n) {
-		check_input_write(newData, n);
-		if (_index >= _len1)
-			print_err("RAMOutputStream: writing more than allocated");
-		if (n > 0) {
-			if (_data[_index] != NULL)
-				cudaFreeHost(_data[_index]); gpuerr();
-			cudaMallocHost(&_data[_index], sizeof(T)*n); gpuerr();
-			cudaMemcpy(_data[_index], newData, sizeof(T)*n, cudaMemcpyDeviceToHost); gpuerr();
+			start += nChunk;
+			totalLen += len;
+			ptr += len;
 		}
-		_len2[_index] = n;
-		_index++;
+
+		if (totalLen != n)
+			print_err("RAMSwapStream: totalLen != n");
+		throughput += n;
 	}
 
-	int get_new_len1() {
-		return _index;
+	void swap() {
+		if (_reading_data.size() != 0) {
+			print_err("RAMSwapStream: reading buffer should be empty before the swap");
+			return;
+		}
+		_writing_data.swap(_reading_data);
+		_writing_len2.swap(_reading_len2);
+		std::reverse(_reading_data.begin(), _reading_data.end());
+		std::reverse(_reading_len2.begin(), _reading_len2.end());
+		throughput = 0;
 	}
 
-	int* get_new_len2() {
-		return _len2;
-	}
-
-	size_t get_throughput() {
-		size_t ans = 0;
-		for (int i = 0; i < _index; i++)
-			ans += _len2[i];
-		return ans;
+	void deconstruct() {
+		cudaFree(_deviceBuffer); gpuerr();
 	}
 };
 
