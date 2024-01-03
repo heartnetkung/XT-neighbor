@@ -120,7 +120,7 @@ public:
 
 		// when len exceed _maxReadableSize, enlarge the readable size, and faithfully read with warning
 		if ((totalLen == 0) && !_reading_data.empty()) {
-			int totalLen = _reading_len2.back();
+			totalLen = _reading_len2.back();
 			set_max_readable_size(totalLen);
 
 			T* dataHost = _reading_data.back();
