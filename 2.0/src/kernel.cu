@@ -42,12 +42,13 @@ void cal_pair_len(int* input, int* output, int n) {
 }
 
 __global__
-void cal_pair_len_lowerbound(int* indexes, int* inputOffsets, int* outputLengths, int lowerbound, int n) {
+void cal_pair_len_lowerbound(int* indexes, int* inputOffsets, int* outputLengths,
+                             int lowerbound, int carry, int n) {
 	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
 	if (tid >= n)
 		return;
 
-	int start = tid == 0 ? 0 : inputOffsets[tid - 1];
+	int start = tid == 0 ? carry : inputOffsets[tid - 1];
 	int end = inputOffsets[tid];
 	int invalidCount = 0;
 	for (int i = start; i < end; i++)
@@ -60,12 +61,12 @@ void cal_pair_len_lowerbound(int* indexes, int* inputOffsets, int* outputLengths
 
 __global__
 void generate_pairs(int* indexes, Int2* outputs, int* inputOffsets, int* outputOffsets,
-                    int* lesserIndex, int lowerbound, int n) {
+                    int* lesserIndex, int lowerbound, int carry, int n) {
 	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
 	if (tid >= n)
 		return;
 
-	int start = tid == 0 ? 0 : inputOffsets[tid - 1];
+	int start = tid == 0 ? carry : inputOffsets[tid - 1];
 	int end = inputOffsets[tid];
 	int outputIndex = tid == 0 ? 0 : outputOffsets[tid - 1];
 	int outputEnd = outputOffsets[tid];
@@ -110,7 +111,7 @@ void generate_smaller_index(int* indexes, int* outputs, int* inputOffsets, int* 
 			if (outputIndex < outputEnd)
 				outputs[outputIndex++] = indexes[i] < indexes[j] ? indexes[i] : indexes[j];
 			else
-				printf("[2]potential error on generate pairs %d %d %d %d\n",i,j,start,end);
+				printf("[2]potential error on generate pairs %d %d %d %d\n", i, j, start, end);
 		}
 	}
 }

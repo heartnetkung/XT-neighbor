@@ -51,7 +51,7 @@ int cal_offsets_lowerbound(Int3* inputKeys, int* inputValues, int* &inputOffsets
 }
 
 int gen_pairs(int* input, int* inputOffsets, int* outputLengths, Int2* &output,
-              int* &lesserIndex, int lowerbound, int n) {
+              int* &lesserIndex, int lowerbound, int carry, int n) {
 	int* outputOffsets;
 
 	// cal outputOffsets
@@ -63,13 +63,14 @@ int gen_pairs(int* input, int* inputOffsets, int* outputLengths, Int2* &output,
 	cudaMalloc(&output, sizeof(Int2)*outputLen); gpuerr();
 	cudaMalloc(&lesserIndex, sizeof(int)*outputLen); gpuerr();
 	generate_pairs <<< NUM_BLOCK(n), NUM_THREADS>>>(input, output,
-	        inputOffsets, outputOffsets, lesserIndex, lowerbound, n); gpuerr();
+	        inputOffsets, outputOffsets, lesserIndex, lowerbound, carry, n); gpuerr();
 
 	cudaFree(outputOffsets); gpuerr();
 	return outputLen;
 }
 
-int gen_smaller_index(int* input, int* inputOffsets, int* outputLengths, int* &output, int n) {
+int gen_smaller_index(int* input, int* inputOffsets, int* outputLengths,
+                      int* &output, int carry, int n) {
 	int* outputOffsets;
 
 	// cal outputOffsets
@@ -80,7 +81,7 @@ int gen_smaller_index(int* input, int* inputOffsets, int* outputLengths, int* &o
 	//generate pairs
 	cudaMalloc(&output, sizeof(int)*outputLen); gpuerr();
 	generate_smaller_index <<< NUM_BLOCK(n), NUM_THREADS>>>(input, output,
-	        inputOffsets, outputOffsets, n); gpuerr();
+	        inputOffsets, outputOffsets, carry, n); gpuerr();
 
 	cudaFree(outputOffsets); gpuerr();
 	return outputLen;
@@ -253,7 +254,7 @@ void stream_handler2(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, std::vector<
 	int offsetLen =
 	    cal_offsets(keyInOut.ptr, inputOffsets, valueLengths, keyInOut.len, buffer);
 
-	int start = 0, nChunk;
+	int start = 0, carry = 0, nChunk;
 	int* inputOffsetsPtr = inputOffsets, *valueLengthsPtr = valueLengths;
 	valueLengthsHost = device_to_host(valueLengths, offsetLen); gpuerr();
 
@@ -268,6 +269,7 @@ void stream_handler2(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, std::vector<
 		cal_histogram(indexes, histogram, ctx.histogramSize , 0, seqLen, chunkLen); gpuerr();
 		histogramOutput.push_back(histogram);
 
+		carry = transfer_last_element(inputOffsetsPtr, nChunk);
 		start += nChunk;
 		inputOffsetsPtr += nChunk;
 		valueLengthsPtr += nChunk;
@@ -288,7 +290,7 @@ void stream_handler3(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, void callbac
 	                    keyInOut.ptr, valueInOut.ptr, inputOffsets,
 	                    valueLengths, lowerbound, keyInOut.len, buffer);
 
-	int start = 0, nChunk;
+	int start = 0, carry = 0, nChunk;
 	int* inputOffsetsPtr = inputOffsets, *valueLengthsPtr = valueLengths;
 	valueLengthsHost = device_to_host(valueLengths, offsetLen); gpuerr();
 
@@ -301,6 +303,7 @@ void stream_handler3(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, void callbac
 		cal_histogram(lesserIndex, histogram, ctx.histogramSize , 0, seqLen, chunkLen); gpuerr();
 		histogramOutput.push_back(histogram);
 
+		carry = transfer_last_element(inputOffsetsPtr, nChunk);
 		start += nChunk;
 		inputOffsetsPtr += nChunk;
 		valueLengthsPtr += nChunk;
