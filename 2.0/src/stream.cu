@@ -96,6 +96,8 @@ public:
 	void set_max_readable_size(int maxReadableSize) {
 		check_readable_input(maxReadableSize);
 		_maxReadableSize = maxReadableSize;
+		if (_deviceBuffer != NULL)
+			cudaFree(_deviceBuffer);
 		cudaMalloc(&_deviceBuffer, sizeof(T)*maxReadableSize); gpuerr();
 	}
 
