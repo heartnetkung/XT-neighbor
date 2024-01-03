@@ -146,6 +146,10 @@ public:
 		if (_maxWritableSize <= 0)
 			print_err("RAMSwapStream: _maxWritableSize <= 0");
 
+		for (int i = 0; i < histogramSize; i++)
+			printf("%d ", histogram[i]);
+		printf("histogram %d\n", n);
+
 		T* ptr = newData;
 		int start = 0, nChunk, totalLen = 0;
 		while ((nChunk = solve_next_bin(histogram, start, _maxWritableSize, histogramSize)) > 0) {
@@ -163,8 +167,10 @@ public:
 			start += nChunk;
 			totalLen += len;
 			ptr += len;
+			printf("aa %d %d\n", start, totalLen);
 		}
 
+		printf("bb %d %d\n", n, totalLen);
 		if (totalLen != n)
 			print_err("RAMSwapStream: totalLen != n");
 		throughput += n;
