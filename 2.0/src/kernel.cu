@@ -87,8 +87,9 @@ void generate_pairs(int* indexes, Int2* outputs, int* inputOffsets, int* outputO
 			if (outputIndex < outputEnd) {
 				outputs[outputIndex] = newValue;
 				lesserIndex[outputIndex++] = newValue.x;
-			} else
-				printf("[1]potential error on generate pairs %d %d\n",outputIndex,outputEnd);
+			}
+			// else
+			// 	printf("[1]potential error on generate pairs %d %d\n",outputIndex,outputEnd);
 		}
 	}
 }
