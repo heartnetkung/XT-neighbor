@@ -176,18 +176,13 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 	GPUInputStream<Int3> *b0;
 	D2Stream<Int3> *b1key;
 	D2Stream<int> *b1value;
-	RAMInputStream<Int3> *b2keyInput;
-	RAMInputStream<int> *b2valueInput;
-	RAMOutputStream<Int3> *b2keyOutput;
-	RAMOutputStream<int> *b2valueOutput;
+	RAMSwapStream<Int3> *b2key;
+	RAMSwapStream<int> *b2value;
 	Chunk<Int3> b0Chunk, b1keyChunk, b2keyChunk;
 	Chunk<Int2> b3Chunk;
 	Chunk<int> b1valueChunk, b2valueChunk;
 	Int3* b1keyOut;
 	int* b1valueOut;
-	Int3** keyStorage;
-	int** valueStorage;
-	int* keyStorageLen, *valueStorageLen;
 	printf("2\n");
 
 	cudaMalloc(&deviceInt, sizeof(int)); gpuerr();
@@ -231,17 +226,8 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 	histograms.clear();
 	printf("7\n");
 
-	cudaMallocHost(&keyStorage, sizeof(Int3*)*chunkCount); gpuerr();
-	cudaMallocHost(&valueStorage, sizeof(int*)*chunkCount); gpuerr();
-	cudaMallocHost(&keyStorageLen, sizeof(int)*chunkCount); gpuerr();
-	cudaMallocHost(&valueStorageLen, sizeof(int)*chunkCount); gpuerr();
-	for (int i = 0; i < chunkCount; i++) {
-		keyStorage[i] = NULL;
-		valueStorage[i] = NULL;
-	}
-
-	b2keyOutput = new RAMOutputStream<Int3>(keyStorage, chunkCount, keyStorageLen);
-	b2valueOutput = new RAMOutputStream<int>(valueStorage, chunkCount, valueStorageLen);
+	b2key = new RAMSwapStream<Int3>();
+	b2value = new RAMSwapStream<int>();
 	printf("8\n");
 
 	while ((b1keyChunk = b1key->read()).not_null()) {
@@ -250,15 +236,16 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 		stream_handler2(b1keyChunk, b1valueChunk, histograms,
 		                distance, seq1Len, deviceInt, ctx2);
 		printf("10\n");
-		b2keyOutput->write(b1keyChunk.ptr, b1keyChunk.len);
-		b2valueOutput->write(b1valueChunk.ptr, b1valueChunk.len);
+		int* currentHistogram = device_to_host(histograms.back(), ctx2.histogramSize); gpuerr();
+		b2key->write(b1keyChunk.ptr, b1keyChunk.len, currentHistogram, ctx2.histogramSize);
+		b2value->write(b1valueChunk.ptr, b1valueChunk.len, currentHistogram, ctx2.histogramSize);
 	}
 
 	printf("11\n");
 	b1key->deconstruct();
 	b1value->deconstruct();
 	_cudaFreeHost2D(offsets, offsetLen); gpuerr();
-	print_tp(verbose, "2", b2keyOutput->get_throughput());
+	print_tp(verbose, "2", b2key->get_throughput());
 	printf("12\n");
 
 	//=====================================
@@ -277,36 +264,28 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 		//=====================================
 
 		MemoryContext ctx3 = cal_memory_stream3(seq1Len);
-		int len = b2keyOutput->get_new_len1();
-		int* len2 = b2keyOutput->get_new_len2();
-		int bandwidth1 = ctx3.bandwidth1;
-		Int3* keyReadBuffer;
-		int* valueReadBuffer;
+		b2key->swap();
+		b2value->swap();
+		b2key->set_max_readable_size(ctx3.bandwidth1);
+		b2value->set_max_readable_size(ctx3.bandwidth1);
 		printf("13.5\n");
-
 		b3 = new D2Stream<Int2>();
-		cudaMalloc(&keyReadBuffer, sizeof(Int3) * bandwidth1); gpuerr();
-		cudaMalloc(&valueReadBuffer, sizeof(int) * bandwidth1); gpuerr();
-		b2keyInput = new RAMInputStream<Int3>(keyStorage, len, len2, bandwidth1, keyReadBuffer);
-		b2valueInput = new RAMInputStream<int>(valueStorage, len, len2, bandwidth1, valueReadBuffer);
-		b2keyOutput = new RAMOutputStream<Int3>(keyStorage, len, len2);
-		b2valueOutput = new RAMOutputStream<int>(valueStorage, len, len2);
 		printf("14\n");
 
-		while ((b2keyChunk = b2keyInput->read()).not_null()) {
-			b2valueChunk = b2valueInput->read();
+		while ((b2keyChunk = b2key->read()).not_null()) {
+			b2valueChunk = b2value->read();
 			printf("15\n");
 			stream_handler3(b2keyChunk, b2valueChunk, write_b3, histograms,
 			                lowerbound, seq1Len, deviceInt, ctx3);
 			printf("16\n");
-			b2keyOutput->write(b2keyChunk.ptr, b2keyChunk.len);
-			b2valueOutput->write(b2valueChunk.ptr, b2valueChunk.len);
+			int* currentHistogram = device_to_host(histograms.back(), ctx3.histogramSize); gpuerr();
+			b2key->write(b2keyChunk.ptr, b2keyChunk.len, currentHistogram, ctx3.histogramSize);
+			b2value->write(b2valueChunk.ptr, b2valueChunk.len, currentHistogram, ctx3.histogramSize);
 			printf("17\n");
 		}
 
 		printf("18\n");
-		_cudaFree(keyReadBuffer, valueReadBuffer); gpuerr();
-		print_tp(verbose, "3.1", b2keyOutput->get_throughput());
+		print_tp(verbose, "3.1", b2key->get_throughput());
 		print_tp(verbose, "3.2", b3->get_throughput());
 
 		//=====================================
@@ -342,6 +321,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 	//=====================================
 	cudaFreeHost(lowerbounds); gpuerr();
 	_cudaFree(deviceInt, seq1Device); gpuerr();
-	_cudaFreeHost(keyStorage, valueStorage, keyStorageLen, valueStorageLen); gpuerr();
+	b2key->deconstruct();
+	b2value->deconstruct();
 	printf("22\n");
 }
