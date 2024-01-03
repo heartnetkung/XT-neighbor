@@ -280,6 +280,8 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 			b2key->write(b2keyChunk.ptr, b2keyChunk.len);
 			b2value->write(b2valueChunk.ptr, b2valueChunk.len);
 			printf("17\n");
+
+			_cudaFree(b2keyChunk.ptr, b2valueChunk.ptr); gpuerr();
 		}
 
 		printf("18\n");
