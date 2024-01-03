@@ -236,9 +236,8 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 		stream_handler2(b1keyChunk, b1valueChunk, histograms,
 		                distance, seq1Len, deviceInt, ctx2);
 		// printf("10\n");
-		int* currentHistogram = device_to_host(histograms.back(), ctx2.histogramSize); gpuerr();
-		b2key->write(b1keyChunk.ptr, b1keyChunk.len, currentHistogram, ctx2.histogramSize);
-		b2value->write(b1valueChunk.ptr, b1valueChunk.len, currentHistogram, ctx2.histogramSize);
+		b2key->write(b1keyChunk.ptr, b1keyChunk.len);
+		b2value->write(b1valueChunk.ptr, b1valueChunk.len);
 	}
 
 	// printf("11\n");
@@ -277,9 +276,8 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 			stream_handler3(b2keyChunk, b2valueChunk, write_b3, histograms,
 			                lowerbound, seq1Len, deviceInt, ctx3);
 			// printf("16\n");
-			int* currentHistogram = device_to_host(histograms.back(), ctx3.histogramSize); gpuerr();
-			b2key->write(b2keyChunk.ptr, b2keyChunk.len, currentHistogram, ctx3.histogramSize);
-			b2value->write(b2valueChunk.ptr, b2valueChunk.len, currentHistogram, ctx3.histogramSize);
+			b2key->write(b2keyChunk.ptr, b2keyChunk.len);
+			b2value->write(b2valueChunk.ptr, b2valueChunk.len);
 			// printf("17\n");
 		}
 
