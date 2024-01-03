@@ -180,13 +180,14 @@ int solve_bin_packing_lowerbounds(int* histograms, int* &lowerboundsOutput,
 
 	print_int_arr(key, nLevel);
 	print_int_arr(value, nLevel);
-	print_int_arr(output, nLevel);
 
 	int outputLen = transfer_last_element(buffer, 1); gpuerr();
+	print_int_arr(output, outputLen);
 	lowerboundsOutput = device_to_host(output, outputLen); gpuerr();
 	_cudaFree(rowIndex, output, key, value); gpuerr();
 
-	printf("aa %d\n", seqLen);
+	printf("====aa %d %d\n", seqLen, n);
+	print_int_arr(histograms, len2d);
 	print_int_arr(lowerboundsOutput, outputLen);
 	return outputLen;
 }
