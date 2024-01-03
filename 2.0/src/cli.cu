@@ -139,8 +139,7 @@ int main(int argc, char **argv) {
 	} else {
 		xtn_perform(args, seq1, null_handler);
 	}
-	if (args.verbose)
-		printf("total output length: %'lu\n", totalOutputLen);
+	printf("total output length: %'lu\n", totalOutputLen);
 
 	// 4. clean up
 	cudaFreeHost(seq1);
