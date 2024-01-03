@@ -99,10 +99,12 @@ public:
 		int totalLen = 0;
 		T* ptr = _deviceBuffer;
 		while (true) {
+			printf("aac %d %d\n", _maxReadableSize, _reading_data.size());
 			if (_reading_data.empty())
 				break;
 
 			int len = _reading_len2.back();
+			printf("aab %d %d\n", totalLen , len);
 			if (totalLen + len > _maxReadableSize)
 				break;
 
