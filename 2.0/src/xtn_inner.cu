@@ -217,6 +217,7 @@ int solve_bin_packing_offsets(int* histograms, int** &offsetOutput,
 	print_int_arr(output1d, outputLen);
 
 	if (outputLen % n == 0) {
+		printf("=====xx\n");
 		offsetLen = outputLen / n;
 		int* output1dPtr = output1d;
 		for (int i = 0; i < n; i++) {
@@ -224,6 +225,7 @@ int solve_bin_packing_offsets(int* histograms, int** &offsetOutput,
 			output1dPtr += offsetLen;
 		}
 	} else if (outputLen == 1) {
+		printf("=====yy\n");
 		for (int i = 0; i < n; i++) {
 			int* singleInt;
 			cudaMallocHost(&singleInt, sizeof(int)); gpuerr();
