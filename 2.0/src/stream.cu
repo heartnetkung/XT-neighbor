@@ -85,6 +85,7 @@ public:
 		if (_deviceBuffer != NULL)
 			cudaFree(_deviceBuffer); gpuerr();
 		cudaMalloc(&_deviceBuffer, sizeof(T)*maxReadableSize); gpuerr();
+		printf("====size grow %d\n", maxReadableSize)
 	}
 
 	Chunk<T> read() {

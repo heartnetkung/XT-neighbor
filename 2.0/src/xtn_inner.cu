@@ -134,8 +134,6 @@ void gen_next_chunk(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut,
 	cudaMalloc(&keyOut, sizeof(Int3)*valueInOut.len); gpuerr();
 	cudaMalloc(&valueOut, sizeof(int)*valueInOut.len); gpuerr();
 
-	print_gpu_memory();
-	print_main_memory();
 	flag_lowerbound <<< NUM_BLOCK(offsetLen), NUM_THREADS>>>(
 	    valueInOut.ptr, valueOffsets, flags, lowerbound, offsetLen); gpuerr();
 	double_flag(keyInOut.ptr, valueInOut.ptr, flags, keyOut, valueOut,
