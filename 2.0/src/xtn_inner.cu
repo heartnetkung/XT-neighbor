@@ -212,6 +212,7 @@ int solve_bin_packing_offsets(int* histograms, int** &offsetOutput,
 	printf("=====aac %d %d %d\n", outputLen, n, nLevel);
 	print_int_arr(histograms, len2d);
 	print_int_arr(assignment, len2d);
+	print_int_arr(output1d, outputLen);
 	if (outputLen % n != 0)
 		print_err("bin_packing outputLen is not divisible by inputLen");
 	int offsetLen = outputLen / n;
