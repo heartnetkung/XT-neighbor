@@ -273,7 +273,6 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 		while ((b2keyChunk = b2key->read()).not_null()) {
 			b2valueChunk = b2value->read();
 			printf("15\n");
-			printf(">>>>>>>len: %d\n", b2keyChunk.len);
 			stream_handler3(b2keyChunk, b2valueChunk, write_b3, histograms,
 			                lowerbound, seq1Len, deviceInt, ctx3);
 			printf("16\n");
