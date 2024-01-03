@@ -192,6 +192,7 @@ int solve_bin_packing_lowerbounds(int* histograms, int* &lowerboundsOutput,
 int solve_bin_packing_offsets(int* histograms, int** &offsetOutput,
                               int n, int* buffer, MemoryContext ctx) {
 	int* rowIndex, *assignment, *output1d, *output1dPtr;
+	int offsetLen;
 
 	int nLevel = ctx.histogramSize, len2d = n * nLevel;
 	cudaMalloc(&rowIndex, sizeof(int) * len2d); gpuerr();
@@ -206,7 +207,6 @@ int solve_bin_packing_offsets(int* histograms, int** &offsetOutput,
 	    histograms, assignment, ctx.maxThroughputExponent, n, nLevel); gpuerr();
 	max_by_key(assignment, histograms, output1d, buffer, len2d); gpuerr();
 
-
 	//make output
 	int outputLen = transfer_last_element(buffer, 1); gpuerr();
 	printf("=====aac %d %d %d %d\n", outputLen, n, nLevel, ctx.maxThroughputExponent);
@@ -215,14 +215,24 @@ int solve_bin_packing_offsets(int* histograms, int** &offsetOutput,
 	print_int_arr(assignment, len2d);
 	printf("=====\n");
 	print_int_arr(output1d, outputLen);
-	if (outputLen % n != 0)
+
+	if (outputLen == 1) {
+		for (int i = 0; i < n; i++) {
+			int* singleInt;
+			cudaMallocHost(&singleInt, sizeof(int)); gpuerr();
+			cudaMemcpy(singleInt, histograms + (i * nLevel) - 1, sizeof(int), cudaMemcpyDeviceToHost); gpuerr();
+			offsetOutput[i] = singleInt;
+		}
+		offsetLen = 1;
+	} else if (outputLen % n == 0) {
+		offsetLen = outputLen / n;
+		output1dPtr = output1d;
+		for (int i = 0; i < n; i++) {
+			offsetOutput[i] = device_to_host(output1dPtr, offsetLen); gpuerr();
+			output1dPtr += offsetLen;
+		}
+	} else
 		print_err("bin_packing outputLen is not divisible by inputLen");
-	int offsetLen = outputLen / n;
-	output1dPtr = output1d;
-	for (int i = 0; i < n; i++) {
-		offsetOutput[i] = device_to_host(output1dPtr, offsetLen); gpuerr();
-		output1dPtr += offsetLen;
-	}
 
 	_cudaFree(rowIndex, assignment, output1d); gpuerr();
 	return offsetLen;
