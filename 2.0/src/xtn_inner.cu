@@ -261,8 +261,9 @@ void stream_handler2(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, std::vector<
 	//histogram loop
 	while ((nChunk = solve_next_bin(valueLengthsHost, start, ctx.bandwidth2, offsetLen)) > 0) {
 
-		printf("9.5 == %d %lu\n", nChunk, nChunkSum);
+		printf("9.5 == %'d %'lu %'d\n", nChunk, nChunkSum, offsetLen);
 		int chunkLen = gen_smaller_index(valueInOut.ptr, inputOffsetsPtr, valueLengthsPtr, indexes, nChunk);
+		printf("9.6 == %'d %'d\n", chunkLen, ctx.bandwidth2);
 		cudaMalloc(&histogram, sizeof(int)*ctx.histogramSize);	gpuerr();
 		cal_histogram(indexes, histogram, ctx.histogramSize , 0, seqLen, chunkLen); gpuerr();
 		histogramOutput.push_back(histogram);
