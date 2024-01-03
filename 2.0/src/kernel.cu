@@ -108,8 +108,8 @@ void generate_smaller_index(int* indexes, int* outputs, int* inputOffsets, int* 
 		for (int j = i + 1; j < end; j++) {
 			if (outputIndex < outputEnd)
 				outputs[outputIndex++] = indexes[i] < indexes[j] ? indexes[i] : indexes[j];
-			else
-				printf("[2]potential error on generate pairs %d %d\n",outputIndex,outputEnd);
+			// else
+			// 	printf("[2]potential error on generate pairs %d %d\n",outputIndex,outputEnd);
 		}
 	}
 }
