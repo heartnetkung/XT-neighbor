@@ -145,18 +145,6 @@ void gen_next_chunk(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut,
 	valueInOut.len = outputLen;
 }
 
-int solve_next_bin(int* chunksizes, int start, int maxReadableSize, int n) {
-	int ans = 0, len = 0;
-	for (int i = start; i < n; i++) {
-		int currentChunkSize = chunksizes[i];
-		if (len + currentChunkSize > maxReadableSize)
-			break;
-		len += currentChunkSize;
-		ans++;
-	}
-	return ans;
-}
-
 //=====================================
 // Public Functions
 //=====================================
