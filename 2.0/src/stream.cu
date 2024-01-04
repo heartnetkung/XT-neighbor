@@ -239,6 +239,7 @@ public:
 			if (newLength > maxLength)
 				maxLength = newLength;
 		}
+		printf("maxLength %d\n", maxLength);
 		cudaMalloc(&_deviceBuffer, sizeof(T)*maxLength); gpuerr();
 	}
 
