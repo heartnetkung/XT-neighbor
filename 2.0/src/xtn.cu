@@ -170,7 +170,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 	int** offsets;
 	int lowerboundsLen;
 	int distance = args.distance, verbose = args.verbose, seq1Len = args.seq1Len;
-	print_v(verbose, "1");
+	print_v(verbose, "0A");
 
 	GPUInputStream<Int3> *b0;
 	D2Stream<Int3> *b1key;
@@ -182,11 +182,11 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 	Chunk<int> b1valueChunk, b2valueChunk;
 	Int3* b1keyOut;
 	int* b1valueOut;
-	print_v(verbose, "2");
+	print_v(verbose, "0B");
 
 	cudaMalloc(&deviceInt, sizeof(int)); gpuerr();
 	seq1Device = host_to_device(seq1, seq1Len); gpuerr();
-	print_v(verbose, "3");
+	print_v(verbose, "0C");
 
 	//=====================================
 	// stream 1: generate deletions
@@ -198,10 +198,10 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 	b0 = new GPUInputStream<Int3>(seq1Device, seq1Len, ctx1.chunkSize);
 	b1key = new D2Stream<Int3>();
 	b1value = new D2Stream<int>();
-	print_v(verbose, "4");
+	print_v(verbose, "1A");
 
 	while ((b0Chunk = b0->read()).not_null()) {
-		print_bandwidth(b0Chunk.len, ctx1.bandwidth1, "1");
+		print_bandwidth(b0Chunk.len, ctx1.bandwidth1, "1B");
 
 		stream_handler1(b0Chunk, b1keyOut, b1valueOut, histograms,
 		                outputLen, distance, ctx1);
@@ -209,7 +209,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 		b1value->write(b1valueOut, outputLen);
 		//cudaErrorInvalidValue
 		_cudaFree(b1keyOut, b1valueOut); gpuerr();
-		print_v(verbose, "5");
+		print_v(verbose, "1C");
 	}
 
 	print_tp(verbose, "1", b1key->get_throughput());
@@ -220,34 +220,34 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 
 	MemoryContext ctx2 = cal_memory_stream2(seq1Len);
 	int chunkCount, offsetLen;
-	print_v(verbose, "6");
+	print_v(verbose, "2A");
 
 	offsetLen = histograms.size();
 	offsets = set_d2_offsets(histograms, b1key, b1value, deviceInt, chunkCount, ctx2);
 	histograms.clear();
-	print_v(verbose, "7");
+	print_v(verbose, "2B");
 
 	b2key = new RAMSwapStream<Int3>();
 	b2value = new RAMSwapStream<int>();
-	print_v(verbose, "8");
+	print_v(verbose, "2C");
 
 	while ((b1keyChunk = b1key->read()).not_null()) {
 		b1valueChunk = b1value->read();
 		print_bandwidth(b1keyChunk.len, ctx2.bandwidth1, "2");
-		print_v(verbose, "9");
+		print_v(verbose, "2D");
 		stream_handler2(b1keyChunk, b1valueChunk, histograms,
 		                distance, seq1Len, deviceInt, ctx2);
-		print_v(verbose, "10");
+		print_v(verbose, "2E");
 		b2key->write(b1keyChunk.ptr, b1keyChunk.len);
 		b2value->write(b1valueChunk.ptr, b1valueChunk.len);
 	}
 
-	print_v(verbose, "11");
+	print_v(verbose, "2F");
 	b1key->deconstruct();
 	b1value->deconstruct();
 	_cudaFreeHost2D(offsets, offsetLen); gpuerr();
 	print_tp(verbose, "2", b2key->get_throughput());
-	print_v(verbose, "12");
+	print_v(verbose, "2G");
 
 	//=====================================
 	// loop: lower bound
@@ -260,7 +260,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 
 	for (int i = 0; i < lowerboundsLen; i++) {
 		int lowerbound = lowerbounds[i];
-		print_v(verbose, "13");
+		print_v(verbose, "3A");
 
 		//=====================================
 		// stream 3: generate pairs
@@ -272,23 +272,23 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 		b2key->set_max_readable_size(ctx3.bandwidth1);
 		b2value->set_max_readable_size(ctx3.bandwidth1);
 		b3 = new D2Stream<Int2>();
-		print_v(verbose, "14");
+		print_v(verbose, "3B");
 
 		while ((b2keyChunk = b2key->read()).not_null()) {
 			b2valueChunk = b2value->read();
 			print_bandwidth(b2keyChunk.len, ctx3.bandwidth1, "3");
-			print_v(verbose, "15");
+			print_v(verbose, "3C");
 			stream_handler3(b2keyChunk, b2valueChunk, write_b3, histograms,
 			                lowerbound, seq1Len, deviceInt, ctx3);
-			print_v(verbose, "16");
+			print_v(verbose, "3D");
 			b2key->write(b2keyChunk.ptr, b2keyChunk.len);
 			b2value->write(b2valueChunk.ptr, b2valueChunk.len);
-			print_v(verbose, "17");
+			print_v(verbose, "3E");
 
 			_cudaFree(b2keyChunk.ptr, b2valueChunk.ptr); gpuerr();
 		}
 
-		print_v(verbose, "18");
+		print_v(verbose, "3F");
 		print_tp(verbose, "3.1", b2key->get_throughput());
 		print_tp(verbose, "3.2", b3->get_throughput());
 
@@ -304,7 +304,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 		offsets = set_d2_offsets(histograms, b3, dummy, deviceInt, chunkCount, ctx4);
 		histograms.clear();
 		XTNOutput finalOutput;
-		print_v(verbose, "19");
+		print_v(verbose, "4A");
 
 		while ((b3Chunk = b3->read()).not_null()) {
 			print_bandwidth(b3Chunk.len, ctx4.bandwidth1, "4");
@@ -312,13 +312,13 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 			tp += finalOutput.len;
 			callback(finalOutput);
 			_cudaFreeHost(finalOutput.indexPairs, finalOutput.pairwiseDistances);
-			print_v(verbose, "20");
+			print_v(verbose, "4B");
 		}
 
 		b3->deconstruct();
 		_cudaFreeHost2D(offsets, offsetLen); gpuerr();
 		print_tp(verbose, "4", tp);
-		print_v(verbose, "21");
+		print_v(verbose, "4C");
 	}
 
 	b2key->print_size();
@@ -331,5 +331,5 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 	_cudaFree(deviceInt, seq1Device); gpuerr();
 	b2key->deconstruct();
 	b2value->deconstruct();
-	print_v(verbose, "22");
+	print_v(verbose, "5");
 }
