@@ -201,6 +201,8 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 	print_v(verbose, "4");
 
 	while ((b0Chunk = b0->read()).not_null()) {
+		print_bandwidth(b0Chunk.len, ctx1.bandwidth1, "1");
+
 		stream_handler1(b0Chunk, b1keyOut, b1valueOut, histograms,
 		                outputLen, distance, ctx1);
 		b1key->write(b1keyOut, outputLen);
@@ -231,6 +233,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 
 	while ((b1keyChunk = b1key->read()).not_null()) {
 		b1valueChunk = b1value->read();
+		print_bandwidth(b1keyChunk.len, ctx2.bandwidth1, "2");
 		print_v(verbose, "9");
 		stream_handler2(b1keyChunk, b1valueChunk, histograms,
 		                distance, seq1Len, deviceInt, ctx2);
@@ -273,6 +276,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 
 		while ((b2keyChunk = b2key->read()).not_null()) {
 			b2valueChunk = b2value->read();
+			print_bandwidth(b2keyChunk.len, ctx3.bandwidth1, "3");
 			print_v(verbose, "15");
 			stream_handler3(b2keyChunk, b2valueChunk, write_b3, histograms,
 			                lowerbound, seq1Len, deviceInt, ctx3);
@@ -303,6 +307,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 		print_v(verbose, "19");
 
 		while ((b3Chunk = b3->read()).not_null()) {
+			print_bandwidth(b3Chunk.len, ctx4.bandwidth1, "4");
 			stream_handler4(b3Chunk, finalOutput, seq1Device, seq1Len, distance, deviceInt);
 			tp += finalOutput.len;
 			callback(finalOutput);

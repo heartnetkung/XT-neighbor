@@ -188,11 +188,12 @@ void print_main_memory() {
 }
 
 void print_tp(int verbose, const char* step, size_t throughput) {
-	if (verbose) {
+	if (verbose)
 		printf("step %s completed with throughput: %'lu\n", step, throughput);
-		print_gpu_memory();
-		print_main_memory();
-	}
+}
+
+void print_bandwidth(int chunkLen, int bandwidth, const char* process) {
+	printf("process %s started with chunk size %'d and bandwidth %'d\n", chunkLen, bandwidth);
 }
 
 void print_v(int verbose, const char* message) {
