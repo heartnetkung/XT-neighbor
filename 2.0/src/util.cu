@@ -193,7 +193,7 @@ void print_tp(int verbose, const char* step, size_t throughput) {
 }
 
 void print_bandwidth(int chunkLen, int bandwidth, const char* process) {
-	printf("process %s started with chunk size %'d and bandwidth %'d\n", chunkLen, bandwidth);
+	printf("process %s started with chunk size %'d and bandwidth %'d\n", process, chunkLen, bandwidth);
 }
 
 void print_v(int verbose, const char* message) {
