@@ -9,7 +9,7 @@ int print_err(const char* str) {
 
 float startTime = 0;
 
-int clock_start() {
+void clock_start() {
 	startTime = (float)clock() / CLOCKS_PER_SEC;
 }
 
