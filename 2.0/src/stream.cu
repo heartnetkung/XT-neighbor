@@ -209,9 +209,9 @@ public:
 	void write(T* newData, int n) {
 		check_input_write(newData, n);
 		printf("bb %d\n", n);
-		if (n > 0)
+		if (n > 0) {
 			_data.push_back(device_to_host(newData, n)); gpuerr();
-		else {
+		} else {
 			T* dummy;
 			cudaMallocHost(&dummy, sizeof(T)); gpuerr();
 			_data.push_back(dummy);
