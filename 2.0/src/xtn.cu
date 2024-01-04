@@ -207,7 +207,6 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 		b1key->write(b1keyOut, outputLen);
 		b1value->write(b1valueOut, outputLen);
 		//cudaErrorInvalidValue
-		printf("aa %d %d\n", outputLen, b0Chunk.len);
 		_cudaFree(b1keyOut, b1valueOut); gpuerr();
 		print_v(verbose, "5");
 	}
@@ -254,6 +253,8 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 
 	lowerboundsLen = cal_lowerbounds(histograms, lowerbounds, seq1Len, deviceInt);
 	histograms.clear();
+	if (verbose)
+		print_int_arr(lowerbounds, lowerboundsLen);
 
 	for (int i = 0; i < lowerboundsLen; i++) {
 		int lowerbound = lowerbounds[i];
