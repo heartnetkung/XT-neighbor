@@ -62,7 +62,7 @@ MemoryContext cal_memory_stream2(int seq1Len) {
 	temp *= 13;
 	ans.bandwidth2 = (temp > MAX_PROCESSING) ? MAX_PROCESSING : temp;
 	ans.maxThroughputExponent = cal_max_exponent(ans.bandwidth1);
-	printf("maxThroughputExponent %d\n", maxThroughputExponent);
+	printf("maxThroughputExponent %d\n", ans.maxThroughputExponent);
 	return ans;
 }
 
