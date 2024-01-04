@@ -178,17 +178,9 @@ int solve_bin_packing_lowerbounds(int* histograms, int* &lowerboundsOutput,
 	    histograms, key, value, ctx.maxThroughputExponent, seqLen, n, nLevel); gpuerr();
 	max_by_key(key, value, output, buffer, nLevel); gpuerr();
 
-	print_int_arr(key, nLevel);
-	print_int_arr(value, nLevel);
-
 	int outputLen = transfer_last_element(buffer, 1); gpuerr();
-	print_int_arr(output, outputLen);
 	lowerboundsOutput = device_to_host(output, outputLen); gpuerr();
 	_cudaFree(rowIndex, output, key, value); gpuerr();
-
-	printf("====aa %d %d\n", seqLen, n);
-	print_int_arr(histograms, len2d);
-	print_int_arr(lowerboundsOutput, outputLen);
 	return outputLen;
 }
 

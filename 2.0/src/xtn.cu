@@ -97,7 +97,6 @@ MemoryContext cal_memory_stream4(int seq1Len) {
 
 MemoryContext cal_memory_lowerbound(int seq1Len) {
 	MemoryContext ans = initMemory(seq1Len, false);
-
 	size_t temp = 7 * ans.ramSize / (sizeof(Int2) * 10);
 	ans.bandwidth1 = (temp > MAX_PROCESSING) ? MAX_PROCESSING : temp;
 	ans.maxThroughputExponent = cal_max_exponent(ans.bandwidth1);
