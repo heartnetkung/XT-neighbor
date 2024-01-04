@@ -42,7 +42,7 @@ struct MemoryContext {
 	int histogramSize = 16;
 	int maxThroughputExponent = 7;
 #else
-	int histogramSize = 4096;
+	int histogramSize = 65536;
 	int maxThroughputExponent = 0;
 #endif
 };
