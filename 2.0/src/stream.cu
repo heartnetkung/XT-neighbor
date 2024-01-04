@@ -208,7 +208,14 @@ public:
 
 	void write(T* newData, int n) {
 		check_input_write(newData, n);
-		_data.push_back((n > 0) ? device_to_host(newData, n) : NULL);
+		printf("bb %d\n", n);
+		if (n > 0)
+			_data.push_back(device_to_host(newData, n)); gpuerr();
+		else {
+			T* dummy;
+			cudaMallocHost(&dummy, sizeof(T)); gpuerr();
+			_data.push_back(dummy);
+		}
 		_len2.push_back(n);
 	}
 
@@ -251,6 +258,8 @@ public:
 			if (chunkLen <= 0)
 				continue;
 
+			// invalid value
+			printf("ccc %d %d\n", chunkLen, _len1);
 			cudaMemcpy(currentPtr, _data[i] + start, sizeof(T)*chunkLen, cudaMemcpyHostToDevice); gpuerr();
 			currentPtr += chunkLen;
 			ans.len += chunkLen;
