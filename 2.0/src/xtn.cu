@@ -84,7 +84,7 @@ MemoryContext cal_memory_stream4(int seq1Len) {
 	    sizeof(Int2) + //Int2* uniquePairs
 	    2 * sizeof(char); //char* uniqueDistances, *flags
 
-	size_t temp = ans.gpuSize / multiplier;
+	size_t temp = (8 * ans.gpuSize) / (10 * multiplier);
 	ans.bandwidth1 = (temp > MAX_PROCESSING) ? MAX_PROCESSING : temp;
 	ans.maxThroughputExponent = cal_max_exponent(ans.bandwidth1);
 	return ans;
