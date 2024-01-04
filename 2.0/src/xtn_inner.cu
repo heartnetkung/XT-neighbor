@@ -92,30 +92,27 @@ int gen_smaller_index(int* input, int* inputOffsets, int* outputLengths,
 int postprocessing(Int3* seq, Int2* input, int distance,
                    Int2* &pairOutput, char* &distanceOutput,
                    int n, int* buffer, int seqLen) {
-	Int2* uniquePairs;
-	char* uniqueDistances, *flags;
+	char* flags;
 
 	// filter duplicate
-	cudaMalloc(&uniquePairs, sizeof(Int2)*n); gpuerr();
+	cudaMalloc(&pairOutput, sizeof(Int2)*n); gpuerr();
 	sort_int2(input, n); gpuerr();
-	unique(input, uniquePairs, buffer, n); gpuerr();
+	unique(input, pairOutput, buffer, n); gpuerr();
 
 	// cal levenshtein
 	int uniqueLen = transfer_last_element(buffer, 1); gpuerr();
 	size_t byteRequirement = sizeof(char) * uniqueLen;
 	cudaMalloc(&flags, byteRequirement); gpuerr();
-	cudaMalloc(&uniqueDistances, byteRequirement); gpuerr();
 	cudaMalloc(&distanceOutput, byteRequirement); gpuerr();
-	cudaMalloc(&pairOutput, sizeof(Int2)*uniqueLen); gpuerr();
 	cal_levenshtein <<< NUM_BLOCK(uniqueLen), NUM_THREADS>>>(
-	    seq, uniquePairs, distance, uniqueDistances, flags, uniqueLen, seqLen); gpuerr();
+	    seq, pairOutput, distance, distanceOutput, flags, uniqueLen, seqLen); gpuerr();
 
 	// filter levenshtein
-	double_flag(uniquePairs, uniqueDistances, flags, pairOutput,
+	double_flag(pairOutput, distanceOutput, flags, pairOutput,
 	            distanceOutput, buffer, uniqueLen); gpuerr();
 
 	print_gpu_memory();
-	_cudaFree(uniquePairs, uniqueDistances, flags); gpuerr();
+	_cudaFree(flags); gpuerr();
 	int outputLen = transfer_last_element(buffer, 1); gpuerr();
 	return outputLen;
 }

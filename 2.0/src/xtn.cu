@@ -82,9 +82,7 @@ MemoryContext cal_memory_stream4(int seq1Len) {
 	MemoryContext ans = initMemory(seq1Len, true);
 	int multiplier =
 	    sizeof(Int2) + //Int2* uniquePairs
-	    2 * sizeof(char) + //char* uniqueDistances, *flags
-	    sizeof(Int2) + //Int2* &pairOutput
-	    sizeof(char);// char* &distanceOutput
+	    2 * sizeof(char); //char* uniqueDistances, *flags
 
 	size_t temp = ans.gpuSize / multiplier;
 	ans.bandwidth1 = (temp > MAX_PROCESSING) ? MAX_PROCESSING : temp;
