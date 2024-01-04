@@ -65,6 +65,7 @@ int gen_pairs(int* input, int* inputOffsets, int* outputLengths, Int2* &output,
 	generate_pairs <<< NUM_BLOCK(n), NUM_THREADS>>>(input, output,
 	        inputOffsets, outputOffsets, lesserIndex, lowerbound, carry, n); gpuerr();
 
+	print_gpu_memory();
 	cudaFree(outputOffsets); gpuerr();
 	return outputLen;
 }
@@ -83,6 +84,7 @@ int gen_smaller_index(int* input, int* inputOffsets, int* outputLengths,
 	generate_smaller_index <<< NUM_BLOCK(n), NUM_THREADS>>>(input, output,
 	        inputOffsets, outputOffsets, carry, n); gpuerr();
 
+	print_gpu_memory();
 	cudaFree(outputOffsets); gpuerr();
 	return outputLen;
 }
@@ -111,6 +113,8 @@ int postprocessing(Int3* seq, Int2* input, int distance,
 	// filter levenshtein
 	double_flag(uniquePairs, uniqueDistances, flags, pairOutput,
 	            distanceOutput, buffer, uniqueLen); gpuerr();
+
+	print_gpu_memory();
 	_cudaFree(uniquePairs, uniqueDistances, flags); gpuerr();
 	int outputLen = transfer_last_element(buffer, 1); gpuerr();
 	return outputLen;
@@ -139,6 +143,7 @@ void gen_next_chunk(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut,
 	            buffer, valueInOut.len); gpuerr();
 
 	int outputLen = transfer_last_element(buffer, 1); gpuerr();
+	print_gpu_memory();
 	_cudaFree(flags); gpuerr();
 	keyInOut.ptr = keyOut;
 	keyInOut.len = outputLen;
@@ -180,6 +185,8 @@ int solve_bin_packing_lowerbounds(int* histograms, int* &lowerboundsOutput,
 
 	int outputLen = transfer_last_element(buffer, 1); gpuerr();
 	lowerboundsOutput = device_to_host(output, outputLen); gpuerr();
+
+	print_gpu_memory();
 	_cudaFree(rowIndex, output, key, value); gpuerr();
 	return outputLen;
 }
@@ -219,6 +226,7 @@ int solve_bin_packing_offsets(int* histograms, int** &offsetOutput,
 	} else
 		print_err("bin_packing outputLen is not divisible by inputLen");
 
+	print_gpu_memory();
 	_cudaFree(rowIndex, assignment, output1d); gpuerr();
 	return offsetLen;
 }
@@ -250,6 +258,7 @@ void stream_handler1(Chunk<Int3> input, Int3* &deletionsOutput, int* &indexOutpu
 	cal_histogram(histogramValue, histogram, ctx.histogramSize, UINT_MIN, UINT_MAX, outputLen); gpuerr();
 	histogramOutput.push_back(histogram);
 
+	print_gpu_memory();
 	_cudaFree(combinationOffsets, histogramValue); gpuerr();
 }
 
@@ -280,8 +289,9 @@ void stream_handler2(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, std::vector<
 		start += nChunk;
 		inputOffsetsPtr += nChunk;
 		valueLengthsPtr += nChunk;
-		cudaFree(indexes); gpuerr();
 		nChunkSum += nChunk;
+		print_gpu_memory();
+		cudaFree(indexes); gpuerr();
 	}
 
 	_cudaFree(inputOffsets, valueLengths); gpuerr();
@@ -315,6 +325,8 @@ void stream_handler3(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, void callbac
 		start += nChunk;
 		inputOffsetsPtr += nChunk;
 		valueLengthsPtr += nChunk;
+
+		print_gpu_memory();
 		_cudaFree(pairOutput, lesserIndex); gpuerr();
 	}
 
