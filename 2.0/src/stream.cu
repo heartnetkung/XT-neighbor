@@ -160,16 +160,6 @@ public:
 	void deconstruct() {
 		cudaFree(_deviceBuffer); gpuerr();
 	}
-
-	void print_size() {
-		size_t totalLenWrite = 0, totalLenRead = 0;
-		for (int len : _writing_len2)
-			totalLenWrite += len;
-		for (int len : _reading_len2)
-			totalLenRead += len;
-		printf("left over size: %'lu %'lu %'lu %'lu\n",
-		       _writing_data.size(), totalLenWrite, _reading_data.size(), totalLenRead);
-	}
 };
 
 /**
@@ -238,7 +228,6 @@ public:
 			if (newLength > maxLength)
 				maxLength = newLength;
 		}
-		printf("maxLength %d\n", maxLength);
 		cudaMalloc(&_deviceBuffer, sizeof(T)*maxLength); gpuerr();
 	}
 

@@ -10,7 +10,7 @@
  */
 
 D2Stream<Int2> *b3 = NULL; /*global variable for callback*/
-const int MAX_PROCESSING = 1 << 29;
+const int MAX_PROCESSING = 1 << 30;
 
 //=====================================
 // Private Memory Functions
@@ -62,7 +62,6 @@ MemoryContext cal_memory_stream2(int seq1Len) {
 	temp *= 13;
 	ans.bandwidth2 = (temp > MAX_PROCESSING) ? MAX_PROCESSING : temp;
 	ans.maxThroughputExponent = cal_max_exponent(ans.bandwidth1);
-	printf("maxThroughputExponent %d\n", ans.maxThroughputExponent);
 	return ans;
 }
 
@@ -320,9 +319,6 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 		print_tp(verbose, "4", tp);
 		print_v(verbose, "4C");
 	}
-
-	b2key->print_size();
-	b2value->print_size();
 
 	//=====================================
 	// boilerplate: deallocalte
