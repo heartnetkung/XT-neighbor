@@ -10,7 +10,7 @@
  */
 
 D2Stream<Int2> *b3 = NULL; /*global variable for callback*/
-const int MAX_PROCESSING = 1 << 30 / 10 * 7;
+const int MAX_PROCESSING = (1 << 30) / 10 * 7;
 
 //=====================================
 // Private Memory Functions
