@@ -68,7 +68,6 @@ MemoryContext cal_memory_stream2(int seq1Len) {
 MemoryContext cal_memory_stream3(int seq1Len) {
 	MemoryContext ans = initMemory(seq1Len, true);
 	int multiplier =
-	    sizeof(Int3) + sizeof(int) + //input
 	    2 * sizeof(int) + // int* &inputOffsets, int* &outputLengths
 	    sizeof(char) + sizeof(Int3) + sizeof(int); //char* flags Int3* keyOut int* valueOut;
 
@@ -82,13 +81,12 @@ MemoryContext cal_memory_stream3(int seq1Len) {
 MemoryContext cal_memory_stream4(int seq1Len) {
 	MemoryContext ans = initMemory(seq1Len, true);
 	int multiplier =
-	    sizeof(Int2) + //input
 	    sizeof(Int2) + //Int2* uniquePairs
 	    2 * sizeof(char) + //char* uniqueDistances, *flags
 	    sizeof(Int2) + //Int2* &pairOutput
 	    sizeof(char);// char* &distanceOutput
 
-	size_t temp = (7 * ans.gpuSize) / (10 * multiplier);
+	size_t temp = ans.gpuSize / multiplier;
 	ans.bandwidth1 = (temp > MAX_PROCESSING) ? MAX_PROCESSING : temp;
 	ans.maxThroughputExponent = cal_max_exponent(ans.bandwidth1);
 	return ans;
