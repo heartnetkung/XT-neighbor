@@ -45,7 +45,7 @@ void expand_keys(Int3 seq, int distance, Int3* output, unsigned int* firstKeys, 
 	for (int i = start; i < end - 1; i++) {
 		// printStack(indexStack, stackPos);
 		output[i] = seqStack[stackPos];
-		firstKeys[i] = seqStack[stackPos].entry[0];
+		firstKeys[i] = seqStack[stackPos].entry[1];
 
 		//pop
 		if (indexStack[stackPos] == len) {
@@ -69,7 +69,7 @@ void expand_keys(Int3 seq, int distance, Int3* output, unsigned int* firstKeys, 
 
 	// last step
 	output[end - 1] = seqStack[0];
-	firstKeys[end - 1] = seqStack[0].entry[0];
+	firstKeys[end - 1] = seqStack[0].entry[1];
 }
 
 /**

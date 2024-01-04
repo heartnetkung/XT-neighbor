@@ -15,10 +15,11 @@
 struct Int3Comparator {
 	CUB_RUNTIME_FUNCTION __forceinline__ __device__
 	bool operator()(const Int3 &lhs, const Int3 &rhs) {
-		if (lhs.entry[0] != rhs.entry[0])
-			return lhs.entry[0] < rhs.entry[0];
+		/*intentionally sort the second int first as it makes histograms more evenly distributed*/
 		if (lhs.entry[1] != rhs.entry[1])
 			return lhs.entry[1] < rhs.entry[1];
+		if (lhs.entry[0] != rhs.entry[0])
+			return lhs.entry[0] < rhs.entry[0];
 		return lhs.entry[2] < rhs.entry[2];
 	}
 };
