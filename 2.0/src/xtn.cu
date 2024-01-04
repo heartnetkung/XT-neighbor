@@ -40,13 +40,13 @@ MemoryContext cal_memory_stream1(int seq1Len, int distance) {
 	MemoryContext ans = initMemory(seq1Len, true);
 	int deletionMultiplier = (distance == 1) ? (18 + 1) : (153 + 18 + 1);
 	int multiplier =
-	    sizeof(int) + //input
 	    sizeof(int) + //int *combinationOffsets
 	    //Int3* &deletionsOutput int* &indexOutput unsigned int *histogramValue;
 	    deletionMultiplier * (sizeof(Int3) + 2 * sizeof(int));
 
-	size_t temp = (7 * ans.gpuSize) / (10 * multiplier);
+	size_t temp = ans.gpuSize / multiplier;
 	ans.bandwidth1 = (temp > MAX_PROCESSING) ? MAX_PROCESSING : temp;
+	printf("gpu memory %'lu %'lu %'d %d\n", temp, ans.gpuSize, ans.bandwidth1, multiplier);
 	ans.chunkSize = (seq1Len < ans.bandwidth1) ? seq1Len : ans.bandwidth1;
 	return ans;
 }
@@ -162,6 +162,7 @@ int** set_d2_offsets(std::vector<int*> histograms, D2Stream<T1> *s1, D2Stream<T2
 //=====================================
 
 void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
+	clock_start();
 
 	int* deviceInt, *lowerbounds;
 	Int3* seq1Device;

@@ -258,6 +258,8 @@ void stream_handler1(Chunk<Int3> input, Int3* &deletionsOutput, int* &indexOutpu
 	cal_histogram(histogramValue, histogram, ctx.histogramSize, UINT_MIN, UINT_MAX, outputLen); gpuerr();
 	histogramOutput.push_back(histogram);
 
+	printf("total allocation 1 %'lu\n",
+	       sizeof(int)*input.len + sizeof(Int3)*outputLen + sizeof(int)*outputLen + sizeof(unsigned int)*outputLen);
 	print_gpu_memory();
 	_cudaFree(combinationOffsets, histogramValue); gpuerr();
 }

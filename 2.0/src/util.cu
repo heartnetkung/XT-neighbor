@@ -1,9 +1,16 @@
 #include "xtn.h"
 #include <sys/sysinfo.h>
+#include <time.h>
 
 int print_err(const char* str) {
 	fprintf(stderr, "Error: %s\n", str);
 	return ERROR;
+}
+
+float startTime = 0;
+
+int clock_start() {
+	startTime = (float)clock() / CLOCKS_PER_SEC;
 }
 
 void print_args(XTNArgs args) {
@@ -193,7 +200,9 @@ void print_tp(int verbose, const char* step, size_t throughput) {
 }
 
 void print_bandwidth(int chunkLen, int bandwidth, const char* process) {
-	printf("process %s started with bandwidth %'d / %'d\n", process, chunkLen, bandwidth);
+	float endTime = (float)clock() / CLOCKS_PER_SEC;
+	printf("process %s started with bandwidth %'d / %'d %'.0f\n",
+	       process, chunkLen, bandwidth, endTime - startTime);
 }
 
 void print_v(int verbose, const char* message) {
