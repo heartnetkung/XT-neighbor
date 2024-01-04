@@ -10,7 +10,7 @@
  */
 
 D2Stream<Int2> *b3 = NULL; /*global variable for callback*/
-const int MAX_PROCESSING = (1 << 30) / 10 * 7;
+const int MAX_PROCESSING = 1 << 30;
 
 //=====================================
 // Private Memory Functions
@@ -84,7 +84,7 @@ MemoryContext cal_memory_stream4(int seq1Len) {
 	    sizeof(Int2) + //Int2* uniquePairs
 	    2 * sizeof(char); //char* uniqueDistances, *flags
 
-	size_t temp = (7 * ans.gpuSize) / (10 * multiplier);
+	size_t temp = (6 * ans.gpuSize) / (10 * multiplier);
 	ans.bandwidth1 = (temp > MAX_PROCESSING) ? MAX_PROCESSING : temp;
 	ans.maxThroughputExponent = cal_max_exponent(ans.bandwidth1);
 	return ans;
