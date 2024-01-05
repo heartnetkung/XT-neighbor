@@ -104,9 +104,6 @@ int postprocessing(Int3* seq, Int2* input, int distance,
 
 	// cal levenshtein
 	int uniqueLen = transfer_last_element(buffer, 1); gpuerr();
-	print_int2_arr(uniquePairs, 20);
-	print_int2_arr(uniquePairs + uniqueLen - 20, 20);
-	printf("uniqueLen %'d \n", uniqueLen);
 	size_t byteRequirement = sizeof(char) * uniqueLen;
 	cudaMalloc(&flags, byteRequirement); gpuerr();
 	cudaMalloc(&uniqueDistances, byteRequirement); gpuerr();
@@ -187,8 +184,7 @@ int solve_bin_packing_lowerbounds(int* histograms, int* &lowerboundsOutput,
 	make_row_index <<< NUM_BLOCK(n), NUM_THREADS>>>(rowIndex, n, nLevel); gpuerr();
 	inclusive_sum_by_key(rowIndex, histograms, histogramIntermediate, len2d); gpuerr();
 	gen_bounds <<< NUM_BLOCK(nLevel), NUM_THREADS >>>(
-	    histogramIntermediate, key, value, 10 /*ctx.maxThroughputExponent*/, seqLen, n, nLevel); gpuerr();
-	print_int_arr(key, nLevel);
+	    histogramIntermediate, key, value, ctx.maxThroughputExponent, seqLen, n, nLevel); gpuerr();
 	max_by_key(key, value, output, buffer, nLevel); gpuerr();
 
 	int outputLen = transfer_last_element(buffer, 1); gpuerr();
@@ -273,7 +269,7 @@ void stream_handler1(Chunk<Int3> input, Int3* &deletionsOutput, int* &indexOutpu
 }
 
 void stream_handler2(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, std::vector<int*> &histogramOutput,
-                     int distance, int seqLen, int* buffer, MemoryContext ctx) {
+                     size_t &throughput2B, int distance, int seqLen, int* buffer, MemoryContext ctx) {
 	int* inputOffsets, *valueLengths, *indexes, *valueLengthsHost, *histogram;
 
 	sort_key_values(keyInOut.ptr, valueInOut.ptr, keyInOut.len); gpuerr();
@@ -290,6 +286,7 @@ void stream_handler2(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, std::vector<
 
 		int chunkLen = gen_smaller_index(
 		                   valueInOut.ptr, inputOffsetsPtr, valueLengthsPtr, indexes, carry, nChunk);
+		throughput2B += chunkLen;
 		print_bandwidth(chunkLen, ctx.bandwidth2, "2b");
 		cudaMalloc(&histogram, sizeof(int)*ctx.histogramSize);	gpuerr();
 		cal_histogram(indexes, histogram, ctx.histogramSize , 0, seqLen, chunkLen); gpuerr();

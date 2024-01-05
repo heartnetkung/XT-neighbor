@@ -219,6 +219,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 
 	MemoryContext ctx2 = cal_memory_stream2(seq1Len);
 	int offsetLen;
+	size_t throughput2B = 0;
 	print_v(verbose, "2A");
 
 	offsetLen = histograms.size();
@@ -234,7 +235,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 		b1valueChunk = b1value->read();
 		print_bandwidth(b1keyChunk.len, ctx2.bandwidth1, "2");
 		print_v(verbose, "2D");
-		stream_handler2(b1keyChunk, b1valueChunk, histograms,
+		stream_handler2(b1keyChunk, b1valueChunk, histograms, throughput2B,
 		                distance, seq1Len, deviceInt, ctx2);
 		print_v(verbose, "2E");
 		b2key->write(b1keyChunk.ptr, b1keyChunk.len);
@@ -246,6 +247,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 	b1value->deconstruct();
 	_cudaFreeHost2D(offsets, offsetLen); gpuerr();
 	print_tp(verbose, "2", b2key->get_throughput());
+	print_tp(verbose, "2B", throughput2B);
 	print_v(verbose, "2G");
 
 	//=====================================
