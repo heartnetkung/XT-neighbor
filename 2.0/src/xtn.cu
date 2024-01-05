@@ -138,10 +138,10 @@ int cal_lowerbounds(std::vector<int*> histograms, int* &lowerbounds, int seqLen,
 
 template <typename T1, typename T2>
 int** set_d2_offsets(std::vector<int*> histograms, D2Stream<T1> *s1, D2Stream<T2> *s2,
-                     int* buffer, int &offsetLen, MemoryContext ctx) {
+                     int* buffer, MemoryContext ctx) {
 	int** offsets;
 	int* fullHistograms;
-	int len;
+	int len, offsetLen;
 
 	len = histograms.size();
 	fullHistograms = concat_histograms(histograms, ctx);
@@ -217,11 +217,11 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 	//=====================================
 
 	MemoryContext ctx2 = cal_memory_stream2(seq1Len);
-	int chunkCount, offsetLen;
+	int offsetLen;
 	print_v(verbose, "2A");
 
 	offsetLen = histograms.size();
-	offsets = set_d2_offsets(histograms, b1key, b1value, deviceInt, chunkCount, ctx2);
+	offsets = set_d2_offsets(histograms, b1key, b1value, deviceInt, ctx2);
 	histograms.clear();
 	print_v(verbose, "2B");
 
@@ -299,7 +299,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 		size_t tp = 0;
 
 		offsetLen = histograms.size();
-		offsets = set_d2_offsets(histograms, b3, dummy, deviceInt, chunkCount, ctx4);
+		offsets = set_d2_offsets(histograms, b3, dummy, deviceInt, ctx4);
 		histograms.clear();
 		XTNOutput finalOutput;
 		print_v(verbose, "4A");
