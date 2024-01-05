@@ -20,6 +20,9 @@ struct Int3Comparator {
 			return lhs.entry[1] < rhs.entry[1];
 		if (lhs.entry[0] != rhs.entry[0])
 			return lhs.entry[0] < rhs.entry[0];
+		// make sure it's irreflexive https://en.cppreference.com/w/cpp/concepts/strict_weak_order
+		if (lhs.entry[2] == rhs.entry[2])
+			return false;
 		return lhs.entry[2] < rhs.entry[2];
 	}
 };
@@ -29,6 +32,9 @@ struct Int2Comparator {
 	bool operator()(const Int2 &lhs, const Int2 &rhs) {
 		if (lhs.x != rhs.x)
 			return lhs.x < rhs.x;
+		// make sure it's irreflexive https://en.cppreference.com/w/cpp/concepts/strict_weak_order
+		if (lhs.y == rhs.y)
+			return false;
 		return lhs.y < rhs.y;
 	}
 };
@@ -111,6 +117,7 @@ void double_flag(T1* input1, T2* input2, char* flags, T1* output1, T2* output2, 
 	cub::DeviceSelect::Flagged(buffer, bufferSize, input1, flags, output1, outputLen, n);
 	cudaMalloc(&buffer, bufferSize);
 	cub::DeviceSelect::Flagged(buffer, bufferSize, input1, flags, output1, outputLen, n);
+
 	cub::DeviceSelect::Flagged(buffer2, bufferSize2, input2, flags, output2, outputLen, n);
 	cudaMalloc(&buffer2, bufferSize2);
 	cub::DeviceSelect::Flagged(buffer2, bufferSize2, input2, flags, output2, outputLen, n);
