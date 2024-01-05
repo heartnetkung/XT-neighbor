@@ -64,6 +64,7 @@ int gen_pairs(int* input, int* inputOffsets, int* outputLengths, Int2* &output,
 	cudaMalloc(&lesserIndex, sizeof(int)*outputLen); gpuerr();
 	generate_pairs <<< NUM_BLOCK(n), NUM_THREADS>>>(input, output,
 	        inputOffsets, outputOffsets, lesserIndex, lowerbound, carry, n); gpuerr();
+	sort_int2(output, outputLen);
 
 	print_gpu_memory();
 	cudaFree(outputOffsets); gpuerr();
