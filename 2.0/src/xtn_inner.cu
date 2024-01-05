@@ -300,6 +300,7 @@ void stream_handler2(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, std::vector<
 		print_gpu_memory();
 		cudaFree(indexes); gpuerr();
 	}
+	printf("start offsetLen %d %d\n", start, offsetLen);
 
 	_cudaFree(inputOffsets, valueLengths); gpuerr();
 	cudaFreeHost(valueLengthsHost); gpuerr();
