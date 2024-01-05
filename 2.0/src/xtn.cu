@@ -28,8 +28,8 @@ MemoryContext initMemory(int seq1Len, bool isGPU) {
 }
 
 // black magic way to calculate floor(log2(n))
-int cal_max_exponent(unsigned int input) {
-	unsigned input2 = input;
+int cal_max_exponent(size_t input) {
+	size_t input2 = input;
 	int ans = 0;
 	while (input2 >>= 1)
 		ans++;
