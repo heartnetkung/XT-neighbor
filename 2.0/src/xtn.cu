@@ -96,7 +96,7 @@ MemoryContext cal_memory_lowerbound(int seq1Len) {
 	MemoryContext ans = initMemory(seq1Len, false);
 	size_t bandwidth = 7 * ans.ramSize / (sizeof(Int2) * 10);
 	ans.maxThroughputExponent = cal_max_exponent(bandwidth);
-	printf("aa %lu %d\n", bandwidth, maxThroughputExponent);
+	printf("aa %lu %d\n", bandwidth, ans.maxThroughputExponent);
 	return ans;
 }
 
