@@ -102,6 +102,7 @@ int postprocessing(Int3* seq, Int2* input, int distance,
 
 	// cal levenshtein
 	int uniqueLen = transfer_last_element(buffer, 1); gpuerr();
+	printf("uniqueLen %'d \n",uniqueLen);
 	size_t byteRequirement = sizeof(char) * uniqueLen;
 	cudaMalloc(&flags, byteRequirement); gpuerr();
 	cudaMalloc(&uniqueDistances, byteRequirement); gpuerr();
