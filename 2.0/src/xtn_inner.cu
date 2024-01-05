@@ -174,25 +174,27 @@ int solve_next_bin(int* chunksizes, int start, int maxSize, int n) {
 
 int solve_bin_packing_lowerbounds(int* histograms, int* &lowerboundsOutput,
                                   int n, int seqLen, int* buffer, MemoryContext ctx) {
-	int* rowIndex, *output, *key, *value ;
+	int* rowIndex, *output, *key, *value;
+	size_t* histogramIntermediate;
 
 	int nLevel = ctx.histogramSize, len2d = n * nLevel;
 	cudaMalloc(&rowIndex, sizeof(int) * len2d); gpuerr();
 	cudaMalloc(&output, sizeof(int) * nLevel); gpuerr();
 	cudaMalloc(&key, sizeof(int) * nLevel); gpuerr();
 	cudaMalloc(&value, sizeof(int) * nLevel); gpuerr();
+	cudaMalloc(&histogramIntermediate, sizeof(size_t) * len2d); gpuerr();
 
 	make_row_index <<< NUM_BLOCK(n), NUM_THREADS>>>(rowIndex, n, nLevel); gpuerr();
-	inclusive_sum_by_key(rowIndex, histograms, len2d); gpuerr();
+	inclusive_sum_by_key(rowIndex, histograms, histogramIntermediate, len2d); gpuerr();
 	gen_bounds <<< NUM_BLOCK(nLevel), NUM_THREADS >>>(
-	    histograms, key, value, ctx.maxThroughputExponent, seqLen, n, nLevel); gpuerr();
+	    histogramIntermediate, key, value, ctx.maxThroughputExponent, seqLen, n, nLevel); gpuerr();
 	max_by_key(key, value, output, buffer, nLevel); gpuerr();
 
 	int outputLen = transfer_last_element(buffer, 1); gpuerr();
 	lowerboundsOutput = device_to_host(output, outputLen); gpuerr();
 
 	print_gpu_memory();
-	_cudaFree(rowIndex, output, key, value); gpuerr();
+	_cudaFree(rowIndex, output, key, value, histogramIntermediate); gpuerr();
 	return outputLen;
 }
 

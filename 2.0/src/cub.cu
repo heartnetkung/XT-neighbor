@@ -136,15 +136,20 @@ void cal_histogram(T* input, int* output, int nLevel, T minValue, T maxValue, in
 	cudaFree(buffer); gpuerr();
 }
 
-void inclusive_sum_by_key(int* keyIn, int* valueInOut, int n) {
+template <typename T>
+void inclusive_sum_by_key(int* keyIn, int* valueIn, T* valueOut, int n) {
 	void *buffer = NULL;
 	size_t bufferSize = 0;
 	cub::DeviceScan::InclusiveSumByKey(
-	    buffer, bufferSize, keyIn, valueInOut, valueInOut, n);
+	    buffer, bufferSize, keyIn, valueIn, valueOut, n);
 	cudaMalloc(&buffer, bufferSize);
 	cub::DeviceScan::InclusiveSumByKey(
-	    buffer, bufferSize, keyIn, valueInOut, valueInOut, n);
+	    buffer, bufferSize, keyIn, valueIn, valueOut, n);
 	cudaFree(buffer);
+}
+
+void inclusive_sum_by_key(int* keyIn, int* valueInOut, int n) {
+	inclusive_sum_by_key(keyIn, valueInOut, valueInOut, n);
 }
 
 void max_by_key(int* keyIn, int* valueIn, int* valueOut, int* outputLen, int n) {

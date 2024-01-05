@@ -203,7 +203,7 @@ void gen_assignment(int* matrix, int* output, int nBit, int nRow, int nColumn) {
 }
 
 __global__
-void gen_bounds(int* matrix, int* keyOut, int* valueOut, int nBit, int valueMax, int nRow, int nColumn) {
+void gen_bounds(size_t* matrix, int* keyOut, int* valueOut, int nBit, int valueMax, int nRow, int nColumn) {
 	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
 	if (tid >= nColumn)
 		return;
