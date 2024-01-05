@@ -1,4 +1,7 @@
 #include "codec.cu"
+#include <limits.h>
+
+const size_t MAX = INT_MAX;
 
 /**
  * @file
@@ -38,7 +41,11 @@ void cal_pair_len(int* input, int* output, int n) {
 	if (tid >= n)
 		return;
 
-	output[tid] = input[tid] * (input[tid] - 1) / 2;
+	size_t intermediate = input[tid];
+	intermediate = intermediate * (intermediate - 1) / 2;
+	if (intermediate > MAX)
+		printf("cal_pair_len overflow\n");
+	output[tid] = intermediate;
 }
 
 __global__
@@ -54,8 +61,11 @@ void cal_pair_len_lowerbound(int* indexes, int* inputOffsets, int* outputLengths
 		if (indexes[i] > lowerbound)
 			invalidCount++;
 
-	int groupLen = end - start;
-	outputLengths[tid] = ((groupLen * (groupLen - 1)) - (invalidCount * (invalidCount - 1)) ) / 2;
+	size_t intermediate = end - start;
+	intermediate = ((intermediate * (intermediate - 1)) - (invalidCount * (invalidCount - 1)) ) / 2;
+	if (intermediate > MAX)
+		printf("cal_pair_len_lowerbound overflow\n");
+	outputLengths[tid] = intermediate;
 }
 
 __global__
@@ -186,6 +196,8 @@ void gen_assignment(int* matrix, int* output, int nBit, int nRow, int nColumn) {
 	for (int i = 0; i < nRow; i++)
 		ans += matrix[i * nColumn + tid];
 	ans = (ans >> nBit);
+	if (ans > MAX)
+		printf("gen_assignment overflow\n");
 	for (int i = 0; i < nRow; i++)
 		output[i * nColumn + tid] = ans;
 }
@@ -202,7 +214,10 @@ void gen_bounds(int* matrix, int* keyOut, int* valueOut, int nBit, int valueMax,
 	size_t ans = 0;
 	for (int i = 0; i < nRow; i++)
 		ans += matrix[i * nColumn + tid];
-	keyOut[tid] = (ans >> nBit);
+	ans = (ans >> nBit);
+	if (ans > MAX)
+		printf("gen_bounds overflow");
+	keyOut[tid] = ans;
 }
 
 __global__
