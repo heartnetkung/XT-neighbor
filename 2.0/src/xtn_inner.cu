@@ -187,7 +187,7 @@ int solve_bin_packing_lowerbounds(int* histograms, int* &lowerboundsOutput,
 	make_row_index <<< NUM_BLOCK(n), NUM_THREADS>>>(rowIndex, n, nLevel); gpuerr();
 	inclusive_sum_by_key(rowIndex, histograms, histogramIntermediate, len2d); gpuerr();
 	gen_bounds <<< NUM_BLOCK(nLevel), NUM_THREADS >>>(
-	    histogramIntermediate, key, value, ctx.maxThroughputExponent, seqLen, n, nLevel); gpuerr();
+	    histogramIntermediate, key, value, 10 /*ctx.maxThroughputExponent*/, seqLen, n, nLevel); gpuerr();
 	print_int_arr(key, nLevel);
 	max_by_key(key, value, output, buffer, nLevel); gpuerr();
 
