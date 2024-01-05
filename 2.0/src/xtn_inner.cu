@@ -100,9 +100,12 @@ int postprocessing(Int3* seq, Int2* input, int distance,
 	sort_int2(input, n); gpuerr();
 	unique(input, uniquePairs, buffer, n); gpuerr();
 
+
 	// cal levenshtein
 	int uniqueLen = transfer_last_element(buffer, 1); gpuerr();
-	printf("uniqueLen %'d \n",uniqueLen);
+	print_int2_arr(uniquePairs, 20);
+	print_int2_arr(uniquePairs + uniqueLen - 20, 20);
+	printf("uniqueLen %'d \n", uniqueLen);
 	size_t byteRequirement = sizeof(char) * uniqueLen;
 	cudaMalloc(&flags, byteRequirement); gpuerr();
 	cudaMalloc(&uniqueDistances, byteRequirement); gpuerr();
