@@ -46,7 +46,6 @@ MemoryContext cal_memory_stream1(int seq1Len, int distance) {
 
 	size_t temp = ans.gpuSize / multiplier;
 	ans.bandwidth1 = (temp > MAX_PROCESSING) ? MAX_PROCESSING : temp;
-	printf("gpu memory %'lu %'lu %'d %d\n", temp, ans.gpuSize, ans.bandwidth1, multiplier);
 	ans.chunkSize = (seq1Len < ans.bandwidth1) ? seq1Len : ans.bandwidth1;
 	return ans;
 }
@@ -96,7 +95,6 @@ MemoryContext cal_memory_lowerbound(int seq1Len) {
 	MemoryContext ans = initMemory(seq1Len, false);
 	size_t bandwidth = 7 * ans.ramSize / (sizeof(Int2) * 10);
 	ans.maxThroughputExponent = cal_max_exponent(bandwidth);
-	printf("aa %lu %d\n", bandwidth, ans.maxThroughputExponent);
 	return ans;
 }
 
