@@ -323,6 +323,12 @@ void stream_handler2(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, std::vector<
 		cal_histogram(indexes, histogram, ctx.histogramSize , 0, seqLen, chunkLen); gpuerr();
 		histogramOutput.push_back(histogram);
 
+		int* histogramHost = device_to_host(histogram, ctx.histogramSize);
+		size_t sum = 0;
+		for (int i = 0; i < ctx.histogramSize; i++)
+			sum += histogramHost[i];
+		printf("hiscount: %'lu\n", sum);
+
 		carry = transfer_last_element(inputOffsetsPtr, nChunk);
 		start += nChunk;
 		inputOffsetsPtr += nChunk;
