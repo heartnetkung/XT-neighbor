@@ -35,7 +35,7 @@ int cal_offsets(Int3* inputKeys, int* &inputOffsets, int* &outputLengths, int n,
 	int* offsetHost = device_to_host( inputOffsets, nUnique);
 	size_t sum = 0;
 	for (int i = 0; i < nUnique; i++)
-		sum += offsetHost;
+		sum += offsetHost[i];
 
 	inclusive_sum(inputOffsets, nUnique); gpuerr();
 	size_t sum2 = transfer_last_element(inputOffsets, nUnique); gpuerr();
