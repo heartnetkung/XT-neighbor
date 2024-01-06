@@ -157,14 +157,18 @@ int solve_next_bin(int* chunksizes, int start, int maxSize, int n) {
 	int ans = 0;
 	size_t len = 0;
 	int currentChunkSize = -1;
+	int minChunkSize = INT_MAX;
 	for (int i = start; i < n; i++) {
 		currentChunkSize = chunksizes[i];
+		if (minChunkSize < currentChunkSize)
+			minChunkSize = currentChunkSize;
 		if (len + currentChunkSize > maxSize)
 			break;
 		len += currentChunkSize;
 		ans++;
 	}
-	printf("len %'d %'d %'d %'d %'d %'lu\n", ans, start, n, maxSize, currentChunkSize, len);
+	printf("len %'d %'d %'d %'d %'lu\n", ans, start, n, maxSize, len);
+	printf("%'d %'d\n", currentChunkSize, minChunkSize);
 	return ans;
 }
 
