@@ -68,6 +68,7 @@ int gen_pairs(int* input, int* inputOffsets, int* outputLengths, Int2* &output,
 
 	print_gpu_memory();
 	cudaFree(outputOffsets); gpuerr();
+	//wrong?
 	return outputLen;
 }
 
@@ -87,6 +88,7 @@ int gen_smaller_index(int* input, int* inputOffsets, int* outputLengths,
 
 	print_gpu_memory();
 	cudaFree(outputOffsets); gpuerr();
+	//wrong?
 	return outputLen;
 }
 
@@ -287,7 +289,6 @@ void stream_handler2(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, std::vector<
 	int* inputOffsetsPtr = inputOffsets, *valueLengthsPtr = valueLengths;
 	valueLengthsHost = device_to_host(valueLengths, offsetLen); gpuerr();
 
-	size_t nChunkSum = 0;
 	//histogram loop
 	while ((nChunk = solve_next_bin(valueLengthsHost, start, ctx.bandwidth2, offsetLen)) > 0) {
 
@@ -303,7 +304,6 @@ void stream_handler2(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, std::vector<
 		start += nChunk;
 		inputOffsetsPtr += nChunk;
 		valueLengthsPtr += nChunk;
-		nChunkSum += nChunk;
 		print_gpu_memory();
 		cudaFree(indexes); gpuerr();
 	}
