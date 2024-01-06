@@ -36,13 +36,13 @@ int cal_offsets(Int3* inputKeys, int* &inputOffsets, int* &outputLengths, int n,
 	printf("offsets: %'d\n", transfer_last_element(inputOffsets, nUnique));
 
 	int* temp1;
-	cudaMalloc(&inputOffsets, sizeof(int)*nUnique); gpuerr();
+	cudaMalloc(&temp1, sizeof(int)*nUnique); gpuerr();
 	inclusive_sum(outputLengths, temp1, nUnique); gpuerr();
 	printf("aa %'d\n", transfer_last_element(temp1, nUnique));
 	cudaFree(temp1);
 
 	size_t* temp2;
-	cudaMalloc(&inputOffsets, sizeof(size_t)*nUnique); gpuerr();
+	cudaMalloc(&temp2, sizeof(size_t)*nUnique); gpuerr();
 	inclusive_sum(outputLengths, temp2, nUnique); gpuerr();
 	printf("bb %'lu\n", transfer_last_element(temp2, nUnique));
 	cudaFree(temp2);
