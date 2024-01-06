@@ -101,9 +101,6 @@ int gen_smaller_index(int* input, int* inputOffsets, int* outputLengths,
 	generate_smaller_index <<< NUM_BLOCK(n), NUM_THREADS>>>(input, output,
 	        inputOffsets, outputOffsets, carry, n); gpuerr();
 
-	print_int_arr(output, 30);
-	print_int_arr(output + outputLen - 30, 30);
-
 	print_gpu_memory();
 	cudaFree(outputOffsets); gpuerr();
 	//wrong?
@@ -120,7 +117,6 @@ int postprocessing(Int3* seq, Int2* input, int distance,
 	cudaMalloc(&uniquePairs, sizeof(Int2)*n); gpuerr();
 	sort_int2(input, n); gpuerr();
 	unique(input, uniquePairs, buffer, n); gpuerr();
-
 
 	// cal levenshtein
 	int uniqueLen = transfer_last_element(buffer, 1); gpuerr();
@@ -302,6 +298,10 @@ void stream_handler2(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, std::vector<
 	sort_key_values(keyInOut.ptr, valueInOut.ptr, keyInOut.len); gpuerr();
 	int offsetLen =
 	    cal_offsets(keyInOut.ptr, inputOffsets, valueLengths, keyInOut.len, buffer);
+
+	printf("vl\n");
+	print_int_arr(valueLengths, 30);
+	print_int_arr(valueLengths + offsetLen - 30, 30);
 
 	int start = 0, carry = 0, nChunk;
 	int* inputOffsetsPtr = inputOffsets, *valueLengthsPtr = valueLengths;
