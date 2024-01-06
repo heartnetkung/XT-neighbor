@@ -294,6 +294,7 @@ void stream_handler2(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, std::vector<
 
 		int chunkLen = gen_smaller_index(
 		                   valueInOut.ptr, inputOffsetsPtr, valueLengthsPtr, indexes, carry, nChunk);
+		printf("cl: %'d", chunkLen);
 		throughput2B += chunkLen;
 		print_bandwidth(chunkLen, ctx.bandwidth2, "2b");
 		cudaMalloc(&histogram, sizeof(int)*ctx.histogramSize);	gpuerr();
