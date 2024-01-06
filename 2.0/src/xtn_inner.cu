@@ -75,11 +75,20 @@ int gen_pairs(int* input, int* inputOffsets, int* outputLengths, Int2* &output,
 int gen_smaller_index(int* input, int* inputOffsets, int* outputLengths,
                       int* &output, int carry, int n) {
 	int* outputOffsets;
+	size_t* outputOffsets2;
+
+	//cal outputOffsets2
+	cudaMalloc(&outputOffsets2, n * sizeof(size_t)); gpuerr();
+	inclusive_sum(outputLengths, outputOffsets2, n); gpuerr();
+	size_t outputLen2 = transfer_last_element(outputOffsets2, n); gpuerr();
+	cudaFree(outputOffsets2); gpuerr();
 
 	// cal outputOffsets
 	cudaMalloc(&outputOffsets, n * sizeof(int)); gpuerr();
 	inclusive_sum(outputLengths, outputOffsets, n); gpuerr();
 	int outputLen = transfer_last_element(outputOffsets, n); gpuerr();
+
+	printf("olol: %'lu %'d\n", outputLen2, outputLen);
 
 	//generate pairs
 	cudaMalloc(&output, sizeof(int)*outputLen); gpuerr();
@@ -294,7 +303,7 @@ void stream_handler2(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, std::vector<
 
 		int chunkLen = gen_smaller_index(
 		                   valueInOut.ptr, inputOffsetsPtr, valueLengthsPtr, indexes, carry, nChunk);
-		printf("cl: %'d", chunkLen);
+		printf("cl: %'d\n", chunkLen);
 		throughput2B += chunkLen;
 		print_bandwidth(chunkLen, ctx.bandwidth2, "2b");
 		cudaMalloc(&histogram, sizeof(int)*ctx.histogramSize);	gpuerr();

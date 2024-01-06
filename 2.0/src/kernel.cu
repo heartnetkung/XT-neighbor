@@ -9,9 +9,10 @@ const size_t MAX = INT_MAX;
  * (most map and expand operations). Follows Facade design pattern.
  */
 
-int transfer_last_element(int* deviceArr, int n) {
-	int ans[1];
-	cudaMemcpy(ans, deviceArr + n - 1, sizeof(int), cudaMemcpyDeviceToHost);
+template <typename T>
+T transfer_last_element(T* deviceArr, int n) {
+	T ans[1];
+	cudaMemcpy(ans, deviceArr + n - 1, sizeof(T), cudaMemcpyDeviceToHost);
 	cudaDeviceSynchronize();
 	return ans[0];
 }
