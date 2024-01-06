@@ -160,7 +160,7 @@ int solve_next_bin(int* chunksizes, int start, int maxSize, int n) {
 	int minChunkSize = INT_MAX;
 	for (int i = start; i < n; i++) {
 		currentChunkSize = chunksizes[i];
-		if (minChunkSize < currentChunkSize)
+		if (minChunkSize > currentChunkSize)
 			minChunkSize = currentChunkSize;
 		if (len + currentChunkSize > maxSize)
 			break;
