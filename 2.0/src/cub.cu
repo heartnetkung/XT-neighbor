@@ -46,24 +46,19 @@ struct IntMax {
 	}
 };
 
-template <typename T>
-void inclusive_sum(T* input, int n) {
+template <typename T1, typename T2>
+void inclusive_sum(T1* input, T2* output, int n) {
 	void *buffer = NULL;
 	size_t bufferSize = 0;
-	cub::DeviceScan::InclusiveSum(buffer, bufferSize, input, input, n);
+	cub::DeviceScan::InclusiveSum(buffer, bufferSize, input, output, n);
 	cudaMalloc(&buffer, bufferSize);
-	cub::DeviceScan::InclusiveSum(buffer, bufferSize, input, input, n);
+	cub::DeviceScan::InclusiveSum(buffer, bufferSize, input, output, n);
 	cudaFree(buffer);
 }
 
 template <typename T>
-void inclusive_sum(int* input, T* output, int n) {
-	void *buffer = NULL;
-	size_t bufferSize = 0;
-	cub::DeviceScan::InclusiveSum(buffer, bufferSize, input, output, n);
-	cudaMalloc(&buffer, bufferSize);
-	cub::DeviceScan::InclusiveSum(buffer, bufferSize, input, output, n);
-	cudaFree(buffer);
+void inclusive_sum(T* input, int n) {
+	inclusive_sum(input, input, n);
 }
 
 void sort_key_values(Int3* keys, int* values, int n) {
