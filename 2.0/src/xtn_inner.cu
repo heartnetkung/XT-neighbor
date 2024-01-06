@@ -101,6 +101,9 @@ int gen_smaller_index(int* input, int* inputOffsets, int* outputLengths,
 	generate_smaller_index <<< NUM_BLOCK(n), NUM_THREADS>>>(input, output,
 	        inputOffsets, outputOffsets, carry, n); gpuerr();
 
+	print_int_arr(output, 30);
+	print_int_arr(output + outputLen - 30, 30);
+
 	print_gpu_memory();
 	cudaFree(outputOffsets); gpuerr();
 	//wrong?
