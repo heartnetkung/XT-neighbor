@@ -277,6 +277,12 @@ void stream_handler2(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, std::vector<
 	int* inputOffsetsPtr = inputOffsets, *valueLengthsPtr = valueLengths;
 	valueLengthsHost = device_to_host(valueLengths, offsetLen); gpuerr();
 
+	print_int3_arr(keyInOut.ptr, 100);
+	print_int_arr(valueInOut.ptr, 100);
+	printf("====\n");
+	print_int3_arr(keyInOut.ptr + keyOut.len - 100, 100);
+	print_int_arr(valueInOut.ptr + valueInOut.len - 100, 100);
+
 	//histogram loop
 	while ((nChunk = solve_next_bin(valueLengthsHost, start, ctx.bandwidth2, offsetLen)) > 0) {
 
