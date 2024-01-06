@@ -22,7 +22,7 @@ struct Int3Comparator {
 			return lhs.entry[0] < rhs.entry[0];
 		// make sure it's irreflexive https://en.cppreference.com/w/cpp/concepts/strict_weak_order
 		if (lhs.entry[2] == rhs.entry[2])
-			return false;
+			return true;
 		return lhs.entry[2] < rhs.entry[2];
 	}
 };
@@ -34,7 +34,7 @@ struct Int2Comparator {
 			return lhs.x < rhs.x;
 		// make sure it's irreflexive https://en.cppreference.com/w/cpp/concepts/strict_weak_order
 		if (lhs.y == rhs.y)
-			return false;
+			return true;
 		return lhs.y < rhs.y;
 	}
 };
