@@ -156,14 +156,15 @@ void gen_next_chunk(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut,
 int solve_next_bin(int* chunksizes, int start, int maxSize, int n) {
 	int ans = 0;
 	size_t len = 0;
+	int currentChunkSize;
 	for (int i = start; i < n; i++) {
-		int currentChunkSize = chunksizes[i];
+		currentChunkSize = chunksizes[i];
 		if (len + currentChunkSize > maxSize)
 			break;
 		len += currentChunkSize;
 		ans++;
 	}
-	printf("len %'lu %'d %'d %'d\n", len, ans, start, maxSize);
+	printf("len %'d %'d %'d %'d %'lu\n", ans, start, maxSize, currentChunkSize, len);
 	return ans;
 }
 
