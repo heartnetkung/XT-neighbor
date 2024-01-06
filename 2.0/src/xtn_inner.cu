@@ -280,7 +280,7 @@ void stream_handler2(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, std::vector<
 	print_int3_arr(keyInOut.ptr, 100);
 	print_int_arr(valueInOut.ptr, 100);
 	printf("====\n");
-	print_int3_arr(keyInOut.ptr + keyOut.len - 100, 100);
+	print_int3_arr(keyInOut.ptr + keyInOut.len - 100, 100);
 	print_int_arr(valueInOut.ptr + valueInOut.len - 100, 100);
 
 	//histogram loop
