@@ -164,7 +164,7 @@ int solve_next_bin(int* chunksizes, int start, int maxSize, int n) {
 		len += currentChunkSize;
 		ans++;
 	}
-	printf("len %'d %'d %'d %'d %'lu\n", ans, start, maxSize, currentChunkSize, len);
+	printf("len %'d %'d %'d %'d %'d %'lu\n", ans, start, n, maxSize, currentChunkSize, len);
 	return ans;
 }
 
