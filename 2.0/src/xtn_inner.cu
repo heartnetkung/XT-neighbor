@@ -78,7 +78,7 @@ int gen_smaller_index(int* input, int* inputOffsets, int* outputLengths,
 
 	int* outputHost = device_to_host(outputLengths, n);
 	int max = INT_MIN, min = INT_MAX;
-	for (int i = 0; i < outputHost; i++) {
+	for (int i = 0; i < n; i++) {
 		int current = outputHost[i];
 		if (min > current)
 			min = current;
@@ -91,8 +91,6 @@ int gen_smaller_index(int* input, int* inputOffsets, int* outputLengths,
 	cudaMalloc(&outputOffsets, n * sizeof(int)); gpuerr();
 	inclusive_sum(outputLengths, outputOffsets, n); gpuerr();
 	int outputLen = transfer_last_element(outputOffsets, n); gpuerr();
-
-	printf("olol: %'lu %'d\n", outputLen2, outputLen);
 
 	//generate pairs
 	cudaMalloc(&output, sizeof(int)*outputLen); gpuerr();
