@@ -156,7 +156,7 @@ void gen_next_chunk(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut,
 int solve_next_bin(int* chunksizes, int start, int maxSize, int n) {
 	int ans = 0;
 	size_t len = 0;
-	int currentChunkSize;
+	int currentChunkSize = -1;
 	for (int i = start; i < n; i++) {
 		currentChunkSize = chunksizes[i];
 		if (len + currentChunkSize > maxSize)
