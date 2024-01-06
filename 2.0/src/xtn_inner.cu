@@ -75,13 +75,17 @@ int gen_pairs(int* input, int* inputOffsets, int* outputLengths, Int2* &output,
 int gen_smaller_index(int* input, int* inputOffsets, int* outputLengths,
                       int* &output, int carry, int n) {
 	int* outputOffsets;
-	size_t* outputOffsets2;
 
-	//cal outputOffsets2
-	cudaMalloc(&outputOffsets2, n * sizeof(size_t)); gpuerr();
-	inclusive_sum(outputLengths, outputOffsets2, n); gpuerr();
-	size_t outputLen2 = transfer_last_element(outputOffsets2, n); gpuerr();
-	cudaFree(outputOffsets2); gpuerr();
+	int* outputHost = device_to_host(outputLengths, n);
+	int max = INT_MIN, min = INT_MAX;
+	for (int i = 0; i < outputHost; i++) {
+		int current = outputHost[i];
+		if (min > current)
+			min = current;
+		if (max < current)
+			max = current;
+	}
+	printf("min: %'d max: %'d\n", min, max);
 
 	// cal outputOffsets
 	cudaMalloc(&outputOffsets, n * sizeof(int)); gpuerr();
