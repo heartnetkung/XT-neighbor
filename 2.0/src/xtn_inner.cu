@@ -27,12 +27,13 @@ int cal_offsets(Int3* inputKeys, int* &inputOffsets, int* &outputLengths, int n,
 	cudaMalloc(&inputOffsets, sizeof(int)*n); gpuerr();
 	unique_counts(inputKeys, inputOffsets, buffer, n); gpuerr();
 	int nUnique = transfer_last_element(buffer, 1); gpuerr();
-	printf("n nUnique: %'d %'d", n, nUnique);
+	printf("n nUnique: %'d %'d\n", n, nUnique);
 
 	// cal outputLengths
 	cudaMalloc(&outputLengths, sizeof(int)*nUnique); gpuerr();
 	cal_pair_len <<< NUM_BLOCK(nUnique), NUM_THREADS>>>(inputOffsets, outputLengths, nUnique); gpuerr();
 	inclusive_sum(inputOffsets, nUnique); gpuerr();
+	printf("offsets: %'lu\n", transfer_last_element(inputOffsets, nUnique));
 
 	return nUnique;
 }
