@@ -114,8 +114,6 @@ int* concat_histograms(std::vector<int*> histograms, MemoryContext ctx) {
 	ansPtr = ans;
 
 	for (int* histogram : histograms) {
-		printf("abg5\n");
-		print_int_arr(histogram, ctx.histogramSize);
 		cudaMemcpy(ansPtr, histogram, memsize, cudaMemcpyDeviceToDevice); gpuerr();
 		cudaFree(histogram); gpuerr();
 		ansPtr += ctx.histogramSize;
@@ -148,6 +146,11 @@ int** set_d2_offsets(std::vector<int*> histograms, D2Stream<T1> *s1, D2Stream<T2
 	fullHistograms = concat_histograms(histograms, ctx);
 	offsetLen = solve_bin_packing_offsets(
 	                fullHistograms, offsets, len, buffer, ctx);
+
+	printf("~");
+	for (int i = 0; i < len; i++)
+		print_int_arr(offsets[i], offsetLen);
+	printf("~\n");
 	s1->set_offsets(offsets, len, offsetLen);
 	if (s2 != NULL)
 		s2->set_offsets(offsets, len, offsetLen);
@@ -200,7 +203,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 	print_v(verbose, "1A");
 
 	while ((b0Chunk = b0->read()).not_null()) {
-		print_bandwidth(b0Chunk.len, ctx1.bandwidth1, "1B");
+		print_bandwidth(b0Chunk.len, ctx1.bandwidth1, "1");
 
 		stream_handler1(b0Chunk, b1keyOut, b1valueOut, histograms,
 		                outputLen, distance, ctx1);
