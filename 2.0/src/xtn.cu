@@ -69,9 +69,9 @@ MemoryContext cal_memory_stream3(int seq1Len) {
 	    2 * sizeof(int) + // int* &inputOffsets, int* &outputLengths
 	    sizeof(char) + sizeof(Int3) + sizeof(int); //char* flags Int3* keyOut int* valueOut;
 
-	size_t temp = ans.gpuSize / (10 * multiplier);
+	size_t temp = ans.gpuSize / (5 * multiplier);
 	ans.bandwidth1 = (temp > MAX_PROCESSING) ? MAX_PROCESSING : temp;
-	temp = temp * 9;
+	temp = temp * 4;
 	ans.bandwidth2 = (temp > MAX_PROCESSING) ? MAX_PROCESSING : temp;
 	return ans;
 }
@@ -254,7 +254,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 	for (int i = 0; i < lowerboundsLen; i++) {
 		int lowerbound = lowerbounds[i];
 		if (verbose)
-			printf("lower bound loop: %d / %d\n", i, lowerboundsLen);
+			printf("lower bound loop: %d / %d\n", i + 1, lowerboundsLen);
 
 		//=====================================
 		// stream 3: generate pairs
