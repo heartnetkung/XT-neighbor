@@ -2,6 +2,14 @@
 #include <sys/sysinfo.h>
 #include <time.h>
 
+#define gpuerr() { print_cuda_error( __FILE__, __LINE__); }
+
+void print_cuda_error(const char *file, int line) {
+	cudaError_t code = cudaGetLastError();
+	if (code != cudaSuccess)
+		printf("Cuda error at %s %s %d\n", cudaGetErrorName(code), file, line);
+}
+
 int print_err(const char* str) {
 	fprintf(stderr, "Error: %s\n", str);
 	return ERROR;
@@ -24,70 +32,71 @@ void print_args(XTNArgs args) {
 }
 
 void _cudaFree(void* a) {
-	cudaFree(a);
+	cudaFree(a); gpuerr();
 }
 void _cudaFree(void* a, void* b) {
-	cudaFree(a);
-	cudaFree(b);
+	cudaFree(a); gpuerr();
+	cudaFree(b); gpuerr();
 }
 void _cudaFree(void* a, void* b, void* c) {
-	cudaFree(a);
-	cudaFree(b);
-	cudaFree(c);
+	cudaFree(a); gpuerr();
+	cudaFree(b); gpuerr();
+	cudaFree(c); gpuerr();
 }
 void _cudaFree(void* a, void* b, void* c, void* d) {
-	cudaFree(a);
-	cudaFree(b);
-	cudaFree(c);
-	cudaFree(d);
+	cudaFree(a); gpuerr();
+	cudaFree(b); gpuerr();
+	cudaFree(c); gpuerr();
+	cudaFree(d); gpuerr();
 }
 void _cudaFree(void* a, void* b, void* c, void* d, void* e) {
-	cudaFree(a);
-	cudaFree(b);
-	cudaFree(c);
-	cudaFree(d);
-	cudaFree(e);
+	cudaFree(a); gpuerr();
+	cudaFree(b); gpuerr();
+	cudaFree(c); gpuerr();
+	cudaFree(d); gpuerr();
+	cudaFree(e); gpuerr();
 }
 void _cudaFree(void* a, void* b, void* c, void* d, void* e, void* f) {
-	cudaFree(a);
-	cudaFree(b);
-	cudaFree(c);
-	cudaFree(d);
-	cudaFree(e);
-	cudaFree(f);
+	cudaFree(a); gpuerr();
+	cudaFree(b); gpuerr();
+	cudaFree(c); gpuerr();
+	cudaFree(d); gpuerr();
+	cudaFree(e); gpuerr();
+	cudaFree(f); gpuerr();
 }
 void _cudaFree(void* a, void* b, void* c, void* d, void* e, void* f, void* g) {
-	cudaFree(a);
-	cudaFree(b);
-	cudaFree(c);
-	cudaFree(d);
-	cudaFree(e);
-	cudaFree(g);
+	cudaFree(a); gpuerr();
+	cudaFree(b); gpuerr();
+	cudaFree(c); gpuerr();
+	cudaFree(d); gpuerr();
+	cudaFree(e); gpuerr();
+	cudaFree(g); gpuerr();
 }
 
 void _cudaFreeHost(void* a, void* b) {
-	cudaFreeHost(a);
-	cudaFreeHost(b);
+	cudaFreeHost(a); gpuerr();
+	cudaFreeHost(b); gpuerr();
 }
 
 void _cudaFreeHost(void* a, void* b, void* c) {
-	cudaFreeHost(a);
-	cudaFreeHost(b);
-	cudaFreeHost(c);
+	cudaFreeHost(a); gpuerr();
+	cudaFreeHost(b); gpuerr();
+	cudaFreeHost(c); gpuerr();
 }
 
 void _cudaFreeHost(void* a, void* b, void* c, void* d) {
-	cudaFreeHost(a);
-	cudaFreeHost(b);
-	cudaFreeHost(c);
-	cudaFreeHost(d);
+	cudaFreeHost(a); gpuerr();
+	cudaFreeHost(b); gpuerr();
+	cudaFreeHost(c); gpuerr();
+	cudaFreeHost(d); gpuerr();
 }
 
 template <typename T>
 void _cudaFreeHost2D(T** a, int n) {
-	for (int i = 0; i < n; i++)
-		cudaFreeHost(a[i]);
-	cudaFreeHost(a);
+	for (int i = 0; i < n; i++) {
+		cudaFreeHost(a[i]); gpuerr();
+	}
+	cudaFreeHost(a); gpuerr();
 }
 
 void _free(void* a, void* b) {
@@ -109,8 +118,8 @@ template <typename T>
 T* device_to_host(T* arr, int n) {
 	T* temp;
 	size_t tempBytes = sizeof(T) * n;
-	cudaMallocHost(&temp, tempBytes);
-	cudaMemcpy(temp, arr, tempBytes, cudaMemcpyDeviceToHost);
+	cudaMallocHost(&temp, tempBytes); gpuerr();
+	cudaMemcpy(temp, arr, tempBytes, cudaMemcpyDeviceToHost); gpuerr();
 	return temp;
 }
 
@@ -118,17 +127,9 @@ template <typename T>
 T* host_to_device(T* arr, int n) {
 	T* temp;
 	size_t tempBytes = sizeof(T) * n;
-	cudaMalloc(&temp, tempBytes);
-	cudaMemcpy(temp, arr, tempBytes, cudaMemcpyHostToDevice);
+	cudaMalloc(&temp, tempBytes); gpuerr();
+	cudaMemcpy(temp, arr, tempBytes, cudaMemcpyHostToDevice); gpuerr();
 	return temp;
-}
-
-#define gpuerr() { print_cuda_error( __FILE__, __LINE__); }
-
-void print_cuda_error(const char *file, int line) {
-	cudaError_t code = cudaGetLastError();
-	if (code != cudaSuccess)
-		printf("Cuda error at %s %s %d\n", cudaGetErrorName(code), file, line);
 }
 
 void print_int_arr(int* arr, int n) {
@@ -140,8 +141,9 @@ void print_int_arr(int* arr, int n) {
 			printf(", ");
 	}
 	printf(" ] n=%d\n", n);
-	if (n > 0)
-		cudaFreeHost(arr2);
+	if (n > 0) {
+		cudaFreeHost(arr2); gpuerr();
+	}
 }
 
 void print_char_arr(char* arr, int n) {
@@ -153,8 +155,9 @@ void print_char_arr(char* arr, int n) {
 			printf(", ");
 	}
 	printf(" ] n=%d\n", n);
-	if (n > 0)
-		cudaFreeHost(arr2);
+	if (n > 0) {
+		cudaFreeHost(arr2); gpuerr();
+	}
 }
 
 void print_int2_arr(Int2* arr, int n) {
@@ -166,8 +169,9 @@ void print_int2_arr(Int2* arr, int n) {
 			printf(", ");
 	}
 	printf(" ] n=%d\n", n);
-	if (n > 0)
-		cudaFreeHost(arr2);
+	if (n > 0) {
+		cudaFreeHost(arr2); gpuerr();
+	}
 }
 
 void print_size_t_arr(size_t* arr, int n) {
@@ -179,7 +183,7 @@ void print_size_t_arr(size_t* arr, int n) {
 			printf(", ");
 	}
 	printf(" ] n=%d\n", n);
-	cudaFreeHost(arr2);
+	cudaFreeHost(arr2); gpuerr();
 }
 
 void print_gpu_memory() {
