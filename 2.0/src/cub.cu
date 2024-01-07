@@ -118,7 +118,7 @@ void double_flag(T1* input1, T2* input2, char* flags, T1* output1, T2* output2, 
 	printf("cub buffer double_flag: %'lu %'lu\n", bufferSize, bufferSize / n);
 	cudaMalloc(&buffer, bufferSize); gpuerr();
 	cub::DeviceSelect::Flagged(buffer, bufferSize, input1, flags, output1, outputLen, n); gpuerr();
-	cudaFree(buffer) gpuerr();
+	cudaFree(buffer); gpuerr();
 
 	cub::DeviceSelect::Flagged(buffer2, bufferSize2, input2, flags, output2, outputLen, n); gpuerr();
 	printf("cub buffer double_flag: %'lu %'lu\n", bufferSize, bufferSize / n);
