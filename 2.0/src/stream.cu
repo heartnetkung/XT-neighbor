@@ -216,6 +216,14 @@ public:
 		_offsets = offsets;
 		_offset_len = offset_len;
 
+		for (int i = 0; i < _data.size(); i++) {
+			printf("yy6 [");
+			for (int j = 0; j < _offset_len; j++) {
+				printf("%'d ,", _offsets[i], [j]);
+			}
+			printf("]\n");
+		}
+
 		// find the largest column size to allocate deviceBuffer
 		int maxLength = 0;
 		int _len1 = _data.size();
@@ -249,7 +257,6 @@ public:
 			if (_len2[i] <= 0)
 				continue;
 
-			printf("xxa %'d %'d %'d\n", _read_index, start, chunkLen);
 			// invalid value
 			cudaMemcpy(currentPtr, _data[i] + start, sizeof(T)*chunkLen, cudaMemcpyHostToDevice); gpuerr();
 			currentPtr += chunkLen;
