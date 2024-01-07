@@ -161,7 +161,7 @@ int solve_next_bin(int* chunksizes, int start, int maxSize, int n) {
 		len += currentChunkSize;
 		ans++;
 	}
-	if ((ans == 0) && (start < n))
+	if ((ans == 0) && (start != n))
 		printf_err("solve_next_bin packet lost");
 	return ans;
 }
