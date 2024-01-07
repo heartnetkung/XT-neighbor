@@ -85,8 +85,9 @@ public:
 			return;
 
 		_maxReadableSize = maxReadableSize;
-		if (_deviceBuffer != NULL)
+		if (_deviceBuffer != NULL) {
 			cudaFree(_deviceBuffer); gpuerr();
+		}
 		cudaMalloc(&_deviceBuffer, sizeof(T)*maxReadableSize); gpuerr();
 		printf("====size grow %'d\n", maxReadableSize);
 	}
@@ -139,7 +140,7 @@ public:
 	}
 
 	void write(T* newData, int n) {
-		T* dataHost = device_to_host(newData, n); gpuerr();
+		T* dataHost = device_to_host(newData, n);
 		_writing_data.push_back(dataHost);
 		_writing_len2.push_back(n);
 		throughput += n;
@@ -199,7 +200,7 @@ public:
 	void write(T* newData, int n) {
 		check_input_write(newData, n);
 		if (n > 0) {
-			_data.push_back(device_to_host(newData, n)); gpuerr();
+			_data.push_back(device_to_host(newData, n));
 		} else {
 			T* dummy;
 			cudaMallocHost(&dummy, sizeof(T)); gpuerr();

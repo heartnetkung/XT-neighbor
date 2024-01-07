@@ -187,7 +187,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 	print_v(verbose, "0B");
 
 	cudaMalloc(&deviceInt, sizeof(int)); gpuerr();
-	seq1Device = host_to_device(seq1, seq1Len); gpuerr();
+	seq1Device = host_to_device(seq1, seq1Len);
 	print_v(verbose, "0C");
 
 	//=====================================
@@ -214,7 +214,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 		b1key->write(b1keyOut, outputLen);
 		b1value->write(b1valueOut, outputLen);
 		//cudaErrorInvalidValue
-		_cudaFree(b1keyOut, b1valueOut); gpuerr();
+		_cudaFree(b1keyOut, b1valueOut);
 		print_v(verbose, "1C");
 	}
 
@@ -252,7 +252,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 	print_v(verbose, "2F");
 	b1key->deconstruct();
 	b1value->deconstruct();
-	_cudaFreeHost2D(offsets, offsetLen); gpuerr();
+	_cudaFreeHost2D(offsets, offsetLen);
 	print_tp(verbose, "2", b2key->get_throughput());
 	print_tp(verbose, "2B", throughput2B);
 	print_v(verbose, "2G");
@@ -293,7 +293,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 			b2value->write(b2valueChunk.ptr, b2valueChunk.len);
 			print_v(verbose, "3E");
 
-			_cudaFree(b2keyChunk.ptr, b2valueChunk.ptr); gpuerr();
+			_cudaFree(b2keyChunk.ptr, b2valueChunk.ptr);
 		}
 
 		print_v(verbose, "3F");
@@ -324,7 +324,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 		}
 
 		b3->deconstruct();
-		_cudaFreeHost2D(offsets, offsetLen); gpuerr();
+		_cudaFreeHost2D(offsets, offsetLen);
 		print_tp(verbose, "4", tp);
 		print_v(verbose, "4C");
 	}
@@ -333,7 +333,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 	// boilerplate: deallocalte
 	//=====================================
 	cudaFreeHost(lowerbounds); gpuerr();
-	_cudaFree(deviceInt, seq1Device); gpuerr();
+	_cudaFree(deviceInt, seq1Device);
 	b2key->deconstruct();
 	b2value->deconstruct();
 	print_v(verbose, "5");

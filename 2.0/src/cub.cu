@@ -154,7 +154,7 @@ void max_by_key(int* keyIn, int* valueIn, int* valueOut, int* outputLen, int n) 
 	int* dummy;
 	IntMax op;
 
-	cudaMalloc(&dummy, sizeof(int)*n);
+	cudaMalloc(&dummy, sizeof(int)*n); gpuerr();
 	cub::DeviceReduce::ReduceByKey(buffer, bufferSize, keyIn,
 	                               dummy, valueIn, valueOut, outputLen, op, n); gpuerr();
 	cudaMalloc(&buffer, bufferSize); gpuerr();

@@ -12,8 +12,8 @@ const size_t MAX = INT_MAX;
 template <typename T>
 T transfer_last_element(T* deviceArr, int n) {
 	T ans[1];
-	cudaMemcpy(ans, deviceArr + n - 1, sizeof(T), cudaMemcpyDeviceToHost);
-	cudaDeviceSynchronize();
+	cudaMemcpy(ans, deviceArr + n - 1, sizeof(T), cudaMemcpyDeviceToHost); gpuerr();
+	cudaDeviceSynchronize(); gpuerr();
 	return ans[0];
 }
 

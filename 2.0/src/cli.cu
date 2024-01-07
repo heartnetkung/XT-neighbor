@@ -118,10 +118,10 @@ int main(int argc, char **argv) {
 		return returnCode;
 
 	// 2. read input
-	cudaMallocHost(&seq1, sizeof(Int3) * args.seq1Len);
+	cudaMallocHost(&seq1, sizeof(Int3) * args.seq1Len); gpuerr();
 	returnCode = parse_file(args.seq1Path, seq1, args.seq1Len);
 	if (returnCode != SUCCESS) {
-		cudaFree(seq1);
+		cudaFree(seq1); gpuerr();
 		return returnCode;
 	}
 	if (args.verbose)
@@ -142,6 +142,6 @@ int main(int argc, char **argv) {
 	printf("total output length: %'lu\n", totalOutputLen);
 
 	// 4. clean up
-	cudaFreeHost(seq1);
+	cudaFreeHost(seq1); gpuerr();
 	return 0;
 }
