@@ -216,13 +216,13 @@ public:
 		_offsets = offsets;
 		_offset_len = offset_len;
 
-		for (int i = 0; i < _data.size(); i++) {
-			printf("yy6 [");
-			for (int j = 0; j < _offset_len; j++) {
-				printf("%'d ,", _offsets[i][j]);
-			}
-			printf("]\n");
-		}
+		// for (int i = 0; i < _data.size(); i++) {
+		// 	printf("yy6 [");
+		// 	for (int j = 0; j < _offset_len; j++) {
+		// 		printf("%'d ,", _offsets[i][j]);
+		// 	}
+		// 	printf("]\n");
+		// }
 
 		// find the largest column size to allocate deviceBuffer
 		int maxLength = 0;

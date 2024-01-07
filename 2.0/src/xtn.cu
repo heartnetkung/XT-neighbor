@@ -114,6 +114,8 @@ int* concat_histograms(std::vector<int*> histograms, MemoryContext ctx) {
 	ansPtr = ans;
 
 	for (int* histogram : histograms) {
+		printf("abg5\n");
+		print_int_arr(histogram, ctx.histogramSize);
 		cudaMemcpy(ansPtr, histogram, memsize, cudaMemcpyDeviceToDevice); gpuerr();
 		cudaFree(histogram); gpuerr();
 		ansPtr += ctx.histogramSize;
