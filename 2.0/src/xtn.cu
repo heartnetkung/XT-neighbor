@@ -55,9 +55,9 @@ MemoryContext cal_memory_stream2(int seq1Len) {
 	    //bottleneck: input sort_key_values
 	    2 * sizeof(Int3) + 2 * sizeof(int);
 
-	size_t temp = ans.gpuSize / (5 * multiplier);
+	size_t temp = ans.gpuSize / (10 * multiplier);
 	ans.bandwidth1 = (temp > MAX_PROCESSING) ? MAX_PROCESSING : temp;
-	temp = temp * 4;
+	temp = temp * 9;
 	ans.bandwidth2 = (temp > MAX_PROCESSING) ? MAX_PROCESSING : temp;
 	ans.maxThroughputExponent = cal_max_exponent(ans.bandwidth1);
 	return ans;
@@ -69,9 +69,9 @@ MemoryContext cal_memory_stream3(int seq1Len) {
 	    2 * sizeof(int) + // int* &inputOffsets, int* &outputLengths
 	    sizeof(char) + sizeof(Int3) + sizeof(int); //char* flags Int3* keyOut int* valueOut;
 
-	size_t temp = ans.gpuSize / (5 * multiplier);
+	size_t temp = ans.gpuSize / (10 * multiplier);
 	ans.bandwidth1 = (temp > MAX_PROCESSING) ? MAX_PROCESSING : temp;
-	temp = temp * 4;
+	temp = temp * 9;
 	ans.bandwidth2 = (temp > MAX_PROCESSING) ? MAX_PROCESSING : temp;
 	return ans;
 }
