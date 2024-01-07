@@ -24,7 +24,7 @@ public:
 template <typename T> class GPUInputStream {
 private:
 	T* _data = NULL;
-	int _len = 0, _chunkSize = 0, _tp;
+	int _len = 0, _chunkSize = 0, _totalLen;
 
 	void check_input(T* data, int len, int chunkSize) {
 		if (data == NULL)
@@ -41,7 +41,7 @@ public:
 		_data = data;
 		_len = len;
 		_chunkSize = chunkSize;
-		_tp = len;
+		_totalLen = len;
 	}
 
 	Chunk<T> read() {
@@ -56,8 +56,8 @@ public:
 		return ans;
 	}
 
-	size_t get_throughput() {
-		return _tp;
+	size_t get_total_len() {
+		return _totalLen;
 	}
 };
 
@@ -65,7 +65,7 @@ template <typename T> class RAMSwapStream {
 private:
 	std::vector<T*> _writing_data, _reading_data;
 	std::vector<int> _writing_len2, _reading_len2;
-	size_t throughput = 0;
+	size_t _totalLen = 0;
 	int _maxReadableSize = 0;
 	T* _deviceBuffer = NULL;
 
@@ -75,8 +75,8 @@ private:
 	}
 
 public:
-	size_t get_throughput() {
-		return throughput;
+	size_t get_total_len() {
+		return _totalLen;
 	}
 
 	void set_max_readable_size(int maxReadableSize) {
@@ -143,7 +143,7 @@ public:
 		T* dataHost = device_to_host(newData, n);
 		_writing_data.push_back(dataHost);
 		_writing_len2.push_back(n);
-		throughput += n;
+		_totalLen += n;
 	}
 
 	void swap() {
@@ -155,7 +155,7 @@ public:
 		_writing_len2.swap(_reading_len2);
 		std::reverse(_reading_data.begin(), _reading_data.end());
 		std::reverse(_reading_len2.begin(), _reading_len2.end());
-		throughput = 0;
+		_totalLen = 0;
 	}
 
 	void deconstruct() {
@@ -217,14 +217,6 @@ public:
 		_offsets = offsets;
 		_offset_len = offset_len;
 
-		// for (int i = 0; i < _data.size(); i++) {
-		// 	printf("yy6 [");
-		// 	for (int j = 0; j < _offset_len; j++) {
-		// 		printf("%'d ,", _offsets[i][j]);
-		// 	}
-		// 	printf("]\n");
-		// }
-
 		// find the largest column size to allocate deviceBuffer
 		int maxLength = 0;
 		int _len1 = _data.size();
@@ -277,7 +269,7 @@ public:
 		_offsets = NULL; /*do not free offset as it can be shared across buffers*/
 	}
 
-	size_t get_throughput() {
+	size_t get_total_len() {
 		size_t ans = 0;
 		for (int newLen : _len2)
 			ans += newLen;

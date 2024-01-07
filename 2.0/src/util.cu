@@ -198,9 +198,9 @@ void print_main_memory() {
 	printf("Main Memory: %'lu / %'lu\n", si.freeram, si.totalram);
 }
 
-void print_tp(int verbose, const char* step, size_t throughput) {
+void print_tl(int verbose, const char* stream, size_t tl) {
 	if (verbose)
-		printf("step %s completed with throughput: %'lu\n", step, throughput);
+		printf("stream %s completed with total length: %'lu\n", stream, tl);
 }
 
 void print_bandwidth(int chunkLen, int bandwidth, const char* process) {
