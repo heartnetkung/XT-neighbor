@@ -219,7 +219,7 @@ public:
 		for (int i = 0; i < _data.size(); i++) {
 			printf("yy6 [");
 			for (int j = 0; j < _offset_len; j++) {
-				printf("%'d ,", _offsets[i], [j]);
+				printf("%'d ,", _offsets[i][j]);
 			}
 			printf("]\n");
 		}
