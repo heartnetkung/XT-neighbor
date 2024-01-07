@@ -40,9 +40,9 @@ MemoryContext cal_memory_stream1(int seq1Len, int distance) {
 	MemoryContext ans = initMemory(seq1Len, true);
 	int deletionMultiplier = (distance == 1) ? (18 + 1) : (153 + 18 + 1);
 	int multiplier =
-	    sizeof(int) + //int *combinationOffsets
-	    //Int3* &deletionsOutput int* &indexOutput unsigned int *histogramValue;
-	    deletionMultiplier * (sizeof(Int3) + 2 * sizeof(int));
+	    //int *combinationOffsets unsigned int *histogramValue not in critical path
+	    //Int3* &deletionsOutput int* &indexOutput sort_key_values
+	    deletionMultiplier * (2 * sizeof(Int3) + 2 * sizeof(int));
 
 	size_t temp = ans.gpuSize / multiplier;
 	ans.bandwidth1 = (temp > MAX_PROCESSING) ? MAX_PROCESSING : temp;
@@ -208,8 +208,8 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 		stream_handler1(b0Chunk, b1keyOut, b1valueOut, histograms,
 		                outputLen, distance, ctx1);
 
-		print_int3_arr(b1keyOut,300);
-		print_int3_arr(b1keyOut+outputLen-300,300);
+		print_int3_arr(b1keyOut, 300);
+		print_int3_arr(b1keyOut + outputLen - 300, 300);
 
 		b1key->write(b1keyOut, outputLen);
 		b1value->write(b1valueOut, outputLen);

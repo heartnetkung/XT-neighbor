@@ -255,6 +255,7 @@ void stream_handler1(Chunk<Int3> input, Int3* &deletionsOutput, int* &indexOutpu
 	gen_combination <<< NUM_BLOCK(input.len), NUM_THREADS >>> (
 	    input.ptr, combinationOffsets, distance,
 	    deletionsOutput, indexOutput, histogramValue, input.len); gpuerr();
+	_cudaFree(combinationOffsets);
 
 	// generate histogram
 	sort_key_values(deletionsOutput, indexOutput, outputLen);
@@ -262,7 +263,7 @@ void stream_handler1(Chunk<Int3> input, Int3* &deletionsOutput, int* &indexOutpu
 	cal_histogram(histogramValue, histogram, ctx.histogramSize, UINT_MIN, UINT_MAX, outputLen);
 	histogramOutput.push_back(histogram);
 
-	_cudaFree(combinationOffsets, histogramValue);
+	_cudaFree(histogramValue);
 }
 
 void stream_handler2(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, std::vector<int*> &histogramOutput,
