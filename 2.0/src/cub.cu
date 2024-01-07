@@ -65,10 +65,11 @@ void sort_key_values(Int3* keys, int* values, int n) {
 	void *buffer = NULL;
 	size_t bufferSize = 0;
 	Int3Comparator op;
-	cub::DeviceMergeSort::SortPairs(buffer, bufferSize, keys, values, n, op);gpuerr();
-	cudaMalloc(&buffer, bufferSize);gpuerr();
-	cub::DeviceMergeSort::SortPairs(buffer, bufferSize, keys, values, n, op);gpuerr();
-	cudaFree(buffer);gpuerr();
+	cub::DeviceMergeSort::SortPairs(buffer, bufferSize, keys, values, n, op); gpuerr();
+	printf("bufferSize: %'lu", bufferSize);
+	cudaMalloc(&buffer, bufferSize); gpuerr();
+	cub::DeviceMergeSort::SortPairs(buffer, bufferSize, keys, values, n, op); gpuerr();
+	cudaFree(buffer); gpuerr();
 }
 
 void sort_int2(Int2* input, int n) {
