@@ -97,8 +97,8 @@ int postprocessing(Int3* seq, Int2* input, int distance,
 	char* uniqueDistances, *flags;
 
 	// filter duplicate
-	cudaMalloc(&uniquePairs, sizeof(Int2)*n); gpuerr();
 	sort_int2(input, n);
+	cudaMalloc(&uniquePairs, sizeof(Int2)*n); gpuerr();
 	unique(input, uniquePairs, buffer, n);
 
 	// cal levenshtein
@@ -106,12 +106,12 @@ int postprocessing(Int3* seq, Int2* input, int distance,
 	size_t byteRequirement = sizeof(char) * uniqueLen;
 	cudaMalloc(&flags, byteRequirement); gpuerr();
 	cudaMalloc(&uniqueDistances, byteRequirement); gpuerr();
-	cudaMalloc(&distanceOutput, byteRequirement); gpuerr();
-	cudaMalloc(&pairOutput, sizeof(Int2)*uniqueLen); gpuerr();
 	cal_levenshtein <<< NUM_BLOCK(uniqueLen), NUM_THREADS>>>(
 	    seq, uniquePairs, distance, uniqueDistances, flags, uniqueLen, seqLen); gpuerr();
 
 	// filter levenshtein
+	cudaMalloc(&distanceOutput, byteRequirement); gpuerr();
+	cudaMalloc(&pairOutput, sizeof(Int2)*uniqueLen); gpuerr();
 	double_flag(uniquePairs, uniqueDistances, flags, pairOutput,
 	            distanceOutput, buffer, uniqueLen);
 

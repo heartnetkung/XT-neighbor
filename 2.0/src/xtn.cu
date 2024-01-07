@@ -40,11 +40,10 @@ MemoryContext cal_memory_stream1(int seq1Len, int distance) {
 	MemoryContext ans = initMemory(seq1Len, true);
 	int deletionMultiplier = (distance == 1) ? (18 + 1) : (153 + 18 + 1);
 	int multiplier =
-	    //int *combinationOffsets unsigned int *histogramValue not in critical path
-	    //Int3* &deletionsOutput int* &indexOutput sort_key_values
+	    //bottleneck: Int3* &deletionsOutput int* &indexOutput sort_key_values
 	    deletionMultiplier * (2 * sizeof(Int3) + 2 * sizeof(int));
 
-	size_t temp = ans.gpuSize / multiplier;
+	size_t temp = ans.gpuSize / multiplier; /*safety factor is included in deletionMultiplier*/
 	ans.bandwidth1 = (temp > MAX_PROCESSING) ? MAX_PROCESSING : temp;
 	ans.chunkSize = (seq1Len < ans.bandwidth1) ? seq1Len : ans.bandwidth1;
 	return ans;
@@ -53,12 +52,12 @@ MemoryContext cal_memory_stream1(int seq1Len, int distance) {
 MemoryContext cal_memory_stream2(int seq1Len) {
 	MemoryContext ans = initMemory(seq1Len, true);
 	int multiplier =
-	    sizeof(Int3) + sizeof(int) + //input
-	    2 * sizeof(int); // int* &inputOffsets, int* &outputLengths
+	    //bottleneck: input sort_key_values
+	    2 * sizeof(Int3) + 2 * sizeof(int);
 
-	size_t temp = ans.gpuSize / (20 * multiplier);
+	size_t temp = ans.gpuSize / (5 * multiplier);
 	ans.bandwidth1 = (temp > MAX_PROCESSING) ? MAX_PROCESSING : temp;
-	temp *= 13;
+	temp = temp * 7 / 2;
 	ans.bandwidth2 = (temp > MAX_PROCESSING) ? MAX_PROCESSING : temp;
 	ans.maxThroughputExponent = cal_max_exponent(ans.bandwidth1);
 	return ans;
@@ -70,9 +69,9 @@ MemoryContext cal_memory_stream3(int seq1Len) {
 	    2 * sizeof(int) + // int* &inputOffsets, int* &outputLengths
 	    sizeof(char) + sizeof(Int3) + sizeof(int); //char* flags Int3* keyOut int* valueOut;
 
-	size_t temp = ans.gpuSize / (10 * multiplier);
+	size_t temp = ans.gpuSize / (5 * multiplier);
 	ans.bandwidth1 = (temp > MAX_PROCESSING) ? MAX_PROCESSING : temp;
-	temp *= 6;
+	temp = temp * 7 / 2;
 	ans.bandwidth2 = (temp > MAX_PROCESSING) ? MAX_PROCESSING : temp;
 	return ans;
 }
