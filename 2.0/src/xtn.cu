@@ -57,7 +57,7 @@ MemoryContext cal_memory_stream2(int seq1Len) {
 
 	size_t temp = ans.gpuSize / (5 * multiplier);
 	ans.bandwidth1 = (temp > MAX_PROCESSING) ? MAX_PROCESSING : temp;
-	temp = temp * 7 / 2;
+	temp = temp * 4;
 	ans.bandwidth2 = (temp > MAX_PROCESSING) ? MAX_PROCESSING : temp;
 	ans.maxThroughputExponent = cal_max_exponent(ans.bandwidth1);
 	return ans;
@@ -71,7 +71,7 @@ MemoryContext cal_memory_stream3(int seq1Len) {
 
 	size_t temp = ans.gpuSize / (5 * multiplier);
 	ans.bandwidth1 = (temp > MAX_PROCESSING) ? MAX_PROCESSING : temp;
-	temp = temp * 7 / 2;
+	temp = temp * 4;
 	ans.bandwidth2 = (temp > MAX_PROCESSING) ? MAX_PROCESSING : temp;
 	return ans;
 }
