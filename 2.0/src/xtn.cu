@@ -147,10 +147,10 @@ int** set_d2_offsets(std::vector<int*> histograms, D2Stream<T1> *s1, D2Stream<T2
 	offsetLen = solve_bin_packing_offsets(
 	                fullHistograms, offsets, len, buffer, ctx);
 
-	printf("~");
-	for (int i = 0; i < len; i++)
-		print_int_arr(offsets[i], offsetLen);
-	printf("~\n");
+	// printf("~");
+	// for (int i = 0; i < len; i++)
+	// 	print_int_arr(offsets[i], offsetLen);
+	// printf("~\n");
 	s1->set_offsets(offsets, len, offsetLen);
 	if (s2 != NULL)
 		s2->set_offsets(offsets, len, offsetLen);
@@ -207,6 +207,10 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 
 		stream_handler1(b0Chunk, b1keyOut, b1valueOut, histograms,
 		                outputLen, distance, ctx1);
+
+		print_int3_arr(b1keyOut,300);
+		print_int3_arr(b1keyOut+outputLen-300,300);
+
 		b1key->write(b1keyOut, outputLen);
 		b1value->write(b1valueOut, outputLen);
 		//cudaErrorInvalidValue
