@@ -249,6 +249,7 @@ public:
 			if (_len2[i] <= 0)
 				continue;
 
+			printf("xxa %'d %'d %'d\n", _read_index, start, chunkLen);
 			// invalid value
 			cudaMemcpy(currentPtr, _data[i] + start, sizeof(T)*chunkLen, cudaMemcpyHostToDevice); gpuerr();
 			currentPtr += chunkLen;
