@@ -51,7 +51,7 @@ void inclusive_sum(T1* input, T2* output, int n) {
 	void *buffer = NULL;
 	size_t bufferSize = 0;
 	cub::DeviceScan::InclusiveSum(buffer, bufferSize, input, output, n); gpuerr();
-	printf("cub buffer inclusive_sum: %'lu %'lu\n", bufferSize, bufferSize / n);
+	printf("cub buffer inclusive_sum: %'lu %f\n", bufferSize, ((float)bufferSize) / n);
 	cudaMalloc(&buffer, bufferSize); gpuerr();
 	cub::DeviceScan::InclusiveSum(buffer, bufferSize, input, output, n); gpuerr();
 	cudaFree(buffer); gpuerr();
@@ -67,7 +67,7 @@ void sort_key_values(Int3* keys, int* values, int n) {
 	size_t bufferSize = 0;
 	Int3Comparator op;
 	cub::DeviceMergeSort::SortPairs(buffer, bufferSize, keys, values, n, op); gpuerr();
-	printf("cub buffer sort_key_values: %'lu %'lu\n", bufferSize, bufferSize / n);
+	printf("cub buffer sort_key_values: %'lu %f\n", bufferSize, ((float)bufferSize) / n);
 	cudaMalloc(&buffer, bufferSize); gpuerr();
 	cub::DeviceMergeSort::SortPairs(buffer, bufferSize, keys, values, n, op); gpuerr();
 	cudaFree(buffer); gpuerr();
@@ -78,7 +78,7 @@ void sort_int2(Int2* input, int n) {
 	size_t bufferSize = 0;
 	Int2Comparator op;
 	cub::DeviceMergeSort::SortKeys(buffer, bufferSize, input, n, op); gpuerr();
-	printf("cub buffer sort_int2: %'lu %'lu\n", bufferSize, bufferSize / n);
+	printf("cub buffer sort_int2: %'lu %f\n", bufferSize, ((float)bufferSize) / n);
 	cudaMalloc(&buffer, bufferSize); gpuerr();
 	cub::DeviceMergeSort::SortKeys(buffer, bufferSize, input, n, op); gpuerr();
 	cudaFree(buffer); gpuerr();
@@ -92,7 +92,7 @@ void unique_counts(T* keys, int* output, int* outputLen, int n) {
 	cudaMalloc(&dummy, sizeof(T)*n); gpuerr();
 	cub::DeviceRunLengthEncode::Encode(
 	    buffer, bufferSize, keys, dummy, output, outputLen, n); gpuerr();
-	printf("cub buffer unique_counts: %'lu %'lu\n", bufferSize, bufferSize / n);
+	printf("cub buffer unique_counts: %'lu %f\n", bufferSize, ((float)bufferSize) / n);
 	cudaMalloc(&buffer, bufferSize); gpuerr();
 	cub::DeviceRunLengthEncode::Encode(
 	    buffer, bufferSize, keys, dummy, output, outputLen, n); gpuerr();
@@ -104,7 +104,7 @@ void unique(Int2* input, Int2* output, int* outputLen, int n) {
 	void *buffer = NULL;
 	size_t bufferSize = 0;
 	cub::DeviceSelect::Unique(buffer, bufferSize, input, output, outputLen, n); gpuerr();
-	printf("cub buffer unique: %'lu %'lu\n", bufferSize, bufferSize / n);
+	printf("cub buffer unique: %'lu %f\n", bufferSize, ((float)bufferSize) / n);
 	cudaMalloc(&buffer, bufferSize); gpuerr();
 	cub::DeviceSelect::Unique(buffer, bufferSize, input, output, outputLen, n); gpuerr();
 	cudaFree(buffer); gpuerr();
@@ -115,13 +115,13 @@ void double_flag(T1* input1, T2* input2, char* flags, T1* output1, T2* output2, 
 	void *buffer = NULL, *buffer2 = NULL;
 	size_t bufferSize = 0, bufferSize2 = 0;
 	cub::DeviceSelect::Flagged(buffer, bufferSize, input1, flags, output1, outputLen, n); gpuerr();
-	printf("cub buffer double_flag: %'lu %'lu\n", bufferSize, bufferSize / n);
+	printf("cub buffer double_flag: %'lu %f\n", bufferSize, ((float)bufferSize) / n);
 	cudaMalloc(&buffer, bufferSize); gpuerr();
 	cub::DeviceSelect::Flagged(buffer, bufferSize, input1, flags, output1, outputLen, n); gpuerr();
 	cudaFree(buffer); gpuerr();
 
 	cub::DeviceSelect::Flagged(buffer2, bufferSize2, input2, flags, output2, outputLen, n); gpuerr();
-	printf("cub buffer double_flag: %'lu %'lu\n", bufferSize, bufferSize / n);
+	printf("cub buffer double_flag: %'lu %f\n", bufferSize2, ((float)bufferSize2) / n);
 	cudaMalloc(&buffer2, bufferSize2); gpuerr();
 	cub::DeviceSelect::Flagged(buffer2, bufferSize2, input2, flags, output2, outputLen, n); gpuerr();
 	cudaFree(buffer2); gpuerr();
@@ -133,7 +133,7 @@ void cal_histogram(T* input, int* output, int nLevel, T minValue, T maxValue, in
 	size_t bufferSize = 0;
 	cub::DeviceHistogram::HistogramEven(buffer, bufferSize,
 	                                    input, output, nLevel + 1, minValue, maxValue, n); gpuerr();
-	printf("cub buffer cal_histogram: %'lu %'lu\n", bufferSize, bufferSize / n);
+	printf("cub buffer cal_histogram: %'lu %f\n", bufferSize, ((float)bufferSize) / n);
 	cudaMalloc(&buffer, bufferSize); gpuerr();
 	cub::DeviceHistogram::HistogramEven(buffer, bufferSize,
 	                                    input, output, nLevel + 1, minValue, maxValue, n); gpuerr();
@@ -146,7 +146,7 @@ void inclusive_sum_by_key(int* keyIn, int* valueIn, T* valueOut, int n) {
 	size_t bufferSize = 0;
 	cub::DeviceScan::InclusiveSumByKey(
 	    buffer, bufferSize, keyIn, valueIn, valueOut, n); gpuerr();
-	printf("cub buffer inclusive_sum_by_key: %'lu %'lu\n", bufferSize, bufferSize / n);
+	printf("cub buffer inclusive_sum_by_key: %'lu %f\n", bufferSize, ((float)bufferSize) / n);
 	cudaMalloc(&buffer, bufferSize); gpuerr();
 	cub::DeviceScan::InclusiveSumByKey(
 	    buffer, bufferSize, keyIn, valueIn, valueOut, n); gpuerr();
@@ -166,7 +166,7 @@ void max_by_key(int* keyIn, int* valueIn, int* valueOut, int* outputLen, int n) 
 	cudaMalloc(&dummy, sizeof(int)*n); gpuerr();
 	cub::DeviceReduce::ReduceByKey(buffer, bufferSize, keyIn,
 	                               dummy, valueIn, valueOut, outputLen, op, n); gpuerr();
-	printf("cub buffer max_by_key: %'lu %'lu\n", bufferSize, bufferSize / n);
+	printf("cub buffer max_by_key: %'lu %f\n", bufferSize, ((float)bufferSize) / n);
 	cudaMalloc(&buffer, bufferSize); gpuerr();
 	cub::DeviceReduce::ReduceByKey(buffer, bufferSize, keyIn,
 	                               dummy, valueIn, valueOut, outputLen, op, n); gpuerr();
