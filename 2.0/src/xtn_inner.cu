@@ -310,8 +310,8 @@ void stream_handler3(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, void callbac
 	print_int3_arr(keyInOut.ptr, 300);
 	print_int3_arr(keyInOut.ptr + keyInOut.len - 300, 300);
 
-	print_int3_arr(valueInOut.ptr, 300);
-	print_int3_arr(valueInOut.ptr + valueInOut.len - 300, 300);
+	print_int_arr(valueInOut.ptr, 300);
+	print_int_arr(valueInOut.ptr + valueInOut.len - 300, 300);
 
 	int offsetLen = cal_offsets_lowerbound(
 	                    keyInOut.ptr, valueInOut.ptr, inputOffsets,
