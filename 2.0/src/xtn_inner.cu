@@ -309,12 +309,6 @@ void stream_handler3(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, void callbac
 	int* inputOffsets, *valueLengths, *valueLengthsHost, *lesserIndex, *histogram;
 	Int2* pairOutput;
 
-	print_int3_arr(keyInOut.ptr, 300);
-	print_int3_arr(keyInOut.ptr + keyInOut.len - 300, 300);
-
-	print_int_arr(valueInOut.ptr, 300);
-	print_int_arr(valueInOut.ptr + valueInOut.len - 300, 300);
-
 	int offsetLen = cal_offsets_lowerbound(
 	                    keyInOut.ptr, valueInOut.ptr, inputOffsets,
 	                    valueLengths, lowerbound, keyInOut.len, buffer);
@@ -322,9 +316,6 @@ void stream_handler3(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, void callbac
 	int start = 0, carry = 0, nChunk;
 	int* inputOffsetsPtr = inputOffsets, *valueLengthsPtr = valueLengths;
 	valueLengthsHost = device_to_host(valueLengths, offsetLen);
-
-	print_int_arr(inputOffsets, 300);
-	print_int_arr(inputOffsets + offsetLen - 300, 300);
 
 	// generate pairs
 	while ((nChunk = solve_next_bin(valueLengthsHost, start, ctx.bandwidth2, offsetLen)) > 0) {
