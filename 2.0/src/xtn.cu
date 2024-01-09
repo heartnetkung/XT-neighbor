@@ -196,7 +196,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 	print_v(verbose, "1A");
 
 	while ((b0Chunk = b0->read()).not_null()) {
-		print_bandwidth(b0Chunk.len, ctx1.bandwidth1, "1");
+		print_bandwidth(verbose, b0Chunk.len, ctx1.bandwidth1, "1");
 
 		stream_handler1(b0Chunk, b1keyOut, b1valueOut, histograms,
 		                outputLen, distance, ctx1);
@@ -228,9 +228,9 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 
 	while ((b1keyChunk = b1key->read()).not_null()) {
 		b1valueChunk = b1value->read();
-		print_bandwidth(b1keyChunk.len, ctx2.bandwidth1, "2");
+		print_bandwidth(verbose, b1keyChunk.len, ctx2.bandwidth1, "2");
 		stream_handler2(b1keyChunk, b1valueChunk, histograms, totalLen2B,
-		                distance, seq1Len, deviceInt, ctx2);
+		                distance, seq1Len, deviceInt, ctx2, verbose);
 		b2key->write(b1keyChunk.ptr, b1keyChunk.len);
 		b2value->write(b1valueChunk.ptr, b1valueChunk.len);
 		print_v(verbose, "2B");
@@ -271,9 +271,9 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 
 		while ((b2keyChunk = b2key->read()).not_null()) {
 			b2valueChunk = b2value->read();
-			print_bandwidth(b2keyChunk.len, ctx3.bandwidth1, "3");
+			print_bandwidth(verbose, b2keyChunk.len, ctx3.bandwidth1, "3");
 			stream_handler3(b2keyChunk, b2valueChunk, write_b3, histograms,
-			                lowerbound, seq1Len, deviceInt, ctx3);
+			                lowerbound, seq1Len, deviceInt, ctx3, verbose);
 			b2key->write(b2keyChunk.ptr, b2keyChunk.len);
 			b2value->write(b2valueChunk.ptr, b2valueChunk.len);
 
@@ -300,7 +300,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 		print_v(verbose, "4A");
 
 		while ((b3Chunk = b3->read()).not_null()) {
-			print_bandwidth(b3Chunk.len, ctx4.bandwidth1, "4");
+			print_bandwidth(verbose, b3Chunk.len, ctx4.bandwidth1, "4");
 			stream_handler4(b3Chunk, finalOutput, seq1Device, seq1Len, distance, deviceInt);
 			totalLen4 += finalOutput.len;
 			callback(finalOutput);
@@ -320,6 +320,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 	_cudaFree(deviceInt, seq1Device);
 	b2key->deconstruct();
 	b2value->deconstruct();
-	printf("totalLen 3B: %'lu\n", totalLen3B);
+	if (verbose)
+		printf("totalLen 3B: %'lu\n", totalLen3B);
 	print_v(verbose, "5");
 }

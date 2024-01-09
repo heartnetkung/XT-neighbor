@@ -203,7 +203,9 @@ void print_tl(int verbose, const char* stream, size_t tl) {
 		printf("stream %s completed with total length: %'lu\n", stream, tl);
 }
 
-void print_bandwidth(int chunkLen, int bandwidth, const char* process) {
+void print_bandwidth(int verbose, int chunkLen, int bandwidth, const char* process) {
+	if (!verbose)
+		return;
 	float endTime = (float)clock() / CLOCKS_PER_SEC;
 	printf("process %s started with bandwidth %'d / %'d %'.0f\n",
 	       process, chunkLen, bandwidth, endTime - startTime);

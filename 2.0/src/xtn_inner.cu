@@ -268,7 +268,8 @@ void stream_handler1(Chunk<Int3> input, Int3* &deletionsOutput, int* &indexOutpu
 }
 
 void stream_handler2(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, std::vector<int*> &histogramOutput,
-                     size_t &throughput2B, int distance, int seqLen, int* buffer, MemoryContext ctx) {
+                     size_t &throughput2B, int distance, int seqLen, int* buffer, MemoryContext ctx,
+                     int verbose) {
 	int* inputOffsets, *valueLengths, *indexes, *valueLengthsHost, *histogram;
 
 	sort_key_values(keyInOut.ptr, valueInOut.ptr, keyInOut.len);
@@ -286,7 +287,7 @@ void stream_handler2(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, std::vector<
 		                   valueInOut.ptr, inputOffsetsPtr, valueLengthsPtr, indexes, carry, nChunk);
 
 		throughput2B += chunkLen;
-		print_bandwidth(chunkLen, ctx.bandwidth2, "2b");
+		print_bandwidth(verbose, chunkLen, ctx.bandwidth2, "2b");
 		cudaMalloc(&histogram, sizeof(int)*ctx.histogramSize);	gpuerr();
 		cal_histogram(indexes, histogram, ctx.histogramSize , 0, seqLen, chunkLen);
 		histogramOutput.push_back(histogram);
@@ -303,7 +304,8 @@ void stream_handler2(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, std::vector<
 }
 
 void stream_handler3(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, void callback(Int2*, int),
-                     std::vector<int*> &histogramOutput, int lowerbound, int seqLen, int* buffer, MemoryContext ctx) {
+                     std::vector<int*> &histogramOutput, int lowerbound, int seqLen,
+                     int* buffer, MemoryContext ctx, int verbose) {
 	int* inputOffsets, *valueLengths, *valueLengthsHost, *lesserIndex, *histogram;
 	Int2* pairOutput;
 
@@ -328,7 +330,7 @@ void stream_handler3(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, void callbac
 	while ((nChunk = solve_next_bin(valueLengthsHost, start, ctx.bandwidth2, offsetLen)) > 0) {
 		int chunkLen = gen_pairs(valueInOut.ptr, inputOffsetsPtr, valueLengthsPtr,
 		                         pairOutput, lesserIndex, lowerbound, carry, nChunk);
-		print_bandwidth(chunkLen, ctx.bandwidth2, "3b");
+		print_bandwidth(verbose, chunkLen, ctx.bandwidth2, "3b");
 		callback(pairOutput, chunkLen);
 		cudaMalloc(&histogram, sizeof(int)*ctx.histogramSize);	gpuerr();
 		cal_histogram(lesserIndex, histogram, ctx.histogramSize , 0, seqLen, chunkLen);
