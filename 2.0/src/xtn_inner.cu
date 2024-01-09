@@ -322,7 +322,7 @@ void stream_handler3(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, void callbac
 	valueLengthsHost = device_to_host(valueLengths, offsetLen);
 
 	print_int_arr(inputOffsets, 300);
-	print_int_arr(inputOffsets + keyInOut.len - 300, 300);
+	print_int_arr(inputOffsets + offsetLen - 300, 300);
 
 	// generate pairs
 	while ((nChunk = solve_next_bin(valueLengthsHost, start, ctx.bandwidth2, offsetLen)) > 0) {
