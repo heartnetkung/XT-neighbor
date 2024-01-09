@@ -246,6 +246,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 	// loop: lower bound
 	//=====================================
 
+	size_t totalLen3B = 0;
 	lowerboundsLen = cal_lowerbounds(histograms, lowerbounds, seq1Len, deviceInt);
 	histograms.clear();
 	if (verbose)
@@ -282,6 +283,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 
 		print_tl(verbose, "3.1", b2key->get_total_len());
 		print_tl(verbose, "3.2", b3->get_total_len());
+		totalLen3B += b3->get_total_len();
 
 		//=====================================
 		// stream 4: postprocessing
@@ -318,5 +320,6 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 	_cudaFree(deviceInt, seq1Device);
 	b2key->deconstruct();
 	b2value->deconstruct();
+	printf("totalLen 3B: %'lu\n", totalLen3B);
 	print_v(verbose, "5");
 }
