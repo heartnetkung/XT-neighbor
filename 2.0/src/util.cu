@@ -198,21 +198,21 @@ void print_main_memory() {
 	printf("Main Memory: %'lu / %'lu\n", si.freeram, si.totalram);
 }
 
-void print_tl(int verbose, const char* stream, size_t tl) {
-	if (verbose)
+void print_tl(const char* stream, size_t tl) {
+	if (verboseGlobal)
 		printf("stream %s completed with total length: %'lu\n", stream, tl);
 }
 
-void print_bandwidth(int verbose, int chunkLen, int bandwidth, const char* process) {
-	if (!verbose)
+void print_bandwidth(int chunkLen, int bandwidth, const char* process) {
+	if (!verboseGlobal)
 		return;
 	float endTime = (float)clock() / CLOCKS_PER_SEC;
 	printf("process %s started with bandwidth %'d / %'d %'.0f\n",
 	       process, chunkLen, bandwidth, endTime - startTime);
 }
 
-void print_v(int verbose, const char* message) {
-	if (verbose)
+void print_v(const char* message) {
+	if (verboseGlobal)
 		printf("%s\n", message);
 }
 

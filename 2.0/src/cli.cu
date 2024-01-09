@@ -114,6 +114,7 @@ int main(int argc, char **argv) {
 	// 1. parse command line arguments
 	setlocale(LC_ALL, "");
 	returnCode = parse_args(argc, argv, &args);
+	verboseGlobal = args.verbose;
 	if (returnCode != SUCCESS)
 		return returnCode;
 
@@ -124,7 +125,7 @@ int main(int argc, char **argv) {
 		cudaFree(seq1); gpuerr();
 		return returnCode;
 	}
-	if (args.verbose)
+	if (verboseGlobal)
 		print_args(args);
 
 	// 3. perform algorithm

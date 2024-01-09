@@ -5,6 +5,7 @@
 
 const int MAX_INPUT_LENGTH = 18;
 const int MAX_DISTANCE = 2;
+int verboseGlobal = 0;
 
 struct Int3 {
 	unsigned int entry[3] = {0, 0, 0};
