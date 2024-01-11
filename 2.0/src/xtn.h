@@ -3,10 +3,13 @@
  * Listing of all shared data structures, constants, and exporting method.
  */
 
-const int MAX_INPUT_LENGTH = 18;
-const int MAX_DISTANCE = 2;
-int verboseGlobal = 0;
+const int MAX_INPUT_LENGTH = 18; /*CDR3 length limit for compression*/
+const int MAX_DISTANCE = 2; /*distance limit for immunology use case*/
+int verboseGlobal = 0; /*control printing of each method*/
 
+/**
+ * 12-byte integer representation for CDR3 string.
+*/
 struct Int3 {
 	unsigned int entry[3] = {0, 0, 0};
 	__device__
@@ -15,6 +18,9 @@ struct Int3 {
 	}
 };
 
+/**
+ * 8-byte integer representation for pair of sequence index.
+*/
 struct Int2 {
 	int x = 0, y = 0;
 	__device__
@@ -23,6 +29,9 @@ struct Int2 {
 	}
 };
 
+/**
+ * bundled representation for command line arguments.
+*/
 struct XTNArgs {
 	int distance = 1;
 	int verbose = 0;
@@ -33,6 +42,9 @@ struct XTNArgs {
 	// int seq2Len = 0;
 };
 
+/**
+ * bundled representation for memory constraints and info.
+*/
 struct MemoryContext {
 	size_t gpuSize = 0;
 	size_t ramSize = 0;
@@ -48,12 +60,25 @@ struct MemoryContext {
 #endif
 };
 
+/**
+ * bundled representation for algorithm's output.
+*/
 struct XTNOutput {
 	Int2* indexPairs = NULL;
 	char* pairwiseDistances = NULL;
 	int len = 0;
 };
 
+/**
+ * control-flow representation.
+*/
 enum ReturnCode {SUCCESS, ERROR, EXIT};
 
+/**
+ * the algorithm's API.
+ *
+ * @param args algorithm's bundled arguments
+ * @param seq1 list of CDR3 sequences
+ * @param callback function to be invoked once a chunk of output is ready
+*/
 void xtn_perform(XTNArgs args, Int3* seq1, void callback (XTNOutput));

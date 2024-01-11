@@ -196,7 +196,7 @@ int** set_d2_offsets(std::vector<int*> histograms, D2Stream<T1> *s1, D2Stream<T2
  *
  * @param args all flags parsed from command line
  * @param seq1 sequence input
- * @param callback return function to be invoked once a chunk of output is ready
+ * @param callback function to be invoked once a chunk of output is ready
 */
 void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 	clock_start();
