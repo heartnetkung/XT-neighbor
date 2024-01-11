@@ -174,6 +174,14 @@ void gen_next_chunk(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut,
 	valueInOut.len = outputLen;
 }
 
+void print_sum(int* histograms, int len2d) {
+	size_t* output;
+	cudaMalloc(&output, sizeof(size_t)*len2d); gpuerr();
+	inclusive_sum(histograms, output, len2d);
+	size_t result = transfer_last_element(output, 1);
+	printf("sum: %'lu\n %'d", result, len2d);
+}
+
 //=====================================
 // Public Functions
 //=====================================

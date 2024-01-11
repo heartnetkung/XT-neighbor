@@ -178,6 +178,7 @@ int** set_d2_offsets(std::vector<int*> histograms, D2Stream<T1> *s1, D2Stream<T2
 
 	len = histograms.size();
 	fullHistograms = concat_histograms(histograms, ctx);
+	print_sum(fullHistograms, len * ctx.histogramSize);
 	offsetLen = solve_bin_packing_offsets(
 	                fullHistograms, offsets, len, buffer, ctx);
 
