@@ -65,15 +65,16 @@ $(function() {
 <div class="title">RAMSwapStream&lt; T &gt; Class Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>A stream with bin packing capability backed by RAM.  
+ <a href="classRAMSwapStream.html#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a9ba83c785e1059efcf3b506c3395265e"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRAMSwapStream.html#a9ba83c785e1059efcf3b506c3395265e">get_throughput</a> ()</td></tr>
-<tr class="separator:a9ba83c785e1059efcf3b506c3395265e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa37c4d83fa530fded22a0cb7311dd9f0"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRAMSwapStream.html#aa37c4d83fa530fded22a0cb7311dd9f0">get_total_len</a> ()</td></tr>
+<tr class="separator:aa37c4d83fa530fded22a0cb7311dd9f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a71c0d105cf16af093b2127de0438b6d6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRAMSwapStream.html#a71c0d105cf16af093b2127de0438b6d6">set_max_readable_size</a> (int maxReadableSize)</td></tr>
 <tr class="separator:a71c0d105cf16af093b2127de0438b6d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae220c04b49273c35ff1d32d1b7a7d45d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRAMSwapStream.html#ae220c04b49273c35ff1d32d1b7a7d45d">set_max_writable_size</a> (int maxWritableSize)</td></tr>
-<tr class="separator:ae220c04b49273c35ff1d32d1b7a7d45d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5bba4c1953c9bc4362f2664418cb6c85"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classChunk.html">Chunk</a>&lt; T &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRAMSwapStream.html#a5bba4c1953c9bc4362f2664418cb6c85">read</a> ()</td></tr>
 <tr class="separator:a5bba4c1953c9bc4362f2664418cb6c85"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0c3c54b6a4684be783a5b06d8bd34867"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRAMSwapStream.html#a0c3c54b6a4684be783a5b06d8bd34867">write</a> (T *newData, int n)</td></tr>
@@ -83,7 +84,14 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a0f39d1b97f7a9df5c7f25045551117ca"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRAMSwapStream.html#a0f39d1b97f7a9df5c7f25045551117ca">deconstruct</a> ()</td></tr>
 <tr class="separator:a0f39d1b97f7a9df5c7f25045551117ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Member Function Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><h3>template&lt;typename T&gt;<br />
+class RAMSwapStream&lt; T &gt;</h3>
+
+<p>A stream with bin packing capability backed by RAM. </p>
+<p>It contains 2 queues for duplex transfer: reading and writing queues. The duplex works by taking turns at the end of each stream as follow. First, when the buffer is empty, it is write-only. All writing is done to until depleted. Second, the "swap" is performed and the writing buffer now become reading now the writing buffer is cleared. Third, start duplexing (read from reading buffer and write to writing buffer). Last, once stream is depleted, repeat second step.</p>
+<p>Note that the memory is immediately deallocated after each read to keep the memory requirement relatively constant. </p>
+</div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="a0f39d1b97f7a9df5c7f25045551117ca"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a0f39d1b97f7a9df5c7f25045551117ca">&#9670;&nbsp;</a></span>deconstruct()</h2>
 
@@ -111,8 +119,8 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
-<a id="a9ba83c785e1059efcf3b506c3395265e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9ba83c785e1059efcf3b506c3395265e">&#9670;&nbsp;</a></span>get_throughput()</h2>
+<a id="aa37c4d83fa530fded22a0cb7311dd9f0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa37c4d83fa530fded22a0cb7311dd9f0">&#9670;&nbsp;</a></span>get_total_len()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -123,7 +131,7 @@ template&lt;typename T &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">size_t <a class="el" href="classRAMSwapStream.html">RAMSwapStream</a>&lt; T &gt;::get_throughput </td>
+          <td class="memname">size_t <a class="el" href="classRAMSwapStream.html">RAMSwapStream</a>&lt; T &gt;::get_total_len </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -181,34 +189,6 @@ template&lt;typename T &gt; </div>
           <td>(</td>
           <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>maxReadableSize</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="ae220c04b49273c35ff1d32d1b7a7d45d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae220c04b49273c35ff1d32d1b7a7d45d">&#9670;&nbsp;</a></span>set_max_writable_size()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void <a class="el" href="classRAMSwapStream.html">RAMSwapStream</a>&lt; T &gt;::set_max_writable_size </td>
-          <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>maxWritableSize</em></td><td>)</td>
           <td></td>
         </tr>
       </table>

@@ -76,12 +76,16 @@ $(function() {
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:aa91d5008805961aceb0d937a4dfcbb7c"><td class="memItemLeft" align="right" valign="top">__device__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="generate__combination_8cu.html#aa91d5008805961aceb0d937a4dfcbb7c">printStack</a> (int *indexStack, int length)</td></tr>
+<tr class="memdesc:aa91d5008805961aceb0d937a4dfcbb7c"><td class="mdescLeft">&#160;</td><td class="mdescRight">private method  <a href="#aa91d5008805961aceb0d937a4dfcbb7c">More...</a><br /></td></tr>
 <tr class="separator:aa91d5008805961aceb0d937a4dfcbb7c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aade24e3b7ae8b7feba6af0b36ed1b24b"><td class="memItemLeft" align="right" valign="top">__device__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="generate__combination_8cu.html#aade24e3b7ae8b7feba6af0b36ed1b24b">expand_values</a> (int index, int *output, int start, int end)</td></tr>
+<tr class="memdesc:aade24e3b7ae8b7feba6af0b36ed1b24b"><td class="mdescLeft">&#160;</td><td class="mdescRight">private method  <a href="#aade24e3b7ae8b7feba6af0b36ed1b24b">More...</a><br /></td></tr>
 <tr class="separator:aade24e3b7ae8b7feba6af0b36ed1b24b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aec7896cb1ea7c3a6a15483a74810d04e"><td class="memItemLeft" align="right" valign="top">__device__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="generate__combination_8cu.html#aec7896cb1ea7c3a6a15483a74810d04e">expand_keys</a> (<a class="el" href="structInt3.html">Int3</a> seq, int distance, <a class="el" href="structInt3.html">Int3</a> *output, unsigned int *firstKeys, int start, int end)</td></tr>
+<tr class="memdesc:aec7896cb1ea7c3a6a15483a74810d04e"><td class="mdescLeft">&#160;</td><td class="mdescRight">private method  <a href="#aec7896cb1ea7c3a6a15483a74810d04e">More...</a><br /></td></tr>
 <tr class="separator:aec7896cb1ea7c3a6a15483a74810d04e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa6009ed8913d82d58111fecbe9f353de"><td class="memItemLeft" align="right" valign="top">__global__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="generate__combination_8cu.html#aa6009ed8913d82d58111fecbe9f353de">gen_combination</a> (<a class="el" href="structInt3.html">Int3</a> *seqs, int *combinationOffsets, int distance, <a class="el" href="structInt3.html">Int3</a> *combinationKeys, int *combinationValues, unsigned int *firstKeys, int n)</td></tr>
+<tr class="memdesc:aa6009ed8913d82d58111fecbe9f353de"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate all combinations of deletion for sequences using expand primitive.  <a href="#aa6009ed8913d82d58111fecbe9f353de">More...</a><br /></td></tr>
 <tr class="separator:aa6009ed8913d82d58111fecbe9f353de"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -137,6 +141,8 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>private method </p>
+
 </div>
 </div>
 <a id="aade24e3b7ae8b7feba6af0b36ed1b24b"></a>
@@ -176,6 +182,8 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>private method </p>
 
 </div>
 </div>
@@ -234,8 +242,22 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Generate all combinations of deletion for sequences using expand primitive. For a given threadId, multiple key value pairs are generated with a combination as key and threadId as value.</p>
-<p>This implementation doesn't use recursive for performance reason. </p>
+
+<p>Generate all combinations of deletion for sequences using expand primitive. </p>
+<p>For a given index, multiple key value pairs are generated with a combination as key and index as value.</p>
+<p>This implementation doesn't use recursive for performance reason.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">seqs</td><td>sequence to expand </td></tr>
+    <tr><td class="paramname">combinationOffsets</td><td>precalculated memory position of the output </td></tr>
+    <tr><td class="paramname">distance</td><td>Levenshtein distance threshold </td></tr>
+    <tr><td class="paramname">combinationKeys</td><td>key output </td></tr>
+    <tr><td class="paramname">combinationValues</td><td>value output </td></tr>
+    <tr><td class="paramname">firstKeys</td><td>partial key output for histogram </td></tr>
+    <tr><td class="paramname">n</td><td>array length of seqs and combinationOffsets </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -264,6 +286,8 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>private method </p>
 
 </div>
 </div>

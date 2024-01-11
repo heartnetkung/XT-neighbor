@@ -70,7 +70,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>Listing of all GPU parallel primitives that use CUB library (everything other than map and expand). Follows Facade design pattern.  
+<p>Listing of all GPU parallel primitives that use CUB library (everything other than map and expand).  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;cub/device/device_scan.cuh&gt;</code><br />
 <code>#include &lt;cub/device/device_merge_sort.cuh&gt;</code><br />
@@ -91,12 +91,12 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:a2011f88b6ba758ef9892be4f23942abe"><td class="memTemplParams" colspan="2">template&lt;typename T1 , typename T2 &gt; </td></tr>
+<tr class="memitem:a2011f88b6ba758ef9892be4f23942abe"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="cub_8cu.html#a2011f88b6ba758ef9892be4f23942abe">inclusive_sum</a> (T1 *input, T2 *output, int n)</td></tr>
+<tr class="separator:a2011f88b6ba758ef9892be4f23942abe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8927d517930d12c6ac455588699dcb00"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
 <tr class="memitem:a8927d517930d12c6ac455588699dcb00"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="cub_8cu.html#a8927d517930d12c6ac455588699dcb00">inclusive_sum</a> (T *input, int n)</td></tr>
 <tr class="separator:a8927d517930d12c6ac455588699dcb00"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aee45a2ee379ea17e9951cae9281bda60"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:aee45a2ee379ea17e9951cae9281bda60"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="cub_8cu.html#aee45a2ee379ea17e9951cae9281bda60">inclusive_sum</a> (int *input, T *output, int n)</td></tr>
-<tr class="separator:aee45a2ee379ea17e9951cae9281bda60"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad28bede403761c8b209f7be9c1e9aed4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cub_8cu.html#ad28bede403761c8b209f7be9c1e9aed4">sort_key_values</a> (<a class="el" href="structInt3.html">Int3</a> *keys, int *values, int n)</td></tr>
 <tr class="separator:ad28bede403761c8b209f7be9c1e9aed4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adae57cf10081d0d4c8f616d47b77dba7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cub_8cu.html#adae57cf10081d0d4c8f616d47b77dba7">sort_int2</a> (<a class="el" href="structInt2.html">Int2</a> *input, int n)</td></tr>
@@ -112,13 +112,17 @@ Functions</h2></td></tr>
 <tr class="memitem:ac2063d7c650f9c95f6df719787bab6ca"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
 <tr class="memitem:ac2063d7c650f9c95f6df719787bab6ca"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="cub_8cu.html#ac2063d7c650f9c95f6df719787bab6ca">cal_histogram</a> (T *input, int *output, int nLevel, T minValue, T maxValue, int n)</td></tr>
 <tr class="separator:ac2063d7c650f9c95f6df719787bab6ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8b0f6c5d81018a275bdd8530e0c82f0d"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a8b0f6c5d81018a275bdd8530e0c82f0d"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="cub_8cu.html#a8b0f6c5d81018a275bdd8530e0c82f0d">inclusive_sum_by_key</a> (int *keyIn, int *valueIn, T *valueOut, int n)</td></tr>
+<tr class="separator:a8b0f6c5d81018a275bdd8530e0c82f0d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab5c006e7cb4a77bcc57cdca65e3c52ba"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cub_8cu.html#ab5c006e7cb4a77bcc57cdca65e3c52ba">inclusive_sum_by_key</a> (int *keyIn, int *valueInOut, int n)</td></tr>
 <tr class="separator:ab5c006e7cb4a77bcc57cdca65e3c52ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1fb93551563c1bad68dc426062f8ba02"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cub_8cu.html#a1fb93551563c1bad68dc426062f8ba02">max_by_key</a> (int *keyIn, int *valueIn, int *valueOut, int *outputLen, int n)</td></tr>
 <tr class="separator:a1fb93551563c1bad68dc426062f8ba02"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Listing of all GPU parallel primitives that use CUB library (everything other than map and expand). Follows Facade design pattern. </p>
+<div class="textblock"><p>Listing of all GPU parallel primitives that use CUB library (everything other than map and expand). </p>
+<p>Follows Facade design pattern. </p>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="ac2063d7c650f9c95f6df719787bab6ca"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ac2063d7c650f9c95f6df719787bab6ca">&#9670;&nbsp;</a></span>cal_histogram()</h2>
@@ -234,54 +238,24 @@ template&lt;typename T1 , typename T2 &gt; </div>
 
 </div>
 </div>
-<a id="a8927d517930d12c6ac455588699dcb00"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8927d517930d12c6ac455588699dcb00">&#9670;&nbsp;</a></span>inclusive_sum() <span class="overload">[1/2]</span></h2>
+<a id="a2011f88b6ba758ef9892be4f23942abe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2011f88b6ba758ef9892be4f23942abe">&#9670;&nbsp;</a></span>inclusive_sum() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename T &gt; </div>
+template&lt;typename T1 , typename T2 &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">void inclusive_sum </td>
           <td>(</td>
-          <td class="paramtype">T *&#160;</td>
+          <td class="paramtype">T1 *&#160;</td>
           <td class="paramname"><em>input</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>n</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="aee45a2ee379ea17e9951cae9281bda60"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aee45a2ee379ea17e9951cae9281bda60">&#9670;&nbsp;</a></span>inclusive_sum() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">void inclusive_sum </td>
-          <td>(</td>
-          <td class="paramtype">int *&#160;</td>
-          <td class="paramname"><em>input</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">T *&#160;</td>
+          <td class="paramtype">T2 *&#160;</td>
           <td class="paramname"><em>output</em>, </td>
         </tr>
         <tr>
@@ -300,8 +274,80 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
+<a id="a8927d517930d12c6ac455588699dcb00"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8927d517930d12c6ac455588699dcb00">&#9670;&nbsp;</a></span>inclusive_sum() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void inclusive_sum </td>
+          <td>(</td>
+          <td class="paramtype">T *&#160;</td>
+          <td class="paramname"><em>input</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>n</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a8b0f6c5d81018a275bdd8530e0c82f0d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8b0f6c5d81018a275bdd8530e0c82f0d">&#9670;&nbsp;</a></span>inclusive_sum_by_key() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void inclusive_sum_by_key </td>
+          <td>(</td>
+          <td class="paramtype">int *&#160;</td>
+          <td class="paramname"><em>keyIn</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *&#160;</td>
+          <td class="paramname"><em>valueIn</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">T *&#160;</td>
+          <td class="paramname"><em>valueOut</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>n</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="ab5c006e7cb4a77bcc57cdca65e3c52ba"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab5c006e7cb4a77bcc57cdca65e3c52ba">&#9670;&nbsp;</a></span>inclusive_sum_by_key()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ab5c006e7cb4a77bcc57cdca65e3c52ba">&#9670;&nbsp;</a></span>inclusive_sum_by_key() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">

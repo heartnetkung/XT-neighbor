@@ -101,6 +101,7 @@ Enumerations</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:abc5c34200949cf9a94acbd8e3bd69f15"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xtn_8h.html#abc5c34200949cf9a94acbd8e3bd69f15">xtn_perform</a> (<a class="el" href="structXTNArgs.html">XTNArgs</a> args, <a class="el" href="structInt3.html">Int3</a> *seq1, void callback(<a class="el" href="structXTNOutput.html">XTNOutput</a>))</td></tr>
+<tr class="memdesc:abc5c34200949cf9a94acbd8e3bd69f15"><td class="mdescLeft">&#160;</td><td class="mdescRight">the main function for XT-neighbor algorithm.  <a href="#abc5c34200949cf9a94acbd8e3bd69f15">More...</a><br /></td></tr>
 <tr class="separator:abc5c34200949cf9a94acbd8e3bd69f15"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
@@ -109,6 +110,8 @@ Variables</h2></td></tr>
 <tr class="separator:a6eeac21364bb491a9483497c337ee982"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a92f077e1a646cb3ae0b7d453ba5096ed"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xtn_8h.html#a92f077e1a646cb3ae0b7d453ba5096ed">MAX_DISTANCE</a> = 2</td></tr>
 <tr class="separator:a92f077e1a646cb3ae0b7d453ba5096ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7bb4d86e2c08ab4a3c08f554744ddfa7"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xtn_8h.html#a7bb4d86e2c08ab4a3c08f554744ddfa7">verboseGlobal</a> = 0</td></tr>
+<tr class="separator:a7bb4d86e2c08ab4a3c08f554744ddfa7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Listing of all shared data structures, constants, and exporting method. </p>
@@ -165,6 +168,16 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>the main function for XT-neighbor algorithm. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">args</td><td>all flags parsed from command line </td></tr>
+    <tr><td class="paramname">seq1</td><td>sequence input </td></tr>
+    <tr><td class="paramname">callback</td><td>return function to be invoked once a chunk of output is ready </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
 <h2 class="groupheader">Variable Documentation</h2>
@@ -190,6 +203,20 @@ Variables</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">const int MAX_INPUT_LENGTH = 18</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a7bb4d86e2c08ab4a3c08f554744ddfa7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7bb4d86e2c08ab4a3c08f554744ddfa7">&#9670;&nbsp;</a></span>verboseGlobal</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int verboseGlobal = 0</td>
         </tr>
       </table>
 </div><div class="memdoc">

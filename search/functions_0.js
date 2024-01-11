@@ -4,7 +4,7 @@ var searchData=
   ['cal_5fhistogram',['cal_histogram',['../cub_8cu.html#ac2063d7c650f9c95f6df719787bab6ca',1,'cub.cu']]],
   ['cal_5flevenshtein',['cal_levenshtein',['../kernel_8cu.html#ac06eb767db57c669c846aa209cd4f3fc',1,'kernel.cu']]],
   ['cal_5flowerbounds',['cal_lowerbounds',['../xtn_8cu.html#af2c4111a60fff7b15b9949f19627903d',1,'xtn.cu']]],
-  ['cal_5fmax_5fexponent',['cal_max_exponent',['../xtn_8cu.html#a7eeaf0cb1f7a94c503735abe8fde6347',1,'xtn.cu']]],
+  ['cal_5fmax_5fexponent',['cal_max_exponent',['../xtn_8cu.html#a58ffefc80374afdd72996e5591505bae',1,'xtn.cu']]],
   ['cal_5fmemory_5flowerbound',['cal_memory_lowerbound',['../xtn_8cu.html#a7bdf16939dbb8a0ecdd946ec80852c1c',1,'xtn.cu']]],
   ['cal_5fmemory_5fstream1',['cal_memory_stream1',['../xtn_8cu.html#a7b8e9876ad20023d60fc73cf93ebbbb5',1,'xtn.cu']]],
   ['cal_5fmemory_5fstream2',['cal_memory_stream2',['../xtn_8cu.html#a30df2fab37e9f28a8b26a75138e4a241',1,'xtn.cu']]],

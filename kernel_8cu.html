@@ -64,15 +64,17 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#define-members">Macros</a> &#124;
-<a href="#func-members">Functions</a>  </div>
+<a href="#func-members">Functions</a> &#124;
+<a href="#var-members">Variables</a>  </div>
   <div class="headertitle">
 <div class="title">kernel.cu File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
-<p>A collection of most GPU parallel primitives that is implemented as CUDA kernel (most map and expand operations). Follows Facade design pattern.  
+<p>A collection of most GPU parallel primitives that is implemented as CUDA kernel (most map and expand operations).  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &quot;<a class="el" href="codec_8cu.html">codec.cu</a>&quot;</code><br />
+<code>#include &lt;limits.h&gt;</code><br />
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
 Macros</h2></td></tr>
@@ -81,33 +83,52 @@ Macros</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a6048709a897ca7b4c3401b5dccf30405"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#a6048709a897ca7b4c3401b5dccf30405">transfer_last_element</a> (int *deviceArr, int n)</td></tr>
-<tr class="separator:a6048709a897ca7b4c3401b5dccf30405"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a31203c438395e36d5c227f410f317df1"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a31203c438395e36d5c227f410f317df1"><td class="memTemplItemLeft" align="right" valign="top">T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#a31203c438395e36d5c227f410f317df1">transfer_last_element</a> (T *deviceArr, int n)</td></tr>
+<tr class="memdesc:a31203c438395e36d5c227f410f317df1"><td class="mdescLeft">&#160;</td><td class="mdescRight">transfer last element of the GPU array to main memory.  <a href="#a31203c438395e36d5c227f410f317df1">More...</a><br /></td></tr>
+<tr class="separator:a31203c438395e36d5c227f410f317df1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a93d49fad6792ec769fe2bb828157b765"><td class="memItemLeft" align="right" valign="top">__global__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#a93d49fad6792ec769fe2bb828157b765">cal_combination_len</a> (<a class="el" href="structInt3.html">Int3</a> *input, int distance, int *output, int n)</td></tr>
+<tr class="memdesc:a93d49fad6792ec769fe2bb828157b765"><td class="mdescLeft">&#160;</td><td class="mdescRight">precalculate the number of positions required in the output array of generate combination operation.  <a href="#a93d49fad6792ec769fe2bb828157b765">More...</a><br /></td></tr>
 <tr class="separator:a93d49fad6792ec769fe2bb828157b765"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a31acb2edf881ea05300e9dc5a25041a3"><td class="memItemLeft" align="right" valign="top">__global__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#a31acb2edf881ea05300e9dc5a25041a3">cal_pair_len</a> (int *input, int *output, int n)</td></tr>
+<tr class="memdesc:a31acb2edf881ea05300e9dc5a25041a3"><td class="mdescLeft">&#160;</td><td class="mdescRight">precalculate the number of positions required in the output array of generate pair operation.  <a href="#a31acb2edf881ea05300e9dc5a25041a3">More...</a><br /></td></tr>
 <tr class="separator:a31acb2edf881ea05300e9dc5a25041a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae6e92bcb4c8803523bb41169d1af42c6"><td class="memItemLeft" align="right" valign="top">__global__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#ae6e92bcb4c8803523bb41169d1af42c6">cal_pair_len_lowerbound</a> (int *indexes, int *inputOffsets, int *outputLengths, int lowerbound, int n)</td></tr>
+<tr class="memdesc:ae6e92bcb4c8803523bb41169d1af42c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">precalculate the number of positions required in the output array of generate pair operation with lower bound constratint.  <a href="#ae6e92bcb4c8803523bb41169d1af42c6">More...</a><br /></td></tr>
 <tr class="separator:ae6e92bcb4c8803523bb41169d1af42c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa20513cf480142c40873c9777579841b"><td class="memItemLeft" align="right" valign="top">__global__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#aa20513cf480142c40873c9777579841b">generate_pairs</a> (int *indexes, <a class="el" href="structInt2.html">Int2</a> *outputs, int *inputOffsets, int *outputOffsets, int *lesserIndex, int lowerbound, int n)</td></tr>
-<tr class="separator:aa20513cf480142c40873c9777579841b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7a7106788ff72298412b0d32e668b89d"><td class="memItemLeft" align="right" valign="top">__global__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#a7a7106788ff72298412b0d32e668b89d">generate_smaller_index</a> (int *indexes, int *outputs, int *inputOffsets, int *outputOffsets, int n)</td></tr>
-<tr class="separator:a7a7106788ff72298412b0d32e668b89d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a86ab09824bdcf9a4057740f37005b8cf"><td class="memItemLeft" align="right" valign="top">__global__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#a86ab09824bdcf9a4057740f37005b8cf">generate_pairs</a> (int *indexes, <a class="el" href="structInt2.html">Int2</a> *outputs, int *inputOffsets, int *outputOffsets, int *lesserIndex, int lowerbound, int carry, int n)</td></tr>
+<tr class="memdesc:a86ab09824bdcf9a4057740f37005b8cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">combinatorially generate pairs of indexes within the same group.  <a href="#a86ab09824bdcf9a4057740f37005b8cf">More...</a><br /></td></tr>
+<tr class="separator:a86ab09824bdcf9a4057740f37005b8cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5a87b4f4ea6527a2332733f457f7ead1"><td class="memItemLeft" align="right" valign="top">__global__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#a5a87b4f4ea6527a2332733f457f7ead1">generate_smaller_index</a> (int *indexes, int *outputs, int *inputOffsets, int *outputOffsets, int carry, int n)</td></tr>
+<tr class="memdesc:a5a87b4f4ea6527a2332733f457f7ead1"><td class="mdescLeft">&#160;</td><td class="mdescRight">combinatorially generate pairs of indexes within the same group but record only the partial output.  <a href="#a5a87b4f4ea6527a2332733f457f7ead1">More...</a><br /></td></tr>
+<tr class="separator:a5a87b4f4ea6527a2332733f457f7ead1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6e6b1eafe46948d017de5a19aa0b1d5c"><td class="memItemLeft" align="right" valign="top">__device__ char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#a6e6b1eafe46948d017de5a19aa0b1d5c">levenshtein</a> (<a class="el" href="structInt3.html">Int3</a> x1, <a class="el" href="structInt3.html">Int3</a> x2)</td></tr>
+<tr class="memdesc:a6e6b1eafe46948d017de5a19aa0b1d5c"><td class="mdescLeft">&#160;</td><td class="mdescRight">calculate Levenshtein distance of 2 strings in GPU.  <a href="#a6e6b1eafe46948d017de5a19aa0b1d5c">More...</a><br /></td></tr>
 <tr class="separator:a6e6b1eafe46948d017de5a19aa0b1d5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac06eb767db57c669c846aa209cd4f3fc"><td class="memItemLeft" align="right" valign="top">__global__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#ac06eb767db57c669c846aa209cd4f3fc">cal_levenshtein</a> (<a class="el" href="structInt3.html">Int3</a> *seq, <a class="el" href="structInt2.html">Int2</a> *index, int distance, char *distanceOutput, char *flagOutput, int n, int seqLen)</td></tr>
+<tr class="memdesc:ac06eb767db57c669c846aa209cd4f3fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">calculate Levenshtein distances of strings from given pairs and flag ones exceeding the threshold.  <a href="#ac06eb767db57c669c846aa209cd4f3fc">More...</a><br /></td></tr>
 <tr class="separator:ac06eb767db57c669c846aa209cd4f3fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3daeef68f78ff43ed757994ec0697171"><td class="memItemLeft" align="right" valign="top">__global__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#a3daeef68f78ff43ed757994ec0697171">gen_assignment</a> (int *matrix, int *output, int nBit, int nRow, int nColumn)</td></tr>
+<tr class="memdesc:a3daeef68f78ff43ed757994ec0697171"><td class="mdescLeft">&#160;</td><td class="mdescRight">expand operation part of solving bin packing for 2D buffer.  <a href="#a3daeef68f78ff43ed757994ec0697171">More...</a><br /></td></tr>
 <tr class="separator:a3daeef68f78ff43ed757994ec0697171"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa8a1225223661df8bb6992eec14e57df"><td class="memItemLeft" align="right" valign="top">__global__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#aa8a1225223661df8bb6992eec14e57df">gen_bounds</a> (int *matrix, int *keyOut, int *valueOut, int nBit, int valueMax, int nRow, int nColumn)</td></tr>
-<tr class="separator:aa8a1225223661df8bb6992eec14e57df"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4ace9ccd6ea9df8010d14023bce9f0b8"><td class="memItemLeft" align="right" valign="top">__global__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#a4ace9ccd6ea9df8010d14023bce9f0b8">gen_bounds</a> (size_t *matrix, int *keyOut, int *valueOut, int nBit, int valueMax, int nRow, int nColumn)</td></tr>
+<tr class="memdesc:a4ace9ccd6ea9df8010d14023bce9f0b8"><td class="mdescLeft">&#160;</td><td class="mdescRight">expand operation part of solving bin packing for lower bound.  <a href="#a4ace9ccd6ea9df8010d14023bce9f0b8">More...</a><br /></td></tr>
+<tr class="separator:a4ace9ccd6ea9df8010d14023bce9f0b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae8158698ed12dfec9769b99f6e035ff7"><td class="memItemLeft" align="right" valign="top">__global__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#ae8158698ed12dfec9769b99f6e035ff7">flag_lowerbound</a> (int *valueInput, int *valueOffsets, char *output, int lowerbound, int n)</td></tr>
+<tr class="memdesc:ae8158698ed12dfec9769b99f6e035ff7"><td class="mdescLeft">&#160;</td><td class="mdescRight">flag data to be removed after the lower bound has been processed.  <a href="#ae8158698ed12dfec9769b99f6e035ff7">More...</a><br /></td></tr>
 <tr class="separator:ae8158698ed12dfec9769b99f6e035ff7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa6d81aea34a3d94544b9224e5d154a94"><td class="memItemLeft" align="right" valign="top">__global__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#aa6d81aea34a3d94544b9224e5d154a94">make_row_index</a> (int *output, int n, int nRepeat)</td></tr>
+<tr class="memdesc:aa6d81aea34a3d94544b9224e5d154a94"><td class="mdescLeft">&#160;</td><td class="mdescRight">utility to generate keys for matrix processing.  <a href="#aa6d81aea34a3d94544b9224e5d154a94">More...</a><br /></td></tr>
 <tr class="separator:aa6d81aea34a3d94544b9224e5d154a94"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
+Variables</h2></td></tr>
+<tr class="memitem:ad8f73cc75eda84e3c058d127609b22d3"><td class="memItemLeft" align="right" valign="top">const size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#ad8f73cc75eda84e3c058d127609b22d3">MAX</a> = INT_MAX</td></tr>
+<tr class="separator:ad8f73cc75eda84e3c058d127609b22d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>A collection of most GPU parallel primitives that is implemented as CUDA kernel (most map and expand operations). Follows Facade design pattern. </p>
+<div class="textblock"><p>A collection of most GPU parallel primitives that is implemented as CUDA kernel (most map and expand operations). </p>
+<p>Follows Facade design pattern. </p>
 </div><h2 class="groupheader">Macro Definition Documentation</h2>
 <a id="a4887ceeae88266064841cbbc11ef8b53"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a4887ceeae88266064841cbbc11ef8b53">&#9670;&nbsp;</a></span>MIN3</h2>
@@ -182,6 +203,17 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>precalculate the number of positions required in the output array of generate combination operation. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">input</td><td>sequences to generate combination </td></tr>
+    <tr><td class="paramname">distance</td><td>Levenshtein threshold </td></tr>
+    <tr><td class="paramname">output</td><td>position output for each sequence </td></tr>
+    <tr><td class="paramname">n</td><td>array length of input and output </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
 <a id="ac06eb767db57c669c846aa209cd4f3fc"></a>
@@ -240,6 +272,20 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>calculate Levenshtein distances of strings from given pairs and flag ones exceeding the threshold. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">seq</td><td>sequence input </td></tr>
+    <tr><td class="paramname">index</td><td>pairs of sequence to calculate </td></tr>
+    <tr><td class="paramname">distance</td><td>Levenshtein distance threshold </td></tr>
+    <tr><td class="paramname">distanceOutput</td><td>output distance </td></tr>
+    <tr><td class="paramname">flagOutput</td><td>array output flag </td></tr>
+    <tr><td class="paramname">n</td><td>array length of index </td></tr>
+    <tr><td class="paramname">seqLen</td><td>array length of seq </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
 <a id="a31acb2edf881ea05300e9dc5a25041a3"></a>
@@ -273,6 +319,16 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>precalculate the number of positions required in the output array of generate pair operation. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">input</td><td>group size </td></tr>
+    <tr><td class="paramname">output</td><td>position requirement </td></tr>
+    <tr><td class="paramname">n</td><td>array length of input and output </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -320,6 +376,18 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>precalculate the number of positions required in the output array of generate pair operation with lower bound constratint. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">indexes</td><td>value of seqIndexes to generate pair </td></tr>
+    <tr><td class="paramname">inputOffsets</td><td>group offsets </td></tr>
+    <tr><td class="paramname">outputLengths</td><td>output position requirement </td></tr>
+    <tr><td class="paramname">lowerbound</td><td>the processing limit for the indexes </td></tr>
+    <tr><td class="paramname">n</td><td>array length </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
 <a id="ae8158698ed12dfec9769b99f6e035ff7"></a>
@@ -365,6 +433,19 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>flag data to be removed after the lower bound has been processed. </p>
+<p>This includes both useless group and processed rows.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">valueInput</td><td>seqIndex input </td></tr>
+    <tr><td class="paramname">valueOffsets</td><td>group offset </td></tr>
+    <tr><td class="paramname">output</td><td>flag output </td></tr>
+    <tr><td class="paramname">lowerbound</td><td>the lowerbound used </td></tr>
+    <tr><td class="paramname">n</td><td>array length of valueOffsets </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -412,10 +493,22 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>expand operation part of solving bin packing for 2D buffer. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">matrix</td><td>statistics of all chunks where each row record the histogram count of each chunk and nRow=nChunk </td></tr>
+    <tr><td class="paramname">output</td><td>assignment of each chunk to the bins </td></tr>
+    <tr><td class="paramname">nBit</td><td>bin capacity expressed in log2 form </td></tr>
+    <tr><td class="paramname">nRow</td><td>number of rows of the matrix </td></tr>
+    <tr><td class="paramname">nColumn</td><td>number of columns of the matrix </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
-<a id="aa8a1225223661df8bb6992eec14e57df"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa8a1225223661df8bb6992eec14e57df">&#9670;&nbsp;</a></span>gen_bounds()</h2>
+<a id="a4ace9ccd6ea9df8010d14023bce9f0b8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4ace9ccd6ea9df8010d14023bce9f0b8">&#9670;&nbsp;</a></span>gen_bounds()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -423,7 +516,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">__global__ void gen_bounds </td>
           <td>(</td>
-          <td class="paramtype">int *&#160;</td>
+          <td class="paramtype">size_t *&#160;</td>
           <td class="paramname"><em>matrix</em>, </td>
         </tr>
         <tr>
@@ -470,10 +563,24 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>expand operation part of solving bin packing for lower bound. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">matrix</td><td>statistics of all chunks where each row record the histogram count of each chunk and nRow=nChunk </td></tr>
+    <tr><td class="paramname">keyOut</td><td>the regrouping of each bin </td></tr>
+    <tr><td class="paramname">valueOut</td><td>the upper bound of each grouped bin </td></tr>
+    <tr><td class="paramname">nBit</td><td>bin capacity expressed in log2 form </td></tr>
+    <tr><td class="paramname">valueMax</td><td>last sequence index </td></tr>
+    <tr><td class="paramname">nRow</td><td>number of rows of the matrix </td></tr>
+    <tr><td class="paramname">nColumn</td><td>number of columns of the matrix </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
-<a id="aa20513cf480142c40873c9777579841b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa20513cf480142c40873c9777579841b">&#9670;&nbsp;</a></span>generate_pairs()</h2>
+<a id="a86ab09824bdcf9a4057740f37005b8cf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a86ab09824bdcf9a4057740f37005b8cf">&#9670;&nbsp;</a></span>generate_pairs()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -518,6 +625,12 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>carry</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>n</em>&#160;</td>
         </tr>
         <tr>
@@ -528,10 +641,25 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>combinatorially generate pairs of indexes within the same group. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">indexes</td><td>value of seqIndexes to generate pair </td></tr>
+    <tr><td class="paramname">outputs</td><td>pairs output </td></tr>
+    <tr><td class="paramname">inputOffsets</td><td>precalculated group offsets </td></tr>
+    <tr><td class="paramname">outputOffsets</td><td>precalculated output position requirement </td></tr>
+    <tr><td class="paramname">lesserIndex</td><td>by partial output for histogram </td></tr>
+    <tr><td class="paramname">lowerbound</td><td>the processing limit for the indexes </td></tr>
+    <tr><td class="paramname">carry</td><td>latest offset from previous chunk in the stream </td></tr>
+    <tr><td class="paramname">n</td><td>array length of inputOffsets and outputOffsets </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
-<a id="a7a7106788ff72298412b0d32e668b89d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7a7106788ff72298412b0d32e668b89d">&#9670;&nbsp;</a></span>generate_smaller_index()</h2>
+<a id="a5a87b4f4ea6527a2332733f457f7ead1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5a87b4f4ea6527a2332733f457f7ead1">&#9670;&nbsp;</a></span>generate_smaller_index()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -564,6 +692,12 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>carry</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>n</em>&#160;</td>
         </tr>
         <tr>
@@ -573,6 +707,19 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>combinatorially generate pairs of indexes within the same group but record only the partial output. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">indexes</td><td>value of seqIndexes to generate pair </td></tr>
+    <tr><td class="paramname">outputs</td><td>smaller index output </td></tr>
+    <tr><td class="paramname">inputOffsets</td><td>precalculated group offsets </td></tr>
+    <tr><td class="paramname">outputOffsets</td><td>precalculated output position requirement </td></tr>
+    <tr><td class="paramname">carry</td><td>latest offset from previous chunk in the stream </td></tr>
+    <tr><td class="paramname">n</td><td>array length of inputOffsets and outputOffsets </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -601,6 +748,15 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>calculate Levenshtein distance of 2 strings in GPU. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">x1</td><td>first string </td></tr>
+    <tr><td class="paramname">x2</td><td>second string </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -636,18 +792,30 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>utility to generate keys for matrix processing. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">output</td><td>key output with range 0 to n-1 each repeating nRepeat time </td></tr>
+    <tr><td class="paramname">n</td><td>number of rows </td></tr>
+    <tr><td class="paramname">nRepeat</td><td>number of columns </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
-<a id="a6048709a897ca7b4c3401b5dccf30405"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6048709a897ca7b4c3401b5dccf30405">&#9670;&nbsp;</a></span>transfer_last_element()</h2>
+<a id="a31203c438395e36d5c227f410f317df1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a31203c438395e36d5c227f410f317df1">&#9670;&nbsp;</a></span>transfer_last_element()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">int transfer_last_element </td>
+          <td class="memname">T transfer_last_element </td>
           <td>(</td>
-          <td class="paramtype">int *&#160;</td>
+          <td class="paramtype">T *&#160;</td>
           <td class="paramname"><em>deviceArr</em>, </td>
         </tr>
         <tr>
@@ -660,6 +828,30 @@ Functions</h2></td></tr>
           <td></td>
           <td>)</td>
           <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>transfer last element of the GPU array to main memory. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">deviceArr</td><td>the GPU array </td></tr>
+    <tr><td class="paramname">n</td><td>array length </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<h2 class="groupheader">Variable Documentation</h2>
+<a id="ad8f73cc75eda84e3c058d127609b22d3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad8f73cc75eda84e3c058d127609b22d3">&#9670;&nbsp;</a></span>MAX</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const size_t MAX = INT_MAX</td>
         </tr>
       </table>
 </div><div class="memdoc">

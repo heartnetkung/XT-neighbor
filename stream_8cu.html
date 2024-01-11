@@ -69,7 +69,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>Listing of low-level streaming and buffering module. It concerns how to read/write data to GPU, RAM, and filesystem with throughput constraints.  
+<p>Listing of low-level streaming and buffering module.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &quot;<a class="el" href="codec_8cu.html">codec.cu</a>&quot;</code><br />
 <code>#include &lt;algorithm&gt;</code><br />
@@ -77,18 +77,21 @@ $(function() {
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classChunk.html">Chunk&lt; T &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classChunk.html" title="Chunk represents a unit of data read by the stream. ">Chunk</a> represents a unit of data read by the stream.  <a href="classChunk.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classGPUInputStream.html">GPUInputStream&lt; T &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A stream where the data is already fit inside the GPU memory, so streaming is basically just shift the pointer around.  <a href="classGPUInputStream.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A stream where the data is already fit inside the GPU memory, so chunking is basically just shift the pointer around.  <a href="classGPUInputStream.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRAMSwapStream.html">RAMSwapStream&lt; T &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A stream with bin packing capability backed by RAM.  <a href="classRAMSwapStream.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classD2Stream.html">D2Stream&lt; T &gt;</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A 2 dimensional stream where the data is written in row direction and read in column direction.  <a href="classD2Stream.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Listing of low-level streaming and buffering module. It concerns how to read/write data to GPU, RAM, and filesystem with throughput constraints. </p>
+<div class="textblock"><p>Listing of low-level streaming and buffering module. </p>
+<p>It concerns how to read/write data to GPU, RAM, and filesystem with throughput constraints. </p>
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

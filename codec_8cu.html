@@ -71,7 +71,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>A collection of conversion operations turning CDR3 strings into numerical representation. Also includes utilities to directly edit the representation.  
+<p>A collection of conversion operations turning CDR3 strings into numerical representation.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &quot;util.cu&quot;</code><br />
 <code>#include &lt;string.h&gt;</code><br />
@@ -84,16 +84,22 @@ Macros</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a83492038edfdbb213727810819720067"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="codec_8cu.html#a83492038edfdbb213727810819720067">char_encode</a> (char amino_acid)</td></tr>
+<tr class="memdesc:a83492038edfdbb213727810819720067"><td class="mdescLeft">&#160;</td><td class="mdescRight">encode character into 5 bit value (0-31).  <a href="#a83492038edfdbb213727810819720067">More...</a><br /></td></tr>
 <tr class="separator:a83492038edfdbb213727810819720067"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a76b7e107e712a40af79b7f31696d4b49"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structInt3.html">Int3</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="codec_8cu.html#a76b7e107e712a40af79b7f31696d4b49">str_encode</a> (char *str)</td></tr>
+<tr class="memdesc:a76b7e107e712a40af79b7f31696d4b49"><td class="mdescLeft">&#160;</td><td class="mdescRight">encode peptide string into int3 struct with 6 characters encoded into an integer.  <a href="#a76b7e107e712a40af79b7f31696d4b49">More...</a><br /></td></tr>
 <tr class="separator:a76b7e107e712a40af79b7f31696d4b49"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a440fbe49ce4e067d58cf18b11f034eb3"><td class="memItemLeft" align="right" valign="top">char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="codec_8cu.html#a440fbe49ce4e067d58cf18b11f034eb3">str_decode</a> (<a class="el" href="structInt3.html">Int3</a> binary)</td></tr>
+<tr class="memdesc:a440fbe49ce4e067d58cf18b11f034eb3"><td class="mdescLeft">&#160;</td><td class="mdescRight">decode binary form into peptide string.  <a href="#a440fbe49ce4e067d58cf18b11f034eb3">More...</a><br /></td></tr>
 <tr class="separator:a440fbe49ce4e067d58cf18b11f034eb3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a64e48571427c42183c73fc2a217ec39d"><td class="memItemLeft" align="right" valign="top">__device__ __host__ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="codec_8cu.html#a64e48571427c42183c73fc2a217ec39d">len_decode</a> (<a class="el" href="structInt3.html">Int3</a> binary)</td></tr>
+<tr class="memdesc:a64e48571427c42183c73fc2a217ec39d"><td class="mdescLeft">&#160;</td><td class="mdescRight">find the string length in original form.  <a href="#a64e48571427c42183c73fc2a217ec39d">More...</a><br /></td></tr>
 <tr class="separator:a64e48571427c42183c73fc2a217ec39d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a681c13f5f31204316905307611784ce5"><td class="memItemLeft" align="right" valign="top">__device__ __host__ <a class="el" href="structInt3.html">Int3</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="codec_8cu.html#a681c13f5f31204316905307611784ce5">remove_char</a> (<a class="el" href="structInt3.html">Int3</a> binary, int position)</td></tr>
+<tr class="memdesc:a681c13f5f31204316905307611784ce5"><td class="mdescLeft">&#160;</td><td class="mdescRight">remove one character from the string in binary form (without turning it into the original string form).  <a href="#a681c13f5f31204316905307611784ce5">More...</a><br /></td></tr>
 <tr class="separator:a681c13f5f31204316905307611784ce5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a73b37ea0cd6d15cd37f4a3bb8a6730ce"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="codec_8cu.html#a73b37ea0cd6d15cd37f4a3bb8a6730ce">print_int3_arr</a> (<a class="el" href="structInt3.html">Int3</a> *arr, int n)</td></tr>
+<tr class="memdesc:a73b37ea0cd6d15cd37f4a3bb8a6730ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">conviniently print Int3* in readable form.  <a href="#a73b37ea0cd6d15cd37f4a3bb8a6730ce">More...</a><br /></td></tr>
 <tr class="separator:a73b37ea0cd6d15cd37f4a3bb8a6730ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
@@ -106,7 +112,8 @@ Variables</h2></td></tr>
 <tr class="separator:adbe7c34ee59c6117f672c4af6d02d951"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>A collection of conversion operations turning CDR3 strings into numerical representation. Also includes utilities to directly edit the representation. </p>
+<div class="textblock"><p>A collection of conversion operations turning CDR3 strings into numerical representation. </p>
+<p>Also includes utilities to directly edit the representation. </p>
 </div><h2 class="groupheader">Macro Definition Documentation</h2>
 <a id="a060b0252834abbe6572360ddffcc4a9a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a060b0252834abbe6572360ddffcc4a9a">&#9670;&nbsp;</a></span>CODEC_DEF</h2>
@@ -138,7 +145,9 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>encode character into 5 bit value (0-31). -1 for non amino acid character </p>
+
+<p>encode character into 5 bit value (0-31). </p>
+<p>-1 for non amino acid character </p>
 
 </div>
 </div>
@@ -157,7 +166,8 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>find the string length in original form </p>
+
+<p>find the string length in original form. </p>
 
 </div>
 </div>
@@ -187,6 +197,8 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>conviniently print Int3* in readable form. </p>
+
 </div>
 </div>
 <a id="a681c13f5f31204316905307611784ce5"></a>
@@ -214,7 +226,8 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>remove one character from the string in binary form (without turning it into the original string form) </p>
+
+<p>remove one character from the string in binary form (without turning it into the original string form). </p>
 
 </div>
 </div>
@@ -233,7 +246,8 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>decode binary form into peptide string </p>
+
+<p>decode binary form into peptide string. </p>
 
 </div>
 </div>
@@ -252,6 +266,7 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
 <p>encode peptide string into int3 struct with 6 characters encoded into an integer. </p>
 
 </div>
