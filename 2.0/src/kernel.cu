@@ -9,6 +9,11 @@ const size_t MAX = INT_MAX;
  * (most map and expand operations). Follows Facade design pattern.
  */
 
+/**
+ * transfer last element of the GPU array to main memory.
+ * @param deviceArr the GPU array
+ * @param n array length
+*/
 template <typename T>
 T transfer_last_element(T* deviceArr, int n) {
 	T ans[1];
@@ -17,6 +22,14 @@ T transfer_last_element(T* deviceArr, int n) {
 	return ans[0];
 }
 
+/**
+ * precalculate the number of positions required in the output array of generate combination operation.
+ *
+ * @param input sequences to generate combination
+ * @param distance Levenshtein threshold
+ * @param output position output for each sequence
+ * @param n array length of input and output
+*/
 __global__
 void cal_combination_len(Int3* input, int distance, int* output, int n) {
 	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
@@ -36,6 +49,13 @@ void cal_combination_len(Int3* input, int distance, int* output, int n) {
 	output[tid] = newValue;
 }
 
+/**
+ * precalculate the number of positions required in the output array of generate pair operation.
+ *
+ * @param input group size
+ * @param output position requirement
+ * @param n array length of input and output
+*/
 __global__
 void cal_pair_len(int* input, int* output, int n) {
 	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
@@ -49,6 +69,15 @@ void cal_pair_len(int* input, int* output, int n) {
 	output[tid] = intermediate;
 }
 
+/**
+ * precalculate the number of positions required in the output array of generate pair operation with lower bound constratint.
+ *
+ * @param indexes value of seqIndexes to generate pair
+ * @param inputOffsets group offsets
+ * @param outputLengths output position requirement
+ * @param lowerbound the processing limit for the indexes
+ * @param n array length
+*/
 __global__
 void cal_pair_len_lowerbound(int* indexes, int* inputOffsets, int* outputLengths, int lowerbound, int n) {
 	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
@@ -69,6 +98,18 @@ void cal_pair_len_lowerbound(int* indexes, int* inputOffsets, int* outputLengths
 	outputLengths[tid] = intermediate;
 }
 
+/**
+ * combinatorially generate pairs of indexes within the same group.
+ *
+ * @param indexes value of seqIndexes to generate pair
+ * @param outputs pairs output
+ * @param inputOffsets precalculated group offsets
+ * @param outputOffsets precalculated output position requirement
+ * @param lesserIndex by partial output for histogram
+ * @param lowerbound the processing limit for the indexes
+ * @param carry latest offset from previous chunk in the stream
+ * @param n array length of inputOffsets and outputOffsets
+*/
 __global__
 void generate_pairs(int* indexes, Int2* outputs, int* inputOffsets, int* outputOffsets,
                     int* lesserIndex, int lowerbound, int carry, int n) {
@@ -105,6 +146,16 @@ void generate_pairs(int* indexes, Int2* outputs, int* inputOffsets, int* outputO
 	}
 }
 
+/**
+ * combinatorially generate pairs of indexes within the same group but record only the partial output.
+ *
+ * @param indexes value of seqIndexes to generate pair
+ * @param outputs smaller index output
+ * @param inputOffsets precalculated group offsets
+ * @param outputOffsets precalculated output position requirement
+ * @param carry latest offset from previous chunk in the stream
+ * @param n array length of inputOffsets and outputOffsets
+*/
 __global__
 void generate_smaller_index(int* indexes, int* outputs, int* inputOffsets,
                             int* outputOffsets, int carry, int n) {
@@ -129,6 +180,11 @@ void generate_smaller_index(int* indexes, int* outputs, int* inputOffsets,
 
 #define MIN3(a, b, c) ((a) < (b) ? ((a) < (c) ? (a) : (c)) : ((b) < (c) ? (b) : (c)))
 
+/**
+ * calculate Levenshtein distance of 2 strings in GPU.
+ * @param x1 first string
+ * @param x2 second string
+*/
 __device__
 char levenshtein(Int3 x1, Int3 x2) {
 	char x, y, lastdiag, olddiag;
@@ -163,6 +219,17 @@ char levenshtein(Int3 x1, Int3 x2) {
 	return column[s1len];
 }
 
+/**
+ * calculate Levenshtein distances of strings from given pairs and flag ones exceeding the threshold.
+ *
+ * @param seq sequence input
+ * @param index pairs of sequence to calculate
+ * @param distance Levenshtein distance threshold
+ * @param distanceOutput output distance
+ * @param flagOutput array output flag
+ * @param n array length of index
+ * @param seqLen array length of seq
+*/
 __global__
 void cal_levenshtein(Int3* seq, Int2* index, int distance,
                      char* distanceOutput, char* flagOutput, int n, int seqLen) {
@@ -187,6 +254,15 @@ void cal_levenshtein(Int3* seq, Int2* index, int distance,
 	flagOutput[tid] =  newOutput <= distance;
 }
 
+/**
+ * expand operation part of solving bin packing for 2D buffer.
+ *
+ * @param matrix statistics of all chunks where each row record the histogram count of each chunk and nRow=nChunk
+ * @param output assignment of each chunk to the bins
+ * @param nBit bin capacity expressed in log2 form
+ * @param nRow number of rows of the matrix
+ * @param nColumn number of columns of the matrix
+*/
 __global__
 void gen_assignment(int* matrix, int* output, int nBit, int nRow, int nColumn) {
 	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
@@ -203,6 +279,17 @@ void gen_assignment(int* matrix, int* output, int nBit, int nRow, int nColumn) {
 		output[i * nColumn + tid] = ans;
 }
 
+/**
+ * expand operation part of solving bin packing for lower bound.
+ *
+ * @param matrix statistics of all chunks where each row record the histogram count of each chunk and nRow=nChunk
+ * @param keyOut the regrouping of each bin
+ * @param valueOut the upper bound of each grouped bin
+ * @param nBit bin capacity expressed in log2 form
+ * @param valueMax last sequence index
+ * @param nRow number of rows of the matrix
+ * @param nColumn number of columns of the matrix
+*/
 __global__
 void gen_bounds(size_t* matrix, int* keyOut, int* valueOut, int nBit, int valueMax, int nRow, int nColumn) {
 	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
@@ -221,6 +308,15 @@ void gen_bounds(size_t* matrix, int* keyOut, int* valueOut, int nBit, int valueM
 	keyOut[tid] = ans;
 }
 
+/**
+ * flag data to be removed after the lower bound has been processed. This includes both useless group and processed rows.
+ *
+ * @param valueInput seqIndex input
+ * @param valueOffsets group offset
+ * @param output flag output
+ * @param lowerbound the lowerbound used
+ * @param n array length of valueOffsets
+*/
 __global__
 void flag_lowerbound(int* valueInput, int* valueOffsets, char* output, int lowerbound, int n) {
 	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
@@ -243,6 +339,13 @@ void flag_lowerbound(int* valueInput, int* valueOffsets, char* output, int lower
 			output[i] = 0;
 }
 
+/**
+ * utility to generate keys for matrix processing.
+ *
+ * @param output key output with range 0 to n-1 each repeating nRepeat time
+ * @param n number of rows
+ * @param nRepeat number of columns
+*/
 __global__
 void make_row_index(int* output, int n, int nRepeat) {
 	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;

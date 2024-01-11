@@ -8,7 +8,7 @@
  */
 
 /**
- * Chunk represents a unit of data read by the stream
+ * Chunk represents a unit of data read by the stream.
  */
 template <typename T> class Chunk {
 public:
@@ -19,7 +19,7 @@ public:
 
 /**
  * A stream where the data is already fit inside the GPU memory, so
- * streaming is basically just shift the pointer around.
+ * chunking is basically just shift the pointer around.
  */
 template <typename T> class GPUInputStream {
 private:
@@ -61,6 +61,14 @@ public:
 	}
 };
 
+/**
+ * A stream with bin packing capability backed by RAM. It contains 2 queues for duplex transfer: reading and writing queues.
+ * The duplex works by taking turns at the end of each stream as follow. First, when the buffer is empty, it is write-only.
+ * All writing is done to until depleted. Second, the "swap" is performed and the writing buffer now become reading now the writing buffer is cleared.
+ * Third, start duplexing (read from reading buffer and write to writing buffer). Last, once stream is depleted, repeat second step.
+ *
+ * Note that the memory is immediately deallocated after each read to keep the memory requirement relatively constant.
+ */
 template <typename T> class RAMSwapStream {
 private:
 	std::vector<T*> _writing_data, _reading_data;

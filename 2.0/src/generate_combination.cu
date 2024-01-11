@@ -6,6 +6,9 @@
  * of a CDR3 string within a given Levenshtein threshold.
  */
 
+/**
+ * private method
+*/
 #ifdef TEST_ENV
 __host__
 #endif
@@ -16,12 +19,18 @@ void printStack(int* indexStack, int length) {
 	printf(">>%d\n", length);
 }
 
+/**
+ * private method
+*/
 __device__
 void expand_values(int index, int* output, int start, int end) {
 	for (int i = start; i < end; i++)
 		output[i] = index;
 }
 
+/**
+ * private method
+*/
 #ifdef TEST_ENV
 __host__
 #endif
@@ -74,9 +83,17 @@ void expand_keys(Int3 seq, int distance, Int3* output, unsigned int* firstKeys, 
 
 /**
  * Generate all combinations of deletion for sequences using expand primitive.
- * For a given threadId, multiple key value pairs are generated with a combination as key and threadId as value.
+ * For a given index, multiple key value pairs are generated with a combination as key and index as value.
  *
  * This implementation doesn't use recursive for performance reason.
+ *
+ * @param seqs sequence to expand
+ * @param combinationOffsets precalculated memory position of the output
+ * @param distance Levenshtein distance threshold
+ * @param combinationKeys key output
+ * @param combinationValues value output
+ * @param firstKeys partial key output for histogram
+ * @param n array length of seqs and combinationOffsets
  *
 */
 __global__

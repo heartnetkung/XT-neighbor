@@ -59,7 +59,7 @@ Int3 str_encode(char *str) {
 
 
 /**
- * decode binary form into peptide string
+ * decode binary form into peptide string.
 */
 char* str_decode(Int3 binary) {
 	char* ans = (char*) malloc((MAX_INPUT_LENGTH + 1) * sizeof(char));
@@ -79,7 +79,7 @@ char* str_decode(Int3 binary) {
 }
 
 /**
- * find the string length in original form
+ * find the string length in original form.
 */
 __device__ __host__
 int len_decode(Int3 binary) {
@@ -104,7 +104,7 @@ int len_decode(Int3 binary) {
 }
 
 /**
- * remove one character from the string in binary form (without turning it into the original string form)
+ * remove one character from the string in binary form (without turning it into the original string form).
 */
 __device__ __host__
 Int3 remove_char(Int3 binary, int position) {
@@ -146,6 +146,9 @@ Int3 remove_char(Int3 binary, int position) {
 	return ans;
 }
 
+/**
+ * conviniently print Int3* in readable form.
+*/
 void print_int3_arr(Int3* arr, int n) {
 	printf("[ ");
 	Int3* arr2 = device_to_host(arr, n);

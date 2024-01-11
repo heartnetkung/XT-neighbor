@@ -18,10 +18,16 @@ const unsigned int UINT_MIN = 0;
 // Private Functions
 //=====================================
 
+/**
+ * private function
+*/
 int NUM_BLOCK(int len) {
 	return divide_ceil(len, NUM_THREADS);
 }
 
+/**
+ * private function
+*/
 int cal_offsets(Int3* inputKeys, int* &inputOffsets, int* &outputLengths, int n, int* buffer) {
 	// cal inputOffsets
 	cudaMalloc(&inputOffsets, sizeof(int)*n); gpuerr();
@@ -35,6 +41,9 @@ int cal_offsets(Int3* inputKeys, int* &inputOffsets, int* &outputLengths, int n,
 	return nUnique;
 }
 
+/**
+ * private function
+*/
 int cal_offsets_lowerbound(Int3* inputKeys, int* inputValues, int* &inputOffsets,
                            int* &outputLengths, int lowerbound, int n, int* buffer) {
 	// cal inputOffsets
@@ -50,6 +59,9 @@ int cal_offsets_lowerbound(Int3* inputKeys, int* inputValues, int* &inputOffsets
 	return nUnique;
 }
 
+/**
+ * private function
+*/
 int gen_pairs(int* input, int* inputOffsets, int* outputLengths, Int2* &output,
               int* &lesserIndex, int lowerbound, int carry, int n) {
 	int* outputOffsets;
@@ -71,6 +83,9 @@ int gen_pairs(int* input, int* inputOffsets, int* outputLengths, Int2* &output,
 	return outputLen;
 }
 
+/**
+ * private function
+*/
 int gen_smaller_index(int* input, int* inputOffsets, int* outputLengths,
                       int* &output, int carry, int n) {
 	int* outputOffsets;
@@ -90,6 +105,9 @@ int gen_smaller_index(int* input, int* inputOffsets, int* outputLengths,
 	return outputLen;
 }
 
+/**
+ * private function
+*/
 int postprocessing(Int3* seq, Int2* input, int distance,
                    Int2* &pairOutput, char* &distanceOutput,
                    int n, int* buffer, int seqLen) {
@@ -120,12 +138,18 @@ int postprocessing(Int3* seq, Int2* input, int distance,
 	return outputLen;
 }
 
+/**
+ * private function
+*/
 void make_output(Int2* pairOut, char* distanceOut, int len, XTNOutput &output) {
 	output.indexPairs = device_to_host(pairOut, len);
 	output.pairwiseDistances = device_to_host(distanceOut, len);
 	output.len = len;
 }
 
+/**
+ * private function
+*/
 void gen_next_chunk(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut,
                     int* valueOffsets, int offsetLen, int lowerbound, int* buffer) {
 	char* flags;
@@ -150,6 +174,18 @@ void gen_next_chunk(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut,
 	valueInOut.len = outputLen;
 }
 
+//=====================================
+// Public Functions
+//=====================================
+
+/**
+ * solve bin packing on spot when precalculation is impossible.
+ *
+ * @param chunksizes array of chunk sizes
+ * @param start offset of the latest processed chunk
+ * @param maxSize bin size
+ * @param n array length of chunkSizes
+*/
 int solve_next_bin(int* chunksizes, int start, int maxSize, int n) {
 	int ans = 0;
 	size_t len = 0;
@@ -168,10 +204,16 @@ int solve_next_bin(int* chunksizes, int start, int maxSize, int n) {
 	return ans;
 }
 
-//=====================================
-// Public Functions
-//=====================================
-
+/**
+ * solve bin packing for lower bound calculation.
+ *
+ * @param histograms flatten histogram matrix
+ * @param lowerboundsOutput output assignment
+ * @param n row count of histograms
+ * @param seqLen array length of sequences
+ * @param buffer reusable 4-byte buffer
+ * @param ctx memory constraints and info
+*/
 int solve_bin_packing_lowerbounds(int* histograms, int* &lowerboundsOutput,
                                   int n, int seqLen, int* buffer, MemoryContext ctx) {
 	int* rowIndex, *output, *key, *value;
@@ -197,6 +239,15 @@ int solve_bin_packing_lowerbounds(int* histograms, int* &lowerboundsOutput,
 	return outputLen;
 }
 
+/**
+ * solve bin packing for 2 dimensional buffer.
+ *
+ * @param histograms flatten histogram matrix
+ * @param offsetOutput output assignment
+ * @param n row count of histograms
+ * @param buffer reusable 4-byte buffer
+ * @param ctx memory constraints and info
+*/
 int solve_bin_packing_offsets(int* histograms, int** &offsetOutput,
                               int n, int* buffer, MemoryContext ctx) {
 	int* rowIndex, *assignment, *output1d;
@@ -236,6 +287,9 @@ int solve_bin_packing_offsets(int* histograms, int** &offsetOutput,
 	return offsetLen;
 }
 
+/**
+ * handle all GPU operations in stream 1
+*/
 void stream_handler1(Chunk<Int3> input, Int3* &deletionsOutput, int* &indexOutput,
                      std::vector<int*> &histogramOutput, int &outputLen, int distance, MemoryContext ctx) {
 	int *combinationOffsets;
@@ -267,6 +321,9 @@ void stream_handler1(Chunk<Int3> input, Int3* &deletionsOutput, int* &indexOutpu
 	_cudaFree(histogramValue);
 }
 
+/**
+ * handle all GPU operations in stream 2
+*/
 void stream_handler2(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, std::vector<int*> &histogramOutput,
                      size_t &throughput2B, int distance, int seqLen, int* buffer, MemoryContext ctx) {
 	int* inputOffsets, *valueLengths, *indexes, *valueLengthsHost, *histogram;
@@ -302,6 +359,9 @@ void stream_handler2(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, std::vector<
 	cudaFreeHost(valueLengthsHost); gpuerr();
 }
 
+/**
+ * handle all GPU operations in stream 3
+*/
 void stream_handler3(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, void callback(Int2*, int),
                      std::vector<int*> &histogramOutput, int lowerbound, int seqLen,
                      int* buffer, MemoryContext ctx) {
@@ -340,6 +400,9 @@ void stream_handler3(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, void callbac
 	cudaFreeHost(valueLengthsHost); gpuerr();
 }
 
+/**
+ * handle all GPU operations in stream 4
+*/
 void stream_handler4(Chunk<Int2> pairInput, XTNOutput & output, Int3 * seq1,
                      int seq1Len, int distance, int* buffer) {
 	Int2* pairOut;

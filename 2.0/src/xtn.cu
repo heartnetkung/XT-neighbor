@@ -16,6 +16,9 @@ const int MAX_PROCESSING = 1 << 30;
 // Private Memory Functions
 //=====================================
 
+/**
+ * private function
+*/
 MemoryContext initMemory(int seq1Len, bool isGPU) {
 	MemoryContext ans;
 	if (isGPU)
@@ -28,6 +31,9 @@ MemoryContext initMemory(int seq1Len, bool isGPU) {
 }
 
 // black magic way to calculate floor(log2(n))
+/**
+ * private function
+*/
 int cal_max_exponent(size_t input) {
 	size_t input2 = input;
 	int ans = 0;
@@ -36,6 +42,9 @@ int cal_max_exponent(size_t input) {
 	return ans;
 }
 
+/**
+ * calculate memory constraint for stream 1 using the upper bound of the memory allocation during the operation.
+*/
 MemoryContext cal_memory_stream1(int seq1Len, int distance) {
 	MemoryContext ans = initMemory(seq1Len, true);
 	int deletionMultiplier = (distance == 1) ? (18 + 1) : (153 + 18 + 1);
@@ -49,6 +58,9 @@ MemoryContext cal_memory_stream1(int seq1Len, int distance) {
 	return ans;
 }
 
+/**
+ * calculate memory constraint for stream 2 using the upper bound of the memory allocation during the operation.
+*/
 MemoryContext cal_memory_stream2(int seq1Len) {
 	MemoryContext ans = initMemory(seq1Len, true);
 	int multiplier =
@@ -63,6 +75,9 @@ MemoryContext cal_memory_stream2(int seq1Len) {
 	return ans;
 }
 
+/**
+ * calculate memory constraint for stream 3 using the upper bound of the memory allocation during the operation.
+*/
 MemoryContext cal_memory_stream3(int seq1Len) {
 	MemoryContext ans = initMemory(seq1Len, true);
 	int multiplier =
@@ -76,6 +91,9 @@ MemoryContext cal_memory_stream3(int seq1Len) {
 	return ans;
 }
 
+/**
+ * calculate memory constraint for stream 4 using the upper bound of the memory allocattion during the operation.
+*/
 MemoryContext cal_memory_stream4(int seq1Len) {
 	MemoryContext ans = initMemory(seq1Len, true);
 	int multiplier =
@@ -90,6 +108,9 @@ MemoryContext cal_memory_stream4(int seq1Len) {
 	return ans;
 }
 
+/**
+ * calculate RAM constraint for lower bound calculation.
+*/
 MemoryContext cal_memory_lowerbound(int seq1Len) {
 	MemoryContext ans = initMemory(seq1Len, false);
 	size_t bandwidth = 7 * ans.ramSize / (sizeof(Int2) * 10);
@@ -101,10 +122,16 @@ MemoryContext cal_memory_lowerbound(int seq1Len) {
 // Other Private Functions
 //=====================================
 
+/**
+ * callback function to write generated pairs.
+*/
 void write_b3(Int2* pairOutput, int pairLen) {
 	b3->write(pairOutput, pairLen);
 }
 
+/**
+ * flatten histograms stored as vector<int*> to a 1D array.
+*/
 int* concat_histograms(std::vector<int*> histograms, MemoryContext ctx) {
 	int* ans, *ansPtr;
 	int len = histograms.size();
@@ -120,6 +147,9 @@ int* concat_histograms(std::vector<int*> histograms, MemoryContext ctx) {
 	return ans;
 }
 
+/**
+ * calculate the lowerbounds from the collected histogram and memory constraints.
+*/
 int cal_lowerbounds(std::vector<int*> histograms, int* &lowerbounds, int seqLen, int* buffer) {
 	int* fullHistograms;
 	int outputLen;
@@ -134,6 +164,9 @@ int cal_lowerbounds(std::vector<int*> histograms, int* &lowerbounds, int seqLen,
 	return outputLen;
 }
 
+/**
+ * apply precalculated bin packing offset to the given 2D buffers.
+*/
 template <typename T1, typename T2>
 int** set_d2_offsets(std::vector<int*> histograms, D2Stream<T1> *s1, D2Stream<T2> *s2,
                      int* buffer, MemoryContext ctx) {
@@ -158,6 +191,13 @@ int** set_d2_offsets(std::vector<int*> histograms, D2Stream<T1> *s1, D2Stream<T2
 // Public Functions
 //=====================================
 
+/**
+ * the main function for XT-neighbor algorithm.
+ *
+ * @param args all flags parsed from command line
+ * @param seq1 sequence input
+ * @param callback return function to be invoked once a chunk of output is ready
+*/
 void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 	clock_start();
 
