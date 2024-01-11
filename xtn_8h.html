@@ -80,14 +80,19 @@ $(function() {
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structInt3.html">Int3</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">12-byte integer representation for CDR3 string.  <a href="structInt3.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structInt2.html">Int2</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">8-byte integer representation for pair of sequence index.  <a href="structInt2.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structXTNArgs.html">XTNArgs</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">bundled representation for command line arguments.  <a href="structXTNArgs.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structMemoryContext.html">MemoryContext</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">bundled representation for memory constraints and info.  <a href="structMemoryContext.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structXTNOutput.html">XTNOutput</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">bundled representation for algorithm's output.  <a href="structXTNOutput.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
@@ -95,13 +100,14 @@ Enumerations</h2></td></tr>
 <tr class="memitem:a5a2236a3693e3930b2c9fbe1fe7144ec"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xtn_8h.html#a5a2236a3693e3930b2c9fbe1fe7144ec">ReturnCode</a> { <a class="el" href="xtn_8h.html#a5a2236a3693e3930b2c9fbe1fe7144ecac7f69f7c9e5aea9b8f54cf02870e2bf8">SUCCESS</a>, 
 <a class="el" href="xtn_8h.html#a5a2236a3693e3930b2c9fbe1fe7144eca2fd6f336d08340583bd620a7f5694c90">ERROR</a>, 
 <a class="el" href="xtn_8h.html#a5a2236a3693e3930b2c9fbe1fe7144eca7a10b5d68d31711288e1fe0fa17dbf4f">EXIT</a>
- }</td></tr>
+ }<tr class="memdesc:a5a2236a3693e3930b2c9fbe1fe7144ec"><td class="mdescLeft">&#160;</td><td class="mdescRight">control-flow representation.  <a href="xtn_8h.html#a5a2236a3693e3930b2c9fbe1fe7144ec">More...</a><br /></td></tr>
+</td></tr>
 <tr class="separator:a5a2236a3693e3930b2c9fbe1fe7144ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:abc5c34200949cf9a94acbd8e3bd69f15"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xtn_8h.html#abc5c34200949cf9a94acbd8e3bd69f15">xtn_perform</a> (<a class="el" href="structXTNArgs.html">XTNArgs</a> args, <a class="el" href="structInt3.html">Int3</a> *seq1, void callback(<a class="el" href="structXTNOutput.html">XTNOutput</a>))</td></tr>
-<tr class="memdesc:abc5c34200949cf9a94acbd8e3bd69f15"><td class="mdescLeft">&#160;</td><td class="mdescRight">the main function for XT-neighbor algorithm.  <a href="#abc5c34200949cf9a94acbd8e3bd69f15">More...</a><br /></td></tr>
+<tr class="memdesc:abc5c34200949cf9a94acbd8e3bd69f15"><td class="mdescLeft">&#160;</td><td class="mdescRight">the algorithm's API.  <a href="#abc5c34200949cf9a94acbd8e3bd69f15">More...</a><br /></td></tr>
 <tr class="separator:abc5c34200949cf9a94acbd8e3bd69f15"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
@@ -127,6 +133,8 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>control-flow representation. </p>
 <table class="fieldtable">
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a5a2236a3693e3930b2c9fbe1fe7144ecac7f69f7c9e5aea9b8f54cf02870e2bf8"></a>SUCCESS&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a5a2236a3693e3930b2c9fbe1fe7144eca2fd6f336d08340583bd620a7f5694c90"></a>ERROR&#160;</td><td class="fielddoc"></td></tr>
@@ -168,12 +176,21 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>the main function for XT-neighbor algorithm. </p>
+<p>the algorithm's API. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">args</td><td>algorithm's bundled arguments </td></tr>
+    <tr><td class="paramname">seq1</td><td>list of CDR3 sequences </td></tr>
+    <tr><td class="paramname">callback</td><td>function to be invoked once a chunk of output is ready</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>the algorithm's API.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">args</td><td>all flags parsed from command line </td></tr>
     <tr><td class="paramname">seq1</td><td>sequence input </td></tr>
-    <tr><td class="paramname">callback</td><td>return function to be invoked once a chunk of output is ready </td></tr>
+    <tr><td class="paramname">callback</td><td>function to be invoked once a chunk of output is ready </td></tr>
   </table>
   </dd>
 </dl>
