@@ -5,7 +5,7 @@ const size_t MAX = INT_MAX;
 
 /**
  * @file
- * @brief A collection of most GPU parallel primitives that is implemented as CUDA kernel
+ * A collection of most GPU parallel primitives that is implemented as CUDA kernel
  * (most map and expand operations). Follows Facade design pattern.
  */
 

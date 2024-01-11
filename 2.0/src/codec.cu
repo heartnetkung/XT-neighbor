@@ -6,7 +6,7 @@
 
 /**
  * @file
- * @brief A collection of conversion operations turning CDR3 strings into numerical representation.
+ * A collection of conversion operations turning CDR3 strings into numerical representation.
  * Also includes utilities to directly edit the representation.
  */
 
@@ -14,6 +14,7 @@
 const int A_CHAR = (int)'A';
 const int BEFORE_A_CHAR = A_CHAR - 1;
 const int Y_CHAR = (int) 'Y';
+
 
 /**
  * encode character into 5 bit value (0-31).

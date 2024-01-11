@@ -1,6 +1,6 @@
 /**
  * @file
- * @brief Listing of all shared data structures, constants, and exporting method.
+ * Listing of all shared data structures, constants, and exporting method.
  */
 
 const int MAX_INPUT_LENGTH = 18;

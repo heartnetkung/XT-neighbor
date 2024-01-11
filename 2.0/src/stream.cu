@@ -3,7 +3,7 @@
 
 /**
  * @file
- * @brief Listing of low-level streaming and buffering module.
+ * Listing of low-level streaming and buffering module.
  * It concerns how to read/write data to GPU, RAM, and filesystem with throughput constraints.
  */
 

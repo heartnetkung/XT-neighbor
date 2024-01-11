@@ -2,7 +2,7 @@
 
 /**
  * @file
- * @brief A single method which generates all possible deletions
+ * A single method which generates all possible deletions
  * of a CDR3 string within a given Levenshtein threshold.
  */
 

@@ -5,7 +5,7 @@
 
 /**
  * @file
- * @brief The core algorithm on a low-level abstraction concerning how buffers,
+ * The core algorithm on a low-level abstraction concerning how buffers,
  * streamings, and memory management techniques fit together.
  */
 

@@ -8,7 +8,7 @@
 
 /**
  * @file
- * @brief Listing of all GPU parallel primitives that use CUB library
+ * Listing of all GPU parallel primitives that use CUB library
  * (everything other than map and expand). Follows Facade design pattern.
  */
 

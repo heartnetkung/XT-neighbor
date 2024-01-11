@@ -7,7 +7,7 @@
 
 /**
  * @file
- * @brief The core algorithm on the high-level abstraction
+ * The core algorithm on the high-level abstraction
  * concerning data manupulation operations in all 4 stream.
  */
 
