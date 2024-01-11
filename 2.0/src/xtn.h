@@ -3,9 +3,12 @@
  * Listing of all shared data structures, constants, and exporting method.
  */
 
-const int MAX_INPUT_LENGTH = 18; /*CDR3 length limit for compression*/
-const int MAX_DISTANCE = 2; /*distance limit for immunology use case*/
-int verboseGlobal = 0; /*control printing of each method*/
+/**CDR3 length limit for compression*/
+const int MAX_INPUT_LENGTH = 18;
+/**distance limit for immunology use case*/
+const int MAX_DISTANCE = 2;
+/**control printing of each method*/
+int verboseGlobal = 0;
 
 /**
  * 12-byte integer representation for CDR3 string.
