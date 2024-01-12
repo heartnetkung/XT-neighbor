@@ -46,8 +46,8 @@ struct IntMax {
 	}
 };
 
-template <typename T1, typename T2>
-void inclusive_sum(T1* input, T2* output, int n) {
+template <typename T>
+void inclusive_sum(T* input, T* output, int n) {
 	void *buffer = NULL;
 	size_t bufferSize = 0;
 	cub::DeviceScan::InclusiveSum(buffer, bufferSize, input, output, n); gpuerr();
@@ -133,19 +133,15 @@ void cal_histogram(T* input, int* output, int nLevel, T minValue, T maxValue, in
 }
 
 template <typename T>
-void inclusive_sum_by_key(int* keyIn, int* valueIn, T* valueOut, int n) {
+void inclusive_sum_by_key(int* keyIn, T* valueInOut, int n) {
 	void *buffer = NULL;
 	size_t bufferSize = 0;
 	cub::DeviceScan::InclusiveSumByKey(
-	    buffer, bufferSize, keyIn, valueIn, valueOut, n); gpuerr();
+	    buffer, bufferSize, keyIn, valueInOut, valueInOut, n); gpuerr();
 	cudaMalloc(&buffer, bufferSize); gpuerr(); /*2% memory*/
 	cub::DeviceScan::InclusiveSumByKey(
-	    buffer, bufferSize, keyIn, valueIn, valueOut, n); gpuerr();
+	    buffer, bufferSize, keyIn, valueInOut, valueInOut, n); gpuerr();
 	cudaFree(buffer); gpuerr();
-}
-
-void inclusive_sum_by_key(int* keyIn, int* valueInOut, int n) {
-	inclusive_sum_by_key(keyIn, valueInOut, valueInOut, n);
 }
 
 void max_by_key(int* keyIn, int* valueIn, int* valueOut, int* outputLen, int n) {
