@@ -179,11 +179,14 @@ void print_sum(int* histograms, int len2d) {
 	cudaMalloc(&output, sizeof(size_t)*len2d); gpuerr();
 	inclusive_sum(histograms, output, len2d);
 
-	for (int i = 1; i < len2d / 1000000; i++) {
-		int index = i * 1000000;
-		size_t result = transfer_last_element(output, index);
-		printf("sum: %'lu\n %'d\n", result, index);
-	}
+	size_t result = transfer_last_element(output, len2d);
+	printf("sum: %'lu\n %'d\n", result, len2d);
+
+	// for (int i = 1; i < len2d / 1000000; i++) {
+	// 	int index = i * 1000000;
+	// 	size_t result = transfer_last_element(output, index);
+	// 	printf("sum: %'lu\n %'d\n", result, index);
+	// }
 }
 
 //=====================================
