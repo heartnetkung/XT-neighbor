@@ -182,11 +182,11 @@ void print_sum(int* histograms, int len2d) {
 	size_t result = transfer_last_element(output, len2d);
 	printf("sum: %'lu\n %'d\n", result, len2d);
 
-	// for (int i = 1; i < len2d / 1000000; i++) {
-	// 	int index = i * 1000000;
-	// 	size_t result = transfer_last_element(output, index);
-	// 	printf("sum: %'lu\n %'d\n", result, index);
-	// }
+	for (int i = 1; i < len2d / 1000000; i++) {
+		int index = i * 1000000;
+		size_t result = transfer_last_element(output, index);
+		printf("sum: %'lu\n %'d\n", result, index);
+	}
 }
 
 //=====================================
