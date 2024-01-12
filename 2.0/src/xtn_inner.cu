@@ -202,6 +202,8 @@ int solve_next_bin(int* chunksizes, int start, int maxSize, int n) {
 	int currentChunkSize = -1;
 	for (int i = start; i < n; i++) {
 		currentChunkSize = chunksizes[i];
+		if(currentChunkSize < 0)
+			printf("solve_next_bin negative chunk size: %d\n", currentChunkSize);
 		if (len + currentChunkSize > maxSize)
 			break;
 		len += currentChunkSize;
