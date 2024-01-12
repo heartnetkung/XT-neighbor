@@ -160,7 +160,8 @@ int cal_lowerbounds(std::vector<int*> histograms, int* &lowerbounds, int seqLen,
 
 	ctx = cal_memory_lowerbound(seqLen);
 	fullHistograms = concat_histograms(histograms, ctx);
-	print_sum(fullHistograms, histograms.size() * ctx.histogramSize);
+	if (verboseGlobal)
+		print_sum(fullHistograms, histograms.size() * ctx.histogramSize);
 	outputLen = solve_bin_packing_lowerbounds(
 	                fullHistograms, lowerbounds, histograms.size(), seqLen, buffer, ctx);
 
@@ -180,7 +181,8 @@ int** set_d2_offsets(std::vector<int*> histograms, D2Stream<T1> *s1, D2Stream<T2
 
 	len = histograms.size();
 	fullHistograms = concat_histograms(histograms, ctx);
-	print_sum(fullHistograms, len * ctx.histogramSize);
+	if (verboseGlobal)
+		print_sum(fullHistograms, len * ctx.histogramSize);
 	offsetLen = solve_bin_packing_offsets(
 	                fullHistograms, offsets, len, buffer, ctx);
 
