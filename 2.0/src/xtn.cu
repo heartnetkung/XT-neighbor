@@ -28,7 +28,8 @@ MemoryContext initMemory(int seq1Len, bool isGPU) {
 	if (ans.histogramSize > seq1Len)
 		ans.histogramSize = seq1Len;
 	else if (seq1Len > 10000000)
-		ans.histogramSize = 262144;
+		// ans.histogramSize = 262144;
+		ans.histogramSize = 1048576;
 	return ans;
 }
 
