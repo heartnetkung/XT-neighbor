@@ -159,6 +159,7 @@ int cal_lowerbounds(std::vector<int*> histograms, int* &lowerbounds, int seqLen,
 
 	ctx = cal_memory_lowerbound(seqLen);
 	fullHistograms = concat_histograms(histograms, ctx);
+	print_sum(fullHistograms, histograms.size() * ctx.histogramSize);
 	outputLen = solve_bin_packing_lowerbounds(
 	                fullHistograms, lowerbounds, histograms.size(), seqLen, buffer, ctx);
 
