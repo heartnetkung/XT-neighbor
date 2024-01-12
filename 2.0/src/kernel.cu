@@ -355,3 +355,12 @@ void make_row_index(int* output, int n, int nRepeat) {
 	for (int i = tid * nRepeat; i < tid * nRepeat + nRepeat; i++)
 		output[i] = tid;
 }
+
+
+__global__
+void toSizeT(int* input, size_t output, int n) {
+	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
+	if (tid >= n)
+		return;
+	output[tid] = input[tid];
+}

@@ -175,17 +175,18 @@ void gen_next_chunk(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut,
 }
 
 void print_sum(int* histograms, int len2d) {
-	int* output;
-	cudaMalloc(&output, sizeof(int)*len2d); gpuerr();
-	inclusive_sum(histograms, output, len2d);
+	size_t* output;
+	cudaMalloc(&output, sizeof(size_t)*len2d); gpuerr();
+	toSizeT <<<NUM_BLOCK(len2d), NUM_THREADS>>>(input, output, len2d);
+	inclusive_sum(output, len2d);
 
-	int result = transfer_last_element(output, len2d);
-	printf("sum: %'d\n %'d\n", result, len2d);
+	size_t result = transfer_last_element(output, len2d);
+	printf("sum: %'lu\n %'d\n", result, len2d);
 
 	for (int i = 1; i < len2d / 1000000; i++) {
 		int index = i * 1000000;
-		int result = transfer_last_element(output, index);
-		printf("sum: %'d\n %'d\n", result, index);
+		size_t result = transfer_last_element(output, index);
+		printf("sum: %'lu\n %'d\n", result, index);
 	}
 }
 
