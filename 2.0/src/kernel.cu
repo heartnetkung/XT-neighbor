@@ -358,7 +358,7 @@ void make_row_index(int* output, int n, int nRepeat) {
 
 
 __global__
-void toSizeT(int* input, size_t output, int n) {
+void toSizeT(int* input, size_t* output, int n) {
 	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
 	if (tid >= n)
 		return;

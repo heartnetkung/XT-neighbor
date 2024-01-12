@@ -177,7 +177,7 @@ void gen_next_chunk(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut,
 void print_sum(int* histograms, int len2d) {
 	size_t* output;
 	cudaMalloc(&output, sizeof(size_t)*len2d); gpuerr();
-	toSizeT <<<NUM_BLOCK(len2d), NUM_THREADS>>>(input, output, len2d);
+	toSizeT <<<NUM_BLOCK(len2d), NUM_THREADS>>>(histograms, output, len2d);
 	inclusive_sum(output, len2d);
 
 	size_t result = transfer_last_element(output, len2d);
