@@ -243,7 +243,7 @@ int solve_bin_packing_lowerbounds(int* histograms, int* &lowerboundsOutput,
 	cudaMalloc(&histogramIntermediate, sizeof(size_t) * len2d); gpuerr();
 
 	make_row_index <<< NUM_BLOCK(n), NUM_THREADS>>>(rowIndex, n, nLevel); gpuerr();
-	toSizeT << NUM_BLOCK(len2d), NUM_THREADS>>(histograms, histogramIntermediate, len2d);
+	toSizeT <<< NUM_BLOCK(len2d), NUM_THREADS>>>(histograms, histogramIntermediate, len2d);
 	inclusive_sum_by_key(rowIndex, histogramIntermediate, len2d);
 	gen_bounds <<< NUM_BLOCK(nLevel), NUM_THREADS >>>(
 	    histogramIntermediate, key, value, ctx.maxThroughputExponent, seqLen, n, nLevel); gpuerr();
