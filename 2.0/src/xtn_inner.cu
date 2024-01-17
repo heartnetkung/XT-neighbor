@@ -274,7 +274,7 @@ int solve_bin_packing_offsets(int* histograms, int** &offsetOutput,
 
 	//solve bin packing
 	make_row_index <<< NUM_BLOCK(n), NUM_THREADS>>>(rowIndex, n, nLevel); gpuerr();
-	inclusive_sum_by_key(rowIndex, histogramIntermediate, len2d);
+	inclusive_sum_by_key(rowIndex, histograms, len2d);
 	gen_assignment <<< NUM_BLOCK(nLevel), NUM_THREADS >>>(
 	    histogramIntermediate, assignment, ctx.maxThroughputExponent, n, nLevel); gpuerr();
 	max_by_key(assignment, histograms, output1d, buffer, len2d);
