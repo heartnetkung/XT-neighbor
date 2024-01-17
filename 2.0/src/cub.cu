@@ -144,8 +144,7 @@ void inclusive_sum_by_key(int* keyIn, T* valueInOut, int n) {
 	cudaFree(buffer); gpuerr();
 }
 
-template <typename T>
-void max_by_key(int* keyIn, T* valueIn, T* valueOut, int* outputLen, int n) {
+void max_by_key(int* keyIn, int* valueIn, int* valueOut, int* outputLen, int n) {
 	void *buffer = NULL;
 	size_t bufferSize = 0;
 	int* dummy;

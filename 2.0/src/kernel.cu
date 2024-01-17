@@ -264,7 +264,7 @@ void cal_levenshtein(Int3* seq, Int2* index, int distance,
  * @param nColumn number of columns of the matrix
 */
 __global__
-void gen_assignment(size_t* matrix, int* output, int nBit, int nRow, int nColumn) {
+void gen_assignment(int* matrix, int* output, int nBit, int nRow, int nColumn) {
 	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
 	if (tid >= nColumn)
 		return;

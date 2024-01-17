@@ -264,7 +264,6 @@ int solve_bin_packing_lowerbounds(int* histograms, int* &lowerboundsOutput,
 int solve_bin_packing_offsets(int* histograms, int** &offsetOutput,
                               int n, int* buffer, MemoryContext ctx) {
 	int* rowIndex, *assignment, *output1d;
-	size_t* histogramIntermediate;
 	int offsetLen;
 
 	int nLevel = ctx.histogramSize, len2d = n * nLevel;
@@ -272,15 +271,13 @@ int solve_bin_packing_offsets(int* histograms, int** &offsetOutput,
 	cudaMalloc(&assignment, sizeof(int) * len2d); gpuerr();
 	cudaMalloc(&output1d, sizeof(int) * len2d); gpuerr();
 	cudaMallocHost(&offsetOutput, sizeof(int*) * n); gpuerr();
-	cudaMalloc(&histogramIntermediate, sizeof(size_t) * len2d); gpuerr();
 
 	//solve bin packing
 	make_row_index <<< NUM_BLOCK(n), NUM_THREADS>>>(rowIndex, n, nLevel); gpuerr();
-	toSizeT <<< NUM_BLOCK(len2d), NUM_THREADS>>>(histograms, histogramIntermediate, len2d); gpuerr();
 	inclusive_sum_by_key(rowIndex, histogramIntermediate, len2d);
 	gen_assignment <<< NUM_BLOCK(nLevel), NUM_THREADS >>>(
 	    histogramIntermediate, assignment, ctx.maxThroughputExponent, n, nLevel); gpuerr();
-	max_by_key(assignment, histogramIntermediate, output1d, buffer, len2d);
+	max_by_key(assignment, histograms, output1d, buffer, len2d);
 
 	//make output
 	int outputLen = transfer_last_element(buffer, 1);
@@ -299,7 +296,7 @@ int solve_bin_packing_offsets(int* histograms, int** &offsetOutput,
 	} else
 		print_err("bin_packing outputLen is not divisible by inputLen");
 
-	_cudaFree(rowIndex, assignment, output1d, histogramIntermediate);
+	_cudaFree(rowIndex, assignment, output1d);
 	return offsetLen;
 }
 
