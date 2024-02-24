@@ -134,7 +134,9 @@ int postprocessing(Int3* seq, Int2* input, int distance,
 	            distanceOutput, buffer, uniqueLen);
 
 	_cudaFree(uniquePairs, uniqueDistances, flags);
-	return transfer_last_element(buffer, 1);
+	int ans = transfer_last_element(buffer, 1);
+	printf("uniqueLen, ans: %d %d", uniqueLen, ans);
+	return ans;
 }
 
 /**
@@ -202,7 +204,7 @@ int solve_next_bin(int* chunksizes, int start, int maxSize, int n) {
 	int currentChunkSize = -1;
 	for (int i = start; i < n; i++) {
 		currentChunkSize = chunksizes[i];
-		if(currentChunkSize < 0)
+		if (currentChunkSize < 0)
 			printf("solve_next_bin negative chunk size: %d\n", currentChunkSize);
 		if (len + currentChunkSize > maxSize)
 			break;
