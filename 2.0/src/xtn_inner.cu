@@ -114,7 +114,7 @@ void pair_print(char* flags, char* distances, Int2* pairs, Int3* seqs, int seqLe
 	for (int i = 0; i < 100; i++) {
 		int x = pairs2[i].x;
 		int y = pairs2[i].y;
-		printf("== %d %d (%d %d) %s %s \n", flags2[i], distances2[i], x, y, seqs2[x] , seqs2[y]);
+		printf("== %d %d (%d %d) %s %s \n", flags2[i], distances2[i], x, y, str_decode(seqs2[x]) , str_decode(seqs2[y]));
 	}
 	cudaFreeHost(flags2);
 	cudaFreeHost(distances2);
