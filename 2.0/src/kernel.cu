@@ -240,12 +240,14 @@ void cal_levenshtein(Int3* seq, Int2* index, int distance,
 	Int2 indexPair = index[tid];
 	if (indexPair.x == indexPair.y) {
 		flagOutput[tid] =  0;
+		distanceOutput[tid] = 99;
 		return;
 	}
 
 	if (indexPair.x >= seqLen || indexPair.y >= seqLen) {
 		printf("curious case! %d %d\n", indexPair.x, indexPair.y);
 		flagOutput[tid] =  0;
+		distanceOutput[tid] = 99;
 		return;
 	}
 
