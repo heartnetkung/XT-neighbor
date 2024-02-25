@@ -195,7 +195,7 @@ int postprocessing(Int3* seq, Int2* input, int distance,
 	double_flag(uniquePairs, uniqueDistances, flags, pairOutput,
 	            distanceOutput, buffer, uniqueLen);
 
-	// pair_print(flags, uniqueDistances, uniquePairs, seq, seqLen);
+	pair_print(flags, uniqueDistances, uniquePairs, seq, seqLen);
 	_cudaFree(uniquePairs, uniqueDistances, flags);
 	int ans = transfer_last_element(buffer, 1);
 	printf("uniqueLen, ans: %'d %'d\n", uniqueLen, ans);
