@@ -50,12 +50,12 @@ void pair_print3(Int3* seqs, int* values, int n) {
 			continue;
 		printf("== %s %d current\n", str_decode(seqs2[i]), values2[i]);
 		for (int j = i - 1; j >= 0; j--) {
-			if (seqs2[j] != seqs2[i])
+			if ((seqs2[j].entry[0] != seqs2[i].entry[0]) || (seqs2[1].entry[0] != seqs2[i].entry[1]) || (seqs2[j].entry[2] != seqs2[i].entry[2]))
 				break;
 			printf("== %s %d before\n", str_decode(seqs2[j]), values2[j]);
 		}
 		for (int j = i + 1; j < n; j++) {
-			if (seqs2[j] != seqs2[i])
+			if ((seqs2[j].entry[0] != seqs2[i].entry[0]) || (seqs2[1].entry[0] != seqs2[i].entry[1]) || (seqs2[j].entry[2] != seqs2[i].entry[2]))
 				break;
 			printf("== %s %d after\n", str_decode(seqs2[j]), values2[j]);
 		}
