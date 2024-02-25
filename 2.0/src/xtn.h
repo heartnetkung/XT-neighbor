@@ -9,6 +9,8 @@ const int MAX_INPUT_LENGTH = 18;
 const int MAX_DISTANCE = 2;
 /**control printing of each method*/
 int verboseGlobal = 0;
+const char LEVENSHTEIN = 0;
+const char HAMMING = 1;
 
 /**
  * 12-byte integer representation for CDR3 string.
@@ -41,8 +43,7 @@ struct XTNArgs {
 	char* seq1Path = NULL;
 	int seq1Len = 0;
 	char* outputPath = NULL;
-	// Int3* seq2 = NULL;
-	// int seq2Len = 0;
+	char measure = LEVENSHTEIN;
 };
 
 /**

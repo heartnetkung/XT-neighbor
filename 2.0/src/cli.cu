@@ -5,15 +5,23 @@
 FILE* outputFile = NULL; /*global variable for callback*/
 size_t totalOutputLen = 0; /*global variable for callback*/
 const char VERSION[] = "2.0.0\n";
-const char HELP_TEXT[] = "xt_neighbor\n"
-                         "\t description: perform xt_neighbor algorithm for near neighbor search of T cell receptor's CDR3 sequences\n"
-                         "\t -p or --input-path [str] (required): set the path of input file which is a text file containing one CDR3 sequence per line\n"
-                         "\t -n or --input-length [number] (required): set the number of sequences given in the input file\n"
-                         "\t -d or --distance [number]: set the distance threshold defining the neighbor\n"
-                         "\t -o or --output-path [str]: set the path of the output file (default to no output)\n"
+const char HELP_TEXT[] = "xt_neighbor: perform either nearest neighbor search for CDR3 sequences or immune repertoire overlap using GPU-based xt_neighbor algorithm.\n"
+                         "\t====================\n\t Common Options\n\t====================\n"
+                         "\t -d or --distance [number]: distance threshold defining the neighbor (default to 1)\n"
+                         "\t -o or --output-path [str]: path of the output file (default to no output)\n"
+                         "\t -m or --measurement [leven|hamming]: distance measurement (default to leven)\n"
                          "\t -v or --version: print the version of the program then exit\n"
                          "\t -h or --help: print the help text of the program then exit\n"
-                         "\t -V or --verbose: print extra detail as the program runs for debugging purpose\n";
+                         "\t -V or --verbose: print extra detail as the program runs for debugging purpose\n"
+                         "\t====================\n\t Nearest Neighbor Options\n\t====================\n"
+                         "\t -i or --input-path [str] (required): path of csv input file containing a single column of CDR3 amino acid sequences\n"
+                         "\t -n or --input-length [number] (required): number of rows given in the input file\n"
+                         "\t====================\n\t Repertoire Overlap Options\n\t====================\n"
+                         "\t -i or --input-path [str] (required): path of csv input file containing 2 columns: CDR3 amino acid sequences and their frequency. Note that the sequences are assumed to be unique\n"
+                         "\t -n or --input-length [number] (required): number of sequences given in the input file\n"
+                         "\t -r or --repertoire-info [str] (required): path of csv input file containing 2 columns: repertoire names, and their sizes. Note that the order of input sequence must be sorted according to this repertoire info\n"
+                         "\t -N or --info-length [number] (required): number of repertoires given in the input file\n"
+                         ;
 
 int parse_args(int argc, char **argv, XTNArgs* ans) {
 	char* current;
@@ -44,6 +52,15 @@ int parse_args(int argc, char **argv, XTNArgs* ans) {
 			ans->seq1Len = atoi(argv[++i]);
 			if (ans->seq1Len == 0)
 				return print_err("invalid input length");
+		}
+		else if (strcmp(current, "-m") == 0 || strcmp(current, "--measurement") == 0) {
+			char* measure = argv[++i];
+			if (strcmp(measure, "leven") == 0)
+				ans->measure = LEVENSHTEIN;
+			else if (strcmp(measure, "hamming") == 0)
+				ans->measure = HAMMING;
+			else
+				return print_err("invalid measure option");
 		}
 		else
 			return print_err("unknown option");

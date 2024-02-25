@@ -109,7 +109,7 @@ int gen_smaller_index(int* input, int* inputOffsets, int* outputLengths,
 /**
  * private function
 */
-int postprocessing(Int3* seq, Int2* input, int distance,
+int postprocessing(Int3* seq, Int2* input, int distance, char measure,
                    Int2* &pairOutput, char* &distanceOutput,
                    int n, int* buffer, int seqLen) {
 	Int2* uniquePairs;
@@ -126,7 +126,8 @@ int postprocessing(Int3* seq, Int2* input, int distance,
 	cudaMalloc(&flags, byteRequirement); gpuerr();
 	cudaMalloc(&uniqueDistances, byteRequirement); gpuerr();
 	cal_levenshtein <<< NUM_BLOCK(uniqueLen), NUM_THREADS>>>(
-	    seq, uniquePairs, distance, uniqueDistances, flags, uniqueLen, seqLen); gpuerr();
+	    seq, uniquePairs, distance, measure, uniqueDistances,
+	    flags, uniqueLen, seqLen); gpuerr();
 
 	// filter levenshtein
 	cudaMalloc(&distanceOutput, byteRequirement); gpuerr();
@@ -420,11 +421,11 @@ void stream_handler3(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, void callbac
  * handle all GPU operations in stream 4
 */
 void stream_handler4(Chunk<Int2> pairInput, XTNOutput & output, Int3 * seq1,
-                     int seq1Len, int distance, int* buffer) {
+                     int seq1Len, int distance, char measure, int* buffer) {
 	Int2* pairOut;
 	char* distanceOut;
 	int outputLen =
-	    postprocessing(seq1, pairInput.ptr, distance, pairOut, distanceOut,
+	    postprocessing(seq1, pairInput.ptr, distance, measure, pairOut, distanceOut,
 	                   pairInput.len, buffer, seq1Len);
 
 	make_output(pairOut, distanceOut, outputLen, output);

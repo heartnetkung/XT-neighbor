@@ -348,7 +348,8 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 
 		while ((b3Chunk = b3->read()).not_null()) {
 			print_bandwidth(b3Chunk.len, ctx4.bandwidth1, "4");
-			stream_handler4(b3Chunk, finalOutput, seq1Device, seq1Len, distance, deviceInt);
+			stream_handler4(b3Chunk, finalOutput, seq1Device, seq1Len,
+			                distance, args.measure, deviceInt);
 			totalLen4 += finalOutput.len;
 			callback(finalOutput);
 			_cudaFreeHost(finalOutput.indexPairs, finalOutput.pairwiseDistances);

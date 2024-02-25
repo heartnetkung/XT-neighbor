@@ -182,11 +182,14 @@ void generate_smaller_index(int* indexes, int* outputs, int* inputOffsets,
  * @param x2 second string
 */
 __device__
-char levenshtein(Int3 x1, Int3 x2) {
+char levenshtein(Int3 x1, Int3 x2, char measure) {
+	char s1len = (char)len_decode(x1), s2len = (char)len_decode(x2);
+	if ((measure == HAMMING) && (s1len != s2len))
+		return 77;
+
 	char x, y, lastdiag, olddiag;
 	char s1[MAX_INPUT_LENGTH];
 	char s2[MAX_INPUT_LENGTH];
-	char s1len = (char)len_decode(x1), s2len = (char)len_decode(x2);
 	char column[MAX_INPUT_LENGTH + 1];
 
 	for (int i = 0; i < MAX_INPUT_LENGTH; i++) {
@@ -227,7 +230,7 @@ char levenshtein(Int3 x1, Int3 x2) {
  * @param seqLen array length of seq
 */
 __global__
-void cal_levenshtein(Int3* seq, Int2* index, int distance,
+void cal_levenshtein(Int3* seq, Int2* index, int distance, char measure,
                      char* distanceOutput, char* flagOutput, int n, int seqLen) {
 	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
 	if (tid >= n)
@@ -243,11 +246,11 @@ void cal_levenshtein(Int3* seq, Int2* index, int distance,
 	if (indexPair.x >= seqLen || indexPair.y >= seqLen) {
 		printf("curious case! %d %d\n", indexPair.x, indexPair.y);
 		flagOutput[tid] =  0;
-		distanceOutput[tid] = 99;
+		distanceOutput[tid] = 88;
 		return;
 	}
 
-	char newOutput = levenshtein(seq[indexPair.x], seq[indexPair.y]);
+	char newOutput = levenshtein(seq[indexPair.x], seq[indexPair.y], measure);
 	distanceOutput[tid] = newOutput;
 	flagOutput[tid] =  newOutput <= distance;
 }
