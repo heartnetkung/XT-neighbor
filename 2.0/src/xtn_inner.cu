@@ -80,16 +80,13 @@ int cal_offsets_lowerbound(Int3* inputKeys, int* inputValues, int* &inputOffsets
 	unique_counts(inputKeys, inputOffsets, buffer, n);
 	int nUnique = transfer_last_element(buffer, 1);
 	inclusive_sum(inputOffsets, nUnique);
-	print_int_arr(inputOffsets,100);
-	print_int3_arr(inputKeys,100);
-	print_int_arr(inputValues,100);
 
 	// cal outputLengths
 	cudaMalloc(&outputLengths, sizeof(int)*nUnique); gpuerr();
 	cal_pair_len_lowerbound <<< NUM_BLOCK(nUnique), NUM_THREADS>>>(
 	    inputValues, inputOffsets, outputLengths, lowerbound, nUnique); gpuerr();
 
-	pair_print3(inputKeys, inputValues, n);
+	// pair_print3(inputKeys, inputValues, n);
 	return nUnique;
 }
 
@@ -368,6 +365,18 @@ int solve_bin_packing_offsets(int* histograms, int** &offsetOutput,
 	return offsetLen;
 }
 
+void pair_print4(Int3* seqs, int* values, int n) {
+	int* values2 = device_to_host(values, n);
+	Int3* seqs2 = device_to_host(seqs, n);
+
+	for (int i = 0; i < n; i++) {
+		if(values2[i]==1887)
+			printf("xx %s \n", seqs2[i]);
+	}
+	cudaFreeHost(values2);
+	cudaFreeHost(seqs2);
+}
+
 /**
  * handle all GPU operations in stream 1
 */
@@ -395,6 +404,7 @@ void stream_handler1(Chunk<Int3> input, Int3* &deletionsOutput, int* &indexOutpu
 
 	// generate histogram
 	sort_key_values(deletionsOutput, indexOutput, outputLen);
+	pair_print4(deletionsOutput,indexOutput, outputLen);
 	cudaMalloc(&histogram, sizeof(int)*ctx.histogramSize); gpuerr();
 	cal_histogram(histogramValue, histogram, ctx.histogramSize, UINT_MIN, UINT_MAX, outputLen);
 	histogramOutput.push_back(histogram);
