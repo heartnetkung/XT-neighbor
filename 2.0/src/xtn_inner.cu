@@ -59,11 +59,24 @@ int cal_offsets_lowerbound(Int3* inputKeys, int* inputValues, int* &inputOffsets
 	return nUnique;
 }
 
+void pair_print2(Int2* pairs, Int3* seqs, int seqLen) {
+	Int2* pairs2 = device_to_host(pairs, 100);
+	Int3* seqs2 = device_to_host(seqs, seqLen);
+
+	for (int i = 0; i < 100; i++) {
+		int x = pairs2[i].x;
+		int y = pairs2[i].y;
+		printf("== (%d %d) %s %s \n", x, y, str_decode(seqs2[x]) , str_decode(seqs2[y]));
+	}
+	cudaFreeHost(pairs2);
+	cudaFreeHost(seqs2);
+}
+
 /**
  * private function
 */
 int gen_pairs(int* input, int* inputOffsets, int* outputLengths, Int2* &output,
-              int* &lesserIndex, int lowerbound, int carry, int n) {
+              int* &lesserIndex, int lowerbound, int carry, int n, Int3* seq1) {
 	int* outputOffsets;
 
 	// cal outputOffsets
@@ -77,6 +90,7 @@ int gen_pairs(int* input, int* inputOffsets, int* outputLengths, Int2* &output,
 	generate_pairs <<< NUM_BLOCK(n), NUM_THREADS>>>(input, output,
 	        inputOffsets, outputOffsets, lesserIndex, lowerbound, carry, n); gpuerr();
 	sort_int2(output, outputLen);
+	pair_print2(output,seq1,seqLen);
 
 	cudaFree(outputOffsets); gpuerr();
 	//wrong?
@@ -397,7 +411,7 @@ void stream_handler2(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, std::vector<
 */
 void stream_handler3(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, void callback(Int2*, int),
                      std::vector<int*> &histogramOutput, int lowerbound, int seqLen,
-                     int* buffer, MemoryContext ctx) {
+                     int* buffer, MemoryContext ctx, Int3* seq1) {
 	int* inputOffsets, *valueLengths, *valueLengthsHost, *lesserIndex, *histogram;
 	Int2* pairOutput;
 
@@ -412,7 +426,7 @@ void stream_handler3(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, void callbac
 	// generate pairs
 	while ((nChunk = solve_next_bin(valueLengthsHost, start, ctx.bandwidth2, offsetLen)) > 0) {
 		int chunkLen = gen_pairs(valueInOut.ptr, inputOffsetsPtr, valueLengthsPtr,
-		                         pairOutput, lesserIndex, lowerbound, carry, nChunk);
+		                         pairOutput, lesserIndex, lowerbound, carry, nChunk, seq1,seqLen);
 		print_bandwidth(chunkLen, ctx.bandwidth2, "3b");
 		callback(pairOutput, chunkLen);
 		cudaMalloc(&histogram, sizeof(int)*ctx.histogramSize);	gpuerr();
