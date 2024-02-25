@@ -49,6 +49,10 @@ void pair_print3(Int3* seqs, int* values, int n) {
 		if (values2[i] != 0)
 			continue;
 		printf("== %s %d current\n", str_decode(seqs2[i]), values2[i]);
+		if(i>0)
+			printf("== %s %d current-1\n", str_decode(seqs2[i-1]), values2[i-1]);
+		if(i<n-1)
+			printf("== %s %d current+1\n", str_decode(seqs2[i+1]), values2[i+1]);
 		for (int j = i - 1; j >= 0; j--) {
 			if ((seqs2[j].entry[0] != seqs2[i].entry[0]) || (seqs2[1].entry[0] != seqs2[i].entry[1]) || (seqs2[j].entry[2] != seqs2[i].entry[2]))
 				break;
@@ -74,6 +78,7 @@ int cal_offsets_lowerbound(Int3* inputKeys, int* inputValues, int* &inputOffsets
 	unique_counts(inputKeys, inputOffsets, buffer, n);
 	int nUnique = transfer_last_element(buffer, 1);
 	inclusive_sum(inputOffsets, nUnique);
+	print_int_arr(inputOffsets,100);
 
 	// cal outputLengths
 	cudaMalloc(&outputLengths, sizeof(int)*nUnique); gpuerr();
