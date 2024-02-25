@@ -371,7 +371,7 @@ void pair_print4(Int3* seqs, int* values, int n) {
 
 	for (int i = 0; i < n; i++) {
 		if(values2[i]==1887)
-			printf("xx %s \n", seqs2[i]);
+			printf("xx %s \n", str_decode(seqs2[i]));
 	}
 	cudaFreeHost(values2);
 	cudaFreeHost(seqs2);
