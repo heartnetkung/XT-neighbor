@@ -395,7 +395,7 @@ void stream_handler3(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, void callbac
 	// generate pairs
 	while ((nChunk = solve_next_bin(valueLengthsHost, start, ctx.bandwidth2, offsetLen)) > 0) {
 		int chunkLen = gen_pairs(valueInOut.ptr, inputOffsetsPtr, valueLengthsPtr,
-		                         pairOutput, lesserIndex, lowerbound, carry, nChunk, seq1, seqLen);
+		                         pairOutput, lesserIndex, lowerbound, carry, nChunk, seqLen);
 		print_bandwidth(chunkLen, ctx.bandwidth2, "3b");
 		callback(pairOutput, chunkLen);
 		cudaMalloc(&histogram, sizeof(int)*ctx.histogramSize);	gpuerr();
