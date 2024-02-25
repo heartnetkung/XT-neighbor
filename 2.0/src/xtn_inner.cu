@@ -79,6 +79,7 @@ int cal_offsets_lowerbound(Int3* inputKeys, int* inputValues, int* &inputOffsets
 	int nUnique = transfer_last_element(buffer, 1);
 	inclusive_sum(inputOffsets, nUnique);
 	print_int_arr(inputOffsets,100);
+	print_int3_arr(inputKeys,100);
 
 	// cal outputLengths
 	cudaMalloc(&outputLengths, sizeof(int)*nUnique); gpuerr();
