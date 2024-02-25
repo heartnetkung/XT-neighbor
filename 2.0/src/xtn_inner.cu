@@ -76,7 +76,7 @@ void pair_print2(Int2* pairs, Int3* seqs, int seqLen) {
  * private function
 */
 int gen_pairs(int* input, int* inputOffsets, int* outputLengths, Int2* &output,
-              int* &lesserIndex, int lowerbound, int carry, int n, Int3* seq1) {
+              int* &lesserIndex, int lowerbound, int carry, int n, Int3* seq1, int seqLen) {
 	int* outputOffsets;
 
 	// cal outputOffsets
