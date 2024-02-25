@@ -320,7 +320,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 			b2valueChunk = b2value->read();
 			print_bandwidth(b2keyChunk.len, ctx3.bandwidth1, "3");
 			stream_handler3(b2keyChunk, b2valueChunk, write_b3, histograms,
-			                lowerbound, seq1Len, deviceInt, ctx3, seq1Device);
+			                lowerbound, seq1Len, deviceInt, ctx3);
 			b2key->write(b2keyChunk.ptr, b2keyChunk.len);
 			b2value->write(b2valueChunk.ptr, b2valueChunk.len);
 

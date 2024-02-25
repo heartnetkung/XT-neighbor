@@ -41,35 +41,6 @@ int cal_offsets(Int3* inputKeys, int* &inputOffsets, int* &outputLengths, int n,
 	return nUnique;
 }
 
-void pair_print3(Int3* seqs, int* values, int n) {
-	int* values2 = device_to_host(values, n);
-	Int3* seqs2 = device_to_host(seqs, n);
-
-	for (int i = 0; i < n; i++) {
-		if (values2[i] != 0)
-			continue;
-		printf("== %s %d %d current\n", str_decode(seqs2[i]), values2[i],i);
-		// for (int j = i - 1; j >= 0; j--) {
-		// 	if ((seqs2[j].entry[0] != seqs2[i].entry[0]) || (seqs2[j].entry[1] != seqs2[i].entry[1]) || (seqs2[j].entry[2] != seqs2[i].entry[2]))
-		// 		break;
-		// 	if(values2[j]==values2[j+1])
-		// 		continue;
-		// 	printf("== %s %d before\n", str_decode(seqs2[j]), values2[j]);
-		// }
-		for (int j = i + 1; j < n; j++) {
-			if ((seqs2[j].entry[0] != seqs2[i].entry[0]) || (seqs2[j].entry[1] != seqs2[i].entry[1]) || (seqs2[j].entry[2] != seqs2[i].entry[2]))
-				break;
-			if(values2[j]==values2[j-1])
-				continue;
-			if(values2[j]>2000)
-				continue;
-			printf("== %s %d after\n", str_decode(seqs2[j]), values2[j]);
-		}
-	}
-	cudaFreeHost(values2);
-	cudaFreeHost(seqs2);
-}
-
 /**
  * private function
 */
@@ -86,28 +57,14 @@ int cal_offsets_lowerbound(Int3* inputKeys, int* inputValues, int* &inputOffsets
 	cal_pair_len_lowerbound <<< NUM_BLOCK(nUnique), NUM_THREADS>>>(
 	    inputValues, inputOffsets, outputLengths, lowerbound, nUnique); gpuerr();
 
-	// pair_print3(inputKeys, inputValues, n);
 	return nUnique;
-}
-
-void pair_print2(Int2* pairs, Int3* seqs, int seqLen) {
-	Int2* pairs2 = device_to_host(pairs, 100);
-	Int3* seqs2 = device_to_host(seqs, seqLen);
-
-	for (int i = 0; i < 100; i++) {
-		int x = pairs2[i].x;
-		int y = pairs2[i].y;
-		printf("== (%d %d) %s %s \n", x, y, str_decode(seqs2[x]) , str_decode(seqs2[y]));
-	}
-	cudaFreeHost(pairs2);
-	cudaFreeHost(seqs2);
 }
 
 /**
  * private function
 */
 int gen_pairs(int* input, int* inputOffsets, int* outputLengths, Int2* &output,
-              int* &lesserIndex, int lowerbound, int carry, int n, Int3* seq1, int seqLen) {
+              int* &lesserIndex, int lowerbound, int carry, int n, int seqLen) {
 	int* outputOffsets;
 
 	// cal outputOffsets
@@ -121,7 +78,6 @@ int gen_pairs(int* input, int* inputOffsets, int* outputLengths, Int2* &output,
 	generate_pairs <<< NUM_BLOCK(n), NUM_THREADS>>>(input, output,
 	        inputOffsets, outputOffsets, lesserIndex, lowerbound, carry, n); gpuerr();
 	sort_int2(output, outputLen);
-	// pair_print2(output,seq1,seqLen);
 
 	cudaFree(outputOffsets); gpuerr();
 	//wrong?
@@ -148,23 +104,6 @@ int gen_smaller_index(int* input, int* inputOffsets, int* outputLengths,
 	cudaFree(outputOffsets); gpuerr();
 	//wrong?
 	return outputLen;
-}
-
-void pair_print(char* flags, char* distances, Int2* pairs, Int3* seqs, int seqLen) {
-	char* flags2 = device_to_host(flags, 100);
-	char* distances2 = device_to_host(distances, 100);
-	Int2* pairs2 = device_to_host(pairs, 100);
-	Int3* seqs2 = device_to_host(seqs, seqLen);
-
-	for (int i = 0; i < 100; i++) {
-		int x = pairs2[i].x;
-		int y = pairs2[i].y;
-		printf("== %d %d (%d %d) %s %s \n", flags2[i], distances2[i], x, y, str_decode(seqs2[x]) , str_decode(seqs2[y]));
-	}
-	cudaFreeHost(flags2);
-	cudaFreeHost(distances2);
-	cudaFreeHost(pairs2);
-	cudaFreeHost(seqs2);
 }
 
 /**
@@ -195,11 +134,8 @@ int postprocessing(Int3* seq, Int2* input, int distance,
 	double_flag(uniquePairs, uniqueDistances, flags, pairOutput,
 	            distanceOutput, buffer, uniqueLen);
 
-	pair_print(flags, uniqueDistances, uniquePairs, seq, seqLen);
 	_cudaFree(uniquePairs, uniqueDistances, flags);
-	int ans = transfer_last_element(buffer, 1);
-	printf("uniqueLen, ans: %'d %'d\n", uniqueLen, ans);
-	return ans;
+	return transfer_last_element(buffer, 1);
 }
 
 /**
@@ -365,18 +301,6 @@ int solve_bin_packing_offsets(int* histograms, int** &offsetOutput,
 	return offsetLen;
 }
 
-void pair_print4(Int3* seqs, int* values, int n) {
-	int* values2 = device_to_host(values, n);
-	Int3* seqs2 = device_to_host(seqs, n);
-
-	for (int i = 0; i < n; i++) {
-		if(values2[i]==1887)
-			printf("xx %s \n", str_decode(seqs2[i]));
-	}
-	cudaFreeHost(values2);
-	cudaFreeHost(seqs2);
-}
-
 /**
  * handle all GPU operations in stream 1
 */
@@ -406,7 +330,6 @@ void stream_handler1(Chunk<Int3> input, Int3* &deletionsOutput, int* &indexOutpu
 
 	// generate histogram
 	sort_key_values(deletionsOutput, indexOutput, outputLen);
-	pair_print4(deletionsOutput,indexOutput, outputLen);
 	cudaMalloc(&histogram, sizeof(int)*ctx.histogramSize); gpuerr();
 	cal_histogram(histogramValue, histogram, ctx.histogramSize, UINT_MIN, UINT_MAX, outputLen);
 	histogramOutput.push_back(histogram);
@@ -457,7 +380,7 @@ void stream_handler2(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, std::vector<
 */
 void stream_handler3(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, void callback(Int2*, int),
                      std::vector<int*> &histogramOutput, int lowerbound, int seqLen,
-                     int* buffer, MemoryContext ctx, Int3* seq1) {
+                     int* buffer, MemoryContext ctx) {
 	int* inputOffsets, *valueLengths, *valueLengthsHost, *lesserIndex, *histogram;
 	Int2* pairOutput;
 
