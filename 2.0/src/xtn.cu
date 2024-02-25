@@ -55,7 +55,7 @@ MemoryContext cal_memory_stream1(int seq1Len, int distance) {
 	    //bottleneck: Int3* &deletionsOutput int* &indexOutput sort_key_values
 	    deletionMultiplier * (2 * sizeof(Int3) + 2 * sizeof(int));
 
-	size_t temp = 3 * ans.gpuSize / (10 * multiplier); /*safety factor is included in deletionMultiplier*/
+	size_t temp = ans.gpuSize / multiplier; /*safety factor is included in deletionMultiplier*/
 	ans.bandwidth1 = (temp > MAX_PROCESSING) ? MAX_PROCESSING : temp;
 	ans.chunkSize = (seq1Len < ans.bandwidth1) ? seq1Len : ans.bandwidth1;
 	return ans;
