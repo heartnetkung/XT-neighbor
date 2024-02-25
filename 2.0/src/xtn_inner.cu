@@ -62,7 +62,7 @@ void pair_print3(Int3* seqs, int* values, int n) {
 			if(values2[j]==values2[j-1])
 				continue;
 			if(values2[j]>2000)
-				break;
+				continue;
 			printf("== %s %d after\n", str_decode(seqs2[j]), values2[j]);
 		}
 	}
