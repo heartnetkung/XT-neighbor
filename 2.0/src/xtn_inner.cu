@@ -41,6 +41,29 @@ int cal_offsets(Int3* inputKeys, int* &inputOffsets, int* &outputLengths, int n,
 	return nUnique;
 }
 
+void pair_print3(Int3* seqs, int* values, int n) {
+	int* values2 = device_to_host(values, n);
+	Int3* seqs2 = device_to_host(seqs, n);
+
+	for (int i = 0; i < n; i++) {
+		if (values2[i] != 0)
+			continue;
+		printf("== %s %d current\n", str_decode(seqs2[i]), values2[i]);
+		for (int j = i - 1; j >= 0; j--) {
+			if (seqs2[j] != seqs2[i])
+				break;
+			printf("== %s %d before\n", str_decode(seqs2[j]), values2[j]);
+		}
+		for (int j = i + 1; j < n; j++) {
+			if (seqs2[j] != seqs2[i])
+				break;
+			printf("== %s %d after\n", str_decode(seqs2[j]), values2[j]);
+		}
+	}
+	cudaFreeHost(values2);
+	cudaFreeHost(seqs2);
+}
+
 /**
  * private function
 */
@@ -56,6 +79,8 @@ int cal_offsets_lowerbound(Int3* inputKeys, int* inputValues, int* &inputOffsets
 	cudaMalloc(&outputLengths, sizeof(int)*nUnique); gpuerr();
 	cal_pair_len_lowerbound <<< NUM_BLOCK(nUnique), NUM_THREADS>>>(
 	    inputValues, inputOffsets, outputLengths, lowerbound, nUnique); gpuerr();
+
+	pair_print3(inputKeys, inputValues, n);
 	return nUnique;
 }
 
@@ -90,7 +115,7 @@ int gen_pairs(int* input, int* inputOffsets, int* outputLengths, Int2* &output,
 	generate_pairs <<< NUM_BLOCK(n), NUM_THREADS>>>(input, output,
 	        inputOffsets, outputOffsets, lesserIndex, lowerbound, carry, n); gpuerr();
 	sort_int2(output, outputLen);
-	pair_print2(output,seq1,seqLen);
+	// pair_print2(output,seq1,seqLen);
 
 	cudaFree(outputOffsets); gpuerr();
 	//wrong?
@@ -164,7 +189,7 @@ int postprocessing(Int3* seq, Int2* input, int distance,
 	double_flag(uniquePairs, uniqueDistances, flags, pairOutput,
 	            distanceOutput, buffer, uniqueLen);
 
-	pair_print(flags, uniqueDistances, uniquePairs, seq, seqLen);
+	// pair_print(flags, uniqueDistances, uniquePairs, seq, seqLen);
 	_cudaFree(uniquePairs, uniqueDistances, flags);
 	int ans = transfer_last_element(buffer, 1);
 	printf("uniqueLen, ans: %'d %'d\n", uniqueLen, ans);
@@ -426,7 +451,7 @@ void stream_handler3(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, void callbac
 	// generate pairs
 	while ((nChunk = solve_next_bin(valueLengthsHost, start, ctx.bandwidth2, offsetLen)) > 0) {
 		int chunkLen = gen_pairs(valueInOut.ptr, inputOffsetsPtr, valueLengthsPtr,
-		                         pairOutput, lesserIndex, lowerbound, carry, nChunk, seq1,seqLen);
+		                         pairOutput, lesserIndex, lowerbound, carry, nChunk, seq1, seqLen);
 		print_bandwidth(chunkLen, ctx.bandwidth2, "3b");
 		callback(pairOutput, chunkLen);
 		cudaMalloc(&histogram, sizeof(int)*ctx.histogramSize);	gpuerr();
