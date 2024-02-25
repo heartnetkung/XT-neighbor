@@ -133,13 +133,28 @@ int postprocessing(Int3* seq, Int2* input, int distance,
 	double_flag(uniquePairs, uniqueDistances, flags, pairOutput,
 	            distanceOutput, buffer, uniqueLen);
 
-	print_char_arr(uniqueDistances,100);
-	print_char_arr(flags,100);
-	print_int2_arr(uniquePairs,100);
+	pair_print(flags, uniqueDistances, uniquePairs, seq, seqLen);
 	_cudaFree(uniquePairs, uniqueDistances, flags);
 	int ans = transfer_last_element(buffer, 1);
 	printf("uniqueLen, ans: %'d %'d\n", uniqueLen, ans);
 	return ans;
+}
+
+void pair_print(char* flags, char* distances, Int2* pairs, Int3* seqs, int seqLen) {
+	char* flags2 = device_to_host(flags, 100);
+	char* distances2 = device_to_host(distances, 100);
+	Int2* pairs2 = device_to_host(pairs, 100);
+	Int3* seqs2 = device_to_host(seqs, seqLen);
+
+	for (int i = 0; i < 100; i++) {
+		int x = pairs2[i].x;
+		int y = pairs2[i].y;
+		printf("== %d %d (%d %d) %s %s \n", flags2[i], distances2[i], x, y, seqs2[x] , seqs2[y]);
+	}
+	cudaFreeHost(flags2);
+	cudaFreeHost(distances2);
+	cudaFreeHost(pairs2);
+	cudaFreeHost(seqs2);
 }
 
 /**
