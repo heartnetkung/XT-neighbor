@@ -98,7 +98,8 @@ void expand_keys(Int3 seq, int distance, Int3* output, unsigned int* firstKeys, 
 */
 __global__
 void gen_combination(Int3* seqs, int* combinationOffsets, int distance,
-                     Int3* combinationKeys, int* combinationValues, unsigned int* firstKeys, int n) {
+                     Int3* combinationKeys, int* combinationValues,
+                     int carry, unsigned int* firstKeys, int n) {
 	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
 	if (tid >= n)
 		return;
@@ -106,6 +107,6 @@ void gen_combination(Int3* seqs, int* combinationOffsets, int distance,
 	int start = tid == 0 ? 0 : combinationOffsets[tid - 1];
 	int end = combinationOffsets[tid];
 
-	expand_values(tid, combinationValues, start, end);
+	expand_values(carry+tid, combinationValues, start, end);
 	expand_keys(seqs[tid], distance, combinationKeys, firstKeys, start, end);
 }

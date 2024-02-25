@@ -235,7 +235,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 	//=====================================
 
 	MemoryContext ctx1 = cal_memory_stream1(seq1Len, distance);
-	int outputLen;
+	int outputLen, carry = 0;
 
 	b0 = new GPUInputStream<Int3>(seq1Device, seq1Len, ctx1.chunkSize);
 	b1key = new D2Stream<Int3>();
@@ -246,7 +246,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 		print_bandwidth(b0Chunk.len, ctx1.bandwidth1, "1");
 
 		stream_handler1(b0Chunk, b1keyOut, b1valueOut, histograms,
-		                outputLen, distance, ctx1);
+		                outputLen, distance, carry, ctx1);
 
 		b1key->write(b1keyOut, outputLen);
 		b1value->write(b1valueOut, outputLen);

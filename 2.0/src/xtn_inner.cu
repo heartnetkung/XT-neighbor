@@ -381,7 +381,8 @@ void pair_print4(Int3* seqs, int* values, int n) {
  * handle all GPU operations in stream 1
 */
 void stream_handler1(Chunk<Int3> input, Int3* &deletionsOutput, int* &indexOutput,
-                     std::vector<int*> &histogramOutput, int &outputLen, int distance, MemoryContext ctx) {
+                     std::vector<int*> &histogramOutput, int &outputLen,
+                     int distance, int &carry, MemoryContext ctx) {
 	int *combinationOffsets;
 	unsigned int *histogramValue;
 	int* histogram;
@@ -398,8 +399,9 @@ void stream_handler1(Chunk<Int3> input, Int3* &deletionsOutput, int* &indexOutpu
 	cudaMalloc(&indexOutput, sizeof(int)*outputLen); gpuerr();
 	cudaMalloc(&histogramValue, sizeof(unsigned int)*outputLen); gpuerr();
 	gen_combination <<< NUM_BLOCK(input.len), NUM_THREADS >>> (
-	    input.ptr, combinationOffsets, distance,
-	    deletionsOutput, indexOutput, histogramValue, input.len); gpuerr();
+	    input.ptr, combinationOffsets, distance, deletionsOutput,
+	    indexOutput, carry, histogramValue, input.len); gpuerr();
+	carry += input.len;
 	_cudaFree(combinationOffsets);
 
 	// generate histogram
