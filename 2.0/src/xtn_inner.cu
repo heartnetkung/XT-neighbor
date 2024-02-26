@@ -125,7 +125,7 @@ int postprocessing(Int3* seq, Int2* input, int distance, char measure,
 	size_t byteRequirement = sizeof(char) * uniqueLen;
 	cudaMalloc(&flags, byteRequirement); gpuerr();
 	cudaMalloc(&uniqueDistances, byteRequirement); gpuerr();
-	cal_levenshtein <<< NUM_BLOCK(uniqueLen), NUM_THREADS>>>(
+	cal_distance <<< NUM_BLOCK(uniqueLen), NUM_THREADS>>>(
 	    seq, uniquePairs, distance, measure, uniqueDistances,
 	    flags, uniqueLen, seqLen); gpuerr();
 

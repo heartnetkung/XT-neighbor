@@ -182,11 +182,8 @@ void generate_smaller_index(int* indexes, int* outputs, int* inputOffsets,
  * @param x2 second string
 */
 __device__
-char levenshtein(Int3 x1, Int3 x2, char measure) {
+char levenshtein(Int3 x1, Int3 x2) {
 	char s1len = (char)len_decode(x1), s2len = (char)len_decode(x2);
-	if ((measure == HAMMING) && (s1len != s2len))
-		return 77;
-
 	char x, y, lastdiag, olddiag;
 	char s1[MAX_INPUT_LENGTH];
 	char s2[MAX_INPUT_LENGTH];
@@ -219,18 +216,40 @@ char levenshtein(Int3 x1, Int3 x2, char measure) {
 }
 
 /**
- * calculate Levenshtein distances of strings from given pairs and flag ones exceeding the threshold.
+ * calculate Hamming distance of 2 strings in GPU.
+ * @param x1 first string
+ * @param x2 second string
+*/
+__device__
+char hamming(Int3 x1, Int3 x2) {
+	char s1len = (char)len_decode(x1), s2len = (char)len_decode(x2);
+	if (s1len != s2len)
+		return 77;
+
+	char ans = 0;
+	for (int i = 0; i < s1len; i++) {
+		char c1 = (x1.entry[i / 6] >> (27 - 5 * (i % 6))) & 0x1F;
+		char c2 = (x2.entry[i / 6] >> (27 - 5 * (i % 6))) & 0x1F;
+		if (c1 != c2)
+			ans++;
+	}
+	return ans;
+}
+
+/**
+ * calculate distances of strings from given pairs and flag ones exceeding the threshold.
  *
  * @param seq sequence input
  * @param index pairs of sequence to calculate
- * @param distance Levenshtein distance threshold
+ * @param distance Levenshtein/Hamming distance threshold
+ * @param measure enum representing Levenshtein/Hamming
  * @param distanceOutput output distance
  * @param flagOutput array output flag
  * @param n array length of index
  * @param seqLen array length of seq
 */
 __global__
-void cal_levenshtein(Int3* seq, Int2* index, int distance, char measure,
+void cal_distance(Int3* seq, Int2* index, int distance, char measure,
                      char* distanceOutput, char* flagOutput, int n, int seqLen) {
 	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
 	if (tid >= n)
@@ -250,7 +269,9 @@ void cal_levenshtein(Int3* seq, Int2* index, int distance, char measure,
 		return;
 	}
 
-	char newOutput = levenshtein(seq[indexPair.x], seq[indexPair.y], measure);
+	char newOutput = measure == LEVENSHTEIN ?
+	                 levenshtein(seq[indexPair.x], seq[indexPair.y]) :
+	                 hamming(seq[indexPair.x], seq[indexPair.y]);
 	distanceOutput[tid] = newOutput;
 	flagOutput[tid] =  newOutput <= distance;
 }
