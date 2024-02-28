@@ -24,7 +24,8 @@ int print_err_line(const char* str, int line) {
 float startTime = 0;
 
 void clock_start() {
-	startTime = (float)clock() / CLOCKS_PER_SEC;
+	if (verboseGlobal)
+		startTime = (float)clock() / CLOCKS_PER_SEC;
 }
 
 void print_args(XTNArgs args) {
