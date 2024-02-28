@@ -15,6 +15,12 @@ int print_err(const char* str) {
 	return ERROR;
 }
 
+int print_err_line(const char* str, int line) {
+	fprintf(stderr, "Error: %s\n", str);
+	fprintf(stderr, "Error line: %d\n", line);
+	return ERROR;
+}
+
 float startTime = 0;
 
 void clock_start() {
@@ -25,10 +31,13 @@ void print_args(XTNArgs args) {
 	printf("XTNArgs{\n");
 	printf("\tdistance: %d\n", args.distance);
 	printf("\tverbose: %d\n", args.verbose);
+	printf("\textendedBuffer: %d\n", args.extendedBuffer);
 	printf("\tseq1Len: %'d\n", args.seq1Len);
 	printf("\tseq1Path: \"%s\"\n", args.seq1Path);
 	printf("\toutputPath: \"%s\"\n", args.outputPath);
 	printf("\tmeasure: \"%s\"\n", (args.measure == LEVENSHTEIN) ? "leven" : "hamming");
+	printf("\tinfoPath: \"%s\"\n", args.infoPath);
+	printf("\tinfoLen: %'d\n", args.infoLen);
 	printf("}\n");
 }
 
