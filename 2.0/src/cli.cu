@@ -121,7 +121,7 @@ int parse_input(char* path, Int3* seqOut, int* freqOut, int len, bool doubleCol)
 				return print_err_line("parsing error (comma expected)", lineNumber);
 			}
 
-			long int temp = strtol(line2);
+			long int temp = strtol(line2, NULL, 10);
 			if (temp == 0 || temp > INT_MAX || temp < INT_MIN) {
 				fclose(file);
 				return print_err_line("parsing error (invalid number)", lineNumber);
@@ -157,7 +157,7 @@ int parse_info(char* path, int* result, int len) {
 		if (strcmp(line, "\n") == 0 || strcmp(line, " \n") == 0)
 			continue;
 
-		long int temp = strtol(line);
+		long int temp = strtol(line, NULL, 10);
 		if (temp == 0 || temp > INT_MAX || temp < INT_MIN) {
 			fclose(file);
 			return print_err_line("parsing error (invalid number)", lineNumber);
@@ -229,14 +229,14 @@ int main(int argc, char **argv) {
 
 	// 2. read input
 	bool overlapMode = args.infoPath != NULL;
+	cudaMallocHost(&seq1, sizeof(Int3) * args.seq1Len); gpuerr();
 	if (overlapMode) {
 		cudaMallocHost(&repSizes, sizeof(int) * args.infoLen); gpuerr();
+		cudaMallocHost(&seqFreq, sizeof(int) * args.seq1Len); gpuerr();
 		returnCode = parse_info(args.infoPath, repSizes, args.infoLen);
 		if (returnCode != SUCCESS)
 			return free_all(seq1, seqFreq, repSizes, returnCode);
-		cudaMallocHost(&seqFreq, sizeof(int) * args.seq1Len); gpuerr();
 	}
-	cudaMallocHost(&seq1, sizeof(Int3) * args.seq1Len); gpuerr();
 	returnCode = parse_input(args.seq1Path, seq1, seqFreq, args.seq1Len, overlapMode);
 	if (returnCode != SUCCESS)
 		return free_all(seq1, seqFreq, repSizes, returnCode);
