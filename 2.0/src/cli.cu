@@ -131,8 +131,10 @@ int parse_input(char* path, Int3* seqOut, int* freqOut, int len, bool doubleCol)
 	}
 
 	fclose(file);
-	if (inputCount != len)
+	if (inputCount != len) {
+		printf("ab %d %d", inputCount, len);
 		return print_err("input length doesn't match with the actual");
+	}
 
 	return SUCCESS;
 }
