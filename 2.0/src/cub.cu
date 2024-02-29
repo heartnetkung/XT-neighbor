@@ -115,7 +115,7 @@ void unique(Int2* input, Int2* output, int* outputLen, int n) {
 template <typename T1>
 void flag(T1* input1, char* flags, T1* output1, int* outputLen, int n) {
 	void *buffer = NULL;
-	size_t bufferSize = 0, bufferSize2 = 0;
+	size_t bufferSize = 0;
 	cub::DeviceSelect::Flagged(buffer, bufferSize, input1, flags, output1, outputLen, n); gpuerr();
 	cudaMalloc(&buffer, bufferSize); gpuerr(); /*~2% memory*/
 	cub::DeviceSelect::Flagged(buffer, bufferSize, input1, flags, output1, outputLen, n); gpuerr();
