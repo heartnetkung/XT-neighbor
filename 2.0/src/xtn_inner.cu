@@ -445,7 +445,7 @@ void stream_handler4_overlap(Chunk<Int2> pairInput, XTNOutput &output, Int3* seq
 	    flags, uniqueLen, seq1Len); gpuerr();
 	flag(uniquePairs, flags, pairOut, buffer, uniqueLen);
 	int pairOutLen = transfer_last_element(buffer, 1);
-	cudaFree(flags); gpuerr();
+	_cudaFree(flags, uniquePairs);
 
 	// concat
 	int pairOutConcatLen = pairOutLen + output.len;
@@ -467,7 +467,7 @@ void stream_handler4_overlap(Chunk<Int2> pairInput, XTNOutput &output, Int3* seq
 	sum_by_key(pairOut, pairOut2, freqOut, freqOut2, buffer, pairOutConcatLen);
 
 	//finish up
-	_cudaFree(output.indexPairs, output.pairwiseFrequencies, uniquePairs, freqOut, pairOut);
+	_cudaFree(output.indexPairs, output.pairwiseFrequencies, freqOut, pairOut);
 	output.indexPairs = pairOut2;
 	output.pairwiseFrequencies = freqOut2;
 	output.len = transfer_last_element(buffer, 1);
