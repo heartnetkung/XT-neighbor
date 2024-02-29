@@ -17,7 +17,7 @@ const int MAX_PROCESSING = 1 << 30;
 //=====================================
 
 /**
- * private function
+ * private function.
 */
 MemoryContext initMemory(int seq1Len, bool isGPU) {
 	MemoryContext ans;
@@ -35,7 +35,7 @@ MemoryContext initMemory(int seq1Len, bool isGPU) {
 
 // black magic way to calculate floor(log2(n))
 /**
- * private function
+ * private function.
 */
 int cal_max_exponent(size_t input) {
 	size_t input2 = input;
@@ -205,15 +205,17 @@ int** set_d2_offsets(std::vector<int*> histograms, D2Stream<T1> *s1, D2Stream<T2
  * @param seq1 sequence input
  * @param callback function to be invoked once a chunk of output is ready
 */
-void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
+void xtn_perform(XTNArgs args, Int3* seq1, int* seqFreqHost,
+                 int* repSizesHost, void callback(XTNOutput)) {
 	clock_start();
 
-	int* deviceInt, *lowerbounds;
+	int* deviceInt, *lowerbounds, *seqFreq = NULL, *repSizes = NULL;
 	Int3* seq1Device;
 	std::vector<int*> histograms;
 	int** offsets;
 	int lowerboundsLen;
 	int distance = args.distance, seq1Len = args.seq1Len;
+	bool overlapMode = args.infoPath != NULL;
 
 	GPUInputStream<Int3> *b0;
 	D2Stream<Int3> *b1key;
@@ -294,10 +296,17 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 	//=====================================
 
 	size_t totalLen3B = 0;
+	XTNOutput finalOutput;
 	lowerboundsLen = cal_lowerbounds(histograms, lowerbounds, seq1Len, deviceInt);
 	histograms.clear();
 	if (verboseGlobal)
 		print_int_arr(lowerbounds, lowerboundsLen);
+
+	if (overlapMode) {
+		seqFreq = host_to_device(seqFreqHost, args.seq1Len);
+		repSizes = host_to_device(repSizesHost, args.infoLen);
+		inclusive_sum(repSizes, args.infoLen); gpuerr();
+	}
 
 	for (int i = 0; i < lowerboundsLen; i++) {
 		int lowerbound = lowerbounds[i];
@@ -343,22 +352,40 @@ void xtn_perform(XTNArgs args, Int3* seq1, void callback(XTNOutput)) {
 		offsetLen = histograms.size();
 		offsets = set_d2_offsets(histograms, b3, dummy, deviceInt, ctx4);
 		histograms.clear();
-		XTNOutput finalOutput;
 		print_v("4A");
 
 		while ((b3Chunk = b3->read()).not_null()) {
 			print_bandwidth(b3Chunk.len, ctx4.bandwidth1, "4");
-			stream_handler4(b3Chunk, finalOutput, seq1Device, seq1Len,
-			                distance, args.measure, deviceInt);
+
+			if (overlapMode)
+				stream_handler4_overlap(b3Chunk, finalOutput, seq1Device,
+				                        seqFreq, repSizes, args.infoLen,
+				                        seq1Len, distance, args.measure, deviceInt);
+			else {
+				stream_handler4_nn(b3Chunk, finalOutput, seq1Device, seq1Len,
+				                   distance, args.measure, deviceInt);
+				callback(finalOutput);
+				_cudaFreeHost(finalOutput.indexPairs, finalOutput.pairwiseDistances);
+			}
+
 			totalLen4 += finalOutput.len;
-			callback(finalOutput);
-			_cudaFreeHost(finalOutput.indexPairs, finalOutput.pairwiseDistances);
 			print_v("4B");
 		}
 
 		b3->deconstruct();
 		_cudaFreeHost2D(offsets, offsetLen);
 		print_tl("4", totalLen4);
+	}
+
+	if (overlapMode) {
+		int* indexPairs = device_to_host(finalOutput.indexPairs);
+		size_t* pairwiseFrequencies = device_to_host(finalOutput.pairwiseFrequencies);
+		_cudaFree(seqFreq, repSizes, finalOutput.indexPairs,
+		          finalOutput.pairwiseFrequencies, seqFreq, repSizes);
+		finalOutput.indexPairs = indexPairs;
+		finalOutput.pairwiseFrequencies = pairwiseFrequencies;
+		callback(finalOutput);
+		_cudaFreeHost(indexPairs, pairwiseFrequencies);
 	}
 
 	//=====================================

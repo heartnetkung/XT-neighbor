@@ -9,7 +9,9 @@ const int MAX_INPUT_LENGTH = 18;
 const int MAX_DISTANCE = 2;
 /**control printing of each method*/
 int verboseGlobal = 0;
+/**enum for distant type*/
 const char LEVENSHTEIN = 0;
+/**enum for distant type*/
 const char HAMMING = 1;
 
 /**
@@ -87,6 +89,8 @@ enum ReturnCode {SUCCESS, ERROR, EXIT};
  *
  * @param args algorithm's bundled arguments
  * @param seq1 list of CDR3 sequences
+ * @param seqFreq frequency of each CDR3 sequence
+ * @param repSizes size of each repertoire
  * @param callback function to be invoked once a chunk of output is ready
 */
-void xtn_perform(XTNArgs args, Int3* seq1, void callback (XTNOutput));
+void xtn_perform(XTNArgs args, Int3* seq1, int* seqFreq, int* repSizes, void callback (XTNOutput));

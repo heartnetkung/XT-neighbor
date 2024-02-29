@@ -243,14 +243,14 @@ char hamming(Int3 x1, Int3 x2) {
  * @param index pairs of sequence to calculate
  * @param distance Levenshtein/Hamming distance threshold
  * @param measure enum representing Levenshtein/Hamming
- * @param distanceOutput output distance
+ * @param distanceOutput output distance, if null the output won't be written
  * @param flagOutput array output flag
  * @param n array length of index
  * @param seqLen array length of seq
 */
 __global__
 void cal_distance(Int3* seq, Int2* index, int distance, char measure,
-                     char* distanceOutput, char* flagOutput, int n, int seqLen) {
+                  char* distanceOutput, char* flagOutput, int n, int seqLen) {
 	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
 	if (tid >= n)
 		return;
@@ -258,21 +258,20 @@ void cal_distance(Int3* seq, Int2* index, int distance, char measure,
 	Int2 indexPair = index[tid];
 	if (indexPair.x == indexPair.y) {
 		flagOutput[tid] =  0;
-		distanceOutput[tid] = 99;
 		return;
 	}
 
 	if (indexPair.x >= seqLen || indexPair.y >= seqLen) {
 		printf("curious case! %d %d\n", indexPair.x, indexPair.y);
 		flagOutput[tid] =  0;
-		distanceOutput[tid] = 88;
 		return;
 	}
 
 	char newOutput = measure == LEVENSHTEIN ?
 	                 levenshtein(seq[indexPair.x], seq[indexPair.y]) :
 	                 hamming(seq[indexPair.x], seq[indexPair.y]);
-	distanceOutput[tid] = newOutput;
+	if (distanceOutput != NULL)
+		distanceOutput[tid] = newOutput;
 	flagOutput[tid] =  newOutput <= distance;
 }
 
@@ -378,11 +377,62 @@ void make_row_index(int* output, int n, int nRepeat) {
 		output[i] = tid;
 }
 
-
+/**
+ * utility to cast types.
+ *
+ * @param input input array
+ * @param output output array
+ * @param n number of rows
+*/
 __global__
 void toSizeT(int* input, size_t* output, int n) {
 	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
 	if (tid >= n)
 		return;
 	output[tid] = input[tid];
+}
+
+/**
+ * perform binary search with round-down return of index value when not found.
+ *
+ * @param query value to search
+ * @param db database for searching
+ * @param dbLen number of rows in db
+*/
+__device__
+void binarySearch(int query, int* db , int dbLen) {
+	int start = 0, end = dbLen;
+	while ((end - start) > 1) {
+		int currentIndex = (end - start) / 2;
+		int current = db[currentIndex];
+		if (current == query)
+			return currentIndex;
+		else if (current > query)
+			start = currentIndex + 1;
+		else
+			end = currentIndex;
+	}
+	return start;
+}
+
+/**
+ * turning pairs and frequencies from sequence format to repertoire format.
+ *
+ * @param pairs pair result from nearest neighbor search
+ * @param values returning frequency of the corresponding pair
+ * @param seqFreq frequency of each CDR3 sequence
+ * @param repSizes size of each repertoire
+ * @param repCount number of repertoires
+ * @param n number of pairs
+*/
+__global__
+void pair2rep(Int2* pairs, size_t* values, int* seqFreq,
+              int* repSizes, int repCount, int n) {
+	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
+	if (tid >= n)
+		return;
+	Int2 pair = pairs[tid];
+	values = seqFreq[pair.x] * seqFreq[pair.y];
+	pair.x = binarySearch(pair.x, repSizes, repCount);
+	pair.y = binarySearch(pair.y, repSizes, repCount);
 }

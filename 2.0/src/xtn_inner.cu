@@ -19,14 +19,14 @@ const unsigned int UINT_MIN = 0;
 //=====================================
 
 /**
- * private function
+ * private function.
 */
 int NUM_BLOCK(int len) {
 	return divide_ceil(len, NUM_THREADS);
 }
 
 /**
- * private function
+ * private function.
 */
 int cal_offsets(Int3* inputKeys, int* &inputOffsets, int* &outputLengths, int n, int* buffer) {
 	// cal inputOffsets
@@ -42,7 +42,7 @@ int cal_offsets(Int3* inputKeys, int* &inputOffsets, int* &outputLengths, int n,
 }
 
 /**
- * private function
+ * private function.
 */
 int cal_offsets_lowerbound(Int3* inputKeys, int* inputValues, int* &inputOffsets,
                            int* &outputLengths, int lowerbound, int n, int* buffer) {
@@ -61,7 +61,7 @@ int cal_offsets_lowerbound(Int3* inputKeys, int* inputValues, int* &inputOffsets
 }
 
 /**
- * private function
+ * private function.
 */
 int gen_pairs(int* input, int* inputOffsets, int* outputLengths, Int2* &output,
               int* &lesserIndex, int lowerbound, int carry, int n, int seqLen) {
@@ -85,7 +85,7 @@ int gen_pairs(int* input, int* inputOffsets, int* outputLengths, Int2* &output,
 }
 
 /**
- * private function
+ * private function.
 */
 int gen_smaller_index(int* input, int* inputOffsets, int* outputLengths,
                       int* &output, int carry, int n) {
@@ -107,21 +107,24 @@ int gen_smaller_index(int* input, int* inputOffsets, int* outputLengths,
 }
 
 /**
- * private function
+ * private function.
 */
-int postprocessing(Int3* seq, Int2* input, int distance, char measure,
+int deduplicate(Int2* input, Int2* output, int n) {
+	sort_int2(input, n);
+	cudaMalloc(&output, sizeof(Int2)*n); gpuerr();
+	unique(input, output, buffer, n);
+	return transfer_last_element(buffer, 1);
+}
+
+/**
+ * private function.
+*/
+int postprocessing(Int3* seq, Int2* uniquePairs, int distance, char measure,
                    Int2* &pairOutput, char* &distanceOutput,
-                   int n, int* buffer, int seqLen) {
-	Int2* uniquePairs;
+                   int uniqueLen, int* buffer, int seqLen) {
 	char* uniqueDistances, *flags;
 
-	// filter duplicate
-	sort_int2(input, n);
-	cudaMalloc(&uniquePairs, sizeof(Int2)*n); gpuerr();
-	unique(input, uniquePairs, buffer, n);
-
 	// cal levenshtein
-	int uniqueLen = transfer_last_element(buffer, 1);
 	size_t byteRequirement = sizeof(char) * uniqueLen;
 	cudaMalloc(&flags, byteRequirement); gpuerr();
 	cudaMalloc(&uniqueDistances, byteRequirement); gpuerr();
@@ -130,17 +133,17 @@ int postprocessing(Int3* seq, Int2* input, int distance, char measure,
 	    flags, uniqueLen, seqLen); gpuerr();
 
 	// filter levenshtein
-	cudaMalloc(&distanceOutput, byteRequirement); gpuerr();
 	cudaMalloc(&pairOutput, sizeof(Int2)*uniqueLen); gpuerr();
-	double_flag(uniquePairs, uniqueDistances, flags, pairOutput,
-	            distanceOutput, buffer, uniqueLen);
+	cudaMalloc(&distanceOutput, byteRequirement); gpuerr();
+	flag(uniquePairs, flags, pairOutput, buffer, uniqueLen);
+	flag(uniqueDistances, flags, distanceOutput, buffer, uniqueLen);
 
-	_cudaFree(uniquePairs, uniqueDistances, flags);
+	_cudaFree(uniqueDistances, flags);
 	return transfer_last_element(buffer, 1);
 }
 
 /**
- * private function
+ * private function.
 */
 void make_output(Int2* pairOut, char* distanceOut, int len, XTNOutput &output) {
 	output.indexPairs = device_to_host(pairOut, len);
@@ -149,7 +152,7 @@ void make_output(Int2* pairOut, char* distanceOut, int len, XTNOutput &output) {
 }
 
 /**
- * private function
+ * private function.
 */
 void gen_next_chunk(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut,
                     int* valueOffsets, int offsetLen, int lowerbound, int* buffer) {
@@ -164,8 +167,8 @@ void gen_next_chunk(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut,
 
 	flag_lowerbound <<< NUM_BLOCK(offsetLen), NUM_THREADS>>>(
 	    valueInOut.ptr, valueOffsets, flags, lowerbound, offsetLen); gpuerr();
-	double_flag(keyInOut.ptr, valueInOut.ptr, flags, keyOut, valueOut,
-	            buffer, valueInOut.len);
+	flag(keyInOut.ptr, flags, keyOut, buffer, keyInOut.len);
+	flag(valueInOut.ptr, flags, valueOut, buffer, valueInOut.len);
 
 	int outputLen = transfer_last_element(buffer, 1);
 	_cudaFree(flags);
@@ -173,17 +176,6 @@ void gen_next_chunk(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut,
 	keyInOut.len = outputLen;
 	valueInOut.ptr = valueOut;
 	valueInOut.len = outputLen;
-}
-
-void print_sum(int* histograms, int len2d) {
-	size_t* output;
-	cudaMalloc(&output, sizeof(size_t)*len2d); gpuerr();
-	toSizeT <<< NUM_BLOCK(len2d), NUM_THREADS>>>(histograms, output, len2d); gpuerr();
-	inclusive_sum(output, len2d);
-
-	size_t result = transfer_last_element(output, len2d);
-	printf("histogram sum: %'lu\n %'d\n", result, len2d);
-	cudaFree(output); gpuerr();
 }
 
 //=====================================
@@ -303,7 +295,7 @@ int solve_bin_packing_offsets(int* histograms, int** &offsetOutput,
 }
 
 /**
- * handle all GPU operations in stream 1
+ * handle all GPU operations in stream 1.
 */
 void stream_handler1(Chunk<Int3> input, Int3* &deletionsOutput, int* &indexOutput,
                      std::vector<int*> &histogramOutput, int &outputLen,
@@ -339,7 +331,7 @@ void stream_handler1(Chunk<Int3> input, Int3* &deletionsOutput, int* &indexOutpu
 }
 
 /**
- * handle all GPU operations in stream 2
+ * handle all GPU operations in stream 2.
 */
 void stream_handler2(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, std::vector<int*> &histogramOutput,
                      size_t &throughput2B, int distance, int seqLen, int* buffer, MemoryContext ctx) {
@@ -377,7 +369,7 @@ void stream_handler2(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, std::vector<
 }
 
 /**
- * handle all GPU operations in stream 3
+ * handle all GPU operations in stream 3.
 */
 void stream_handler3(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, void callback(Int2*, int),
                      std::vector<int*> &histogramOutput, int lowerbound, int seqLen,
@@ -418,16 +410,64 @@ void stream_handler3(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, void callbac
 }
 
 /**
- * handle all GPU operations in stream 4
+ * handle all GPU operations in stream 4 nn mode.
 */
-void stream_handler4(Chunk<Int2> pairInput, XTNOutput & output, Int3 * seq1,
-                     int seq1Len, int distance, char measure, int* buffer) {
-	Int2* pairOut;
+void stream_handler4_nn(Chunk<Int2> pairInput, XTNOutput &output, Int3* seq1,
+                        int seq1Len, int distance, char measure, int* buffer) {
+	Int2* pairOut, *uniquePairs;
 	char* distanceOut;
-	int outputLen =
-	    postprocessing(seq1, pairInput.ptr, distance, measure, pairOut, distanceOut,
-	                   pairInput.len, buffer, seq1Len);
 
+	int uniqueLen = deduplicate(pairInput.ptr, uniquePairs, pairInput.len);
+	int outputLen =
+	    postprocessing(seq1, uniquePairs, distance, measure, pairOut, distanceOut,
+	                   uniqueLen, buffer, seq1Len);
 	make_output(pairOut, distanceOut, outputLen, output);
-	_cudaFree(pairOut, distanceOut);
+	_cudaFree(uniquePairs, pairOut, distanceOut);
+}
+
+/**
+ * handle all GPU operations in stream 4 overlap mode.
+*/
+void stream_handler4_overlap(Chunk<Int2> pairInput, XTNOutput &output, Int3* seq1,
+                             int*seqFreq, int* repSizes, int repCount,
+                             int seq1Len, int distance, char measure, int* buffer) {
+	Int2* uniquePairs, *pairOut, *pairOut2;
+	char* flags;
+	size_t* freqOut, *freqOut2;
+
+	// find pairOut
+	int uniqueLen = deduplicate(pairInput.ptr, uniquePairs, pairInput.len);
+	cudaMalloc(&flags, byteRequirement); gpuerr();
+	cudaMalloc(&pairOut, sizeof(Int2) * (uniqueLen + output.len)); gpuerr();
+	cal_distance <<< NUM_BLOCK(uniqueLen), NUM_THREADS>>>(
+	    seq, uniquePairs, distance, measure, NULL,
+	    flags, uniqueLen, seqLen); gpuerr();
+	flag(uniquePairs, flags, pairOut, buffer, uniqueLen);
+	int pairOutLen = transfer_last_element(buffer, 1);
+	cudaFree(flags); gpuerr();
+
+	// concat
+	int pairOutConcatLen = pairOutLen + output.len;
+	cudaMalloc(&freqOut, sizeof(size_t) * pairOutConcatLen); gpuerr();
+	if (output.len > 0) {
+		cudaMemcpy(freqOut + pairOutLen, output.pairwiseFrequencies,
+		           sizeof(size_t)*output.len, cudaMemcpyDeviceToDevice); gpuerr();
+		cudaMemcpy(pairOut + pairOutLen, output.indexPairs,
+		           sizeof(Int2)*output.len, cudaMemcpyDeviceToDevice); gpuerr();
+	}
+
+	// calculate repertoire
+	pair2rep <<< NUM_BLOCK(pairOutLen), NUM_THREADS>>>(
+	    pairOut, freqOut, seqFreq,  repSizes,  repCount, pairOutLen); gpuerr();
+	// since i,j < repCount, (i,j) has at most repCount^2 unique pairs
+	int maxOutputLen = repCount * repCount;
+	cudaMalloc(&freqOut2, sizeof(size_t) * maxOutputLen); gpuerr();
+	cudaMalloc(&pairOut2, sizeof(Int2) * maxOutputLen); gpuerr();
+	sum_by_key(pairOut, pairOut2, freqOut, freqOut2, buffer, pairOutConcatLen);
+
+	//finish up
+	_cudaFree(output.indexPairs, output.pairwiseFrequencies, uniquePairs, freqOut, pairOut);
+	output.indexPairs = pairOut2;
+	output.pairwiseFrequencies = freqOut2;
+	output.len = transfer_last_element(buffer, 1);
 }

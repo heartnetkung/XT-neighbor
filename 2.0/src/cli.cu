@@ -253,11 +253,11 @@ int main(int argc, char **argv) {
 		outputFile = fopen(args.outputPath, "w");
 		if (outputFile == NULL)
 			return print_err("file reading failed");
-		xtn_perform(args, seq1,
+		xtn_perform(args, seq1, seqFreq, repSizes,
 		            overlapMode ? file_handler_overlap : file_handler_nn);
 		fclose(outputFile);
 	} else {
-		xtn_perform(args, seq1, null_handler);
+		xtn_perform(args, seq1, seqFreq, repSizes, null_handler);
 	}
 
 	printf("total output length: %'lu\n", totalOutputLen);

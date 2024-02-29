@@ -46,6 +46,13 @@ struct IntMax {
 	}
 };
 
+struct Sum {
+	CUB_RUNTIME_FUNCTION __forceinline__ __device__
+	int operator()(const size_t &a, const size_t &b) const {
+		return a + b;
+	}
+};
+
 template <typename T>
 void inclusive_sum(T* input, T* output, int n) {
 	void *buffer = NULL;
@@ -105,19 +112,14 @@ void unique(Int2* input, Int2* output, int* outputLen, int n) {
 	cudaFree(buffer); gpuerr();
 }
 
-template <typename T1, typename T2>
-void double_flag(T1* input1, T2* input2, char* flags, T1* output1, T2* output2, int* outputLen, int n) {
-	void *buffer = NULL, *buffer2 = NULL;
+template <typename T1>
+void flag(T1* input1, char* flags, T1* output1, int* outputLen, int n) {
+	void *buffer = NULL;
 	size_t bufferSize = 0, bufferSize2 = 0;
 	cub::DeviceSelect::Flagged(buffer, bufferSize, input1, flags, output1, outputLen, n); gpuerr();
 	cudaMalloc(&buffer, bufferSize); gpuerr(); /*~2% memory*/
 	cub::DeviceSelect::Flagged(buffer, bufferSize, input1, flags, output1, outputLen, n); gpuerr();
 	cudaFree(buffer); gpuerr();
-
-	cub::DeviceSelect::Flagged(buffer2, bufferSize2, input2, flags, output2, outputLen, n); gpuerr();
-	cudaMalloc(&buffer2, bufferSize2); gpuerr(); /*<1% memory*/
-	cub::DeviceSelect::Flagged(buffer2, bufferSize2, input2, flags, output2, outputLen, n); gpuerr();
-	cudaFree(buffer2); gpuerr();
 }
 
 template <typename T>
@@ -157,4 +159,17 @@ void max_by_key(int* keyIn, int* valueIn, int* valueOut, int* outputLen, int n) 
 	cub::DeviceReduce::ReduceByKey(buffer, bufferSize, keyIn,
 	                               dummy, valueIn, valueOut, outputLen, op, n); gpuerr();
 	_cudaFree(buffer, dummy); gpuerr();
+}
+
+void sum_by_key(Int2* keyIn, Int2* keyOut, size_t* valueIn, size_t valueOut, int* outputLen, int n) {
+	void *buffer = NULL;
+	size_t bufferSize = 0;
+	Sum op;
+
+	cub::DeviceReduce::ReduceByKey(buffer, bufferSize, keyIn,
+	                               keyOut, valueIn, valueOut, outputLen, op, n); gpuerr();
+	cudaMalloc(&buffer, bufferSize); gpuerr();
+	cub::DeviceReduce::ReduceByKey(buffer, bufferSize, keyIn,
+	                               keyOut, valueIn, valueOut, outputLen, op, n); gpuerr();
+	_cudaFree(buffer); gpuerr();
 }
