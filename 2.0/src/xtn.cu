@@ -374,7 +374,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, int* seqFreqHost,
 	}
 
 	if (overlapMode) {
-		int* indexPairs = device_to_host(finalOutput.indexPairs, finalOutput.len);
+		Int2* indexPairs = device_to_host(finalOutput.indexPairs, finalOutput.len);
 		size_t* pairwiseFreq = device_to_host(
 		                           finalOutput.pairwiseFrequencies, finalOutput.len);
 		_cudaFree(seqFreq, repSizes, finalOutput.indexPairs,

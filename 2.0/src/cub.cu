@@ -161,7 +161,7 @@ void max_by_key(int* keyIn, int* valueIn, int* valueOut, int* outputLen, int n) 
 	_cudaFree(buffer, dummy); gpuerr();
 }
 
-void sum_by_key(Int2* keyIn, Int2* keyOut, size_t* valueIn, size_t valueOut, int* outputLen, int n) {
+void sum_by_key(Int2* keyIn, Int2* keyOut, size_t* valueIn, size_t* valueOut, int* outputLen, int n) {
 	void *buffer = NULL;
 	size_t bufferSize = 0;
 	Sum op;
