@@ -242,9 +242,11 @@ int main(int argc, char **argv) {
 	returnCode = parse_input(args.seq1Path, seq1, seqFreq, args.seq1Len, overlapMode);
 	if (returnCode != SUCCESS)
 		return free_all(seq1, seqFreq, repSizes, returnCode);
-	returnCode = sum_check(repSizes, args.seq1Len, args.infoLen);
-	if (returnCode != SUCCESS)
-		return free_all(seq1, seqFreq, repSizes, returnCode);
+	if (overlapMode) {
+		returnCode = sum_check(repSizes, args.seq1Len, args.infoLen);
+		if (returnCode != SUCCESS)
+			return free_all(seq1, seqFreq, repSizes, returnCode);
+	}
 
 	// 3. perform algorithm
 	if (verboseGlobal)
