@@ -400,7 +400,7 @@ void toSizeT(int* input, size_t* output, int n) {
  * @param dbLen number of rows in db
 */
 __device__
-void binarySearch(int query, int* db , int dbLen) {
+int binarySearch(int query, int* db , int dbLen) {
 	int start = 0, end = dbLen;
 	while ((end - start) > 1) {
 		int currentIndex = (end - start) / 2;
@@ -432,7 +432,7 @@ void pair2rep(Int2* pairs, size_t* values, int* seqFreq,
 	if (tid >= n)
 		return;
 	Int2 pair = pairs[tid];
-	values = seqFreq[pair.x] * seqFreq[pair.y];
+	values[tid] = seqFreq[pair.x] * seqFreq[pair.y];
 	pair.x = binarySearch(pair.x, repSizes, repCount);
 	pair.y = binarySearch(pair.y, repSizes, repCount);
 }

@@ -109,7 +109,7 @@ int gen_smaller_index(int* input, int* inputOffsets, int* outputLengths,
 /**
  * private function.
 */
-int deduplicate(Int2* input, Int2* output, int n) {
+int deduplicate(Int2* input, Int2* output, int n, int* buffer) {
 	sort_int2(input, n);
 	cudaMalloc(&output, sizeof(Int2)*n); gpuerr();
 	unique(input, output, buffer, n);
@@ -417,7 +417,7 @@ void stream_handler4_nn(Chunk<Int2> pairInput, XTNOutput &output, Int3* seq1,
 	Int2* pairOut, *uniquePairs;
 	char* distanceOut;
 
-	int uniqueLen = deduplicate(pairInput.ptr, uniquePairs, pairInput.len);
+	int uniqueLen = deduplicate(pairInput.ptr, uniquePairs, pairInput.len, buffer);
 	int outputLen =
 	    postprocessing(seq1, uniquePairs, distance, measure, pairOut, distanceOut,
 	                   uniqueLen, buffer, seq1Len);
@@ -436,7 +436,7 @@ void stream_handler4_overlap(Chunk<Int2> pairInput, XTNOutput &output, Int3* seq
 	size_t* freqOut, *freqOut2;
 
 	// find pairOut
-	int uniqueLen = deduplicate(pairInput.ptr, uniquePairs, pairInput.len);
+	int uniqueLen = deduplicate(pairInput.ptr, uniquePairs, pairInput.len, buffer);
 	cudaMalloc(&flags, byteRequirement); gpuerr();
 	cudaMalloc(&pairOut, sizeof(Int2) * (uniqueLen + output.len)); gpuerr();
 	cal_distance <<< NUM_BLOCK(uniqueLen), NUM_THREADS>>>(

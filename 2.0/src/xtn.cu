@@ -160,8 +160,6 @@ int cal_lowerbounds(std::vector<int*> histograms, int* &lowerbounds, int seqLen,
 
 	ctx = cal_memory_lowerbound(seqLen);
 	fullHistograms = concat_histograms(histograms, ctx);
-	if (verboseGlobal)
-		print_sum(fullHistograms, histograms.size() * ctx.histogramSize);
 	outputLen = solve_bin_packing_lowerbounds(
 	                fullHistograms, lowerbounds, histograms.size(), seqLen, buffer, ctx);
 
@@ -181,8 +179,6 @@ int** set_d2_offsets(std::vector<int*> histograms, D2Stream<T1> *s1, D2Stream<T2
 
 	len = histograms.size();
 	fullHistograms = concat_histograms(histograms, ctx);
-	if (verboseGlobal)
-		print_sum(fullHistograms, len * ctx.histogramSize);
 	offsetLen = solve_bin_packing_offsets(
 	                fullHistograms, offsets, len, buffer, ctx);
 
@@ -378,14 +374,15 @@ void xtn_perform(XTNArgs args, Int3* seq1, int* seqFreqHost,
 	}
 
 	if (overlapMode) {
-		int* indexPairs = device_to_host(finalOutput.indexPairs);
-		size_t* pairwiseFrequencies = device_to_host(finalOutput.pairwiseFrequencies);
+		int* indexPairs = device_to_host(finalOutput.indexPairs, finalOutput.len);
+		size_t* pairwiseFreq = device_to_host(
+		                           finalOutput.pairwiseFrequencies, finalOutput.len);
 		_cudaFree(seqFreq, repSizes, finalOutput.indexPairs,
 		          finalOutput.pairwiseFrequencies, seqFreq, repSizes);
 		finalOutput.indexPairs = indexPairs;
-		finalOutput.pairwiseFrequencies = pairwiseFrequencies;
+		finalOutput.pairwiseFrequencies = pairwiseFreq;
 		callback(finalOutput);
-		_cudaFreeHost(indexPairs, pairwiseFrequencies);
+		_cudaFreeHost(indexPairs, pairwiseFreq);
 	}
 
 	//=====================================
