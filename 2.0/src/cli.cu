@@ -93,7 +93,7 @@ int parse_args(int argc, char **argv, XTNArgs* ans) {
 int parse_input(char* path, Int3* seqOut, int* freqOut, int len, bool doubleCol) {
 	FILE* file = fopen(path, "r");
 	if (file == NULL)
-		return print_err("file reading failed");
+		return print_err("input file reading failed");
 
 	const int BUFFER_SIZE = 50;
 	char line[BUFFER_SIZE];
@@ -145,7 +145,7 @@ int parse_input(char* path, Int3* seqOut, int* freqOut, int len, bool doubleCol)
 int parse_info(char* path, int* result, int len) {
 	FILE* file = fopen(path, "r");
 	if (file == NULL)
-		return print_err("file reading failed");
+		return print_err("info file reading failed");
 
 	const int BUFFER_SIZE = 20;
 	char line[BUFFER_SIZE];
@@ -256,7 +256,7 @@ int main(int argc, char **argv) {
 			return print_err("output file has already been allocated, possibly due to concurrency");
 		outputFile = fopen(args.outputPath, "w");
 		if (outputFile == NULL)
-			return print_err("file reading failed");
+			return print_err("output file opening failed");
 		xtn_perform(args, seq1, seqFreq, repSizes,
 		            overlapMode ? file_handler_overlap : file_handler_nn);
 		fclose(outputFile);
