@@ -97,13 +97,13 @@ MemoryContext cal_memory_stream3(int seq1Len) {
 /**
  * calculate memory constraint for stream 4 using the upper bound of the memory allocattion during the operation.
 */
-MemoryContext cal_memory_stream4(int seq1Len) {
+MemoryContext cal_memory_stream4(int seq1Len, bool overlapMode) {
 	MemoryContext ans = initMemory(seq1Len, true);
-	int multiplier =
-	    sizeof(Int2) + //Int2* uniquePairs
-	    2 * sizeof(char) + //char* uniqueDistances, *flags
-	    sizeof(Int2) + //Int2* &pairOutput
-	    sizeof(char);// char* &distanceOutput
+	int multiplier = sizeof(Int2) + //Int2* uniquePairs
+	                 2 * sizeof(char) + //char* uniqueDistances, *flags
+	                 sizeof(Int2);//Int2* &pairOutput
+	if (!overlapMode)
+		multiplier += sizeof(char); // char* &distanceOutput;
 
 	size_t temp = (8 * ans.gpuSize) / (10 * multiplier);
 	ans.bandwidth1 = (temp > MAX_PROCESSING) ? MAX_PROCESSING : temp;
@@ -341,7 +341,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, int* seqFreqHost,
 		// stream 4: postprocessing
 		//=====================================
 
-		MemoryContext ctx4 = cal_memory_stream4(seq1Len);
+		MemoryContext ctx4 = cal_memory_stream4(seq1Len, overlapMode);
 		D2Stream<int> *dummy = NULL;
 		size_t totalLen4 = 0;
 
