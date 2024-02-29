@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['not_5fnull',['not_null',['../classChunk.html#a26c7c36bd090cdb87ce3844deb00f891',1,'Chunk']]],
-  ['num_5fblock',['NUM_BLOCK',['../xtn__inner_8cu.html#a6910bcd0d7b04390b2680a0f681a8888',1,'xtn_inner.cu']]]
+  ['len_5fdecode',['len_decode',['../codec_8cu.html#a64e48571427c42183c73fc2a217ec39d',1,'codec.cu']]],
+  ['levenshtein',['levenshtein',['../kernel_8cu.html#a6e6b1eafe46948d017de5a19aa0b1d5c',1,'kernel.cu']]]
 ];

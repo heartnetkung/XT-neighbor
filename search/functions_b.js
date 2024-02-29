@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['read',['read',['../classGPUInputStream.html#a5dd180752ac54dce56b3bc91ba023a37',1,'GPUInputStream::read()'],['../classRAMSwapStream.html#a5bba4c1953c9bc4362f2664418cb6c85',1,'RAMSwapStream::read()'],['../classD2Stream.html#ab61c377b9f79bea11f158cb9d6a31287',1,'D2Stream::read()']]],
-  ['remove_5fchar',['remove_char',['../codec_8cu.html#a681c13f5f31204316905307611784ce5',1,'codec.cu']]]
+  ['operator_28_29',['operator()',['../structInt3Comparator.html#a775149420dacd4300eb87d56bb0c13af',1,'Int3Comparator::operator()()'],['../structInt2Comparator.html#a9a6e53ea34cf8d46e3a803e9fd1aba03',1,'Int2Comparator::operator()()'],['../structIntMax.html#ac9a7d70a848dd05c38a3648d00d3dd25',1,'IntMax::operator()()'],['../structSum.html#af7c1348476639b1fe13313dbbdf970f8',1,'Sum::operator()()']]],
+  ['operator_3d_3d',['operator==',['../structInt3.html#ae2f620ef91cf169388e644653e24b51f',1,'Int3::operator==()'],['../structInt2.html#ae0779973bef8eb68d5b7907859fff85d',1,'Int2::operator==()']]]
 ];

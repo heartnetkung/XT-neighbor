@@ -84,9 +84,9 @@ Functions</h2></td></tr>
 <tr class="memitem:aec7896cb1ea7c3a6a15483a74810d04e"><td class="memItemLeft" align="right" valign="top">__device__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="generate__combination_8cu.html#aec7896cb1ea7c3a6a15483a74810d04e">expand_keys</a> (<a class="el" href="structInt3.html">Int3</a> seq, int distance, <a class="el" href="structInt3.html">Int3</a> *output, unsigned int *firstKeys, int start, int end)</td></tr>
 <tr class="memdesc:aec7896cb1ea7c3a6a15483a74810d04e"><td class="mdescLeft">&#160;</td><td class="mdescRight">private method  <a href="#aec7896cb1ea7c3a6a15483a74810d04e">More...</a><br /></td></tr>
 <tr class="separator:aec7896cb1ea7c3a6a15483a74810d04e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa6009ed8913d82d58111fecbe9f353de"><td class="memItemLeft" align="right" valign="top">__global__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="generate__combination_8cu.html#aa6009ed8913d82d58111fecbe9f353de">gen_combination</a> (<a class="el" href="structInt3.html">Int3</a> *seqs, int *combinationOffsets, int distance, <a class="el" href="structInt3.html">Int3</a> *combinationKeys, int *combinationValues, unsigned int *firstKeys, int n)</td></tr>
-<tr class="memdesc:aa6009ed8913d82d58111fecbe9f353de"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate all combinations of deletion for sequences using expand primitive.  <a href="#aa6009ed8913d82d58111fecbe9f353de">More...</a><br /></td></tr>
-<tr class="separator:aa6009ed8913d82d58111fecbe9f353de"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac2688a017c9243c4e97b1aa793b3a6fc"><td class="memItemLeft" align="right" valign="top">__global__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="generate__combination_8cu.html#ac2688a017c9243c4e97b1aa793b3a6fc">gen_combination</a> (<a class="el" href="structInt3.html">Int3</a> *seqs, int *combinationOffsets, int distance, <a class="el" href="structInt3.html">Int3</a> *combinationKeys, int *combinationValues, int carry, unsigned int *firstKeys, int n)</td></tr>
+<tr class="memdesc:ac2688a017c9243c4e97b1aa793b3a6fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate all combinations of deletion for sequences using expand primitive.  <a href="#ac2688a017c9243c4e97b1aa793b3a6fc">More...</a><br /></td></tr>
+<tr class="separator:ac2688a017c9243c4e97b1aa793b3a6fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A single method which generates all possible deletions of a CDR3 string within a given Levenshtein threshold. </p>
@@ -187,8 +187,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="aa6009ed8913d82d58111fecbe9f353de"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa6009ed8913d82d58111fecbe9f353de">&#9670;&nbsp;</a></span>gen_combination()</h2>
+<a id="ac2688a017c9243c4e97b1aa793b3a6fc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac2688a017c9243c4e97b1aa793b3a6fc">&#9670;&nbsp;</a></span>gen_combination()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -222,6 +222,12 @@ Functions</h2></td></tr>
           <td></td>
           <td class="paramtype">int *&#160;</td>
           <td class="paramname"><em>combinationValues</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>carry</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>

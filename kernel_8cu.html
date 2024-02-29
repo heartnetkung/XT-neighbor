@@ -105,9 +105,12 @@ Functions</h2></td></tr>
 <tr class="memitem:a6e6b1eafe46948d017de5a19aa0b1d5c"><td class="memItemLeft" align="right" valign="top">__device__ char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#a6e6b1eafe46948d017de5a19aa0b1d5c">levenshtein</a> (<a class="el" href="structInt3.html">Int3</a> x1, <a class="el" href="structInt3.html">Int3</a> x2)</td></tr>
 <tr class="memdesc:a6e6b1eafe46948d017de5a19aa0b1d5c"><td class="mdescLeft">&#160;</td><td class="mdescRight">calculate Levenshtein distance of 2 strings in GPU.  <a href="#a6e6b1eafe46948d017de5a19aa0b1d5c">More...</a><br /></td></tr>
 <tr class="separator:a6e6b1eafe46948d017de5a19aa0b1d5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac06eb767db57c669c846aa209cd4f3fc"><td class="memItemLeft" align="right" valign="top">__global__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#ac06eb767db57c669c846aa209cd4f3fc">cal_levenshtein</a> (<a class="el" href="structInt3.html">Int3</a> *seq, <a class="el" href="structInt2.html">Int2</a> *index, int distance, char *distanceOutput, char *flagOutput, int n, int seqLen)</td></tr>
-<tr class="memdesc:ac06eb767db57c669c846aa209cd4f3fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">calculate Levenshtein distances of strings from given pairs and flag ones exceeding the threshold.  <a href="#ac06eb767db57c669c846aa209cd4f3fc">More...</a><br /></td></tr>
-<tr class="separator:ac06eb767db57c669c846aa209cd4f3fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a50d3ec5a7bc185bc22ed8a586f2d693d"><td class="memItemLeft" align="right" valign="top">__device__ char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#a50d3ec5a7bc185bc22ed8a586f2d693d">hamming</a> (<a class="el" href="structInt3.html">Int3</a> x1, <a class="el" href="structInt3.html">Int3</a> x2)</td></tr>
+<tr class="memdesc:a50d3ec5a7bc185bc22ed8a586f2d693d"><td class="mdescLeft">&#160;</td><td class="mdescRight">calculate Hamming distance of 2 strings in GPU.  <a href="#a50d3ec5a7bc185bc22ed8a586f2d693d">More...</a><br /></td></tr>
+<tr class="separator:a50d3ec5a7bc185bc22ed8a586f2d693d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6bdcdc804e6ec7ed728a3722333c6c2c"><td class="memItemLeft" align="right" valign="top">__global__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#a6bdcdc804e6ec7ed728a3722333c6c2c">cal_distance</a> (<a class="el" href="structInt3.html">Int3</a> *seq, <a class="el" href="structInt2.html">Int2</a> *index, int distance, char measure, char *distanceOutput, char *flagOutput, int n, int seqLen)</td></tr>
+<tr class="memdesc:a6bdcdc804e6ec7ed728a3722333c6c2c"><td class="mdescLeft">&#160;</td><td class="mdescRight">calculate distances of strings from given pairs and flag ones exceeding the threshold.  <a href="#a6bdcdc804e6ec7ed728a3722333c6c2c">More...</a><br /></td></tr>
+<tr class="separator:a6bdcdc804e6ec7ed728a3722333c6c2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3daeef68f78ff43ed757994ec0697171"><td class="memItemLeft" align="right" valign="top">__global__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#a3daeef68f78ff43ed757994ec0697171">gen_assignment</a> (int *matrix, int *output, int nBit, int nRow, int nColumn)</td></tr>
 <tr class="memdesc:a3daeef68f78ff43ed757994ec0697171"><td class="mdescLeft">&#160;</td><td class="mdescRight">expand operation part of solving bin packing for 2D buffer.  <a href="#a3daeef68f78ff43ed757994ec0697171">More...</a><br /></td></tr>
 <tr class="separator:a3daeef68f78ff43ed757994ec0697171"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -120,6 +123,13 @@ Functions</h2></td></tr>
 <tr class="memitem:aa6d81aea34a3d94544b9224e5d154a94"><td class="memItemLeft" align="right" valign="top">__global__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#aa6d81aea34a3d94544b9224e5d154a94">make_row_index</a> (int *output, int n, int nRepeat)</td></tr>
 <tr class="memdesc:aa6d81aea34a3d94544b9224e5d154a94"><td class="mdescLeft">&#160;</td><td class="mdescRight">utility to generate keys for matrix processing.  <a href="#aa6d81aea34a3d94544b9224e5d154a94">More...</a><br /></td></tr>
 <tr class="separator:aa6d81aea34a3d94544b9224e5d154a94"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af93300e704ea8236b4df42938a641d27"><td class="memItemLeft" align="right" valign="top">__global__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#af93300e704ea8236b4df42938a641d27">toSizeT</a> (int *input, size_t *output, int n)</td></tr>
+<tr class="memdesc:af93300e704ea8236b4df42938a641d27"><td class="mdescLeft">&#160;</td><td class="mdescRight">utility to cast types.  <a href="#af93300e704ea8236b4df42938a641d27">More...</a><br /></td></tr>
+<tr class="separator:af93300e704ea8236b4df42938a641d27"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a403be9b51b3f30a314947fda58bfa3f7"><td class="memItemLeft" align="right" valign="top">__device__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#a403be9b51b3f30a314947fda58bfa3f7">binarySearch</a> (int query, int *db, int dbLen)</td></tr>
+<tr class="separator:a403be9b51b3f30a314947fda58bfa3f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a10d48cf3a95f3da2b41821c56f79ab86"><td class="memItemLeft" align="right" valign="top">__global__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#a10d48cf3a95f3da2b41821c56f79ab86">pair2rep</a> (<a class="el" href="structInt2.html">Int2</a> *pairs, size_t *values, int *seqFreq, int *repSizes, int repCount, int n)</td></tr>
+<tr class="separator:a10d48cf3a95f3da2b41821c56f79ab86"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
@@ -165,6 +175,40 @@ Variables</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Function Documentation</h2>
+<a id="a403be9b51b3f30a314947fda58bfa3f7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a403be9b51b3f30a314947fda58bfa3f7">&#9670;&nbsp;</a></span>binarySearch()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">__device__ void binarySearch </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>query</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *&#160;</td>
+          <td class="paramname"><em>db</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>dbLen</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a93d49fad6792ec769fe2bb828157b765"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a93d49fad6792ec769fe2bb828157b765">&#9670;&nbsp;</a></span>cal_combination_len()</h2>
 
@@ -216,14 +260,14 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a id="ac06eb767db57c669c846aa209cd4f3fc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac06eb767db57c669c846aa209cd4f3fc">&#9670;&nbsp;</a></span>cal_levenshtein()</h2>
+<a id="a6bdcdc804e6ec7ed728a3722333c6c2c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6bdcdc804e6ec7ed728a3722333c6c2c">&#9670;&nbsp;</a></span>cal_distance()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">__global__ void cal_levenshtein </td>
+          <td class="memname">__global__ void cal_distance </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="structInt3.html">Int3</a> *&#160;</td>
           <td class="paramname"><em>seq</em>, </td>
@@ -239,6 +283,12 @@ Variables</h2></td></tr>
           <td></td>
           <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>distance</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char&#160;</td>
+          <td class="paramname"><em>measure</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -272,13 +322,14 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>calculate Levenshtein distances of strings from given pairs and flag ones exceeding the threshold. </p>
+<p>calculate distances of strings from given pairs and flag ones exceeding the threshold. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">seq</td><td>sequence input </td></tr>
     <tr><td class="paramname">index</td><td>pairs of sequence to calculate </td></tr>
-    <tr><td class="paramname">distance</td><td>Levenshtein distance threshold </td></tr>
-    <tr><td class="paramname">distanceOutput</td><td>output distance </td></tr>
+    <tr><td class="paramname">distance</td><td>Levenshtein/Hamming distance threshold </td></tr>
+    <tr><td class="paramname">measure</td><td>enum representing Levenshtein/Hamming </td></tr>
+    <tr><td class="paramname">distanceOutput</td><td>output distance, if null the output won't be written </td></tr>
     <tr><td class="paramname">flagOutput</td><td>array output flag </td></tr>
     <tr><td class="paramname">n</td><td>array length of index </td></tr>
     <tr><td class="paramname">seqLen</td><td>array length of seq </td></tr>
@@ -723,6 +774,43 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a id="a50d3ec5a7bc185bc22ed8a586f2d693d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a50d3ec5a7bc185bc22ed8a586f2d693d">&#9670;&nbsp;</a></span>hamming()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">__device__ char hamming </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structInt3.html">Int3</a>&#160;</td>
+          <td class="paramname"><em>x1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structInt3.html">Int3</a>&#160;</td>
+          <td class="paramname"><em>x2</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>calculate Hamming distance of 2 strings in GPU. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">x1</td><td>first string </td></tr>
+    <tr><td class="paramname">x2</td><td>second string </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="a6e6b1eafe46948d017de5a19aa0b1d5c"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a6e6b1eafe46948d017de5a19aa0b1d5c">&#9670;&nbsp;</a></span>levenshtein()</h2>
 
@@ -798,6 +886,102 @@ Variables</h2></td></tr>
     <tr><td class="paramname">output</td><td>key output with range 0 to n-1 each repeating nRepeat time </td></tr>
     <tr><td class="paramname">n</td><td>number of rows </td></tr>
     <tr><td class="paramname">nRepeat</td><td>number of columns </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a10d48cf3a95f3da2b41821c56f79ab86"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a10d48cf3a95f3da2b41821c56f79ab86">&#9670;&nbsp;</a></span>pair2rep()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">__global__ void pair2rep </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structInt2.html">Int2</a> *&#160;</td>
+          <td class="paramname"><em>pairs</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t *&#160;</td>
+          <td class="paramname"><em>values</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *&#160;</td>
+          <td class="paramname"><em>seqFreq</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *&#160;</td>
+          <td class="paramname"><em>repSizes</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>repCount</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>n</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="af93300e704ea8236b4df42938a641d27"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af93300e704ea8236b4df42938a641d27">&#9670;&nbsp;</a></span>toSizeT()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">__global__ void toSizeT </td>
+          <td>(</td>
+          <td class="paramtype">int *&#160;</td>
+          <td class="paramname"><em>input</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t *&#160;</td>
+          <td class="paramname"><em>output</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>n</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>utility to cast types. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">input</td><td>input array </td></tr>
+    <tr><td class="paramname">output</td><td>output array </td></tr>
+    <tr><td class="paramname">n</td><td>number of rows </td></tr>
   </table>
   </dd>
 </dl>

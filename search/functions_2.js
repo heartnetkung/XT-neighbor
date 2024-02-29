@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['expand_5fkeys',['expand_keys',['../generate__combination_8cu.html#aec7896cb1ea7c3a6a15483a74810d04e',1,'generate_combination.cu']]],
-  ['expand_5fvalues',['expand_values',['../generate__combination_8cu.html#aade24e3b7ae8b7feba6af0b36ed1b24b',1,'generate_combination.cu']]]
+  ['d2stream',['D2Stream',['../classD2Stream.html#a39acaca425fb1dd04d1e6d07011a6dcc',1,'D2Stream']]],
+  ['deconstruct',['deconstruct',['../classRAMSwapStream.html#a0f39d1b97f7a9df5c7f25045551117ca',1,'RAMSwapStream::deconstruct()'],['../classD2Stream.html#ac890cdfcbd134249e1150f981cbef536',1,'D2Stream::deconstruct()']]],
+  ['deduplicate',['deduplicate',['../xtn__inner_8cu.html#ab15c8e47c75e26e2ffe02fe2c0b3b7ed',1,'xtn_inner.cu']]]
 ];
