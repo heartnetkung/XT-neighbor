@@ -127,8 +127,10 @@ Functions</h2></td></tr>
 <tr class="memdesc:af93300e704ea8236b4df42938a641d27"><td class="mdescLeft">&#160;</td><td class="mdescRight">utility to cast types.  <a href="#af93300e704ea8236b4df42938a641d27">More...</a><br /></td></tr>
 <tr class="separator:af93300e704ea8236b4df42938a641d27"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a403be9b51b3f30a314947fda58bfa3f7"><td class="memItemLeft" align="right" valign="top">__device__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#a403be9b51b3f30a314947fda58bfa3f7">binarySearch</a> (int query, int *db, int dbLen)</td></tr>
+<tr class="memdesc:a403be9b51b3f30a314947fda58bfa3f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">perform binary search with round-down return of index value when not found.  <a href="#a403be9b51b3f30a314947fda58bfa3f7">More...</a><br /></td></tr>
 <tr class="separator:a403be9b51b3f30a314947fda58bfa3f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a10d48cf3a95f3da2b41821c56f79ab86"><td class="memItemLeft" align="right" valign="top">__global__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#a10d48cf3a95f3da2b41821c56f79ab86">pair2rep</a> (<a class="el" href="structInt2.html">Int2</a> *pairs, size_t *values, int *seqFreq, int *repSizes, int repCount, int n)</td></tr>
+<tr class="memdesc:a10d48cf3a95f3da2b41821c56f79ab86"><td class="mdescLeft">&#160;</td><td class="mdescRight">turning pairs and frequencies from sequence format to repertoire format.  <a href="#a10d48cf3a95f3da2b41821c56f79ab86">More...</a><br /></td></tr>
 <tr class="separator:a10d48cf3a95f3da2b41821c56f79ab86"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
@@ -206,6 +208,16 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>perform binary search with round-down return of index value when not found. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">query</td><td>value to search </td></tr>
+    <tr><td class="paramname">db</td><td>database for searching </td></tr>
+    <tr><td class="paramname">dbLen</td><td>number of rows in db </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -941,6 +953,19 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>turning pairs and frequencies from sequence format to repertoire format. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pairs</td><td>pair result from nearest neighbor search </td></tr>
+    <tr><td class="paramname">values</td><td>returning frequency of the corresponding pair </td></tr>
+    <tr><td class="paramname">seqFreq</td><td>frequency of each CDR3 sequence </td></tr>
+    <tr><td class="paramname">repSizes</td><td>size of each repertoire </td></tr>
+    <tr><td class="paramname">repCount</td><td>number of repertoires </td></tr>
+    <tr><td class="paramname">n</td><td>number of pairs </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
