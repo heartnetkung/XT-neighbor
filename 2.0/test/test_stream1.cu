@@ -5,6 +5,7 @@ TEST(Stream1, {
 	int seqLen = 4;
 	char seqs[seqLen][6] = {"CAAA", "CADA", "CAAA", "CDKD"};
 	int distance = 1;
+	int carry = 0;
 
 	//allocate inputs
 	Int3 * seq1d, *seq1h;
@@ -26,7 +27,8 @@ TEST(Stream1, {
 	int* indexOutput;
 	Int3* deletionsOutput;
 	int outputLen;
-	stream_handler1(input, deletionsOutput, indexOutput, histogramOutput, outputLen, distance, ctx);
+	stream_handler1(input, deletionsOutput, indexOutput, histogramOutput,
+	                outputLen, distance, carry, ctx);
 
 	//expactation
 	int expectedLen = 20;
