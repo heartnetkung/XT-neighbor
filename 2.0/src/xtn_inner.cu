@@ -480,37 +480,47 @@ void stream_handler4_overlap(Chunk<Int2> pairInput, XTNOutput &output, Int3* seq
 	Int2* uniquePairs, *pairOut, *pairOut2;
 	char* flags;
 	size_t* freqOut, *freqOut2;
+	printf("z1\n");
 
 	// find pairOut
 	cudaMalloc(&uniquePairs, sizeof(Int2)*pairInput.len); gpuerr();
 	int uniqueLen = deduplicate(pairInput.ptr, uniquePairs, pairInput.len, buffer);
+	printf("z2\n");
 	cudaMalloc(&flags, sizeof(char)*uniqueLen); gpuerr();
 	cudaMalloc(&pairOut, sizeof(Int2) * (uniqueLen + output.len)); gpuerr();
+	printf("z3\n");
 	cal_distance <<< NUM_BLOCK(uniqueLen), NUM_THREADS>>>(
 	    seq1, uniquePairs, distance, measure, NULL,
 	    flags, uniqueLen, seq1Len); gpuerr();
+	printf("z4\n");
 	flag(uniquePairs, flags, pairOut, buffer, uniqueLen);
+	printf("z5\n");
 	int pairOutLen = transfer_last_element(buffer, 1);
 	_cudaFree(flags, uniquePairs);
 
 	// concat
 	int pairOutConcatLen = pairOutLen + output.len;
 	cudaMalloc(&freqOut, sizeof(size_t) * pairOutConcatLen); gpuerr();
+	printf("z6\n");
 	if (output.len > 0) {
 		cudaMemcpy(freqOut + pairOutLen, output.pairwiseFrequencies,
 		           sizeof(size_t)*output.len, cudaMemcpyDeviceToDevice); gpuerr();
 		cudaMemcpy(pairOut + pairOutLen, output.indexPairs,
 		           sizeof(Int2)*output.len, cudaMemcpyDeviceToDevice); gpuerr();
 	}
+	printf("z7\n");
 
 	// calculate repertoire
 	pair2rep <<< NUM_BLOCK(pairOutLen), NUM_THREADS>>>(
 	    pairOut, freqOut, seqFreq,  repSizes,  repCount, pairOutLen); gpuerr();
+	printf("z8\n");
 	// since i,j < repCount, (i,j) has at most repCount^2 unique pairs
 	int maxOutputLen = repCount * repCount;
 	cudaMalloc(&freqOut2, sizeof(size_t) * maxOutputLen); gpuerr();
 	cudaMalloc(&pairOut2, sizeof(Int2) * maxOutputLen); gpuerr();
+	printf("z9\n");
 	sum_by_key(pairOut, pairOut2, freqOut, freqOut2, buffer, pairOutConcatLen);
+	printf("z10\n");
 
 	//finish up
 	_cudaFree(output.indexPairs, output.pairwiseFrequencies, freqOut, pairOut);
