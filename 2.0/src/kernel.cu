@@ -256,7 +256,7 @@ void cal_distance(Int3* seq, Int2* index, int distance, char measure,
 		return;
 
 	Int2 indexPair = index[tid];
-	if (indexPair.x == indexPair.y) {
+	if ((distanceOutput != NULL) && (indexPair.x == indexPair.y)) {
 		flagOutput[tid] =  0;
 		return;
 	}
