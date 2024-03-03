@@ -376,7 +376,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, int* seqFreqHost,
 		size_t* pairwiseFreq = device_to_host(
 		                           finalOutput.pairwiseFrequencies, finalOutput.len);
 		_cudaFree(seqFreq, repSizes, finalOutput.indexPairs,
-		          finalOutput.pairwiseFrequencies, seqFreq, repSizes);
+		          finalOutput.pairwiseFrequencies);
 		finalOutput.indexPairs = indexPairs;
 		finalOutput.pairwiseFrequencies = pairwiseFreq;
 		callback(finalOutput);
