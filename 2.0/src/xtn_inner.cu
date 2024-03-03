@@ -514,10 +514,8 @@ void stream_handler4_overlap(Chunk<Int2> pairInput, XTNOutput &output, Int3* seq
 	pair2rep <<< NUM_BLOCK(pairOutLen), NUM_THREADS>>>(
 	    pairOut, freqOut, seqFreq,  repSizes,  repCount, pairOutLen); gpuerr();
 	printf("z8\n");
-	// since i,j < repCount, (i,j) has at most repCount^2 unique pairs
-	int maxOutputLen = repCount * repCount;
-	cudaMalloc(&freqOut2, sizeof(size_t) * maxOutputLen); gpuerr();
-	cudaMalloc(&pairOut2, sizeof(Int2) * maxOutputLen); gpuerr();
+	cudaMalloc(&freqOut2, sizeof(size_t) * pairOutConcatLen); gpuerr();
+	cudaMalloc(&pairOut2, sizeof(Int2) * pairOutConcatLen); gpuerr();
 	printf("z9\n");
 	sum_by_key(pairOut, pairOut2, freqOut, freqOut2, buffer, pairOutConcatLen);
 	printf("z10\n");
