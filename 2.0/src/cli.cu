@@ -95,7 +95,7 @@ int parse_input(char* path, Int3* seqOut, int* freqOut, int len, bool doubleCol)
 	if (file == NULL)
 		return print_err("input file reading failed");
 
-	const int BUFFER_SIZE = 50;
+	const int BUFFER_SIZE = 500;/*header could be long*/
 	char line[BUFFER_SIZE];
 	int lineNumber = 0, inputCount = 0;
 
@@ -147,7 +147,7 @@ int parse_info(char* path, int* result, int len) {
 	if (file == NULL)
 		return print_err("info file reading failed");
 
-	const int BUFFER_SIZE = 20;
+	const int BUFFER_SIZE = 500;/*header could be long*/
 	char line[BUFFER_SIZE];
 	int lineNumber = 0, inputCount = 0;
 
