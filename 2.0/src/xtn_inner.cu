@@ -295,6 +295,15 @@ int solve_bin_packing_offsets(int* histograms, int** &offsetOutput,
 
 /**
  * handle all GPU operations in stream 1.
+ *
+ * @param input input CDR3 sequences
+ * @param deletionsOutput generated deletion forms of CDR3 sequence
+ * @param indexOutput original index of each deletion forms
+ * @param histogramOutput histogram of deletion forms
+ * @param outputLen number of output deletion forms
+ * @param distance distance threshold
+ * @param carry index offset of the chunk
+ * @param ctx memory context
 */
 void stream_handler1(Chunk<Int3> input, Int3* &deletionsOutput, int* &indexOutput,
                      std::vector<int*> &histogramOutput, int &outputLen,
@@ -331,6 +340,15 @@ void stream_handler1(Chunk<Int3> input, Int3* &deletionsOutput, int* &indexOutpu
 
 /**
  * handle all GPU operations in stream 2.
+ *
+ * @param keyInOut deletion forms of CDR3 sequence
+ * @param valueInOut index of each deletion forms
+ * @param histogramOutput histogram of indexes
+ * @param throughput2B throughput counting variable
+ * @param distance distance threshold
+ * @param seqLen number of input CDR3 sequences
+ * @param buffer integer buffer
+ * @param ctx memory context
 */
 void stream_handler2(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, std::vector<int*> &histogramOutput,
                      size_t &throughput2B, int distance, int seqLen, int* buffer, MemoryContext ctx) {
@@ -369,6 +387,15 @@ void stream_handler2(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, std::vector<
 
 /**
  * handle all GPU operations in stream 3.
+ *
+ * @param keyInOut deletion forms of CDR3 sequence
+ * @param valueInOut index of each deletion forms
+ * @param callback pair outputs
+ * @param histogramOutput histogram of generating pairs
+ * @param lowerbound bound of generating pairs
+ * @param seqLen number of input CDR3 sequences
+ * @param buffer integer buffer
+ * @param ctx memory context
 */
 void stream_handler3(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, void callback(Int2*, int),
                      std::vector<int*> &histogramOutput, int lowerbound, int seqLen,
@@ -410,6 +437,14 @@ void stream_handler3(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, void callbac
 
 /**
  * handle all GPU operations in stream 4 nn mode.
+ *
+ * @param pairInput nearest neighbor pairs
+ * @param output returning output
+ * @param seq1 input CDR3 sequences
+ * @param seq1Len number of input CDR3 sequences
+ * @param distance distance threshold
+ * @param measure type of measurement (levenshtein/hamming)
+ * @param buffer integer buffer
 */
 void stream_handler4_nn(Chunk<Int2> pairInput, XTNOutput &output, Int3* seq1,
                         int seq1Len, int distance, char measure, int* buffer) {
@@ -427,9 +462,20 @@ void stream_handler4_nn(Chunk<Int2> pairInput, XTNOutput &output, Int3* seq1,
 
 /**
  * handle all GPU operations in stream 4 overlap mode.
+ *
+ * @param pairInput nearest neighbor pairs
+ * @param output returning output
+ * @param seq1 input CDR3 sequences
+ * @param seqFreq frequency of each sequence
+ * @param repSizes size of each repertoire
+ * @param repCount number of repertoires
+ * @param seq1Len number of input CDR3 sequences
+ * @param distance distance threshold
+ * @param measure type of measurement (levenshtein/hamming)
+ * @param buffer integer buffer
 */
 void stream_handler4_overlap(Chunk<Int2> pairInput, XTNOutput &output, Int3* seq1,
-                             int*seqFreq, int* repSizes, int repCount,
+                             int* seqFreq, int* repSizes, int repCount,
                              int seq1Len, int distance, char measure, int* buffer) {
 	Int2* uniquePairs, *pairOut, *pairOut2;
 	char* flags;
