@@ -126,9 +126,9 @@ Functions</h2></td></tr>
 <tr class="memitem:af93300e704ea8236b4df42938a641d27"><td class="memItemLeft" align="right" valign="top">__global__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#af93300e704ea8236b4df42938a641d27">toSizeT</a> (int *input, size_t *output, int n)</td></tr>
 <tr class="memdesc:af93300e704ea8236b4df42938a641d27"><td class="mdescLeft">&#160;</td><td class="mdescRight">utility to cast types.  <a href="#af93300e704ea8236b4df42938a641d27">More...</a><br /></td></tr>
 <tr class="separator:af93300e704ea8236b4df42938a641d27"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a403be9b51b3f30a314947fda58bfa3f7"><td class="memItemLeft" align="right" valign="top">__device__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#a403be9b51b3f30a314947fda58bfa3f7">binarySearch</a> (int query, int *db, int dbLen)</td></tr>
-<tr class="memdesc:a403be9b51b3f30a314947fda58bfa3f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">perform binary search with round-down return of index value when not found.  <a href="#a403be9b51b3f30a314947fda58bfa3f7">More...</a><br /></td></tr>
-<tr class="separator:a403be9b51b3f30a314947fda58bfa3f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6fc8a6a33f6841f2a0f738e0fbbf2bb6"><td class="memItemLeft" align="right" valign="top">__device__ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#a6fc8a6a33f6841f2a0f738e0fbbf2bb6">binarySearch</a> (int query, int *db, int dbLen)</td></tr>
+<tr class="memdesc:a6fc8a6a33f6841f2a0f738e0fbbf2bb6"><td class="mdescLeft">&#160;</td><td class="mdescRight">perform binary search with round-down return of index value when not found.  <a href="#a6fc8a6a33f6841f2a0f738e0fbbf2bb6">More...</a><br /></td></tr>
+<tr class="separator:a6fc8a6a33f6841f2a0f738e0fbbf2bb6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a10d48cf3a95f3da2b41821c56f79ab86"><td class="memItemLeft" align="right" valign="top">__global__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#a10d48cf3a95f3da2b41821c56f79ab86">pair2rep</a> (<a class="el" href="structInt2.html">Int2</a> *pairs, size_t *values, int *seqFreq, int *repSizes, int repCount, int n)</td></tr>
 <tr class="memdesc:a10d48cf3a95f3da2b41821c56f79ab86"><td class="mdescLeft">&#160;</td><td class="mdescRight">turning pairs and frequencies from sequence format to repertoire format.  <a href="#a10d48cf3a95f3da2b41821c56f79ab86">More...</a><br /></td></tr>
 <tr class="separator:a10d48cf3a95f3da2b41821c56f79ab86"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -177,14 +177,14 @@ Variables</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="a403be9b51b3f30a314947fda58bfa3f7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a403be9b51b3f30a314947fda58bfa3f7">&#9670;&nbsp;</a></span>binarySearch()</h2>
+<a id="a6fc8a6a33f6841f2a0f738e0fbbf2bb6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6fc8a6a33f6841f2a0f738e0fbbf2bb6">&#9670;&nbsp;</a></span>binarySearch()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">__device__ void binarySearch </td>
+          <td class="memname">__device__ int binarySearch </td>
           <td>(</td>
           <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>query</em>, </td>

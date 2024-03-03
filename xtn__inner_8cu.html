@@ -96,9 +96,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a4edd46c481242d30b7312c0f845fc9b7"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xtn__inner_8cu.html#a4edd46c481242d30b7312c0f845fc9b7">gen_smaller_index</a> (int *input, int *inputOffsets, int *outputLengths, int *&amp;output, int carry, int n)</td></tr>
 <tr class="memdesc:a4edd46c481242d30b7312c0f845fc9b7"><td class="mdescLeft">&#160;</td><td class="mdescRight">private function.  <a href="#a4edd46c481242d30b7312c0f845fc9b7">More...</a><br /></td></tr>
 <tr class="separator:a4edd46c481242d30b7312c0f845fc9b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab15c8e47c75e26e2ffe02fe2c0b3b7ed"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xtn__inner_8cu.html#ab15c8e47c75e26e2ffe02fe2c0b3b7ed">deduplicate</a> (<a class="el" href="structInt2.html">Int2</a> *input, <a class="el" href="structInt2.html">Int2</a> *output, int n)</td></tr>
-<tr class="memdesc:ab15c8e47c75e26e2ffe02fe2c0b3b7ed"><td class="mdescLeft">&#160;</td><td class="mdescRight">private function.  <a href="#ab15c8e47c75e26e2ffe02fe2c0b3b7ed">More...</a><br /></td></tr>
-<tr class="separator:ab15c8e47c75e26e2ffe02fe2c0b3b7ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6f07b6eec7a5f17046895e4e9ae0b0c5"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xtn__inner_8cu.html#a6f07b6eec7a5f17046895e4e9ae0b0c5">deduplicate</a> (<a class="el" href="structInt2.html">Int2</a> *input, <a class="el" href="structInt2.html">Int2</a> *output, int n, int *buffer)</td></tr>
+<tr class="memdesc:a6f07b6eec7a5f17046895e4e9ae0b0c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">private function.  <a href="#a6f07b6eec7a5f17046895e4e9ae0b0c5">More...</a><br /></td></tr>
+<tr class="separator:a6f07b6eec7a5f17046895e4e9ae0b0c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a46cd2cf7590d47dcc12bc2305ae145fd"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xtn__inner_8cu.html#a46cd2cf7590d47dcc12bc2305ae145fd">postprocessing</a> (<a class="el" href="structInt3.html">Int3</a> *seq, <a class="el" href="structInt2.html">Int2</a> *uniquePairs, int distance, char measure, <a class="el" href="structInt2.html">Int2</a> *&amp;pairOutput, char *&amp;distanceOutput, int uniqueLen, int *buffer, int seqLen)</td></tr>
 <tr class="memdesc:a46cd2cf7590d47dcc12bc2305ae145fd"><td class="mdescLeft">&#160;</td><td class="mdescRight">private function.  <a href="#a46cd2cf7590d47dcc12bc2305ae145fd">More...</a><br /></td></tr>
 <tr class="separator:a46cd2cf7590d47dcc12bc2305ae145fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -251,8 +251,8 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a id="ab15c8e47c75e26e2ffe02fe2c0b3b7ed"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab15c8e47c75e26e2ffe02fe2c0b3b7ed">&#9670;&nbsp;</a></span>deduplicate()</h2>
+<a id="a6f07b6eec7a5f17046895e4e9ae0b0c5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6f07b6eec7a5f17046895e4e9ae0b0c5">&#9670;&nbsp;</a></span>deduplicate()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -273,7 +273,13 @@ Variables</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>n</em>&#160;</td>
+          <td class="paramname"><em>n</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *&#160;</td>
+          <td class="paramname"><em>buffer</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -838,6 +844,19 @@ Variables</h2></td></tr>
 </div><div class="memdoc">
 
 <p>handle all GPU operations in stream 1. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">input</td><td>input CDR3 sequences </td></tr>
+    <tr><td class="paramname">deletionsOutput</td><td>generated deletion forms of CDR3 sequence </td></tr>
+    <tr><td class="paramname">indexOutput</td><td>original index of each deletion forms </td></tr>
+    <tr><td class="paramname">histogramOutput</td><td>histogram of deletion forms </td></tr>
+    <tr><td class="paramname">outputLen</td><td>number of output deletion forms </td></tr>
+    <tr><td class="paramname">distance</td><td>distance threshold </td></tr>
+    <tr><td class="paramname">carry</td><td>index offset of the chunk </td></tr>
+    <tr><td class="paramname">ctx</td><td>memory context </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -904,6 +923,19 @@ Variables</h2></td></tr>
 </div><div class="memdoc">
 
 <p>handle all GPU operations in stream 2. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">keyInOut</td><td>deletion forms of CDR3 sequence </td></tr>
+    <tr><td class="paramname">valueInOut</td><td>index of each deletion forms </td></tr>
+    <tr><td class="paramname">histogramOutput</td><td>histogram of indexes </td></tr>
+    <tr><td class="paramname">throughput2B</td><td>throughput counting variable </td></tr>
+    <tr><td class="paramname">distance</td><td>distance threshold </td></tr>
+    <tr><td class="paramname">seqLen</td><td>number of input CDR3 sequences </td></tr>
+    <tr><td class="paramname">buffer</td><td>integer buffer </td></tr>
+    <tr><td class="paramname">ctx</td><td>memory context </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -970,6 +1002,19 @@ Variables</h2></td></tr>
 </div><div class="memdoc">
 
 <p>handle all GPU operations in stream 3. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">keyInOut</td><td>deletion forms of CDR3 sequence </td></tr>
+    <tr><td class="paramname">valueInOut</td><td>index of each deletion forms </td></tr>
+    <tr><td class="paramname">callback</td><td>pair outputs </td></tr>
+    <tr><td class="paramname">histogramOutput</td><td>histogram of generating pairs </td></tr>
+    <tr><td class="paramname">lowerbound</td><td>bound of generating pairs </td></tr>
+    <tr><td class="paramname">seqLen</td><td>number of input CDR3 sequences </td></tr>
+    <tr><td class="paramname">buffer</td><td>integer buffer </td></tr>
+    <tr><td class="paramname">ctx</td><td>memory context </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -1030,6 +1075,18 @@ Variables</h2></td></tr>
 </div><div class="memdoc">
 
 <p>handle all GPU operations in stream 4 nn mode. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pairInput</td><td>nearest neighbor pairs </td></tr>
+    <tr><td class="paramname">output</td><td>returning output </td></tr>
+    <tr><td class="paramname">seq1</td><td>input CDR3 sequences </td></tr>
+    <tr><td class="paramname">seq1Len</td><td>number of input CDR3 sequences </td></tr>
+    <tr><td class="paramname">distance</td><td>distance threshold </td></tr>
+    <tr><td class="paramname">measure</td><td>type of measurement (levenshtein/hamming) </td></tr>
+    <tr><td class="paramname">buffer</td><td>integer buffer </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -1108,6 +1165,21 @@ Variables</h2></td></tr>
 </div><div class="memdoc">
 
 <p>handle all GPU operations in stream 4 overlap mode. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pairInput</td><td>nearest neighbor pairs </td></tr>
+    <tr><td class="paramname">output</td><td>returning output </td></tr>
+    <tr><td class="paramname">seq1</td><td>input CDR3 sequences </td></tr>
+    <tr><td class="paramname">seqFreq</td><td>frequency of each sequence </td></tr>
+    <tr><td class="paramname">repSizes</td><td>size of each repertoire </td></tr>
+    <tr><td class="paramname">repCount</td><td>number of repertoires </td></tr>
+    <tr><td class="paramname">seq1Len</td><td>number of input CDR3 sequences </td></tr>
+    <tr><td class="paramname">distance</td><td>distance threshold </td></tr>
+    <tr><td class="paramname">measure</td><td>type of measurement (levenshtein/hamming) </td></tr>
+    <tr><td class="paramname">buffer</td><td>integer buffer </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>

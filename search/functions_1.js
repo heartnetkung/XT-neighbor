@@ -9,7 +9,7 @@ var searchData=
   ['cal_5fmemory_5fstream1',['cal_memory_stream1',['../xtn_8cu.html#a7b8e9876ad20023d60fc73cf93ebbbb5',1,'xtn.cu']]],
   ['cal_5fmemory_5fstream2',['cal_memory_stream2',['../xtn_8cu.html#a30df2fab37e9f28a8b26a75138e4a241',1,'xtn.cu']]],
   ['cal_5fmemory_5fstream3',['cal_memory_stream3',['../xtn_8cu.html#a0f8fa0678411071716b7835956354335',1,'xtn.cu']]],
-  ['cal_5fmemory_5fstream4',['cal_memory_stream4',['../xtn_8cu.html#af7993354ff6d12127f1b2b13e976af3f',1,'xtn.cu']]],
+  ['cal_5fmemory_5fstream4',['cal_memory_stream4',['../xtn_8cu.html#a0dad298458cb2519e386f1c1fde5c9fe',1,'xtn.cu']]],
   ['cal_5foffsets',['cal_offsets',['../xtn__inner_8cu.html#a0cb1e66aca5ea0fa766da669c498fb49',1,'xtn_inner.cu']]],
   ['cal_5foffsets_5flowerbound',['cal_offsets_lowerbound',['../xtn__inner_8cu.html#afc87ec053463b54fb461a60c5db7dd0b',1,'xtn_inner.cu']]],
   ['cal_5fpair_5flen',['cal_pair_len',['../kernel_8cu.html#a31acb2edf881ea05300e9dc5a25041a3',1,'kernel.cu']]],

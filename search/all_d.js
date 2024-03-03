@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['operator_28_29',['operator()',['../structInt3Comparator.html#a775149420dacd4300eb87d56bb0c13af',1,'Int3Comparator::operator()()'],['../structInt2Comparator.html#a9a6e53ea34cf8d46e3a803e9fd1aba03',1,'Int2Comparator::operator()()'],['../structIntMax.html#ac9a7d70a848dd05c38a3648d00d3dd25',1,'IntMax::operator()()'],['../structSum.html#af7c1348476639b1fe13313dbbdf970f8',1,'Sum::operator()()']]],
-  ['operator_3d_3d',['operator==',['../structInt3.html#ae2f620ef91cf169388e644653e24b51f',1,'Int3::operator==()'],['../structInt2.html#ae0779973bef8eb68d5b7907859fff85d',1,'Int2::operator==()']]],
-  ['outputpath',['outputPath',['../structXTNArgs.html#aa29d37c6c9fcb8aa8bfb12c4adba20ea',1,'XTNArgs']]]
+  ['not_5fnull',['not_null',['../classChunk.html#a26c7c36bd090cdb87ce3844deb00f891',1,'Chunk']]],
+  ['num_5fblock',['NUM_BLOCK',['../xtn__inner_8cu.html#a6910bcd0d7b04390b2680a0f681a8888',1,'xtn_inner.cu']]],
+  ['num_5fthreads',['NUM_THREADS',['../xtn__inner_8cu.html#aff9a2523f2975f5feab7ae5b61a451b6',1,'xtn_inner.cu']]]
 ];

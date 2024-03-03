@@ -94,9 +94,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a0f8fa0678411071716b7835956354335"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structMemoryContext.html">MemoryContext</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xtn_8cu.html#a0f8fa0678411071716b7835956354335">cal_memory_stream3</a> (int seq1Len)</td></tr>
 <tr class="memdesc:a0f8fa0678411071716b7835956354335"><td class="mdescLeft">&#160;</td><td class="mdescRight">calculate memory constraint for stream 3 using the upper bound of the memory allocation during the operation.  <a href="#a0f8fa0678411071716b7835956354335">More...</a><br /></td></tr>
 <tr class="separator:a0f8fa0678411071716b7835956354335"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af7993354ff6d12127f1b2b13e976af3f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structMemoryContext.html">MemoryContext</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xtn_8cu.html#af7993354ff6d12127f1b2b13e976af3f">cal_memory_stream4</a> (int seq1Len)</td></tr>
-<tr class="memdesc:af7993354ff6d12127f1b2b13e976af3f"><td class="mdescLeft">&#160;</td><td class="mdescRight">calculate memory constraint for stream 4 using the upper bound of the memory allocattion during the operation.  <a href="#af7993354ff6d12127f1b2b13e976af3f">More...</a><br /></td></tr>
-<tr class="separator:af7993354ff6d12127f1b2b13e976af3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0dad298458cb2519e386f1c1fde5c9fe"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structMemoryContext.html">MemoryContext</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xtn_8cu.html#a0dad298458cb2519e386f1c1fde5c9fe">cal_memory_stream4</a> (int seq1Len, bool overlapMode)</td></tr>
+<tr class="memdesc:a0dad298458cb2519e386f1c1fde5c9fe"><td class="mdescLeft">&#160;</td><td class="mdescRight">calculate memory constraint for stream 4 using the upper bound of the memory allocattion during the operation.  <a href="#a0dad298458cb2519e386f1c1fde5c9fe">More...</a><br /></td></tr>
+<tr class="separator:a0dad298458cb2519e386f1c1fde5c9fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7bdf16939dbb8a0ecdd946ec80852c1c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structMemoryContext.html">MemoryContext</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xtn_8cu.html#a7bdf16939dbb8a0ecdd946ec80852c1c">cal_memory_lowerbound</a> (int seq1Len)</td></tr>
 <tr class="memdesc:a7bdf16939dbb8a0ecdd946ec80852c1c"><td class="mdescLeft">&#160;</td><td class="mdescRight">calculate RAM constraint for lower bound calculation.  <a href="#a7bdf16939dbb8a0ecdd946ec80852c1c">More...</a><br /></td></tr>
 <tr class="separator:a7bdf16939dbb8a0ecdd946ec80852c1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -279,8 +279,8 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a id="af7993354ff6d12127f1b2b13e976af3f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af7993354ff6d12127f1b2b13e976af3f">&#9670;&nbsp;</a></span>cal_memory_stream4()</h2>
+<a id="a0dad298458cb2519e386f1c1fde5c9fe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0dad298458cb2519e386f1c1fde5c9fe">&#9670;&nbsp;</a></span>cal_memory_stream4()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -289,8 +289,18 @@ Variables</h2></td></tr>
           <td class="memname"><a class="el" href="structMemoryContext.html">MemoryContext</a> cal_memory_stream4 </td>
           <td>(</td>
           <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>seq1Len</em></td><td>)</td>
+          <td class="paramname"><em>seq1Len</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>overlapMode</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">

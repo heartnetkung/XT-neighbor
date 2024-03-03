@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['uint_5fmin',['UINT_MIN',['../xtn__inner_8cu.html#a476236d2dbb7458d8c2c17e6b7bf849f',1,'xtn_inner.cu']]]
+  ['ramsize',['ramSize',['../structMemoryContext.html#a087063d834c544331237592c08d50a0d',1,'MemoryContext']]]
 ];

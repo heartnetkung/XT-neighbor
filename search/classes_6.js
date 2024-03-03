@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['sum',['Sum',['../structSum.html',1,'']]]
+  ['ramswapstream',['RAMSwapStream',['../classRAMSwapStream.html',1,'']]]
 ];

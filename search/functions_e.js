@@ -15,6 +15,6 @@ var searchData=
   ['stream_5fhandler3',['stream_handler3',['../xtn__inner_8cu.html#a0c797d489251ff552b4f19bf85aabcbf',1,'xtn_inner.cu']]],
   ['stream_5fhandler4_5fnn',['stream_handler4_nn',['../xtn__inner_8cu.html#a844ae084ce76ff5939b0032c88d3bd02',1,'xtn_inner.cu']]],
   ['stream_5fhandler4_5foverlap',['stream_handler4_overlap',['../xtn__inner_8cu.html#ab6890d3b2479000c3c9c0c2c35fe3a11',1,'xtn_inner.cu']]],
-  ['sum_5fby_5fkey',['sum_by_key',['../cub_8cu.html#ab97036d915e9734e4a07a4617fcaef68',1,'cub.cu']]],
+  ['sum_5fby_5fkey',['sum_by_key',['../cub_8cu.html#a31ed98a50d89ec5ef254d49d6246506d',1,'cub.cu']]],
   ['swap',['swap',['../classRAMSwapStream.html#ab6e5906de5291b15764f42aa3853edf7',1,'RAMSwapStream']]]
 ];

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['gpuinputstream',['GPUInputStream',['../classGPUInputStream.html',1,'']]]
+  ['d2stream',['D2Stream',['../classD2Stream.html',1,'']]]
 ];
