@@ -110,7 +110,7 @@ int parse_input(char* path, Int3* seqOut, int* freqOut, int len, bool doubleCol)
 		Int3 newInt3 = str_encode(line);
 		if (newInt3.entry[0] == 0) {
 			fclose(file);
-			return print_err_line("parsing error (only upper-cased amino acids with max length of 18 are allowed)", lineNumber);
+			return print_err_line("input parsing error (only upper-cased amino acids with max length of 18 are allowed)", lineNumber);
 		}
 		seqOut[inputCount++] = newInt3;
 
@@ -118,13 +118,13 @@ int parse_input(char* path, Int3* seqOut, int* freqOut, int len, bool doubleCol)
 			char* line2 = strchr(line, ',');
 			if (line2 == NULL) {
 				fclose(file);
-				return print_err_line("parsing error (comma expected)", lineNumber);
+				return print_err_line("input parsing error (comma expected)", lineNumber);
 			}
 
 			long int temp = strtol(line2, NULL, 10);
 			if (temp == 0 || temp > INT_MAX || temp < INT_MIN) {
 				fclose(file);
-				return print_err_line("parsing error (invalid number)", lineNumber);
+				return print_err_line("input parsing error (invalid number)", lineNumber);
 			}
 			freqOut[inputCount] = temp;
 		}
@@ -162,7 +162,7 @@ int parse_info(char* path, int* result, int len) {
 		long int temp = strtol(line, NULL, 10);
 		if (temp == 0 || temp > INT_MAX || temp < INT_MIN) {
 			fclose(file);
-			return print_err_line("parsing error (invalid number)", lineNumber);
+			return print_err_line("info parsing error (invalid number)", lineNumber);
 		}
 		result[inputCount++] = temp;
 	}
