@@ -21,7 +21,7 @@ const char HELP_TEXT[] = "xt_neighbor: perform either nearest neighbor search fo
                          "\t====================\n\t Repertoire Overlap Options\n\t====================\n"
                          "\t -i or --input-path [str] (required): path of csv input file containing exactly 2 columns: CDR3 amino acid sequences and their frequency. Note that the sequences are assumed to be unique\n"
                          "\t -n or --input-length [number] (required): number of sequences given in the input file\n"
-                         "\t -r or --info-path [str] (required): path of csv input file containing exactly 1 column: repertoire sizes. Note that the order of input sequence must be sorted according to this repertoire info\n"
+                         "\t -I or --info-path [str] (required): path of csv input file containing exactly 1 column: repertoire sizes. Note that the order of input sequence must be sorted according to this repertoire info\n"
                          "\t -N or --info-length [number] (required): number of repertoires given in the info file\n"
                          ;
 
@@ -43,9 +43,9 @@ int parse_args(int argc, char **argv, XTNArgs* ans) {
 			ans->verbose = 1;
 		else if (strcmp(current, "-x") == 0 || strcmp(current, "--extended-buffer") == 0)
 			ans->extendedBuffer = 1;
-		else if (strcmp(current, "-p") == 0 || strcmp(current, "--input-path") == 0)
+		else if (strcmp(current, "-i") == 0 || strcmp(current, "--input-path") == 0)
 			ans->seq1Path = argv[++i];
-		else if (strcmp(current, "-r") == 0 || strcmp(current, "--info-path") == 0)
+		else if (strcmp(current, "-I") == 0 || strcmp(current, "--info-path") == 0)
 			ans->infoPath = argv[++i];
 		else if (strcmp(current, "-o") == 0 || strcmp(current, "--output-path") == 0)
 			ans->outputPath = argv[++i];
