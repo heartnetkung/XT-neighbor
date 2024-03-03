@@ -12,6 +12,7 @@ TEST(Stream2, {
 	std::vector<int*> histogramOutput;
 	MemoryContext ctx;
 	int* histogramOutputHost = (int*)calloc(ctx.histogramSize, sizeof(int));
+	size_t dummy=0;
 
 	cudaMalloc(&deviceInt, sizeof(int));
 	Int3* keysInt3 = (Int3*)malloc(sizeof(Int3) * len);
@@ -21,7 +22,7 @@ TEST(Stream2, {
 
 	Chunk<Int3> keyInOut = {.ptr = host_to_device(keysInt3, len), .len = len};
 	Chunk<int> valueInOut = {.ptr = host_to_device(values, len), .len = len};
-	stream_handler2(keyInOut, valueInOut, histogramOutput, 0,
+	stream_handler2(keyInOut, valueInOut, histogramOutput, dummy,
 	                distance, seqLen, deviceInt, ctx);
 
 	int expectedLen = 20;
