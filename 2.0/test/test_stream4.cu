@@ -32,7 +32,7 @@ TEST(Stream4, {
 	Chunk<Int2> pairInput;
 	pairInput.ptr = pairs_d;
 	pairInput.len = pairLen;
-	stream_handler4(pairInput, output, seq1d, seqLen, distance, deviceInt);
+	stream_handler4_nn(pairInput, output, seq1d, seqLen, distance, LEVENSHTEIN, deviceInt);
 
 	//expactation
 	int expectedLen = 5;

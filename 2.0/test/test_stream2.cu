@@ -21,7 +21,7 @@ TEST(Stream2, {
 
 	Chunk<Int3> keyInOut = {.ptr = host_to_device(keysInt3, len), .len = len};
 	Chunk<int> valueInOut = {.ptr = host_to_device(values, len), .len = len};
-	stream_handler2(keyInOut, valueInOut, histogramOutput,
+	stream_handler2(keyInOut, valueInOut, histogramOutput, 0,
 	                distance, seqLen, deviceInt, ctx);
 
 	int expectedLen = 20;
