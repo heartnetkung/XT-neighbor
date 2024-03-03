@@ -120,8 +120,10 @@ int parse_input(char* path, Int3* seqOut, int* freqOut, int len, bool doubleCol)
 				fclose(file);
 				return print_err_line("input parsing error (comma expected)", lineNumber);
 			}
+			printf("aa: %s\n", line2);
 
 			long int temp = strtol(line2, NULL, 10);
+			printf("aa: %s %d\n", line2, temp);
 			if (temp == 0 || temp > INT_MAX || temp < INT_MIN) {
 				fclose(file);
 				return print_err_line("input parsing error (invalid number)", lineNumber);
