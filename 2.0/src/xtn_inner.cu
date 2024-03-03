@@ -512,7 +512,7 @@ void stream_handler4_overlap(Chunk<Int2> pairInput, XTNOutput &output, Int3* seq
 
 	// calculate repertoire
 	pair2rep <<< NUM_BLOCK(pairOutLen), NUM_THREADS>>>(
-	    pairOut, freqOut, seqFreq,  repSizes,  repCount, pairOutLen); gpuerr();
+	    pairOut, freqOut, seqFreq,  repSizes,  repCount, pairOutConcatLen); gpuerr();
 	printf("z8\n");
 	cudaMalloc(&freqOut2, sizeof(size_t) * pairOutConcatLen); gpuerr();
 	cudaMalloc(&pairOut2, sizeof(Int2) * pairOutConcatLen); gpuerr();
