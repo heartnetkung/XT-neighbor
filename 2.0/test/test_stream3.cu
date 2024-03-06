@@ -15,15 +15,10 @@ void callback(Int2* pairOut, int len) {
 	Int2* pairOut2 = device_to_host(pairOut, len);
 
 	check(len == expectedLen);
-	printf("ee %d\n", len == expectedLen);
 	for (int i = 0; i < expectedLen; i++) {
 		check(pairOut2[i].x == expectedPairs[i].x);
 		check(pairOut2[i].y == expectedPairs[i].y);
-		printf("ff %d %d\n", pairOut2[i].x == expectedPairs[i].x, pairOut2[i].y == expectedPairs[i].y);
 	}
-
-	for (int i = 0; i < len; i++)
-		printf("gg %d %d\n", pairOut2[i].x, pairOut2[i].y);
 }
 
 TEST(Stream3, {
@@ -59,15 +54,10 @@ TEST(Stream3, {
 
 	check(keyIn.len == expectedLen);
 	check(valueIn.len == expectedLen);
-	printf("aa %d %d\n", keyIn.len == expectedLen, valueIn.len == expectedLen);
 	for (int i = 0; i < expectedLen; i++) {
 		check(expectedValue[i] == valueOut[i]);
-		printf("bb %d\n", expectedValue[i] == valueOut[i]);
 		checkstr(expectedKey[i], str_decode(keyOut[i]));
-		printf("dd %s %s\n", expectedKey[i], str_decode(keyOut[i]));
 	}
-	for (int i = 0; i < ctx.histogramSize; i++) {
+	for (int i = 0; i < ctx.histogramSize; i++)
 		check(expectedHistogram[i] == histogramOutput2[i]);
-		printf("cc %d\n", expectedHistogram[i] == histogramOutput2[i]);
-	}
 })
