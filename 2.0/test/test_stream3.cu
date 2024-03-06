@@ -18,6 +18,9 @@ void callback(Int2* pairOut, int len) {
 		check(pairOut2[i].y == expectedPairs[i].y);
 		printf("ff %d %d\n", pairOut2[i].x == expectedPairs[i].x, pairOut2[i].y == expectedPairs[i].y);
 	}
+
+	for (int i = 0; i < len; i++)
+		printf("gg %d %d\n", pairOut2[i].x, pairOut2[i].y);
 }
 
 TEST(Stream3, {
