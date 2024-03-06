@@ -47,6 +47,8 @@ TEST(Stream4Overlap, {
 		{.x = 0, .y = 0}
 	};
 	size_t expectedDistances[] = {103};
+	output.indexPairs = device_to_host(output.indexPairs, output.len);
+	output.pairwiseFrequencies = device_to_host(output.pairwiseFrequencies, output.len);
 
 	//check
 	check(output.len == expectedLen);
