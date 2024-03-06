@@ -433,6 +433,8 @@ void pair2rep(Int2* pairs, size_t* values, int* seqFreq,
 		return;
 	Int2 pair = pairs[tid];
 	values[tid] = seqFreq[pair.x] * seqFreq[pair.y];
-	pair.x = binarySearch(pair.x, repSizes, repCount);
-	pair.y = binarySearch(pair.y, repSizes, repCount);
+	pairs[tid] = {
+		.x = binarySearch(pair.x, repSizes, repCount),
+		.y = binarySearch(pair.y, repSizes, repCount)
+	};
 }
