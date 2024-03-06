@@ -48,7 +48,7 @@ struct IntMax {
 
 struct Sum {
 	CUB_RUNTIME_FUNCTION __forceinline__ __device__
-	int operator()(const size_t &a, const size_t &b) const {
+	size_t operator()(const size_t &a, const size_t &b) const {
 		return a + b;
 	}
 };
