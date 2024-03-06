@@ -399,6 +399,9 @@ void toSizeT(int* input, size_t* output, int n) {
  * @param db database for searching
  * @param dbLen number of rows in db
 */
+#ifdef TEST_ENV
+__host__
+#endif
 __device__
 int binarySearch(int query, int* db , int dbLen) {
 	int start = 0, end = dbLen;
@@ -408,11 +411,11 @@ int binarySearch(int query, int* db , int dbLen) {
 		if (current == query)
 			return currentIndex;
 		else if (current > query)
-			start = currentIndex + 1;
-		else
 			end = currentIndex;
+		else
+			start = currentIndex + 1;
 	}
-	return start;
+	return db[start] >= query ? start : end;
 }
 
 /**
