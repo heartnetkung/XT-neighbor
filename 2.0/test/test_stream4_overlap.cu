@@ -46,7 +46,7 @@ TEST(Stream4Overlap, {
 	Int2 expectedPairs[] = {
 		{.x = 0, .y = 0}
 	};
-	char expectedDistances[] = {103};
+	size_t expectedDistances[] = {103};
 
 	//check
 	check(output.len == expectedLen);
@@ -54,6 +54,7 @@ TEST(Stream4Overlap, {
 	for (int i = 0; i < expectedLen; i++) {
 		check(expectedPairs[i].x == output.indexPairs[i].x);
 		check(expectedPairs[i].y == output.indexPairs[i].y);
-		check(expectedDistances[i] == output.pairwiseDistances[i]);
+		check(expectedDistances[i] == output.pairwiseFrequencies[i]);
 	}
+	printf("hello2\n");
 })
