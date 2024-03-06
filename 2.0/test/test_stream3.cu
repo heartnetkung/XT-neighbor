@@ -51,10 +51,14 @@ TEST(Stream3, {
 
 	check(keyIn.len == expectedLen);
 	check(valueIn.len == expectedLen);
+	printf("aa %d %d\n", keyIn.len == expectedLen, valueIn.len == expectedLen);
 	for (int i = 0; i < expectedLen; i++) {
 		check(expectedValue[i] == valueOut[i]);
+		printf("bb %d\n", expectedValue[i] == valueOut[i]);
 		checkstr(expectedKey[i], str_decode(keyOut[i]));
 	}
-	for (int i = 0; i < ctx.histogramSize; i++)
+	for (int i = 0; i < ctx.histogramSize; i++){
 		check(expectedHistogram[i] == histogramOutput2[i]);
+		printf("cc %d\n", expectedHistogram[i] == histogramOutput2[i]);
+	}
 })
