@@ -56,8 +56,9 @@ TEST(Stream3, {
 		check(expectedValue[i] == valueOut[i]);
 		printf("bb %d\n", expectedValue[i] == valueOut[i]);
 		checkstr(expectedKey[i], str_decode(keyOut[i]));
+		printf("dd %s %s\n", expectedKey[i], str_decode(keyOut[i]));
 	}
-	for (int i = 0; i < ctx.histogramSize; i++){
+	for (int i = 0; i < ctx.histogramSize; i++) {
 		check(expectedHistogram[i] == histogramOutput2[i]);
 		printf("cc %d\n", expectedHistogram[i] == histogramOutput2[i]);
 	}
