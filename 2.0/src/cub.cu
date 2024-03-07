@@ -78,6 +78,17 @@ void sort_key_values(Int3* keys, int* values, int n) {
 	cudaFree(buffer); gpuerr();
 }
 
+void sort_key_values2(Int2* keys, size_t* values, int n) {
+	void *buffer = NULL;
+	size_t bufferSize = 0;
+	Int2Comparator op;
+	cub::DeviceMergeSort::SortPairs(buffer, bufferSize, keys, values, n, op); gpuerr();
+	cudaMalloc(&buffer, bufferSize); gpuerr(); /*16x memory*/
+	cub::DeviceMergeSort::SortPairs(buffer, bufferSize, keys, values, n, op); gpuerr();
+	cudaFree(buffer); gpuerr();
+}
+
+
 void sort_int2(Int2* input, int n) {
 	void *buffer = NULL;
 	size_t bufferSize = 0;

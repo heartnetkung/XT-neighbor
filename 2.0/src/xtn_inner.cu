@@ -518,6 +518,7 @@ void stream_handler4_overlap(Chunk<Int2> pairInput, XTNOutput &output, Int3* seq
 	printf("z8\n");
 	cudaMalloc(&freqOut2, sizeof(size_t) * pairOutConcatLen); gpuerr();
 	cudaMalloc(&pairOut2, sizeof(Int2) * pairOutConcatLen); gpuerr();
+	sort_key_values2(pairOut, freqOut, pairOutConcatLen);
 	printf("z9\n");
 	sum_by_key(pairOut, pairOut2, freqOut, freqOut2, buffer, pairOutConcatLen);
 	printf("z10\n");
