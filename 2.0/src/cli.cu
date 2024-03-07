@@ -14,7 +14,6 @@ const char HELP_TEXT[] = "xt_neighbor: perform either nearest neighbor search fo
                          "\t -v or --version: print the version of the program then exit\n"
                          "\t -h or --help: print the help text of the program then exit\n"
                          "\t -V or --verbose: print extra detail as the program runs for debugging purpose\n"
-                         "\t -x or --extended-buffer: switch to the alternate buffer implementation that can be enlarged using disc memory\n"
                          "\t====================\n\t Nearest Neighbor Options\n\t====================\n"
                          "\t -i or --input-path [str] (required): path of csv input file containing exactly 1 column: CDR3 amino acid sequences\n"
                          "\t -n or --input-length [number] (required): number of rows given in the input file\n"
@@ -41,8 +40,6 @@ int parse_args(int argc, char **argv, XTNArgs* ans) {
 		}
 		else if (strcmp(current, "-V") == 0 || strcmp(current, "--verbose") == 0)
 			ans->verbose = 1;
-		else if (strcmp(current, "-x") == 0 || strcmp(current, "--extended-buffer") == 0)
-			ans->extendedBuffer = 1;
 		else if (strcmp(current, "-i") == 0 || strcmp(current, "--input-path") == 0)
 			ans->seq1Path = argv[++i];
 		else if (strcmp(current, "-I") == 0 || strcmp(current, "--info-path") == 0)

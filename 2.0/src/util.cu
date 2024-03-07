@@ -32,7 +32,6 @@ void print_args(XTNArgs args) {
 	printf("XTNArgs{\n");
 	printf("\tdistance: %d\n", args.distance);
 	printf("\tverbose: %d\n", args.verbose);
-	printf("\textendedBuffer: %d\n", args.extendedBuffer);
 	printf("\tseq1Len: %'d\n", args.seq1Len);
 	printf("\tseq1Path: \"%s\"\n", args.seq1Path);
 	printf("\toutputPath: \"%s\"\n", args.outputPath);

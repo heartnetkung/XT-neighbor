@@ -42,7 +42,6 @@ struct Int2 {
 struct XTNArgs {
 	int distance = 1;
 	int verbose = 0;
-	int extendedBuffer = 0;
 	char* seq1Path = NULL;
 	int seq1Len = 0;
 	char* outputPath = NULL;
