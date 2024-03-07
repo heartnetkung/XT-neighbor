@@ -306,6 +306,10 @@ void xtn_perform(XTNArgs args, Int3* seq1, int* seqFreqHost,
 		finalOutput.len = seq1Len;
 		init_overlap_output <<< NUM_BLOCK(seq1Len), NUM_THREADS>>>(finalOutput.indexPairs,
 		        finalOutput.pairwiseFrequencies, seqFreq, repSizes, args.infoLen, seq1Len); gpuerr();
+		printf("555\n");
+		print_int2_arr(finalOutput.indexPairs,seq1Len);
+		print_size_t_arr(finalOutput.pairwiseFrequencies,seq1Len);
+
 	}
 
 	for (int i = 0; i < lowerboundsLen; i++) {
