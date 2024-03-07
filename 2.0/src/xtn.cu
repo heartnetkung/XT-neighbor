@@ -305,7 +305,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, int* seqFreqHost,
 		cudaMalloc(&finalOutput.pairwiseFrequencies, sizeof(size_t)*seq1Len); gpuerr();
 		finalOutput.len = seq1Len;
 		init_overlap_output <<< NUM_BLOCK(seq1Len), NUM_THREADS>>>(finalOutput.indexPairs,
-		        finalOutput.pairwiseFrequencies, seqFreq, seq1Len) gpuerr();
+		        finalOutput.pairwiseFrequencies, seqFreq, seq1Len); gpuerr();
 	}
 
 	for (int i = 0; i < lowerboundsLen; i++) {
