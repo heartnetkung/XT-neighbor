@@ -130,8 +130,7 @@ public:
 			printf("%d %d\n", ptr == NULL, dataHost == NULL);
 			printf("551 %'lu %'lu\n", sizeof(T), sizeof(T)*len);
 			cudaError_t code = cudaGetLastError();
-			if (code != cudaSuccess)
-				printf("Cudaaa error at %s\n", cudaGetErrorName(code));
+			printf("Cudaaa error at %s\n", cudaGetErrorName(code));
 			cudaMemcpy(ptr, dataHost, sizeof(T)*len , cudaMemcpyHostToDevice); gpuerr();
 			printf("552\n");
 			_reading_data.pop_back();
