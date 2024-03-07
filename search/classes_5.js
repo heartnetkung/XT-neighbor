@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['memorycontext',['MemoryContext',['../structMemoryContext.html',1,'']]]
+  ['ramswapstream',['RAMSwapStream',['../classRAMSwapStream.html',1,'']]]
 ];

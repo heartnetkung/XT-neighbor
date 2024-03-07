@@ -8,6 +8,7 @@ var searchData=
   ['solve_5fnext_5fbin',['solve_next_bin',['../xtn__inner_8cu.html#a595d82476664147a0f679c110aa755fb',1,'xtn_inner.cu']]],
   ['sort_5fint2',['sort_int2',['../cub_8cu.html#adae57cf10081d0d4c8f616d47b77dba7',1,'cub.cu']]],
   ['sort_5fkey_5fvalues',['sort_key_values',['../cub_8cu.html#ad28bede403761c8b209f7be9c1e9aed4',1,'cub.cu']]],
+  ['sort_5fkey_5fvalues2',['sort_key_values2',['../cub_8cu.html#a47941c6e13e35bb6c410cf6e12f9d11f',1,'cub.cu']]],
   ['str_5fdecode',['str_decode',['../codec_8cu.html#a440fbe49ce4e067d58cf18b11f034eb3',1,'codec.cu']]],
   ['str_5fencode',['str_encode',['../codec_8cu.html#a76b7e107e712a40af79b7f31696d4b49',1,'codec.cu']]],
   ['stream_5fhandler1',['stream_handler1',['../xtn__inner_8cu.html#a204393aaec3c484980a3369a283365ed',1,'xtn_inner.cu']]],

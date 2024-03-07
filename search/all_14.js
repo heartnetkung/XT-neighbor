@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['verbose',['verbose',['../structXTNArgs.html#a4eabe515d755b9ff52d0e3beaee915bd',1,'XTNArgs']]],
-  ['verboseglobal',['verboseGlobal',['../xtn_8h.html#a7bb4d86e2c08ab4a3c08f554744ddfa7',1,'xtn.h']]]
+  ['write',['write',['../classRAMSwapStream.html#a0c3c54b6a4684be783a5b06d8bd34867',1,'RAMSwapStream::write()'],['../classD2Stream.html#aaeac1c03f27671f9b3b0c2a4ebbd6c53',1,'D2Stream::write()']]],
+  ['write_5fb3',['write_b3',['../xtn_8cu.html#a0b89cdbbdede4057aea653506643e348',1,'xtn.cu']]]
 ];

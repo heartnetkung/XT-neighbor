@@ -1,25 +1,5 @@
 var searchData=
 [
-  ['seq1len',['seq1Len',['../structXTNArgs.html#ac3d7b407558bf1ef815a52eafe764ba7',1,'XTNArgs']]],
-  ['seq1path',['seq1Path',['../structXTNArgs.html#a394d4f44fb29625ef2c9bbdb32a5fade',1,'XTNArgs']]],
-  ['set_5fd2_5foffsets',['set_d2_offsets',['../xtn_8cu.html#a6a62aecf3e02f35fed93860918198e87',1,'xtn.cu']]],
-  ['set_5fmax_5freadable_5fsize',['set_max_readable_size',['../classRAMSwapStream.html#a71c0d105cf16af093b2127de0438b6d6',1,'RAMSwapStream']]],
-  ['set_5foffsets',['set_offsets',['../classD2Stream.html#ad344d443f6bd53d12d8d187eb5cce499',1,'D2Stream']]],
-  ['solve_5fbin_5fpacking_5flowerbounds',['solve_bin_packing_lowerbounds',['../xtn__inner_8cu.html#a51fa3e433c73e45b6bf6a12ae95e5d45',1,'xtn_inner.cu']]],
-  ['solve_5fbin_5fpacking_5foffsets',['solve_bin_packing_offsets',['../xtn__inner_8cu.html#a2439e4f4c36eb921aaf923032b837e12',1,'xtn_inner.cu']]],
-  ['solve_5fnext_5fbin',['solve_next_bin',['../xtn__inner_8cu.html#a595d82476664147a0f679c110aa755fb',1,'xtn_inner.cu']]],
-  ['sort_5fint2',['sort_int2',['../cub_8cu.html#adae57cf10081d0d4c8f616d47b77dba7',1,'cub.cu']]],
-  ['sort_5fkey_5fvalues',['sort_key_values',['../cub_8cu.html#ad28bede403761c8b209f7be9c1e9aed4',1,'cub.cu']]],
-  ['str_5fdecode',['str_decode',['../codec_8cu.html#a440fbe49ce4e067d58cf18b11f034eb3',1,'codec.cu']]],
-  ['str_5fencode',['str_encode',['../codec_8cu.html#a76b7e107e712a40af79b7f31696d4b49',1,'codec.cu']]],
-  ['stream_2ecu',['stream.cu',['../stream_8cu.html',1,'']]],
-  ['stream_5fhandler1',['stream_handler1',['../xtn__inner_8cu.html#a204393aaec3c484980a3369a283365ed',1,'xtn_inner.cu']]],
-  ['stream_5fhandler2',['stream_handler2',['../xtn__inner_8cu.html#a6106aa3872c6f87041c72b4ce0db6e76',1,'xtn_inner.cu']]],
-  ['stream_5fhandler3',['stream_handler3',['../xtn__inner_8cu.html#a0c797d489251ff552b4f19bf85aabcbf',1,'xtn_inner.cu']]],
-  ['stream_5fhandler4_5fnn',['stream_handler4_nn',['../xtn__inner_8cu.html#a844ae084ce76ff5939b0032c88d3bd02',1,'xtn_inner.cu']]],
-  ['stream_5fhandler4_5foverlap',['stream_handler4_overlap',['../xtn__inner_8cu.html#ab6890d3b2479000c3c9c0c2c35fe3a11',1,'xtn_inner.cu']]],
-  ['success',['SUCCESS',['../xtn_8h.html#a5a2236a3693e3930b2c9fbe1fe7144ecac7f69f7c9e5aea9b8f54cf02870e2bf8',1,'xtn.h']]],
-  ['sum',['Sum',['../structSum.html',1,'']]],
-  ['sum_5fby_5fkey',['sum_by_key',['../cub_8cu.html#a31ed98a50d89ec5ef254d49d6246506d',1,'cub.cu']]],
-  ['swap',['swap',['../classRAMSwapStream.html#ab6e5906de5291b15764f42aa3853edf7',1,'RAMSwapStream']]]
+  ['tosizet',['toSizeT',['../kernel_8cu.html#af93300e704ea8236b4df42938a641d27',1,'kernel.cu']]],
+  ['transfer_5flast_5felement',['transfer_last_element',['../kernel_8cu.html#a31203c438395e36d5c227f410f317df1',1,'kernel.cu']]]
 ];

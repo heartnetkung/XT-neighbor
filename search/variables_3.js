@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['chunksize',['chunkSize',['../structMemoryContext.html#abfb4c07eb3a1ce4e909d0710240e6ea8',1,'MemoryContext']]]
+  ['distance',['distance',['../structXTNArgs.html#aa64d4f1a63ac76dfb4560ea662cb4f3a',1,'XTNArgs']]]
 ];

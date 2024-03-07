@@ -1,5 +1,10 @@
 var searchData=
 [
-  ['write',['write',['../classBlob.html#a4c47eda26cb5ce102512e1805e55529a',1,'Blob::write()'],['../classRAMSwapStream.html#a0c3c54b6a4684be783a5b06d8bd34867',1,'RAMSwapStream::write()'],['../classD2Stream.html#aaeac1c03f27671f9b3b0c2a4ebbd6c53',1,'D2Stream::write()']]],
-  ['write_5fb3',['write_b3',['../xtn_8cu.html#a0b89cdbbdede4057aea653506643e348',1,'xtn.cu']]]
+  ['x',['x',['../structInt2.html#aebf292cf519bf1618fe1c76ece5f03cd',1,'Int2']]],
+  ['xtn_2ecu',['xtn.cu',['../xtn_8cu.html',1,'']]],
+  ['xtn_2eh',['xtn.h',['../xtn_8h.html',1,'']]],
+  ['xtn_5finner_2ecu',['xtn_inner.cu',['../xtn__inner_8cu.html',1,'']]],
+  ['xtn_5fperform',['xtn_perform',['../xtn_8cu.html#ac85cffbb3441d48e911a1c618d71e954',1,'xtn_perform(XTNArgs args, Int3 *seq1, int *seqFreqHost, int *repSizesHost, void callback(XTNOutput)):&#160;xtn.cu'],['../xtn_8h.html#abcde9c325121ccd75ab2a76b4c400486',1,'xtn_perform(XTNArgs args, Int3 *seq1, int *seqFreq, int *repSizes, void callback(XTNOutput)):&#160;xtn.cu']]],
+  ['xtnargs',['XTNArgs',['../structXTNArgs.html',1,'']]],
+  ['xtnoutput',['XTNOutput',['../structXTNOutput.html',1,'']]]
 ];

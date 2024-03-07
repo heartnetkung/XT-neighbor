@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['_5fdata',['_data',['../classBlob.html#ade4d25baa7e772c6fcb8d68acb9fbd7b',1,'Blob']]]
+  ['a_5fchar',['A_CHAR',['../codec_8cu.html#a3219b3ead9f19ff672f17114ea9dd34a',1,'codec.cu']]]
 ];

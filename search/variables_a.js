@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['len',['len',['../classChunk.html#ae9c1ade04a1ab63ea83cb824223d6aa8',1,'Chunk::len()'],['../structXTNOutput.html#a10472cf643325ee368f654336b5d6539',1,'XTNOutput::len()']]],
-  ['levenshtein',['LEVENSHTEIN',['../xtn_8h.html#a5f2e956f2fe0e28e8b622fc96eebd25b',1,'xtn.h']]]
+  ['num_5fthreads',['NUM_THREADS',['../xtn__inner_8cu.html#aff9a2523f2975f5feab7ae5b61a451b6',1,'xtn_inner.cu']]]
 ];

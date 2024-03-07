@@ -1,6 +1,9 @@
 var searchData=
 [
-  ['indexpairs',['indexPairs',['../structXTNOutput.html#a2508876459747c44015e6f26486e1dd4',1,'XTNOutput']]],
-  ['infolen',['infoLen',['../structXTNArgs.html#ad28f9b0305e186ef27d72f595847ea54',1,'XTNArgs']]],
-  ['infopath',['infoPath',['../structXTNArgs.html#a802e2ec84d8942aa8cd8a12ba6c6004b',1,'XTNArgs']]]
+  ['max',['MAX',['../kernel_8cu.html#ad8f73cc75eda84e3c058d127609b22d3',1,'kernel.cu']]],
+  ['max_5fdistance',['MAX_DISTANCE',['../xtn_8h.html#a92f077e1a646cb3ae0b7d453ba5096ed',1,'xtn.h']]],
+  ['max_5finput_5flength',['MAX_INPUT_LENGTH',['../xtn_8h.html#a6eeac21364bb491a9483497c337ee982',1,'xtn.h']]],
+  ['max_5fprocessing',['MAX_PROCESSING',['../xtn_8cu.html#adef074dc8f10889cd373041c3505ff9f',1,'xtn.cu']]],
+  ['maxthroughputexponent',['maxThroughputExponent',['../structMemoryContext.html#a8960d670163115c9b3583871475d5ecd',1,'MemoryContext']]],
+  ['measure',['measure',['../structXTNArgs.html#a3b4cbfcf3ad2a95c8f64ec0059beb30b',1,'XTNArgs']]]
 ];

@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['distance',['distance',['../structXTNArgs.html#aa64d4f1a63ac76dfb4560ea662cb4f3a',1,'XTNArgs']]]
+  ['entry',['entry',['../structInt3.html#ab291873e871510b4893a5f3699fa2916',1,'Int3']]],
+  ['extendedbuffer',['extendedBuffer',['../structXTNArgs.html#ac8c561d32ef335ec285b84f3e1c21c39',1,'XTNArgs']]]
 ];

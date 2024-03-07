@@ -108,6 +108,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a3a0ba1cf1bcc1393843425f8f28cd9d2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xtn__inner_8cu.html#a3a0ba1cf1bcc1393843425f8f28cd9d2">gen_next_chunk</a> (<a class="el" href="classChunk.html">Chunk</a>&lt; <a class="el" href="structInt3.html">Int3</a> &gt; &amp;keyInOut, <a class="el" href="classChunk.html">Chunk</a>&lt; int &gt; &amp;valueInOut, int *valueOffsets, int offsetLen, int lowerbound, int *buffer)</td></tr>
 <tr class="memdesc:a3a0ba1cf1bcc1393843425f8f28cd9d2"><td class="mdescLeft">&#160;</td><td class="mdescRight">private function.  <a href="#a3a0ba1cf1bcc1393843425f8f28cd9d2">More...</a><br /></td></tr>
 <tr class="separator:a3a0ba1cf1bcc1393843425f8f28cd9d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8662074e9f1b496e3cdbe1eb35d331c5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xtn__inner_8cu.html#a8662074e9f1b496e3cdbe1eb35d331c5">init_overlap</a> (<a class="el" href="structXTNOutput.html">XTNOutput</a> &amp;finalOutput, int *seqFreq, int *repSizes, int seqLen, int repCount)</td></tr>
+<tr class="memdesc:a8662074e9f1b496e3cdbe1eb35d331c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">private function.  <a href="#a8662074e9f1b496e3cdbe1eb35d331c5">More...</a><br /></td></tr>
+<tr class="separator:a8662074e9f1b496e3cdbe1eb35d331c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a595d82476664147a0f679c110aa755fb"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xtn__inner_8cu.html#a595d82476664147a0f679c110aa755fb">solve_next_bin</a> (int *chunksizes, int start, int maxSize, int n)</td></tr>
 <tr class="memdesc:a595d82476664147a0f679c110aa755fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">solve bin packing on spot when precalculation is impossible.  <a href="#a595d82476664147a0f679c110aa755fb">More...</a><br /></td></tr>
 <tr class="separator:a595d82476664147a0f679c110aa755fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -460,6 +463,54 @@ Variables</h2></td></tr>
           <td></td>
           <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>n</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>private function. </p>
+
+</div>
+</div>
+<a id="a8662074e9f1b496e3cdbe1eb35d331c5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8662074e9f1b496e3cdbe1eb35d331c5">&#9670;&nbsp;</a></span>init_overlap()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void init_overlap </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structXTNOutput.html">XTNOutput</a> &amp;&#160;</td>
+          <td class="paramname"><em>finalOutput</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *&#160;</td>
+          <td class="paramname"><em>seqFreq</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *&#160;</td>
+          <td class="paramname"><em>repSizes</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>seqLen</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>repCount</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
