@@ -48,16 +48,20 @@ int cal_offsets(Int3* inputKeys, int* &inputOffsets, int* &outputLengths, int n,
 */
 int cal_offsets_lowerbound(Int3* inputKeys, int* inputValues, int* &inputOffsets,
                            int* &outputLengths, int lowerbound, int n, int* buffer) {
+	printf("1X\n");
 	// cal inputOffsets
 	cudaMalloc(&inputOffsets, sizeof(int)*n); gpuerr();
 	unique_counts(inputKeys, inputOffsets, buffer, n);
+	printf("2X\n");
 	int nUnique = transfer_last_element(buffer, 1);
 	inclusive_sum(inputOffsets, nUnique);
+	printf("3X\n");
 
 	// cal outputLengths
 	cudaMalloc(&outputLengths, sizeof(int)*nUnique); gpuerr();
 	cal_pair_len_lowerbound <<< NUM_BLOCK(nUnique), NUM_THREADS>>>(
 	    inputValues, inputOffsets, outputLengths, lowerbound, nUnique); gpuerr();
+	printf("4X\n");
 
 	return nUnique;
 }
@@ -70,16 +74,20 @@ int gen_pairs(int* input, int* inputOffsets, int* outputLengths, Int2* &output,
 	int* outputOffsets;
 
 	// cal outputOffsets
+	printf("1Y\n");
 	cudaMalloc(&outputOffsets, n * sizeof(int)); gpuerr();
 	inclusive_sum(outputLengths, outputOffsets, n);
 	int outputLen = transfer_last_element(outputOffsets, n);
+	printf("2Y\n");
 
 	//generate pairs
 	cudaMalloc(&output, sizeof(Int2)*outputLen); gpuerr();
 	cudaMalloc(&lesserIndex, sizeof(int)*outputLen); gpuerr();
 	generate_pairs <<< NUM_BLOCK(n), NUM_THREADS>>>(input, output,
 	        inputOffsets, outputOffsets, lesserIndex, lowerbound, carry, n); gpuerr();
+	printf("3Y\n");
 	sort_int2(output, outputLen);
+	printf("4Y\n");
 
 	cudaFree(outputOffsets); gpuerr();
 	//wrong?
