@@ -122,14 +122,21 @@ public:
 			if (totalLen + len > _maxReadableSize)
 				break;
 
+
+			printf("550\n");
 			T* dataHost = _reading_data.back();
+			printf("551\n");
 			cudaMemcpy(ptr, dataHost, sizeof(T)*len , cudaMemcpyHostToDevice); gpuerr();
+			printf("552\n");
 			_reading_data.pop_back();
+			printf("553\n");
 			_reading_len2.pop_back();
+			printf("554\n");
 
 			cudaFreeHost(dataHost); gpuerr();
 			ptr += len;
 			totalLen += len;
+			printf("555\n");
 		}
 
 		// when len exceed _maxReadableSize, enlarge the readable size, and faithfully read with warning
