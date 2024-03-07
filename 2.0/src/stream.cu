@@ -17,6 +17,7 @@ public:
 	bool not_null() {return ptr != NULL;}
 };
 
+
 /**
  * A stream where the data is already fit inside the GPU memory, so
  * chunking is basically just shift the pointer around.
@@ -110,13 +111,14 @@ public:
 			return ans;
 		}
 
-		int totalLen = 0;
+		int totalLen = 0, count=0;
 		T* ptr = _deviceBuffer;
 		while (true) {
 			if (_reading_data.empty())
 				break;
 
 			int len = _reading_len2.back();
+			printf("ajb %d %d %lu \n",++count,len,_reading_len2.size());
 			if (totalLen + len > _maxReadableSize)
 				break;
 
