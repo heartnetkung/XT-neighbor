@@ -443,11 +443,13 @@ void pair2rep(Int2* pairs, size_t* values, int* seqFreq,
 }
 
 __global__
-void init_overlap_output(Int2* pairOut, size_t* freqOut, int* seqFreq, int n) {
+void init_overlap_output(Int2* pairOut, size_t* freqOut, int* seqFreq,
+                         int* repSizes, int repCount, int n) {
 	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
 	if (tid >= n)
 		return;
 
-	pairOut[tid] = {.x = tid, .y = tid};
+	int rep = binarySearch(tid, repSizes, repCount);
+	pairOut[tid] = {.x = rep, .y = rep};
 	freqOut[tid] = ((size_t)seqFreq[tid]) * seqFreq[tid];
 }
