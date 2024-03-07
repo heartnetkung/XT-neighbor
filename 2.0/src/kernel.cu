@@ -256,7 +256,7 @@ void cal_distance(Int3* seq, Int2* index, int distance, char measure,
 		return;
 
 	Int2 indexPair = index[tid];
-	if ((distanceOutput != NULL) && (indexPair.x == indexPair.y)) {
+	if (indexPair.x == indexPair.y) {
 		flagOutput[tid] =  0;
 		return;
 	}
@@ -439,13 +439,24 @@ void pair2rep(Int2* pairs, size_t* values, int* seqFreq,
 	int newY = binarySearch(pair.y, repSizes, repCount);
 	pairs[tid] = {.x = newX, .y = newY};
 	if (newX == newY)
-		values[tid] = ((size_t)seqFreq[pair.x]) * seqFreq[pair.y] * 2; /*our method only*/
+		// our nearest neighbor results only contain (i,j) pairs where i<j, so J>i cases must be accounted
+		values[tid] = ((size_t)seqFreq[pair.x]) * seqFreq[pair.y] * 2;
 	else
 		values[tid] = ((size_t)seqFreq[pair.x]) * seqFreq[pair.y];
 }
 
+/**
+ * initialize
+ *
+ * @param pairs pair result from nearest neighbor search
+ * @param values returning frequency of the corresponding pair
+ * @param seqFreq frequency of each CDR3 sequence
+ * @param repSizes size of each repertoire
+ * @param repCount number of repertoires
+ * @param n number of pairs
+*/
 __global__
-void init_overlap_output(Int2* pairOut, size_t* freqOut, int* seqFreq,
+void init_diagonal_overlap_output(Int2* pairOut, size_t* freqOut, int* seqFreq,
                          int* repSizes, int repCount, int n) {
 	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
 	if (tid >= n)

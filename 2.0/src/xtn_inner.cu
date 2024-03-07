@@ -179,6 +179,18 @@ void gen_next_chunk(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut,
 	valueInOut.len = outputLen;
 }
 
+/**
+ * private function.
+*/
+void init_overlap(XTNOutput &finalOutput, int* seqFreq, int* repSizes, int seqLen, int repCount) {
+	inclusive_sum(repSizes, repCount); gpuerr();
+	cudaMalloc(&finalOutput.indexPairs, sizeof(Int2)*seqLen); gpuerr();
+	cudaMalloc(&finalOutput.pairwiseFrequencies, sizeof(size_t)*seqLen); gpuerr();
+	finalOutput.len = seqLen;
+	init_diagonal_overlap_output <<< NUM_BLOCK(seqLen), NUM_THREADS>>>(finalOutput.indexPairs,
+	        finalOutput.pairwiseFrequencies, seqFreq, repSizes, repCount, seqLen); gpuerr();
+}
+
 //=====================================
 // Public Functions
 //=====================================
@@ -498,12 +510,10 @@ void stream_handler4_overlap(Chunk<Int2> pairInput, XTNOutput &output, Int3* seq
 	// concat
 	int pairOutConcatLen = pairOutLen + output.len;
 	cudaMalloc(&freqOut, sizeof(size_t) * pairOutConcatLen); gpuerr();
-	if (output.len > 0) {
-		cudaMemcpy(freqOut + pairOutLen, output.pairwiseFrequencies,
-		           sizeof(size_t)*output.len, cudaMemcpyDeviceToDevice); gpuerr();
-		cudaMemcpy(pairOut + pairOutLen, output.indexPairs,
-		           sizeof(Int2)*output.len, cudaMemcpyDeviceToDevice); gpuerr();
-	}
+	cudaMemcpy(freqOut + pairOutLen, output.pairwiseFrequencies,
+	           sizeof(size_t)*output.len, cudaMemcpyDeviceToDevice); gpuerr();
+	cudaMemcpy(pairOut + pairOutLen, output.indexPairs,
+	           sizeof(Int2)*output.len, cudaMemcpyDeviceToDevice); gpuerr();
 
 	// calculate repertoire
 	pair2rep <<< NUM_BLOCK(pairOutLen), NUM_THREADS>>>(
