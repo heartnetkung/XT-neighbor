@@ -485,6 +485,7 @@ void stream_handler4_overlap(Chunk<Int2> pairInput, XTNOutput &output, Int3* seq
 	// find pairOut
 	cudaMalloc(&uniquePairs, sizeof(Int2)*pairInput.len); gpuerr();
 	int uniqueLen = deduplicate(pairInput.ptr, uniquePairs, pairInput.len, buffer);
+	printf("uniqueLen %'d\n", uniqueLen);
 	printf("z2\n");
 	cudaMalloc(&flags, sizeof(char)*uniqueLen); gpuerr();
 	cudaMalloc(&pairOut, sizeof(Int2) * (uniqueLen + output.len)); gpuerr();
@@ -500,6 +501,7 @@ void stream_handler4_overlap(Chunk<Int2> pairInput, XTNOutput &output, Int3* seq
 
 	// concat
 	int pairOutConcatLen = pairOutLen + output.len;
+	printf("pairOutLen %'d pairOutConcatLen %'d\n", pairOutLen, pairOutConcatLen);
 	cudaMalloc(&freqOut, sizeof(size_t) * pairOutConcatLen); gpuerr();
 	printf("z6\n");
 	if (output.len > 0) {
@@ -525,4 +527,5 @@ void stream_handler4_overlap(Chunk<Int2> pairInput, XTNOutput &output, Int3* seq
 	output.indexPairs = pairOut2;
 	output.pairwiseFrequencies = freqOut2;
 	output.len = transfer_last_element(buffer, 1);
+	printf("output.len %d \n", output.len);
 }
