@@ -197,12 +197,12 @@ int** set_d2_offsets(std::vector<int*> histograms, D2Stream<T1> *s1, D2Stream<T2
  *
  * @param args all flags parsed from command line
  * @param seq1 sequence input
- * @param seqFreq frequency of each CDR3 sequence, only used in overlap mode
- * @param repSizes size of each repertiore, only used in overlap mode
+ * @param seqFreqHost frequency of each CDR3 sequence, only used in overlap mode
+ * @param repSizesHost size of each repertiore, only used in overlap mode
  * @param callback function to be invoked once a chunk of output is ready
 */
-void xtn_perform(XTNArgs args, Int3* seq1, int* seqFreq,
-                 int* repSizes, void callback(XTNOutput)) {
+void xtn_perform(XTNArgs args, Int3* seq1, int* seqFreqHost,
+                 int* repSizesHost, void callback(XTNOutput)) {
 	clock_start();
 
 	int* deviceInt, *lowerbounds, *seqFreq = NULL, *repSizes = NULL;

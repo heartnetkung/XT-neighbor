@@ -88,8 +88,8 @@ enum ReturnCode {SUCCESS, ERROR, EXIT};
  *
  * @param args algorithm's bundled arguments
  * @param seq1 list of CDR3 sequences
- * @param seqFreq frequency of each CDR3 sequence, only used in overlap mode
- * @param repSizes size of each repertiore, only used in overlap mode
+ * @param seqFreqHost frequency of each CDR3 sequence, only used in overlap mode
+ * @param repSizesHost size of each repertiore, only used in overlap mode
  * @param callback function to be invoked once a chunk of output is ready
 */
-void xtn_perform(XTNArgs args, Int3* seq1, int* seqFreq, int* repSizes, void callback (XTNOutput));
+void xtn_perform(XTNArgs args, Int3* seq1, int* seqFreqHost, int* repSizesHost, void callback (XTNOutput));
