@@ -256,7 +256,7 @@ void cal_distance(Int3* seq, Int2* index, int distance, char measure,
 		return;
 
 	Int2 indexPair = index[tid];
-	if (indexPair.x == indexPair.y) {
+	if ((distanceOutput != NULL) && (indexPair.x == indexPair.y)) {
 		flagOutput[tid] =  0;
 		return;
 	}
@@ -439,7 +439,7 @@ void pair2rep(Int2* pairs, size_t* values, int* seqFreq,
 	int newY = binarySearch(pair.y, repSizes, repCount);
 	pairs[tid] = {.x = newX, .y = newY};
 	if (newX == newY)
-		values[tid] = ((size_t)seqFreq[pair.x]) * seqFreq[pair.y] * 2;
+		values[tid] = ((size_t)seqFreq[pair.x]) * seqFreq[pair.y] * 2; /*our method only*/
 	else
 		values[tid] = ((size_t)seqFreq[pair.x]) * seqFreq[pair.y];
 }
