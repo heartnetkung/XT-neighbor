@@ -499,7 +499,7 @@ void stream_handler4_overlap(Chunk<Int2> pairInput, XTNOutput &output, Int3* seq
 	int pairOutLen = transfer_last_element(buffer, 1);
 	Int2* a = device_to_host(output.indexPairs, output.len);
 	int count = 0;
-	for ( int i = 0; i < pairOutLen; i++) {
+	for ( int i = 0; i < output.len; i++) {
 		if (a[i].x == a[i].y) {
 			count++;
 		}
