@@ -202,8 +202,8 @@ Variables</h2></td></tr>
   <table class="params">
     <tr><td class="paramname">args</td><td>algorithm's bundled arguments </td></tr>
     <tr><td class="paramname">seq1</td><td>list of CDR3 sequences </td></tr>
-    <tr><td class="paramname">seqFreq</td><td>frequency of each CDR3 sequence </td></tr>
-    <tr><td class="paramname">repSizes</td><td>size of each repertoire </td></tr>
+    <tr><td class="paramname">seqFreq</td><td>frequency of each CDR3 sequence, only used in overlap mode </td></tr>
+    <tr><td class="paramname">repSizes</td><td>size of each repertiore, only used in overlap mode </td></tr>
     <tr><td class="paramname">callback</td><td>function to be invoked once a chunk of output is ready</td></tr>
   </table>
   </dd>
@@ -213,6 +213,8 @@ Variables</h2></td></tr>
   <table class="params">
     <tr><td class="paramname">args</td><td>all flags parsed from command line </td></tr>
     <tr><td class="paramname">seq1</td><td>sequence input </td></tr>
+    <tr><td class="paramname">seqFreqHost</td><td>frequency of each sequence, only used in overlap mode </td></tr>
+    <tr><td class="paramname">repSizesHost</td><td>size of each repertiore, only used in overlap mode </td></tr>
     <tr><td class="paramname">callback</td><td>function to be invoked once a chunk of output is ready </td></tr>
   </table>
   </dd>
