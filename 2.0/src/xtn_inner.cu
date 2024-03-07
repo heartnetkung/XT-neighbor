@@ -22,7 +22,9 @@ const unsigned int UINT_MIN = 0;
  * private function.
 */
 int NUM_BLOCK(int len) {
-	return divide_ceil(len, NUM_THREADS);
+	int ans = divide_ceil(len, NUM_THREADS);
+	if (ans == 0) return 1;
+	return ans;
 }
 
 /**
