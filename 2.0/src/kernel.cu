@@ -256,7 +256,7 @@ void cal_distance(Int3* seq, Int2* index, int distance, char measure,
 		return;
 
 	Int2 indexPair = index[tid];
-	if ((distanceOutput != NULL) && (indexPair.x == indexPair.y)) {
+	if (indexPair.x == indexPair.y) {
 		flagOutput[tid] =  0;
 		return;
 	}
@@ -440,4 +440,14 @@ void pair2rep(Int2* pairs, size_t* values, int* seqFreq,
 		.x = binarySearch(pair.x, repSizes, repCount),
 		.y = binarySearch(pair.y, repSizes, repCount)
 	};
+}
+
+__global__
+void init_overlap_output(Int2* pairOut, size_t* freqOut, int* seqFreq, int n) {
+	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
+	if (tid >= n)
+		return;
+
+	pairOut[tid] = {.x = tid, .y = tid};
+	freqOut[tid] = ((size_t)seqFreq[tid]) * seqFreq[tid];
 }
