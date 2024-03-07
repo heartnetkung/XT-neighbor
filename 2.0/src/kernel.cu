@@ -446,10 +446,10 @@ void pair2rep(Int2* pairs, size_t* values, int* seqFreq,
 }
 
 /**
- * initialize
+ * generate patching diagonal results since our original algorithm doesn't support it.
  *
- * @param pairs pair result from nearest neighbor search
- * @param values returning frequency of the corresponding pair
+ * @param pairOut initial diagonal pairs
+ * @param freqOut initial diagonal frequencies
  * @param seqFreq frequency of each CDR3 sequence
  * @param repSizes size of each repertoire
  * @param repCount number of repertoires
@@ -457,7 +457,7 @@ void pair2rep(Int2* pairs, size_t* values, int* seqFreq,
 */
 __global__
 void init_diagonal_overlap_output(Int2* pairOut, size_t* freqOut, int* seqFreq,
-                         int* repSizes, int repCount, int n) {
+                                  int* repSizes, int repCount, int n) {
 	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
 	if (tid >= n)
 		return;
