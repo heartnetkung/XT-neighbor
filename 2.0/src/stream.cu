@@ -132,9 +132,9 @@ public:
 			// 	Int3* temp = (Int3*)dataHost;
 			// }
 			// cudaMemcpy(ptr, dataHost, sizeof(T)*len , cudaMemcpyHostToDevice); gpuerr();
-			int temp[] = {0, 0, 0, 0, 0};
-			cudaMemcpy(ptr, temp, sizeof(int) * 5 , cudaMemcpyHostToDevice); gpuerr();
-			len = 5;
+			// int temp[] = {0, 0, 0, 0, 0};
+			// cudaMemcpy(ptr, temp, sizeof(int) * 5 , cudaMemcpyHostToDevice); gpuerr();
+			// len = 5;
 			printf("552\n");
 			_reading_data.pop_back();
 			printf("553\n");
