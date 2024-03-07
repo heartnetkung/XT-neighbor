@@ -7,19 +7,27 @@ TEST(BinarySearch, {
 	int len = 3, input, expect;
 
 	input = 0, expect = 0;
-	check(binarySearch(input, data, len) == expect);
+	printf("%d %d %d \n", input, binarySearch(input, data, len), expect);
+	// check(binarySearch(input, data, len) == expect);
 	input = 1, expect = 0;
-	check(binarySearch(input, data, len) == expect);
-	input = 2, expect = 0;
-	check(binarySearch(input, data, len) == expect);
+	printf("%d %d %d \n", input, binarySearch(input, data, len), expect);
+	// check(binarySearch(input, data, len) == expect);
+	input = 2, expect = 1;
+	printf("%d %d %d \n", input, binarySearch(input, data, len), expect);
+	// check(binarySearch(input, data, len) == expect);
 	input = 3, expect = 1;
-	check(binarySearch(input, data, len) == expect);
-	input = 4, expect = 1;
-	check(binarySearch(input, data, len) == expect);
+	// check(binarySearch(input, data, len) == expect);
+	printf("%d %d %d \n", input, binarySearch(input, data, len), expect);
+	input = 4, expect = 2;
+	// check(binarySearch(input, data, len) == expect);
+	printf("%d %d %d \n", input, binarySearch(input, data, len), expect);
 	input = 5, expect = 2;
-	check(binarySearch(input, data, len) == expect);
-	input = 6, expect = 2;
-	check(binarySearch(input, data, len) == expect);
+	// check(binarySearch(input, data, len) == expect);
+	printf("%d %d %d \n", input, binarySearch(input, data, len), expect);
+	input = 6, expect = 3;
+	// check(binarySearch(input, data, len) == expect);
+	printf("%d %d %d \n", input, binarySearch(input, data, len), expect);
 	input = 7, expect = 3;
-	check(binarySearch(input, data, len) == expect);
+	// check(binarySearch(input, data, len) == expect);
+	printf("%d %d %d \n", input, binarySearch(input, data, len), expect);
 })

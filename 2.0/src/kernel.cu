@@ -409,13 +409,13 @@ int binarySearch(int query, int* db , int dbLen) {
 		int currentIndex = (end - start) / 2;
 		int current = db[currentIndex];
 		if (current == query)
-			return currentIndex;
+			return currentIndex + 1;
 		else if (current > query)
 			end = currentIndex;
 		else
 			start = currentIndex + 1;
 	}
-	return db[start] >= query ? start : end;
+	return db[start] > query ? start : end;
 }
 
 /**
