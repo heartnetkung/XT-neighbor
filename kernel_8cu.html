@@ -133,7 +133,7 @@ Functions</h2></td></tr>
 <tr class="memdesc:a10d48cf3a95f3da2b41821c56f79ab86"><td class="mdescLeft">&#160;</td><td class="mdescRight">turning pairs and frequencies from sequence format to repertoire format.  <a href="#a10d48cf3a95f3da2b41821c56f79ab86">More...</a><br /></td></tr>
 <tr class="separator:a10d48cf3a95f3da2b41821c56f79ab86"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad3d7c5e84c9e1d7af3190975d226c68a"><td class="memItemLeft" align="right" valign="top">__global__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#ad3d7c5e84c9e1d7af3190975d226c68a">init_diagonal_overlap_output</a> (<a class="el" href="structInt2.html">Int2</a> *pairOut, size_t *freqOut, int *seqFreq, int *repSizes, int repCount, int n)</td></tr>
-<tr class="memdesc:ad3d7c5e84c9e1d7af3190975d226c68a"><td class="mdescLeft">&#160;</td><td class="mdescRight">initialize  <a href="#ad3d7c5e84c9e1d7af3190975d226c68a">More...</a><br /></td></tr>
+<tr class="memdesc:ad3d7c5e84c9e1d7af3190975d226c68a"><td class="mdescLeft">&#160;</td><td class="mdescRight">generate patching diagonal results since our original algorithm doesn't support it.  <a href="#ad3d7c5e84c9e1d7af3190975d226c68a">More...</a><br /></td></tr>
 <tr class="separator:ad3d7c5e84c9e1d7af3190975d226c68a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
@@ -876,11 +876,11 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>initialize </p>
+<p>generate patching diagonal results since our original algorithm doesn't support it. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">pairs</td><td>pair result from nearest neighbor search </td></tr>
-    <tr><td class="paramname">values</td><td>returning frequency of the corresponding pair </td></tr>
+    <tr><td class="paramname">pairOut</td><td>initial diagonal pairs </td></tr>
+    <tr><td class="paramname">freqOut</td><td>initial diagonal frequencies </td></tr>
     <tr><td class="paramname">seqFreq</td><td>frequency of each CDR3 sequence </td></tr>
     <tr><td class="paramname">repSizes</td><td>size of each repertoire </td></tr>
     <tr><td class="paramname">repCount</td><td>number of repertoires </td></tr>
