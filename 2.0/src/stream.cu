@@ -119,6 +119,7 @@ public:
 
 			int len = _reading_len2.back();
 			printf("ajb %d %d %lu \n",++count,len,_reading_len2.size());
+			printf("ajc %d %d %d \n",totalLen,len,_maxReadableSize);
 			if (totalLen + len > _maxReadableSize)
 				break;
 
