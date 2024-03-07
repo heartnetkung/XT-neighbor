@@ -111,22 +111,22 @@ public:
 			return ans;
 		}
 
-		int totalLen = 0, count=0;
+		int totalLen = 0, count = 0;
 		T* ptr = _deviceBuffer;
 		while (true) {
 			if (_reading_data.empty())
 				break;
 
 			int len = _reading_len2.back();
-			printf("ajb %d %d %lu \n",++count,len,_reading_len2.size());
-			printf("ajc %d %d %d \n",totalLen,len,_maxReadableSize);
+			printf("ajb %d %d %lu \n", ++count, len, _reading_len2.size());
+			printf("ajc %d %d %d \n", totalLen, len, _maxReadableSize);
 			if (totalLen + len > _maxReadableSize)
 				break;
 
 
 			printf("550\n");
 			T* dataHost = _reading_data.back();
-			printf("551 %'lu %'lu\n",sizeof(T),sizeof(T)*len);
+			printf("551 %'lu %'lu\n", sizeof(T), sizeof(T)*len);
 			cudaMemcpy(ptr, dataHost, sizeof(T)*len , cudaMemcpyHostToDevice); gpuerr();
 			printf("552\n");
 			_reading_data.pop_back();
@@ -157,10 +157,12 @@ public:
 		ans.ptr = _deviceBuffer;
 		ans.len = totalLen;
 		printf("557\n");
+		printf("read %d\n", totalLen);
 		return ans;
 	}
 
 	void write(T* newData, int n) {
+		printf("write %d _totalLen %'lu\n", n, _totalLen);
 		T* dataHost = device_to_host(newData, n);
 		_writing_data.push_back(dataHost);
 		_writing_len2.push_back(n);
