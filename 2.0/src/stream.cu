@@ -125,13 +125,16 @@ public:
 
 
 			printf("550-c\n");
-			len = 2;
 			T* dataHost = _reading_data.back();
 			printf("%d %d\n", ptr == NULL, dataHost == NULL);
 			printf("551 %'lu %'lu\n", sizeof(T), sizeof(T)*len);
-			cudaError_t code = cudaGetLastError();
-			printf("Cudaaa error at %s\n", cudaGetErrorName(code));
-			cudaMemcpy(ptr, dataHost, sizeof(T)*len , cudaMemcpyHostToDevice); gpuerr();
+			// if (sizeof(T) == 12) {
+			// 	Int3* temp = (Int3*)dataHost;
+			// }
+			// cudaMemcpy(ptr, dataHost, sizeof(T)*len , cudaMemcpyHostToDevice); gpuerr();
+			int temp[] = {0, 0, 0, 0, 0};
+			cudaMemcpy(ptr, temp, sizeof(int) * 5 , cudaMemcpyHostToDevice); gpuerr();
+			len = 5;
 			printf("552\n");
 			_reading_data.pop_back();
 			printf("553\n");
