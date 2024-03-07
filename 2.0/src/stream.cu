@@ -134,6 +134,7 @@ public:
 
 		// when len exceed _maxReadableSize, enlarge the readable size, and faithfully read with warning
 		if ((totalLen == 0) && !_reading_data.empty()) {
+			printf("556\n");
 			totalLen = _reading_len2.back();
 			set_max_readable_size(totalLen);
 
@@ -147,6 +148,7 @@ public:
 
 		ans.ptr = _deviceBuffer;
 		ans.len = totalLen;
+		printf("557\n");
 		return ans;
 	}
 
