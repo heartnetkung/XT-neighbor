@@ -125,7 +125,7 @@ public:
 
 			printf("550\n");
 			T* dataHost = _reading_data.back();
-			printf("551\n");
+			printf("551 %'lu %'lu\n",sizeof(T),sizeof(T)*len);
 			cudaMemcpy(ptr, dataHost, sizeof(T)*len , cudaMemcpyHostToDevice); gpuerr();
 			printf("552\n");
 			_reading_data.pop_back();
