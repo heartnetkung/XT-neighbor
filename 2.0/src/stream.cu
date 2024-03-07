@@ -124,7 +124,7 @@ public:
 				break;
 
 
-			printf("550-c\n")
+			printf("550-c\n");
 			printf("%d %d\n", ptr == NULL, dataHost == NULL);
 			len = 2;
 			T* dataHost = _reading_data.back();
