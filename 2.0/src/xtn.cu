@@ -299,7 +299,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, int* seqFreqHost,
 	if (overlapMode) {
 		seqFreq = host_to_device(seqFreqHost, args.seq1Len);
 		repSizes = host_to_device(repSizesHost, args.infoLen);
-		init_overlap();
+		init_overlap(finalOutput, seqFreq, repSizes, seq1Len, args.infoLen);
 	}
 
 	for (int i = 0; i < lowerboundsLen; i++) {
