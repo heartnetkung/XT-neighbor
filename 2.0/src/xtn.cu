@@ -300,6 +300,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, int* seqFreqHost,
 		seqFreq = host_to_device(seqFreqHost, args.seq1Len);
 		repSizes = host_to_device(repSizesHost, args.infoLen);
 		inclusive_sum(repSizes, args.infoLen); gpuerr();
+		print_int_arr(repSizes,args.infoLen);
 
 		cudaMalloc(&finalOutput.indexPairs, sizeof(Int2)*seq1Len); gpuerr();
 		cudaMalloc(&finalOutput.pairwiseFrequencies, sizeof(size_t)*seq1Len); gpuerr();
