@@ -112,7 +112,7 @@ int parse_input(char* path, Int3* seqOut, int* freqOut, int len, bool doubleCol)
 			fclose(file);
 			return print_err_line("input parsing error (only upper-cased amino acids with max length of 18 are allowed)", lineNumber);
 		}
-		seqOut[inputCount++] = newInt3;
+		seqOut[inputCount] = newInt3;
 
 		if (doubleCol) {
 			char* line2 = strchr(line, ',');
@@ -128,6 +128,8 @@ int parse_input(char* path, Int3* seqOut, int* freqOut, int len, bool doubleCol)
 			}
 			freqOut[inputCount] = temp;
 		}
+
+		inputCount++;
 	}
 
 	fclose(file);
