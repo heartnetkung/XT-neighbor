@@ -124,8 +124,9 @@ public:
 				break;
 
 
-			printf("550-b\n");
-			len=2;
+			printf("550-c\n")
+			printf("%d %d\n", ptr == NULL, dataHost == NULL);
+			len = 2;
 			T* dataHost = _reading_data.back();
 			printf("551 %'lu %'lu\n", sizeof(T), sizeof(T)*len);
 			cudaMemcpy(ptr, dataHost, sizeof(T)*len , cudaMemcpyHostToDevice); gpuerr();
