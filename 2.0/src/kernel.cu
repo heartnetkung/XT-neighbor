@@ -435,7 +435,7 @@ void pair2rep(Int2* pairs, size_t* values, int* seqFreq,
 	if (tid >= n)
 		return;
 	Int2 pair = pairs[tid];
-	values[tid] = ((size_t)seqFreq[pair.x]) * seqFreq[pair.y];
+	values[tid] = ((size_t)seqFreq[pair.x]) * seqFreq[pair.y] * 2;
 	pairs[tid] = {
 		.x = binarySearch(pair.x, repSizes, repCount),
 		.y = binarySearch(pair.y, repSizes, repCount)
