@@ -97,7 +97,7 @@ public:
 		if (_deviceBuffer != NULL) {
 			cudaFree(_deviceBuffer); gpuerr();
 		}
-		printf("BB %lu\n",sizeof(T));
+		printf("BB %lu\n", sizeof(T));
 		cudaMalloc(&_deviceBuffer, sizeof(T)*maxReadableSize); gpuerr();
 		if (verboseGlobal)
 			printf("====size grow %'d\n", maxReadableSize);
@@ -117,6 +117,9 @@ public:
 		printf("AA\n");
 		print_gpu_memory();
 		print_main_memory();
+		if (sizeof(T) == 12) {
+			print_int3_arr((Int3*)_deviceBuffer, 10);
+		}
 		cudaFree(_deviceBuffer); gpuerr();
 		printf("AB\n");
 		cudaMalloc(&_deviceBuffer, sizeof(T)*_maxReadableSize); gpuerr();
