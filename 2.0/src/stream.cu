@@ -113,7 +113,7 @@ public:
 
 		int totalLen = 0;
 		cudaFree(_deviceBuffer); gpuerr();
-		cudaMalloc(&_deviceBuffer, sizeof(T)*len); gpuerr();
+		cudaMalloc(&_deviceBuffer, sizeof(T)*_maxReadableSize); gpuerr();
 		T* ptr = _deviceBuffer;
 		while (true) {
 			if (_reading_data.empty())
