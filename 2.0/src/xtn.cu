@@ -253,23 +253,40 @@ void xtn_perform(XTNArgs args, Int3* seq1, int* seqFreqHost,
 		print_v("1B");
 	}
 
+	printf("AX0");
+	cudaDeviceSynchronize(); gpuerr();
+	printf("AX1");
+
 	print_tl("1", b1key->get_total_len());
 
 	//=====================================
 	// stream 2: group key values
 	//=====================================
 
+	printf("BX0");
+	cudaDeviceSynchronize(); gpuerr();
+	printf("BX1");
+
 	MemoryContext ctx2 = cal_memory_stream2(seq1Len);
 	int offsetLen;
 	size_t totalLen2B = 0;
+
+	printf("CX0");
+	cudaDeviceSynchronize(); gpuerr();
+	printf("CX1");
 
 	offsetLen = histograms.size();
 	offsets = set_d2_offsets(histograms, b1key, b1value, deviceInt, ctx2);
 	histograms.clear();
 
+	printf("DX0");
+	cudaDeviceSynchronize(); gpuerr();
+	printf("DX1");
+
 	b2key = new RAMSwapStream<Int3>();
 	b2value = new RAMSwapStream<int>();
 	print_v("2A");
+
 
 	while ((b1keyChunk = b1key->read()).not_null()) {
 		b1valueChunk = b1value->read();
@@ -281,6 +298,11 @@ void xtn_perform(XTNArgs args, Int3* seq1, int* seqFreqHost,
 		print_v("2B");
 	}
 
+
+	printf("EX0");
+	cudaDeviceSynchronize(); gpuerr();
+	printf("EX1");
+
 	b1key->deconstruct();
 	b1value->deconstruct();
 	_cudaFreeHost2D(offsets, offsetLen);
@@ -291,6 +313,10 @@ void xtn_perform(XTNArgs args, Int3* seq1, int* seqFreqHost,
 	// loop: lower bound
 	//=====================================
 
+	printf("FX0");
+	cudaDeviceSynchronize(); gpuerr();
+	printf("FX1");
+
 	size_t totalLen3B = 0;
 	XTNOutput finalOutput;
 	lowerboundsLen = cal_lowerbounds(histograms, lowerbounds, seq1Len, deviceInt);
@@ -298,16 +324,31 @@ void xtn_perform(XTNArgs args, Int3* seq1, int* seqFreqHost,
 	if (verboseGlobal)
 		print_int_arr(lowerbounds, lowerboundsLen);
 
+
+	printf("GX0");
+	cudaDeviceSynchronize(); gpuerr();
+	printf("GX1");
+
 	if (overlapMode) {
 		seqFreq = host_to_device(seqFreqHost, args.seq1Len);
 		repSizes = host_to_device(repSizesHost, args.infoLen);
 		init_overlap(finalOutput, seqFreq, repSizes, seq1Len, args.infoLen);
 	}
 
+
+	printf("HX0");
+	cudaDeviceSynchronize(); gpuerr();
+	printf("HX1");
+
 	for (int i = 0; i < lowerboundsLen; i++) {
 		int lowerbound = lowerbounds[i];
 		if (verboseGlobal)
 			printf("lower bound loop: %d / %d\n", i + 1, lowerboundsLen);
+
+
+		printf("IX0");
+		cudaDeviceSynchronize(); gpuerr();
+		printf("IX1");
 
 		//=====================================
 		// stream 3: generate pairs
@@ -320,6 +361,11 @@ void xtn_perform(XTNArgs args, Int3* seq1, int* seqFreqHost,
 		b2value->set_max_readable_size(ctx3.bandwidth1);
 		b3 = new D2Stream<Int2>();
 		print_v("3A");
+
+
+		printf("JX0");
+		cudaDeviceSynchronize(); gpuerr();
+		printf("JX1");
 
 		while ((b2keyChunk = b2key->read()).not_null()) {
 			b2valueChunk = b2value->read();
