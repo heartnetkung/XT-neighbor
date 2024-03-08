@@ -105,6 +105,8 @@ public:
 
 	Chunk<T> read() {
 		printf("A0\n");
+		cudaDeviceSynchronize(); gpuerr();
+		printf("A1\n");
 		Chunk<T> ans;
 		if (_reading_data.empty())
 			return ans;
