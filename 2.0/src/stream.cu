@@ -114,7 +114,7 @@ public:
 
 		int totalLen = 0;
 		printf("AA\n");
-		// cudaFree(_deviceBuffer); gpuerr();
+		cudaFree(_deviceBuffer); gpuerr();
 		printf("AB\n");
 		cudaMalloc(&_deviceBuffer, sizeof(T)*_maxReadableSize); gpuerr();
 		T* ptr = _deviceBuffer;
