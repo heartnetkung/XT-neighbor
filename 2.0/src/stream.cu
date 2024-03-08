@@ -118,6 +118,8 @@ public:
 		cudaFree(_deviceBuffer); gpuerr();
 		printf("AB\n");
 		cudaMalloc(&_deviceBuffer, sizeof(T)*_maxReadableSize); gpuerr();
+		print_gpu_memory();
+		print_main_memory();
 		T* ptr = _deviceBuffer;
 		while (true) {
 			printf("AC\n");
