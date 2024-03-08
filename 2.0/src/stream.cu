@@ -97,7 +97,7 @@ public:
 		if (_deviceBuffer != NULL) {
 			cudaFree(_deviceBuffer); gpuerr();
 		}
-		printf("BB\n");
+		printf("BB %lu\n",sizeof(T));
 		cudaMalloc(&_deviceBuffer, sizeof(T)*maxReadableSize); gpuerr();
 		if (verboseGlobal)
 			printf("====size grow %'d\n", maxReadableSize);
