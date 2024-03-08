@@ -111,48 +111,32 @@ public:
 			return ans;
 		}
 
-		int totalLen = 0, count = 0;
+		int totalLen = 0;
+		cudaFree(_deviceBuffer); gpuerr();
+		cudaMalloc(&_deviceBuffer, sizeof(T)*len); gpuerr();
 		T* ptr = _deviceBuffer;
 		while (true) {
 			if (_reading_data.empty())
 				break;
 
 			int len = _reading_len2.back();
-			printf("ajb %d %d %lu \n", ++count, len, _reading_len2.size());
-			printf("ajc %d %d %d \n", totalLen, len, _maxReadableSize);
 			if (totalLen + len > _maxReadableSize)
 				break;
 
 
-			printf("550-c\n");
 			T* dataHost = _reading_data.back();
-			printf("%d %d\n", ptr == NULL, dataHost == NULL);
-			printf("551 %'lu %'lu\n", sizeof(T), sizeof(T)*len);
-			// if (sizeof(T) == 12) {
-			// 	Int3* temp = (Int3*)dataHost;
-			// }
-
-			cudaFree(_deviceBuffer); gpuerr();
-			cudaMalloc(&_deviceBuffer, sizeof(T)*len); gpuerr();
+			printf("the line\n");
 			cudaMemcpy(ptr, dataHost, sizeof(T)*len , cudaMemcpyHostToDevice); gpuerr();
-			// int temp[] = {0, 0, 0, 0, 0};
-			// cudaMemcpy(ptr, temp, sizeof(int) * 5 , cudaMemcpyHostToDevice); gpuerr();
-			// len = 5;
-			printf("552\n");
 			_reading_data.pop_back();
-			printf("553\n");
 			_reading_len2.pop_back();
-			printf("554\n");
 
 			cudaFreeHost(dataHost); gpuerr();
 			ptr += len;
 			totalLen += len;
-			printf("555\n");
 		}
 
 		// when len exceed _maxReadableSize, enlarge the readable size, and faithfully read with warning
 		if ((totalLen == 0) && !_reading_data.empty()) {
-			printf("556\n");
 			totalLen = _reading_len2.back();
 			set_max_readable_size(totalLen);
 
@@ -166,13 +150,10 @@ public:
 
 		ans.ptr = _deviceBuffer;
 		ans.len = totalLen;
-		printf("557\n");
-		printf("read %d\n", totalLen);
 		return ans;
 	}
 
 	void write(T* newData, int n) {
-		printf("write %d _totalLen %'lu\n", n, _totalLen);
 		T* dataHost = device_to_host(newData, n);
 		_writing_data.push_back(dataHost);
 		_writing_len2.push_back(n);
