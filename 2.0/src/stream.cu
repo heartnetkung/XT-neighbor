@@ -103,6 +103,7 @@ public:
 	}
 
 	Chunk<T> read() {
+		printf("A0\n");
 		Chunk<T> ans;
 		if (_reading_data.empty())
 			return ans;
@@ -112,10 +113,13 @@ public:
 		}
 
 		int totalLen = 0;
+		printf("AA\n");
 		cudaFree(_deviceBuffer); gpuerr();
+		printf("AB\n");
 		cudaMalloc(&_deviceBuffer, sizeof(T)*_maxReadableSize); gpuerr();
 		T* ptr = _deviceBuffer;
 		while (true) {
+			printf("AC\n");
 			if (_reading_data.empty())
 				break;
 
@@ -123,6 +127,7 @@ public:
 			if (totalLen + len > _maxReadableSize)
 				break;
 
+			printf("AD\n");
 
 			T* dataHost = _reading_data.back();
 			printf("the line\n");
