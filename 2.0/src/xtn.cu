@@ -253,9 +253,9 @@ void xtn_perform(XTNArgs args, Int3* seq1, int* seqFreqHost,
 		print_v("1B");
 	}
 
-	printf("AX0");
+	printf("AX0\n");
 	cudaDeviceSynchronize(); gpuerr();
-	printf("AX1");
+	printf("AX1\n");
 
 	print_tl("1", b1key->get_total_len());
 
@@ -263,25 +263,25 @@ void xtn_perform(XTNArgs args, Int3* seq1, int* seqFreqHost,
 	// stream 2: group key values
 	//=====================================
 
-	printf("BX0");
+	printf("BX0\n");
 	cudaDeviceSynchronize(); gpuerr();
-	printf("BX1");
+	printf("BX1\n");
 
 	MemoryContext ctx2 = cal_memory_stream2(seq1Len);
 	int offsetLen;
 	size_t totalLen2B = 0;
 
-	printf("CX0");
+	printf("CX0\n");
 	cudaDeviceSynchronize(); gpuerr();
-	printf("CX1");
+	printf("CX1\n");
 
 	offsetLen = histograms.size();
 	offsets = set_d2_offsets(histograms, b1key, b1value, deviceInt, ctx2);
 	histograms.clear();
 
-	printf("DX0");
+	printf("DX0\n");
 	cudaDeviceSynchronize(); gpuerr();
-	printf("DX1");
+	printf("DX1\n");
 
 	b2key = new RAMSwapStream<Int3>();
 	b2value = new RAMSwapStream<int>();
@@ -299,9 +299,9 @@ void xtn_perform(XTNArgs args, Int3* seq1, int* seqFreqHost,
 	}
 
 
-	printf("EX0");
+	printf("EX0\n");
 	cudaDeviceSynchronize(); gpuerr();
-	printf("EX1");
+	printf("EX1\n");
 
 	b1key->deconstruct();
 	b1value->deconstruct();
@@ -313,9 +313,9 @@ void xtn_perform(XTNArgs args, Int3* seq1, int* seqFreqHost,
 	// loop: lower bound
 	//=====================================
 
-	printf("FX0");
+	printf("FX0\n");
 	cudaDeviceSynchronize(); gpuerr();
-	printf("FX1");
+	printf("FX1\n");
 
 	size_t totalLen3B = 0;
 	XTNOutput finalOutput;
@@ -325,20 +325,23 @@ void xtn_perform(XTNArgs args, Int3* seq1, int* seqFreqHost,
 		print_int_arr(lowerbounds, lowerboundsLen);
 
 
-	printf("GX0");
+	printf("GX0\n");
 	cudaDeviceSynchronize(); gpuerr();
-	printf("GX1");
+	printf("GX1\n");
 
 	if (overlapMode) {
 		seqFreq = host_to_device(seqFreqHost, args.seq1Len);
 		repSizes = host_to_device(repSizesHost, args.infoLen);
+		printf("GX2\n");
+		cudaDeviceSynchronize(); gpuerr();
+		printf("GX3\n");
 		init_overlap(finalOutput, seqFreq, repSizes, seq1Len, args.infoLen);
 	}
 
 
-	printf("HX0");
+	printf("HX0\n");
 	cudaDeviceSynchronize(); gpuerr();
-	printf("HX1");
+	printf("HX1\n");
 
 	for (int i = 0; i < lowerboundsLen; i++) {
 		int lowerbound = lowerbounds[i];
