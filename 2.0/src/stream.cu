@@ -125,6 +125,7 @@ public:
 		// cudaFree(_deviceBuffer); gpuerr();
 		printf("AB\n");
 		cudaMalloc(&_deviceBuffer2, sizeof(T)*_maxReadableSize); gpuerr();
+		cudaFree(_deviceBuffer2); gpuerr();
 		T* ptr = _deviceBuffer2;
 		while (true) {
 			printf("AC\n");
