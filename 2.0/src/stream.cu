@@ -131,7 +131,10 @@ public:
 			// if (sizeof(T) == 12) {
 			// 	Int3* temp = (Int3*)dataHost;
 			// }
-			// cudaMemcpy(ptr, dataHost, sizeof(T)*len , cudaMemcpyHostToDevice); gpuerr();
+
+			cudaFree(_deviceBuffer); gpuerr();
+			cudaMalloc(&_deviceBuffer, sizeof(T)*len); gpuerr();
+			cudaMemcpy(ptr, dataHost, sizeof(T)*len , cudaMemcpyHostToDevice); gpuerr();
 			// int temp[] = {0, 0, 0, 0, 0};
 			// cudaMemcpy(ptr, temp, sizeof(int) * 5 , cudaMemcpyHostToDevice); gpuerr();
 			// len = 5;
