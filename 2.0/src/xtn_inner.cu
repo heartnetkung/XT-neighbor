@@ -197,8 +197,8 @@ void init_overlap(XTNOutput &finalOutput, int* seqFreq, int* repSizes, int seqLe
 	printf("GY1\n");
 
 	inclusive_sum(repSizes, repCount); gpuerr();
-	cudaMalloc(&finalOutput.indexPairs, sizeof(Int2)*seqLen); gpuerr();
-	cudaMalloc(&finalOutput.pairwiseFrequencies, sizeof(size_t)*seqLen); gpuerr();
+	cudaMalloc(&(finalOutput.indexPairs), sizeof(Int2)*seqLen); gpuerr();
+	cudaMalloc(&(finalOutput.pairwiseFrequencies), sizeof(size_t)*seqLen); gpuerr();
 	printf("HY0\n");
 	cudaDeviceSynchronize(); gpuerr();
 	printf("HY1\n");
