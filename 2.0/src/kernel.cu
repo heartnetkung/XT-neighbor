@@ -464,8 +464,8 @@ void init_diagonal_overlap_output(Int2* pairOut, size_t* freqOut, int* seqFreq,
 
 	int rep = binarySearch(tid, repSizes, repCount);
 	Int2 newValue;
-	newValue.x = rep;
-	newValue.y = rep;
+	newValue.x = 0;
+	newValue.y = 0;
 	pairOut[tid] = newValue;
 	freqOut[tid] = ((size_t)seqFreq[tid]) * seqFreq[tid];
 }
