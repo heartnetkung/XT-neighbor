@@ -118,7 +118,6 @@ public:
 		int totalLen = 0;
 		printf("AA\n");
 
-		T* _deviceBuffer2 ;
 		print_gpu_memory();
 		print_main_memory();
 		// if (sizeof(T) == 12) {
@@ -126,9 +125,7 @@ public:
 		// }
 		// cudaFree(_deviceBuffer); gpuerr();
 		printf("AB\n");
-		cudaMalloc(&_deviceBuffer2, sizeof(T)*_maxReadableSize); gpuerr();
-		cudaFree(_deviceBuffer2); gpuerr();
-		T* ptr = _deviceBuffer2;
+		T* ptr = _deviceBuffer;
 		while (true) {
 			printf("AC\n");
 			if (_reading_data.empty())
@@ -157,14 +154,14 @@ public:
 			set_max_readable_size(totalLen);
 
 			T* dataHost = _reading_data.back();
-			cudaMemcpy(_deviceBuffer2, dataHost, sizeof(T)*totalLen , cudaMemcpyHostToDevice); gpuerr();
+			cudaMemcpy(_deviceBuffer, dataHost, sizeof(T)*totalLen , cudaMemcpyHostToDevice); gpuerr();
 			_reading_data.pop_back();
 			_reading_len2.pop_back();
 
 			cudaFreeHost(dataHost); gpuerr();
 		}
 
-		ans.ptr = _deviceBuffer2;
+		ans.ptr = _deviceBuffer;
 		ans.len = totalLen;
 		return ans;
 	}
