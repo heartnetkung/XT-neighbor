@@ -437,7 +437,10 @@ void pair2rep(Int2* pairs, size_t* values, int* seqFreq,
 	Int2 pair = pairs[tid];
 	int newX = binarySearch(pair.x, repSizes, repCount);
 	int newY = binarySearch(pair.y, repSizes, repCount);
-	pairs[tid] = {.x = 0, .y = 0};
+	Int2 newValue;
+	newValue.x = 0;
+	newValue.y = 0;
+	pairs[tid] = newValue;
 	if (newX == newY)
 		// our nearest neighbor results only contain (i,j) pairs where i<j, so J>i cases must be accounted
 		values[tid] = ((size_t)seqFreq[pair.x]) * seqFreq[pair.y] * 2;
