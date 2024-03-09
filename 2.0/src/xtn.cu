@@ -330,12 +330,17 @@ void xtn_perform(XTNArgs args, Int3* seq1, int* seqFreqHost,
 	printf("GX1\n");
 
 	if (overlapMode) {
-		seqFreq = host_to_device(seqFreqHost, args.seq1Len);
+		Int2* indexPairs;
+		size_t* pairwiseFrequencies;
+		seqFreq = host_to_device(seqFreqHost, seq1Len);
 		repSizes = host_to_device(repSizesHost, args.infoLen);
 		printf("GX2\n");
 		cudaDeviceSynchronize(); gpuerr();
 		printf("GX3\n");
-		init_overlap(finalOutput, seqFreq, repSizes, seq1Len, args.infoLen);
+		init_overlap(indexPairs, pairwiseFrequencies, seqFreq, repSizes, seq1Len, args.infoLen);
+		finalOutput.len = seq1Len;
+		finalOutput.indexPairs = indexPairs;
+		finalOutput.pairwiseFrequencies = finalOutput;
 	}
 
 

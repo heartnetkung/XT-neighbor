@@ -190,21 +190,21 @@ void gen_next_chunk(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut,
 /**
  * private function.
 */
-void init_overlap(XTNOutput &finalOutput, int* seqFreq, int* repSizes, int seqLen, int repCount) {
+void init_overlap(Int2* &indexPairs, size_t* &pairwiseFrequencies, int* seqFreq,
+                  int* repSizes, int seqLen, int repCount) {
 
 	printf("GY0\n");
 	cudaDeviceSynchronize(); gpuerr();
 	printf("GY1\n");
 
 	inclusive_sum(repSizes, repCount); gpuerr();
-	cudaMalloc(&(finalOutput.indexPairs), sizeof(Int2)*seqLen); gpuerr();
-	cudaMalloc(&(finalOutput.pairwiseFrequencies), sizeof(size_t)*seqLen); gpuerr();
+	cudaMalloc(&indexPairs, sizeof(Int2)*seqLen); gpuerr();
+	cudaMalloc(&pairwiseFrequencies, sizeof(size_t)*seqLen); gpuerr();
 	printf("HY0\n");
 	cudaDeviceSynchronize(); gpuerr();
 	printf("HY1\n");
-	finalOutput.len = seqLen;
-	init_diagonal_overlap_output <<< NUM_BLOCK(seqLen), NUM_THREADS>>>(finalOutput.indexPairs,
-	        finalOutput.pairwiseFrequencies, seqFreq, repSizes, repCount, seqLen); gpuerr();
+	init_diagonal_overlap_output <<< NUM_BLOCK(seqLen), NUM_THREADS>>>(indexPairs,
+	        pairwiseFrequencies, seqFreq, repSizes, repCount, seqLen); gpuerr();
 
 	printf("IY0\n");
 	cudaDeviceSynchronize(); gpuerr();
