@@ -404,25 +404,18 @@ __host__
 #endif
 __device__
 int binarySearch(int query, int* db , int dbLen) {
-	for (int i = 0; i < dbLen; i++) {
-		int current = db[i];
-		if (query < current)
-			return i;
-		current -= current;
+	int start = 0, end = dbLen - 1;
+	while (end >= start) {
+		int currentIndex = (end + start) / 2;
+		int current = db[currentIndex];
+		if (current == query)
+			return currentIndex + 1;
+		else if (current < query)
+			start = currentIndex + 1;
+		else
+			end = currentIndex - 1;
 	}
-	return dbLen;
-	// int start = 0, end = dbLen;
-	// while ((end - start) > 1) {
-	// 	int currentIndex = (end - start) / 2;
-	// 	int current = db[currentIndex];
-	// 	if (current == query)
-	// 		return currentIndex + 1;
-	// 	else if (current > query)
-	// 		end = (currentIndex == end) ? currentIndex - 1 : currentIndex;
-	// 	else
-	// 		start = currentIndex + 1;
-	// }
-	// return (db[start] > query) ? start : end;
+	return start;
 }
 
 /**
