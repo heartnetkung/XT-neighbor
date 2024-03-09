@@ -340,7 +340,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, int* seqFreqHost,
 		init_overlap(indexPairs, pairwiseFrequencies, seqFreq, repSizes, seq1Len, args.infoLen);
 		finalOutput.len = seq1Len;
 		finalOutput.indexPairs = indexPairs;
-		finalOutput.pairwiseFrequencies = finalOutput;
+		finalOutput.pairwiseFrequencies = pairwiseFrequencies;
 	}
 
 
