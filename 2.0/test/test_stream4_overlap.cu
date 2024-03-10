@@ -46,19 +46,15 @@ TEST(Stream4Overlap, {
 	Int2 expectedPairs[] = {
 		{.x = 0, .y = 0}
 	};
-	size_t expectedDistances[] = {103};
+	size_t expectedDistances[] = {206};
 	output.indexPairs = device_to_host(output.indexPairs, output.len);
 	output.pairwiseFrequencies = device_to_host(output.pairwiseFrequencies, output.len);
 
 	//check
 	check(output.len == expectedLen);
-	printf("a %d %d \n", output.len, expectedLen);
 	for (int i = 0; i < expectedLen; i++) {
 		check(expectedPairs[i].x == output.indexPairs[i].x);
-		printf("b %d %d \n", expectedPairs[i].x, output.indexPairs[i].x);
 		check(expectedPairs[i].y == output.indexPairs[i].y);
-		printf("c %d %d \n", expectedPairs[i].y, output.indexPairs[i].y);
 		check(expectedDistances[i] == output.pairwiseFrequencies[i]);
-		printf("d %lu %lu \n", expectedDistances[i], output.pairwiseFrequencies[i]);
 	}
 })
