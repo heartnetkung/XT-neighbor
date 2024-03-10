@@ -6,7 +6,7 @@ var searchData=
   ['infolen',['infoLen',['../structXTNArgs.html#ad28f9b0305e186ef27d72f595847ea54',1,'XTNArgs']]],
   ['infopath',['infoPath',['../structXTNArgs.html#a802e2ec84d8942aa8cd8a12ba6c6004b',1,'XTNArgs']]],
   ['init_5fdiagonal_5foverlap_5foutput',['init_diagonal_overlap_output',['../kernel_8cu.html#ad3d7c5e84c9e1d7af3190975d226c68a',1,'kernel.cu']]],
-  ['init_5foverlap',['init_overlap',['../xtn__inner_8cu.html#a8662074e9f1b496e3cdbe1eb35d331c5',1,'xtn_inner.cu']]],
+  ['init_5foverlap',['init_overlap',['../xtn__inner_8cu.html#a9e5d7773b5d3c0371024a29e3d04eec4',1,'xtn_inner.cu']]],
   ['initmemory',['initMemory',['../xtn_8cu.html#a243b931f8f183350a46a2338e5a5f67b',1,'xtn.cu']]],
   ['int2',['Int2',['../structInt2.html',1,'']]],
   ['int2comparator',['Int2Comparator',['../structInt2Comparator.html',1,'']]],
