@@ -275,6 +275,32 @@ void cal_distance(Int3* seq, Int2* index, int distance, char measure,
 }
 
 /**
+ * perform binary search with round-down return of index value when not found.
+ *
+ * @param query value to search
+ * @param db database for searching
+ * @param dbLen number of rows in db
+*/
+#ifdef TEST_ENV
+__host__
+#endif
+__device__
+int binarySearch(int query, int* db , int dbLen) {
+	int start = 0, end = dbLen - 1;
+	while (end >= start) {
+		int currentIndex = (end + start) / 2;
+		int current = db[currentIndex];
+		if (current == query)
+			return currentIndex + 1;
+		else if (current < query)
+			start = currentIndex + 1;
+		else
+			end = currentIndex - 1;
+	}
+	return start;
+}
+
+/**
  * turning pairs and frequencies from sequence format to repertoire format.
  *
  * @param pairs pair result from nearest neighbor search
@@ -434,32 +460,6 @@ void toSizeT(int* input, size_t* output, int n) {
 	if (tid >= n)
 		return;
 	output[tid] = input[tid];
-}
-
-/**
- * perform binary search with round-down return of index value when not found.
- *
- * @param query value to search
- * @param db database for searching
- * @param dbLen number of rows in db
-*/
-#ifdef TEST_ENV
-__host__
-#endif
-__device__
-int binarySearch(int query, int* db , int dbLen) {
-	int start = 0, end = dbLen - 1;
-	while (end >= start) {
-		int currentIndex = (end + start) / 2;
-		int current = db[currentIndex];
-		if (current == query)
-			return currentIndex + 1;
-		else if (current < query)
-			start = currentIndex + 1;
-		else
-			end = currentIndex - 1;
-	}
-	return start;
 }
 
 /**
