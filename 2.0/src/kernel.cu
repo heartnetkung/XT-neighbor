@@ -243,7 +243,7 @@ char hamming(Int3 x1, Int3 x2) {
  * @param index pairs of sequence to calculate
  * @param distance Levenshtein/Hamming distance threshold
  * @param measure enum representing Levenshtein/Hamming
- * @param distanceOutput output distance, if null the output won't be written
+ * @param distanceOutput output distance
  * @param flagOutput array output flag
  * @param n array length of index
  * @param seqLen array length of seq
@@ -267,13 +267,57 @@ void cal_distance(Int3* seq, Int2* index, int distance, char measure,
 		return;
 	}
 
-	char newOutput = measure == LEVENSHTEIN ?
+	char newOutput = (measure == LEVENSHTEIN) ?
 	                 levenshtein(seq[indexPair.x], seq[indexPair.y]) :
 	                 hamming(seq[indexPair.x], seq[indexPair.y]);
-	if (distanceOutput != NULL)
-		distanceOutput[tid] = newOutput;
+	distanceOutput[tid] = newOutput;
 	flagOutput[tid] =  newOutput <= distance;
 }
+
+/**
+ * turning pairs and frequencies from sequence format to repertoire format.
+ *
+ * @param pairs pair result from nearest neighbor search
+ * @param values returning frequency of the corresponding pair
+ * @param seq sequence input
+ * @param seqFreq frequency of each CDR3 sequence
+ * @param repSizes size of each repertoire
+ * @param distance Levenshtein/Hamming distance threshold
+ * @param measure enum representing Levenshtein/Hamming
+ * @param repCount number of repertoires
+ * @param n number of pairs
+*/
+__global__
+void pair2rep(Int2* pairs, size_t* values, Int3* seq, int* seqFreq, int* repSizes,
+              int distance, char measure, int repCount, int n) {
+	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
+	if (tid >= n)
+		return;
+
+	Int2 pair = pairs[tid];
+	int newX = binarySearch(pair.x, repSizes, repCount);
+	if (pair.x == pair.y) {
+		pairs[tid] = {.x = newX, .y = newX};
+		// filter
+		values[tid] = 0;
+		return;
+	}
+
+	int newY = binarySearch(pair.y, repSizes, repCount);
+	char d = (measure == LEVENSHTEIN) ?
+	         levenshtein(seq[pair.x], seq[pair.y]) :
+	         hamming(seq[pair.x], seq[pair.y]);
+	pairs[tid] = {.x = newX, .y = newY};
+	if (d > distance)
+		// filter
+		values[tid] = 0;
+	else if (newX == newY)
+		// our nearest neighbor results only contain (i,j) pairs where i<j, so J>i cases must be accounted
+		values[tid] = ((size_t)seqFreq[pair.x]) * seqFreq[pair.y] * 2;
+	else
+		values[tid] = ((size_t)seqFreq[pair.x]) * seqFreq[pair.y];
+}
+
 
 /**
  * expand operation part of solving bin packing for 2D buffer.
@@ -416,33 +460,6 @@ int binarySearch(int query, int* db , int dbLen) {
 			end = currentIndex - 1;
 	}
 	return start;
-}
-
-/**
- * turning pairs and frequencies from sequence format to repertoire format.
- *
- * @param pairs pair result from nearest neighbor search
- * @param values returning frequency of the corresponding pair
- * @param seqFreq frequency of each CDR3 sequence
- * @param repSizes size of each repertoire
- * @param repCount number of repertoires
- * @param n number of pairs
-*/
-__global__
-void pair2rep(Int2* pairs, size_t* values, int* seqFreq,
-              int* repSizes, int repCount, int n) {
-	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
-	if (tid >= n)
-		return;
-	Int2 pair = pairs[tid];
-	int newX = binarySearch(pair.x, repSizes, repCount);
-	int newY = binarySearch(pair.y, repSizes, repCount);
-	pairs[tid] = {.x = newX, .y = newY};
-	if (newX == newY)
-		// our nearest neighbor results only contain (i,j) pairs where i<j, so J>i cases must be accounted
-		values[tid] = ((size_t)seqFreq[pair.x]) * seqFreq[pair.y] * 2;
-	else
-		values[tid] = ((size_t)seqFreq[pair.x]) * seqFreq[pair.y];
 }
 
 /**

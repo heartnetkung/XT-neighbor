@@ -97,11 +97,13 @@ MemoryContext cal_memory_stream3(int seq1Len) {
 */
 MemoryContext cal_memory_stream4(int seq1Len, bool overlapMode) {
 	MemoryContext ans = initMemory(seq1Len, true);
-	int multiplier = 2 * sizeof(Int2) + //Int2* uniquePairs, sorting
-	                 2 * sizeof(char) + //char* uniqueDistances, *flags
-	                 sizeof(Int2);//Int2* &pairOutput
-	if (!overlapMode)
-		multiplier += sizeof(char); // char* &distanceOutput;
+	int multiplier;
+	if (overlapMode)
+		multiplier = 3 * sizeof(Int2) + // *pairBuffer, *pairOut, sortKeyValues
+		             3 * sizeof(size_t); // *freqBuffer, *freqOut, sortKeyValues
+	else
+		multiplier = 3 * sizeof(Int2) + //Int2* uniquePairs, sorting, pairOutput
+		             3 * sizeof(char); //char* uniqueDistances, *flags, distanceOutput
 
 	size_t temp = (8 * ans.gpuSize) / (10 * multiplier);
 	ans.bandwidth1 = (temp > MAX_PROCESSING) ? MAX_PROCESSING : temp;
