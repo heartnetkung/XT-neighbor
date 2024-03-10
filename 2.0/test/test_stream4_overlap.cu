@@ -52,9 +52,13 @@ TEST(Stream4Overlap, {
 
 	//check
 	check(output.len == expectedLen);
+	printf("a %d %d \n", output.len, expectedLen);
 	for (int i = 0; i < expectedLen; i++) {
 		check(expectedPairs[i].x == output.indexPairs[i].x);
+		printf("b %d %d \n", expectedPairs[i].x, output.indexPairs[i].x);
 		check(expectedPairs[i].y == output.indexPairs[i].y);
+		printf("c %d %d \n", expectedPairs[i].y, output.indexPairs[i].y);
 		check(expectedDistances[i] == output.pairwiseFrequencies[i]);
+		printf("d %d %d \n", expectedDistances[i], output.pairwiseFrequencies[i]);
 	}
 })
