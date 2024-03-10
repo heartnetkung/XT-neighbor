@@ -97,16 +97,12 @@ public:
 		if (_deviceBuffer != NULL) {
 			cudaFree(_deviceBuffer); gpuerr();
 		}
-		printf("BB %lu\n", sizeof(T));
 		cudaMalloc(&_deviceBuffer, sizeof(T)*maxReadableSize); gpuerr();
 		if (verboseGlobal)
 			printf("====size grow %'d\n", maxReadableSize);
 	}
 
 	Chunk<T> read() {
-		printf("A0\n");
-		cudaDeviceSynchronize(); gpuerr();
-		printf("A1\n");
 		Chunk<T> ans;
 		if (_reading_data.empty())
 			return ans;
@@ -116,18 +112,8 @@ public:
 		}
 
 		int totalLen = 0;
-		printf("AA\n");
-
-		print_gpu_memory();
-		print_main_memory();
-		// if (sizeof(T) == 12) {
-		// 	print_int3_arr((Int3*)_deviceBuffer, 10);
-		// }
-		// cudaFree(_deviceBuffer); gpuerr();
-		printf("AB\n");
 		T* ptr = _deviceBuffer;
 		while (true) {
-			printf("AC\n");
 			if (_reading_data.empty())
 				break;
 
@@ -135,10 +121,7 @@ public:
 			if (totalLen + len > _maxReadableSize)
 				break;
 
-			printf("AD\n");
-
 			T* dataHost = _reading_data.back();
-			printf("the line\n");
 			cudaMemcpy(ptr, dataHost, sizeof(T)*len , cudaMemcpyHostToDevice); gpuerr();
 			_reading_data.pop_back();
 			_reading_len2.pop_back();
