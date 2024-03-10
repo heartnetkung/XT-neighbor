@@ -59,6 +59,6 @@ TEST(Stream4Overlap, {
 		check(expectedPairs[i].y == output.indexPairs[i].y);
 		printf("c %d %d \n", expectedPairs[i].y, output.indexPairs[i].y);
 		check(expectedDistances[i] == output.pairwiseFrequencies[i]);
-		printf("d %d %d \n", expectedDistances[i], output.pairwiseFrequencies[i]);
+		printf("d %lu %lu \n", expectedDistances[i], output.pairwiseFrequencies[i]);
 	}
 })
