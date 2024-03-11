@@ -182,7 +182,7 @@ void gen_next_chunk(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut,
 void init_overlap(Int2* &indexPairs, size_t* &pairwiseFrequencies, int* seqFreq,
                   int* repSizes, int seqLen, int repCount) {
 
-	inclusive_sum(repSizes, repCount); gpuerr();
+	inclusive_sum(repSizes, repCount);
 	cudaMalloc(&indexPairs, sizeof(Int2)*seqLen); gpuerr();
 	cudaMalloc(&pairwiseFrequencies, sizeof(size_t)*seqLen); gpuerr();
 	init_diagonal_overlap_output <<< NUM_BLOCK(seqLen), NUM_THREADS>>>(indexPairs,
@@ -468,8 +468,9 @@ void stream_handler4_nn(Chunk<Int2> pairInput, XTNOutput &output, Int3* seq1,
 	int outputLen =
 	    postprocessing(seq1, uniquePairs, distance, measure, pairOut, distanceOut,
 	                   uniqueLen, buffer, seq1Len);
+	cudaFree(uniquePairs); gpuerr();
 	make_output(pairOut, distanceOut, outputLen, output);
-	_cudaFree(uniquePairs, pairOut, distanceOut);
+	_cudaFree(pairOut, distanceOut);
 }
 
 /**
