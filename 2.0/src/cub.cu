@@ -68,7 +68,8 @@ void inclusive_sum(T* input, int n) {
 	inclusive_sum(input, input, n);
 }
 
-void sort_key_values(Int3* keys, int* values, int n) {
+template <typename T>
+void sort_key_values(Int3* keys, T* values, int n) {
 	void *buffer = NULL;
 	size_t bufferSize = 0;
 	Int3Comparator op;
@@ -100,17 +101,22 @@ void sort_int2(Int2* input, int n) {
 }
 
 template <typename T>
-void unique_counts(T* keys, int* output, int* outputLen, int n) {
+void unique_counts(T* keys, int* output, T* uniqueOut, int* outputLen, int n) {
 	void *buffer = NULL;
 	size_t bufferSize = 0;
-	T* dummy;
-	cudaMalloc(&dummy, sizeof(T)*n); gpuerr();
 	cub::DeviceRunLengthEncode::Encode(
-	    buffer, bufferSize, keys, dummy, output, outputLen, n); gpuerr();
+	    buffer, bufferSize, keys, uniqueOut, output, outputLen, n); gpuerr();
 	cudaMalloc(&buffer, bufferSize); gpuerr(); /*~5% memory*/
 	cub::DeviceRunLengthEncode::Encode(
-	    buffer, bufferSize, keys, dummy, output, outputLen, n); gpuerr();
+	    buffer, bufferSize, keys, uniqueOut, output, outputLen, n); gpuerr();
 	cudaFree(buffer); gpuerr();
+}
+
+template <typename T>
+void unique_counts(T* keys, int* output, int* outputLen, int n) {
+	T* dummy;
+	cudaMalloc(&dummy, sizeof(T)*n); gpuerr();
+	unique_counts(keys, output, dummy, outputLen, n);
 	cudaFree(dummy); gpuerr();
 }
 
