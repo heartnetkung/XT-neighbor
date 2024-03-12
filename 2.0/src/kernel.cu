@@ -485,12 +485,13 @@ void toSizeT(int* input, size_t* output, int n) {
  * @param info information of each sequence
  * @param indexOut repertoire pair output
  * @param freqOut frequency output for the pair
- * @param inputOffset index range of input to operate on
- * @param outputOffset index range of output to operate on
+ * @param inputOffsets index range of input to operate on
+ * @param outputOffsets index range of output to operate on
  * @param n length of inputOffset and outputOffset
 */
+__global__
 void init_overlap_output(SeqInfo* info, Int2* indexOut, size_t* freqOut,
-                         int* inputOffset, int* outputOffset, int n) {
+                         int* inputOffsets, int* outputOffsets, int n) {
 	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
 	if (tid >= n)
 		return;

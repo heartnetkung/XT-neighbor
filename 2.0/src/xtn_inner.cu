@@ -535,7 +535,7 @@ int overlap_mode_init(Int3* seq, Int3* &seqOut, SeqInfo* &infoInOut, int* &infoO
 
 	// cal offset
 	cudaMalloc(&outputOffset, uniqueLen * sizeof(int)); gpuerr();
-	cal_pair_len_diag <<< NUM_BLOCK(outputLen), NUM_THREADS>>>(infoOffsetOut, outputOffset, uniqueLen); gpuerr();
+	cal_pair_len_diag <<< NUM_BLOCK(uniqueLen), NUM_THREADS>>>(infoOffsetOut, outputOffset, uniqueLen); gpuerr();
 	inclusive_sum(outputOffset, uniqueLen);
 	inclusive_sum(infoOffsetOut, uniqueLen);
 
