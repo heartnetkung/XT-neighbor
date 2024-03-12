@@ -27,8 +27,26 @@ TEST(OverlapInit, {
 
 	int uniqueLen = overlap_mode_init(seq1d, seqOut, infoD, infoOffset,
 	                                  output, seqLen, buffer);
-	printf("%d %d\n", uniqueLen, output.len);
-	print_int3_arr(seqOut, uniqueLen);
-	print_int2_arr(output.indexPairs, uniqueLen);
-	print_size_t_arr(output.pairwiseFrequencies, uniqueLen);
+
+	int expectedUniqueLen = 3, expectedOutputLen = 3;
+	check(uniqueLen == expectedUniqueLen);
+	check(output.len == expectedOutputLen);
+
+	SeqInfo expectedInfo[] = {
+		{.frequency = 3, .repertoire = 0}, {.frequency = 5, .repertoire = 1},
+		{.frequency = 4, .repertoire = 0}, {.frequency = 6, .repertoire = 1}
+	};
+	check_device_arr(infoD, expectedInfo, seqLen);
+
+	int expectedInfoOffset[] = {2, 3, 4};
+	check_device_arr(infoOffset, expectedInfoOffset, uniqueLen);
+
+	Int3 expectedSeqOut[] = {str_encode("CAAA"), str_encode("CADA"), str_encode("CDKD")};
+	check_device_arr(seqOut, expectedSeqOut, uniqueLen);
+
+	Int2 expectedIndexPair[] = {{.x = 0, .y = 0}, {.x = 0, .y = 1}, {.x = 1, .y = 1}};
+	check_device_arr(output.indexPairs, expectedIndexPair, output.len);
+
+	size_t expectedPairwiseFreq[] = {25, 15, 61};
+	check_device_arr(output.pairwiseFrequencies, expectedPairwiseFreq, output.len);
 })

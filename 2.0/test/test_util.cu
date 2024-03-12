@@ -19,6 +19,13 @@ void checkstr(const char* a, const char* b) {
 	check(!strcmp(a, b));
 }
 
+<template T>
+void check_device_arr(T* deviceArr, T* expectedArr, int n) {
+	T* hostArr = device_to_host(deviceArr, n);
+	for (int i = 0; i < n; i++)
+		check(hostArr[i] == expectedArr[i]);
+}
+
 int _append(std::string name, void (*func)()) {
 	descriptions.push_back(name);
 	results.push_back(1);
