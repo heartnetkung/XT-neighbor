@@ -489,6 +489,7 @@ void stream_handler4_overlap(Chunk<Int2> pairInput, XTNOutput &output, Int3* seq
 	cal_pair_len_nondiag <<< NUM_BLOCK(uniqueLen), NUM_THREADS>>>(
 		uniquePairs, seqOffset, outputRange, uniqueLen); gpuerr();
 	inclusive_sum(outputRange, uniqueLen);
+	print_int_arr(outputRange, uniqueLen);
 	int outputLen = transfer_last_element(outputRange, uniqueLen);
 
 	// prepare output
