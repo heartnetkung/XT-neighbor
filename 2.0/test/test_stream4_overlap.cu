@@ -2,45 +2,52 @@
 #include "../src/xtn_inner.cu"
 
 TEST(Stream4Overlap, {
-	int seqLen = 5;
-	char seqs[seqLen][6] = {"CAAA", "CADA", "CAAA", "CDKD", "CAAK"};
-	int freqs[6] = {3, 4, 5, 6, 7};
-	int reps[1] = {5}, repCount = 1;
-	int pairLen = 10;
+	int seqLen = 4;
+	int infoLen = 5;
+	// char seqs[seqLen][6] = {"CAAA", "CADA", "CAAA", "CDKD", "CAAK"};
+	char useqs[seqLen][6] = {"CAAA", "CADA", "CDKD", "CAAK"};
+	SeqInfo info[] = {
+		{.frequency = 3, .repertoire = 0}, {.frequency = 5, .repertoire = 1},
+		{.frequency = 4, .repertoire = 0}, {.frequency = 6, .repertoire = 1}, {.frequency = 7, .repertoire = 1}
+	};
+	int inputOffsets[] = {2, 3, 4, 5};
+	int pairLen = 6;
 	int distance = 1;
 
 	//allocate inputs
-	Int3 * seq1d, *seq1h;
+	Int3 * seq1_d, *seq1_h;
 	Int2 * pairs_d, *pairs_h;
 	XTNOutput output;
-	int* deviceInt, *freqs_d, *reps_d;
+	int* deviceInt, *inputOffsets_d;
+	SeqInfo* info_d;
 	cudaMalloc(&deviceInt, sizeof(int));
-	cudaMalloc(&seq1d, sizeof(Int3)*seqLen);
-	cudaMallocHost(&seq1h, sizeof(Int3)*seqLen);
+	cudaMalloc(&seq1_d, sizeof(Int3)*seqLen);
+	cudaMallocHost(&seq1_h, sizeof(Int3)*seqLen);
 	cudaMalloc(&pairs_d, sizeof(Int2)*pairLen);
-	cudaMalloc(&freqs_d, sizeof(int)*seqLen);
-	cudaMalloc(&reps_d, sizeof(int)*repCount);
 	cudaMallocHost(&pairs_h, sizeof(Int2)*pairLen);
+	cudaMalloc(&info_d, sizeof(SeqInfo)*infoLen);
 
-	// //make inputs
-	// for (int i = 0; i < seqLen; i++)
-	// 	seq1h[i] = str_encode(seqs[i]);
-	// int count = 0;
-	// for (int i = 0; i < 5; i++)
-	// 	for (int j = i + 1; j < 5; j++)
-	// 		pairs_h[count++] = {.x = i, .y = j};
-	// seq1d = host_to_device(seq1h, seqLen);
-	// pairs_d = host_to_device(pairs_h, pairLen);
-	// freqs_d = host_to_device(freqs, seqLen);
-	// reps_d = host_to_device(reps, repCount);
+	//make inputs
+	for (int i = 0; i < seqLen; i++)
+		seq1_h[i] = str_encode(seqs[i]);
+	int count = 0;
+	for (int i = 0; i < 5; i++)
+		for (int j = i + 1; j < 5; j++)
+			pairs_h[count++] = {.x = i, .y = j};
+	seq1_d = host_to_device(seq1_h, seqLen);
+	pairs_d = host_to_device(pairs_h, pairLen);
+	info_d = host_to_device(info_h, infoLen);
+	inputOffsets_d = host_to_device(inputOffsets, seqLen);
 
-	// //do testing
-	// Chunk<Int2> pairInput;
-	// pairInput.ptr = pairs_d;
-	// pairInput.len = pairLen;
-	// stream_handler4_overlap(pairInput, output, seq1d, freqs_d, reps_d, repCount,
-	//                         seqLen, distance, LEVENSHTEIN, deviceInt);
+	//do testing
+	Chunk<Int2> pairInput;
+	pairInput.ptr = pairs_d;
+	pairInput.len = pairLen;
+	stream_handler4_overlap(pairInput, output, seq1_d, info_d, inputOffsets_d,
+	                        seqLen, distance, LEVENSHTEIN, deviceInt);
 
+	print_int2_arr(output.indexPairs, output.len);
+	print_size_t_arr(output.pairwiseFrequencies, output.len);
 	// //expactation
 	// int expectedLen = 1;
 	// Int2 expectedPairs[] = {
