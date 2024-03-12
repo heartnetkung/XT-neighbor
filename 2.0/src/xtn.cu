@@ -199,22 +199,24 @@ int** set_d2_offsets(std::vector<int*> histograms, D2Stream<T1> *s1, D2Stream<T2
  *
  * @param args all flags parsed from command line
  * @param seq1 sequence input
- * @param seqFreqHost frequency of each CDR3 sequence, only used in overlap mode
- * @param repSizesHost size of each repertiore, only used in overlap mode
+ * @param seqInfo information of each CDR3 sequence, only used in overlap mode
  * @param callback function to be invoked once a chunk of output is ready
 */
-void xtn_perform(XTNArgs args, Int3* seq1, int* seqFreqHost,
-                 int* repSizesHost, void callback(XTNOutput)) {
+void xtn_perform(XTNArgs args, Int3* seq1, SeqInfo* seqInfo, void callback(XTNOutput)) {
 	clock_start();
 
-	int* deviceInt, *lowerbounds, *seqFreq = NULL, *repSizes = NULL;
+	// normal variables
+	int* deviceInt, *lowerbounds, *seqOffset = NULL;
 	Int3* seq1Device;
 	std::vector<int*> histograms;
 	int** offsets;
+	SeqInfo* seqInfoDevice = NULL;
 	int lowerboundsLen;
 	int distance = args.distance, seq1Len = args.seq1Len;
 	bool overlapMode = (args.infoPath != NULL);
+	XTNOutput finalOutput;
 
+	// buffer related variables
 	GPUInputStream<Int3> *b0;
 	D2Stream<Int3> *b1key;
 	D2Stream<int> *b1value;
@@ -229,6 +231,18 @@ void xtn_perform(XTNArgs args, Int3* seq1, int* seqFreqHost,
 	cudaMalloc(&deviceInt, sizeof(int)); gpuerr();
 	seq1Device = host_to_device(seq1, seq1Len);
 	print_v("0A");
+
+	//=====================================
+	// overlap mode input preparation
+	//=====================================
+
+	if (overlapMode) {
+		Int3* seq1Dedup;
+		seq1Len =  overlap_mode_init(seq1Device, seq1Dedup, seqInfoDevice, seqOffset,
+		                             finalOutput, seq1Len, deviceInt);
+		cudaFree(seq1Device); gpuerr();
+		seq1Device = seq1Dedup;
+	}
 
 	//=====================================
 	// stream 1: generate deletions
@@ -294,22 +308,10 @@ void xtn_perform(XTNArgs args, Int3* seq1, int* seqFreqHost,
 	//=====================================
 
 	size_t totalLen3B = 0;
-	XTNOutput finalOutput;
 	lowerboundsLen = cal_lowerbounds(histograms, lowerbounds, seq1Len, deviceInt);
 	histograms.clear();
 	if (verboseGlobal)
 		print_int_arr(lowerbounds, lowerboundsLen);
-
-	if (overlapMode) {
-		Int2* indexPairs;
-		size_t* pairwiseFrequencies;
-		seqFreq = host_to_device(seqFreqHost, seq1Len);
-		repSizes = host_to_device(repSizesHost, args.infoLen);
-		init_overlap(indexPairs, pairwiseFrequencies, seqFreq, repSizes, seq1Len, args.infoLen);
-		finalOutput.len = seq1Len;
-		finalOutput.indexPairs = indexPairs;
-		finalOutput.pairwiseFrequencies = pairwiseFrequencies;
-	}
 
 	for (int i = 0; i < lowerboundsLen; i++) {
 		int lowerbound = lowerbounds[i];
@@ -361,9 +363,8 @@ void xtn_perform(XTNArgs args, Int3* seq1, int* seqFreqHost,
 			print_bandwidth(b3Chunk.len, ctx4.bandwidth1, "4");
 
 			if (overlapMode)
-				stream_handler4_overlap(b3Chunk, finalOutput, seq1Device,
-				                        seqFreq, repSizes, args.infoLen,
-				                        seq1Len, distance, args.measure, deviceInt);
+				stream_handler4_overlap(b3Chunk, finalOutput, seq1Device, seqInfoDevice,
+				                        seqOffset, seq1Len, distance, args.measure, deviceInt);
 			else {
 				stream_handler4_nn(b3Chunk, finalOutput, seq1Device, seq1Len,
 				                   distance, args.measure, deviceInt);
@@ -384,7 +385,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, int* seqFreqHost,
 		Int2* indexPairs = device_to_host(finalOutput.indexPairs, finalOutput.len);
 		size_t* pairwiseFreq = device_to_host(
 		                           finalOutput.pairwiseFrequencies, finalOutput.len);
-		_cudaFree(seqFreq, repSizes, finalOutput.indexPairs,
+		_cudaFree(seqOffset, seqInfoDevice, finalOutput.indexPairs,
 		          finalOutput.pairwiseFrequencies);
 		finalOutput.indexPairs = indexPairs;
 		finalOutput.pairwiseFrequencies = pairwiseFreq;
