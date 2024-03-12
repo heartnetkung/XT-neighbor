@@ -485,7 +485,7 @@ void stream_handler4_overlap(Chunk<Int2> pairInput, XTNOutput &output, Int3* seq
 
 	// prepare output
 	int concatLen = outputLen + output.len;
-	printf("cc\n");
+	printf("cc %d %d\n", pairInput.len, outputLen);
 	_cudaMalloc(pairOut, freqOut, concatLen);
 	cudaMemcpy(freqOut + outputLen, output.pairwiseFrequencies,
 	           sizeof(size_t)*output.len, cudaMemcpyDeviceToDevice); gpuerr();
