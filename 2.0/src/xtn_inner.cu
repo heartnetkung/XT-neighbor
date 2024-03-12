@@ -486,7 +486,8 @@ void stream_handler4_overlap(Chunk<Int2> pairInput, XTNOutput &output, Int3* seq
 
 	// calculate output offset
 	cudaMalloc(&outputRange, sizeof(int)*uniqueLen);
-	cal_pair_len_nondiag(uniquePairs, seqOffset, outputRange, uniqueLen);
+	cal_pair_len_nondiag <<< NUM_BLOCK(uniqueLen), NUM_THREADS>>>(
+		uniquePairs, seqOffset, outputRange, uniqueLen); gpuerr();
 	inclusive_sum(outputRange, uniqueLen);
 	int outputLen = transfer_last_element(buffer, uniqueLen);
 
@@ -506,6 +507,8 @@ void stream_handler4_overlap(Chunk<Int2> pairInput, XTNOutput &output, Int3* seq
 	    outputRange, distance, measure, outputLen); gpuerr();
 	_cudaFree(uniquePairs, outputRange);
 	sort_key_values2(pairOut, freqOut, concatLen);
+	cudaMalloc(&pairOut2, sizeof(Int2) * concatLen); gpuerr();
+	cudaMalloc(&freqOut2, sizeof(size_t) * concatLen); gpuerr();
 	sum_by_key(pairOut, pairOut2, freqOut, freqOut2, buffer, concatLen);
 
 	//finish up
