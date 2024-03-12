@@ -20,13 +20,18 @@ void checkstr(const char* a, const char* b) {
 }
 
 template <typename T>
+void check_arr(T* arr, T* expectedArr, int n) {
+	for (int i = 0; i < n; i++)
+		check(arr[i] == expectedArr[i]);
+}
+
+template <typename T>
 void check_device_arr(T* deviceArr, T* expectedArr, int n) {
 	T* hostArr;
 	size_t tempBytes = sizeof(T) * n;
 	cudaMallocHost(&hostArr, tempBytes);
 	cudaMemcpy(hostArr, deviceArr, tempBytes, cudaMemcpyDeviceToHost);
-	for (int i = 0; i < n; i++)
-		check(hostArr[i] == expectedArr[i]);
+	check_arr(hostArr, expectedArr, n);
 	cudaFreeHost(hostArr);
 }
 

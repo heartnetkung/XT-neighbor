@@ -20,9 +20,7 @@ TEST(RAMSwapStream, {
 	int count = 0;
 	while ((data = stream->read()).not_null()) {
 		check(data.len == expectedLen2[count]);
-		int* hostPtr = device_to_host(data.ptr, data.len);
-		for (int i = 0; i < data.len; i++)
-			check(expectedData[count][i] == hostPtr[i]);
+		check_device_arr(data.ptr, expectedData[count], data.len);
 		count++;
 	}
 	check(count == expectedLen);
@@ -44,9 +42,7 @@ TEST(RAMSwapStream, {
 	count = 0;
 	while ((data = stream->read()).not_null()) {
 		check(data.len == expectedLen22[count]);
-		int* hostPtr = device_to_host(data.ptr, data.len);
-		for (int i = 0; i < data.len; i++)
-			check(expectedData2[count][i] == hostPtr[i]);
+		check_device_arr(data.ptr, expectedData2[count], data.len);
 		count++;
 	}
 	check(count == expectedLen21);
@@ -87,10 +83,8 @@ TEST(D2Stream, {
 	Chunk<int> buffer;
 	int chunkCount = 0;
 	while ( (buffer = stream->read()).not_null() ) {
-		int* data = device_to_host(buffer.ptr, buffer.len);
 		check(buffer.len == expectedLen[chunkCount]);
-		for (int i = 0; i < buffer.len; i++)
-			check(data[i] == expectedData[chunkCount][i]);
+		check_device_arr(buffer.ptr, expectedData[chunkCount], buffer.len);
 		chunkCount++;
 	}
 	stream->deconstruct();

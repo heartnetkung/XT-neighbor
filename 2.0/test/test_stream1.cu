@@ -38,12 +38,10 @@ TEST(Stream1, {
 	};
 	int expectedIndex[] = {0, 2, 1, 0, 0, 0, 1, 2, 2, 2, 0, 2, 1, 1, 1, 3, 3, 3, 3, 3};
 	deletionsOutput = device_to_host(deletionsOutput, outputLen);
-	indexOutput = device_to_host(indexOutput, outputLen);
 
 	//check
 	check(outputLen == expectedLen);
-	for (int i = 0; i < expectedLen; i++) {
+	check_device_arr(indexOutput, expectedIndex, outputLen);
+	for (int i = 0; i < expectedLen; i++)
 		checkstr(expectedPairs[i], str_decode(deletionsOutput[i]));
-		check(expectedIndex[i] == indexOutput[i]);
-	}
 })
