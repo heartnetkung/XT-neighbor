@@ -101,4 +101,4 @@ enum ReturnCode {SUCCESS, ERROR, EXIT};
  * @param seqInfo information of each CDR3 sequence, only used in overlap mode
  * @param callback function to be invoked once a chunk of output is ready
 */
-void xtn_perform(XTNArgs args, Int3* seq1, SeqInfo* seqInfoHost, void callback (XTNOutput));
+void xtn_perform(XTNArgs args, Int3* seq1, SeqInfo* seqInfo, void callback (XTNOutput));

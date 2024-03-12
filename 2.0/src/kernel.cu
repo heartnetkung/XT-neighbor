@@ -85,7 +85,8 @@ void cal_pair_len_diag(int* inputRange, int* outputRange, int n) {
 /**
  * precalculate the output range of pair generation in diagonal position for overlap mode.
  *
- * @param inputRange range of each input group
+ * @param pairs pairs of sequences
+ * @param seqOffset range of each input group
  * @param outputRange range of each output group
  * @param n array length of inputRange and outputRange
 */
