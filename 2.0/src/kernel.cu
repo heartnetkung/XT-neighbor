@@ -17,6 +17,7 @@ const size_t MAX = INT_MAX;
 template <typename T>
 T transfer_last_element(T* deviceArr, int n) {
 	T ans[1];
+	printf("aax %d %lu\n", deviceArr + n - 1, sizeof(T));
 	cudaMemcpy(ans, deviceArr + n - 1, sizeof(T), cudaMemcpyDeviceToHost); gpuerr();
 	cudaDeviceSynchronize(); gpuerr();
 	return ans[0];
@@ -366,10 +367,13 @@ void pair2rep(Int2* pairs, Int2* indexOut, size_t* freqOut, Int3* seq, SeqInfo* 
 		SeqInfo infoI = seqInfo[i];
 		for (int j = start2; j < end2; j++) {
 			SeqInfo infoJ = seqInfo[j];
-			indexOut[outputIndex] = {.x = infoI.repertoire, .y = infoJ.repertoire};
+			if (infoI.repertoire > infoJ.repertoire)
+				indexOut[outputIndex] = {.x = infoJ.repertoire, .y = infoI.repertoire};
+			else
+				indexOut[outputIndex] = {.x = infoI.repertoire, .y = infoJ.repertoire};
 			if (infoI.repertoire == infoJ.repertoire)
 				// same repertoire must be counted twice
-				freqOut[outputIndex++] = ((size_t)infoI.frequency) * infoJ.frequency*2;
+				freqOut[outputIndex++] = ((size_t)infoI.frequency) * infoJ.frequency * 2;
 			else
 				freqOut[outputIndex++] = ((size_t)infoI.frequency) * infoJ.frequency;
 		}
