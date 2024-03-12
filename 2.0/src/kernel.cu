@@ -499,7 +499,6 @@ void init_overlap_output(SeqInfo* info, Int2* indexOut, size_t* freqOut,
 	int start = tid == 0 ? 0 : inputOffsets[tid - 1];
 	int end = inputOffsets[tid];
 	int outputIndex = tid == 0 ? 0 : outputOffsets[tid - 1];
-	int outputEnd = outputOffsets[tid];
 
 	for (int i = start; i < end; i++) {
 		SeqInfo infoI = info[i];

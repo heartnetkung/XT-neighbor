@@ -25,7 +25,10 @@ TEST(OverlapInit, {
 	seq1d = host_to_device(seq1h, seqLen);
 	infoD = host_to_device(info, seqLen);
 
-
-	// int output = overlap_mode_init(seq1d, seqOut, infoD, &infoOffset,
-	//                                output, seqLen, buffer);
+	int uniqueLen = overlap_mode_init(seq1d, seqOut, infoD, infoOffset,
+	                                  output, seqLen, buffer);
+	printf("%d %d\n", uniqueLen, output.len);
+	print_int3_arr(seqOut, uniqueLen);
+	print_int2_arr(output.indexPairs);
+	print_size_t_arr(output.pairwiseFrequencies);
 })
