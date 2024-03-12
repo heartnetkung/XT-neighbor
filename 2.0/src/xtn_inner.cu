@@ -316,7 +316,7 @@ void stream_handler1(Chunk<Int3> input, Int3* &deletionsOutput, int* &indexOutpu
 	    input.ptr, combinationOffsets, distance, deletionsOutput,
 	    indexOutput, carry, histogramValue, input.len); gpuerr();
 	carry += input.len;
-	_cudaFree(combinationOffsets);
+	cudaFree(combinationOffsets); gpuerr();
 
 	// generate histogram
 	sort_key_values(deletionsOutput, indexOutput, outputLen);
@@ -324,7 +324,7 @@ void stream_handler1(Chunk<Int3> input, Int3* &deletionsOutput, int* &indexOutpu
 	cal_histogram(histogramValue, histogram, ctx.histogramSize, UINT_MIN, UINT_MAX, outputLen);
 	histogramOutput.push_back(histogram);
 
-	_cudaFree(histogramValue);
+	cudaFree(histogramValue); gpuerr();
 }
 
 /**
@@ -475,7 +475,7 @@ void stream_handler4_overlap(Chunk<Int2> pairInput, XTNOutput &output, Int3* seq
 	int uniqueLen = deduplicate(pairInput.ptr, uniquePairs, pairInput.len, buffer);
 
 	// calculate output offset
-	cudaMalloc(&outputRange, sizeof(int)*uniqueLen);
+	cudaMalloc(&outputRange, sizeof(int)*uniqueLen); gpuerr();
 	cal_pair_len_nondiag <<< NUM_BLOCK(uniqueLen), NUM_THREADS>>>(
 	    uniquePairs, seqOffset, outputRange, uniqueLen); gpuerr();
 	inclusive_sum(outputRange, uniqueLen);
