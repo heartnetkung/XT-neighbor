@@ -1,8 +1,8 @@
 var searchData=
 [
-  ['seq1len',['seq1Len',['../structXTNArgs.html#ac3d7b407558bf1ef815a52eafe764ba7',1,'XTNArgs']]],
-  ['seq1path',['seq1Path',['../structXTNArgs.html#a394d4f44fb29625ef2c9bbdb32a5fade',1,'XTNArgs']]],
   ['seqinfo',['SeqInfo',['../structSeqInfo.html',1,'']]],
+  ['seqlen',['seqLen',['../structXTNArgs.html#a9e55850405e448779b0c5f627e24f58b',1,'XTNArgs']]],
+  ['seqpath',['seqPath',['../structXTNArgs.html#a3ff92a8a9f3279cabb0414c3bad4c14b',1,'XTNArgs']]],
   ['set_5fd2_5foffsets',['set_d2_offsets',['../xtn_8cu.html#a6a62aecf3e02f35fed93860918198e87',1,'xtn.cu']]],
   ['set_5fmax_5freadable_5fsize',['set_max_readable_size',['../classRAMSwapStream.html#a71c0d105cf16af093b2127de0438b6d6',1,'RAMSwapStream']]],
   ['set_5foffsets',['set_offsets',['../classD2Stream.html#ad344d443f6bd53d12d8d187eb5cce499',1,'D2Stream']]],
@@ -18,8 +18,8 @@ var searchData=
   ['stream_5fhandler1',['stream_handler1',['../xtn__inner_8cu.html#a204393aaec3c484980a3369a283365ed',1,'xtn_inner.cu']]],
   ['stream_5fhandler2',['stream_handler2',['../xtn__inner_8cu.html#a6106aa3872c6f87041c72b4ce0db6e76',1,'xtn_inner.cu']]],
   ['stream_5fhandler3',['stream_handler3',['../xtn__inner_8cu.html#a0c797d489251ff552b4f19bf85aabcbf',1,'xtn_inner.cu']]],
-  ['stream_5fhandler4_5fnn',['stream_handler4_nn',['../xtn__inner_8cu.html#a844ae084ce76ff5939b0032c88d3bd02',1,'xtn_inner.cu']]],
-  ['stream_5fhandler4_5foverlap',['stream_handler4_overlap',['../xtn__inner_8cu.html#a8b634d950485fa0d847ed03e8aacbac7',1,'xtn_inner.cu']]],
+  ['stream_5fhandler4_5fnn',['stream_handler4_nn',['../xtn__inner_8cu.html#af6390c0bd0b9c3e320f8a5f296f65146',1,'xtn_inner.cu']]],
+  ['stream_5fhandler4_5foverlap',['stream_handler4_overlap',['../xtn__inner_8cu.html#aba1f474720482aaaba6f756560a60a40',1,'xtn_inner.cu']]],
   ['success',['SUCCESS',['../xtn_8h.html#a5a2236a3693e3930b2c9fbe1fe7144ecac7f69f7c9e5aea9b8f54cf02870e2bf8',1,'xtn.h']]],
   ['sum',['Sum',['../structSum.html',1,'']]],
   ['sum_5fby_5fkey',['sum_by_key',['../cub_8cu.html#a31ed98a50d89ec5ef254d49d6246506d',1,'cub.cu']]],

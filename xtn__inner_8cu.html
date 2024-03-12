@@ -126,12 +126,12 @@ Functions</h2></td></tr>
 <tr class="memitem:a0c797d489251ff552b4f19bf85aabcbf"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xtn__inner_8cu.html#a0c797d489251ff552b4f19bf85aabcbf">stream_handler3</a> (<a class="el" href="classChunk.html">Chunk</a>&lt; <a class="el" href="structInt3.html">Int3</a> &gt; &amp;keyInOut, <a class="el" href="classChunk.html">Chunk</a>&lt; int &gt; &amp;valueInOut, void callback(<a class="el" href="structInt2.html">Int2</a> *, int), std::vector&lt; int *&gt; &amp;histogramOutput, int lowerbound, int seqLen, int *buffer, <a class="el" href="structMemoryContext.html">MemoryContext</a> ctx)</td></tr>
 <tr class="memdesc:a0c797d489251ff552b4f19bf85aabcbf"><td class="mdescLeft">&#160;</td><td class="mdescRight">handle all GPU operations in stream 3.  <a href="#a0c797d489251ff552b4f19bf85aabcbf">More...</a><br /></td></tr>
 <tr class="separator:a0c797d489251ff552b4f19bf85aabcbf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a844ae084ce76ff5939b0032c88d3bd02"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xtn__inner_8cu.html#a844ae084ce76ff5939b0032c88d3bd02">stream_handler4_nn</a> (<a class="el" href="classChunk.html">Chunk</a>&lt; <a class="el" href="structInt2.html">Int2</a> &gt; pairInput, <a class="el" href="structXTNOutput.html">XTNOutput</a> &amp;output, <a class="el" href="structInt3.html">Int3</a> *seq1, int seq1Len, int distance, char measure, int *buffer)</td></tr>
-<tr class="memdesc:a844ae084ce76ff5939b0032c88d3bd02"><td class="mdescLeft">&#160;</td><td class="mdescRight">handle all GPU operations in stream 4 nn mode.  <a href="#a844ae084ce76ff5939b0032c88d3bd02">More...</a><br /></td></tr>
-<tr class="separator:a844ae084ce76ff5939b0032c88d3bd02"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8b634d950485fa0d847ed03e8aacbac7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xtn__inner_8cu.html#a8b634d950485fa0d847ed03e8aacbac7">stream_handler4_overlap</a> (<a class="el" href="classChunk.html">Chunk</a>&lt; <a class="el" href="structInt2.html">Int2</a> &gt; pairInput, <a class="el" href="structXTNOutput.html">XTNOutput</a> &amp;output, <a class="el" href="structInt3.html">Int3</a> *seq1, <a class="el" href="structSeqInfo.html">SeqInfo</a> *seqInfo, int *seqOffset, int seq1Len, int distance, char measure, int *buffer)</td></tr>
-<tr class="memdesc:a8b634d950485fa0d847ed03e8aacbac7"><td class="mdescLeft">&#160;</td><td class="mdescRight">handle all GPU operations in stream 4 overlap mode.  <a href="#a8b634d950485fa0d847ed03e8aacbac7">More...</a><br /></td></tr>
-<tr class="separator:a8b634d950485fa0d847ed03e8aacbac7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af6390c0bd0b9c3e320f8a5f296f65146"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xtn__inner_8cu.html#af6390c0bd0b9c3e320f8a5f296f65146">stream_handler4_nn</a> (<a class="el" href="classChunk.html">Chunk</a>&lt; <a class="el" href="structInt2.html">Int2</a> &gt; pairInput, <a class="el" href="structXTNOutput.html">XTNOutput</a> &amp;output, <a class="el" href="structInt3.html">Int3</a> *seq, int seqLen, int distance, char measure, int *buffer)</td></tr>
+<tr class="memdesc:af6390c0bd0b9c3e320f8a5f296f65146"><td class="mdescLeft">&#160;</td><td class="mdescRight">handle all GPU operations in stream 4 nn mode.  <a href="#af6390c0bd0b9c3e320f8a5f296f65146">More...</a><br /></td></tr>
+<tr class="separator:af6390c0bd0b9c3e320f8a5f296f65146"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aba1f474720482aaaba6f756560a60a40"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xtn__inner_8cu.html#aba1f474720482aaaba6f756560a60a40">stream_handler4_overlap</a> (<a class="el" href="classChunk.html">Chunk</a>&lt; <a class="el" href="structInt2.html">Int2</a> &gt; pairInput, <a class="el" href="structXTNOutput.html">XTNOutput</a> &amp;output, <a class="el" href="structInt3.html">Int3</a> *seq, <a class="el" href="structSeqInfo.html">SeqInfo</a> *seqInfo, int *seqOffset, int seqLen, int distance, char measure, int *buffer)</td></tr>
+<tr class="memdesc:aba1f474720482aaaba6f756560a60a40"><td class="mdescLeft">&#160;</td><td class="mdescRight">handle all GPU operations in stream 4 overlap mode.  <a href="#aba1f474720482aaaba6f756560a60a40">More...</a><br /></td></tr>
+<tr class="separator:aba1f474720482aaaba6f756560a60a40"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a54662df18289f61f08b3a29be1ecdbd0"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xtn__inner_8cu.html#a54662df18289f61f08b3a29be1ecdbd0">overlap_mode_init</a> (<a class="el" href="structInt3.html">Int3</a> *seq, <a class="el" href="structInt3.html">Int3</a> *&amp;seqOut, <a class="el" href="structSeqInfo.html">SeqInfo</a> *&amp;infoInOut, int *&amp;infoOffsetOut, <a class="el" href="structXTNOutput.html">XTNOutput</a> &amp;output, int seqLen, int *buffer)</td></tr>
 <tr class="memdesc:a54662df18289f61f08b3a29be1ecdbd0"><td class="mdescLeft">&#160;</td><td class="mdescRight">deduplicate input and initialize output variable  <a href="#a54662df18289f61f08b3a29be1ecdbd0">More...</a><br /></td></tr>
 <tr class="separator:a54662df18289f61f08b3a29be1ecdbd0"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -1093,8 +1093,8 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a id="a844ae084ce76ff5939b0032c88d3bd02"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a844ae084ce76ff5939b0032c88d3bd02">&#9670;&nbsp;</a></span>stream_handler4_nn()</h2>
+<a id="af6390c0bd0b9c3e320f8a5f296f65146"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af6390c0bd0b9c3e320f8a5f296f65146">&#9670;&nbsp;</a></span>stream_handler4_nn()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1115,13 +1115,13 @@ Variables</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype"><a class="el" href="structInt3.html">Int3</a> *&#160;</td>
-          <td class="paramname"><em>seq1</em>, </td>
+          <td class="paramname"><em>seq</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>seq1Len</em>, </td>
+          <td class="paramname"><em>seqLen</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1154,8 +1154,8 @@ Variables</h2></td></tr>
   <table class="params">
     <tr><td class="paramname">pairInput</td><td>nearest neighbor pairs </td></tr>
     <tr><td class="paramname">output</td><td>returning output </td></tr>
-    <tr><td class="paramname">seq1</td><td>input CDR3 sequences </td></tr>
-    <tr><td class="paramname">seq1Len</td><td>number of input CDR3 sequences </td></tr>
+    <tr><td class="paramname">seq</td><td>input CDR3 sequences </td></tr>
+    <tr><td class="paramname">seqLen</td><td>number of input CDR3 sequences </td></tr>
     <tr><td class="paramname">distance</td><td>distance threshold </td></tr>
     <tr><td class="paramname">measure</td><td>type of measurement (levenshtein/hamming) </td></tr>
     <tr><td class="paramname">buffer</td><td>integer buffer </td></tr>
@@ -1165,8 +1165,8 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a id="a8b634d950485fa0d847ed03e8aacbac7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8b634d950485fa0d847ed03e8aacbac7">&#9670;&nbsp;</a></span>stream_handler4_overlap()</h2>
+<a id="aba1f474720482aaaba6f756560a60a40"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aba1f474720482aaaba6f756560a60a40">&#9670;&nbsp;</a></span>stream_handler4_overlap()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1187,7 +1187,7 @@ Variables</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype"><a class="el" href="structInt3.html">Int3</a> *&#160;</td>
-          <td class="paramname"><em>seq1</em>, </td>
+          <td class="paramname"><em>seq</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1205,7 +1205,7 @@ Variables</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>seq1Len</em>, </td>
+          <td class="paramname"><em>seqLen</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1238,10 +1238,10 @@ Variables</h2></td></tr>
   <table class="params">
     <tr><td class="paramname">pairInput</td><td>nearest neighbor pairs </td></tr>
     <tr><td class="paramname">output</td><td>returning output </td></tr>
-    <tr><td class="paramname">seq1</td><td>input CDR3 sequences </td></tr>
+    <tr><td class="paramname">seq</td><td>input CDR3 sequences </td></tr>
     <tr><td class="paramname">seqInfo</td><td>information of each sequence </td></tr>
     <tr><td class="paramname">seqOffset</td><td>offset of seqInfo array </td></tr>
-    <tr><td class="paramname">seq1Len</td><td>number of input CDR3 sequences </td></tr>
+    <tr><td class="paramname">seqLen</td><td>number of input CDR3 sequences </td></tr>
     <tr><td class="paramname">distance</td><td>distance threshold </td></tr>
     <tr><td class="paramname">measure</td><td>type of measurement (levenshtein/hamming) </td></tr>
     <tr><td class="paramname">buffer</td><td>integer buffer </td></tr>
