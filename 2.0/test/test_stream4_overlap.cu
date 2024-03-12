@@ -15,26 +15,26 @@ TEST(Stream4Overlap, {
 	int distance = 1;
 
 	//allocate inputs
-	Int3 * seq1_d, *seq1_h;
+	Int3 * seq_d, *seq_h;
 	Int2 * pairs_d, *pairs_h;
 	XTNOutput output;
 	int* deviceInt, *inputOffsets_d;
 	SeqInfo* info_d;
 	cudaMalloc(&deviceInt, sizeof(int));
-	cudaMalloc(&seq1_d, sizeof(Int3)*seqLen);
-	cudaMallocHost(&seq1_h, sizeof(Int3)*seqLen);
+	cudaMalloc(&seq_d, sizeof(Int3)*seqLen);
+	cudaMallocHost(&seq_h, sizeof(Int3)*seqLen);
 	cudaMalloc(&pairs_d, sizeof(Int2)*pairLen);
 	cudaMallocHost(&pairs_h, sizeof(Int2)*pairLen);
 	cudaMalloc(&info_d, sizeof(SeqInfo)*infoLen);
 
 	//make inputs
 	for (int i = 0; i < seqLen; i++)
-		seq1_h[i] = str_encode(seqs[i]);
+		seq_h[i] = str_encode(seqs[i]);
 	int count = 0;
 	for (int i = 0; i < seqLen; i++)
 		for (int j = i + 1; j < seqLen; j++)
 			pairs_h[count++] = {.x = i, .y = j};
-	seq1_d = host_to_device(seq1_h, seqLen);
+	seq_d = host_to_device(seq_h, seqLen);
 	pairs_d = host_to_device(pairs_h, pairLen);
 	info_d = host_to_device(info_h, infoLen);
 	inputOffsets_d = host_to_device(inputOffsets, seqLen);
@@ -43,7 +43,7 @@ TEST(Stream4Overlap, {
 	Chunk<Int2> pairInput;
 	pairInput.ptr = pairs_d;
 	pairInput.len = pairLen;
-	stream_handler4_overlap(pairInput, output, seq1_d, info_d, inputOffsets_d,
+	stream_handler4_overlap(pairInput, output, seq_d, info_d, inputOffsets_d,
 	                        seqLen, distance, LEVENSHTEIN, deviceInt);
 
 	// checking

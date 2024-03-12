@@ -52,8 +52,8 @@ struct SeqInfo {
 struct XTNArgs {
 	int distance = 1;
 	int verbose = 0;
-	char* seq1Path = NULL;
-	int seq1Len = 0;
+	char* seqPath = NULL;
+	int seqLen = 0;
 	char* outputPath = NULL;
 	char measure = LEVENSHTEIN;
 	char* infoPath = NULL;
@@ -97,8 +97,8 @@ enum ReturnCode {SUCCESS, ERROR, EXIT};
  * the algorithm's API.
  *
  * @param args algorithm's bundled arguments
- * @param seq1 list of CDR3 sequences
+ * @param seq list of CDR3 sequences
  * @param seqInfo information of each CDR3 sequence, only used in overlap mode
  * @param callback function to be invoked once a chunk of output is ready
 */
-void xtn_perform(XTNArgs args, Int3* seq1, SeqInfo* seqInfo, void callback (XTNOutput));
+void xtn_perform(XTNArgs args, Int3* seq, SeqInfo* seqInfo, void callback (XTNOutput));

@@ -429,22 +429,22 @@ void stream_handler3(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, void callbac
  *
  * @param pairInput nearest neighbor pairs
  * @param output returning output
- * @param seq1 input CDR3 sequences
- * @param seq1Len number of input CDR3 sequences
+ * @param seq input CDR3 sequences
+ * @param seqLen number of input CDR3 sequences
  * @param distance distance threshold
  * @param measure type of measurement (levenshtein/hamming)
  * @param buffer integer buffer
 */
-void stream_handler4_nn(Chunk<Int2> pairInput, XTNOutput &output, Int3* seq1,
-                        int seq1Len, int distance, char measure, int* buffer) {
+void stream_handler4_nn(Chunk<Int2> pairInput, XTNOutput &output, Int3* seq,
+                        int seqLen, int distance, char measure, int* buffer) {
 	Int2* pairOut, *uniquePairs;
 	char* distanceOut;
 
 	cudaMalloc(&uniquePairs, sizeof(Int2)*pairInput.len); gpuerr();
 	int uniqueLen = deduplicate(pairInput.ptr, uniquePairs, pairInput.len, buffer);
 	int outputLen =
-	    postprocessing(seq1, uniquePairs, distance, measure, pairOut, distanceOut,
-	                   uniqueLen, buffer, seq1Len);
+	    postprocessing(seq, uniquePairs, distance, measure, pairOut, distanceOut,
+	                   uniqueLen, buffer, seqLen);
 	cudaFree(uniquePairs); gpuerr();
 	make_output(pairOut, distanceOut, outputLen, output);
 	_cudaFree(pairOut, distanceOut);
@@ -455,17 +455,17 @@ void stream_handler4_nn(Chunk<Int2> pairInput, XTNOutput &output, Int3* seq1,
  *
  * @param pairInput nearest neighbor pairs
  * @param output returning output
- * @param seq1 input CDR3 sequences
+ * @param seq input CDR3 sequences
  * @param seqInfo information of each sequence
  * @param seqOffset offset of seqInfo array
- * @param seq1Len number of input CDR3 sequences
+ * @param seqLen number of input CDR3 sequences
  * @param distance distance threshold
  * @param measure type of measurement (levenshtein/hamming)
  * @param buffer integer buffer
 */
-void stream_handler4_overlap(Chunk<Int2> pairInput, XTNOutput &output, Int3* seq1,
+void stream_handler4_overlap(Chunk<Int2> pairInput, XTNOutput &output, Int3* seq,
                              SeqInfo* seqInfo, int* seqOffset,
-                             int seq1Len, int distance, char measure, int* buffer) {
+                             int seqLen, int distance, char measure, int* buffer) {
 	Int2* pairOut, *pairOut2, *uniquePairs;
 	size_t* freqOut, *freqOut2;
 	int* outputRange;
@@ -492,7 +492,7 @@ void stream_handler4_overlap(Chunk<Int2> pairInput, XTNOutput &output, Int3* seq
 
 	// calculate repertoire
 	pair2rep <<< NUM_BLOCK(uniqueLen), NUM_THREADS>>>(
-	    uniquePairs, pairOut, freqOut, seq1, seqInfo, seqOffset,
+	    uniquePairs, pairOut, freqOut, seq, seqInfo, seqOffset,
 	    outputRange, distance, measure, outputLen); gpuerr();
 	_cudaFree(uniquePairs, outputRange);
 	sort_key_values2(pairOut, freqOut, concatLen);

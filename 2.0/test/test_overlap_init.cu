@@ -4,7 +4,7 @@
 TEST(OverlapInit, {
 	XTNOutput output;
 	int* buffer, *infoOffset;
-	Int3 * seq1d, *seq1h, *seqOut;
+	Int3 * seqd, *seqh, *seqOut;
 	SeqInfo* infoD;
 
 	int seqLen = 4;
@@ -15,16 +15,16 @@ TEST(OverlapInit, {
 	};
 
 	cudaMalloc(&buffer, sizeof(int));
-	_cudaMalloc(seq1d, infoD, seqLen);
-	cudaMallocHost(&seq1h, sizeof(Int3)*seqLen);
+	_cudaMalloc(seqd, infoD, seqLen);
+	cudaMallocHost(&seqh, sizeof(Int3)*seqLen);
 
 	//make inputs
 	for (int i = 0; i < seqLen; i++)
-		seq1h[i] = str_encode(seqs[i]);
-	seq1d = host_to_device(seq1h, seqLen);
+		seqh[i] = str_encode(seqs[i]);
+	seqd = host_to_device(seqh, seqLen);
 	infoD = host_to_device(info, seqLen);
 
-	int uniqueLen = overlap_mode_init(seq1d, seqOut, infoD, infoOffset,
+	int uniqueLen = overlap_mode_init(seqd, seqOut, infoD, infoOffset,
 	                                  output, seqLen, buffer);
 
 	int expectedUniqueLen = 3, expectedOutputLen = 3;

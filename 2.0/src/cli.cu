@@ -41,7 +41,7 @@ int parse_args(int argc, char **argv, XTNArgs* ans) {
 		else if (strcmp(current, "-V") == 0 || strcmp(current, "--verbose") == 0)
 			ans->verbose = 1;
 		else if (strcmp(current, "-i") == 0 || strcmp(current, "--input-path") == 0)
-			ans->seq1Path = argv[++i];
+			ans->seqPath = argv[++i];
 		else if (strcmp(current, "-I") == 0 || strcmp(current, "--info-path") == 0)
 			ans->infoPath = argv[++i];
 		else if (strcmp(current, "-o") == 0 || strcmp(current, "--output-path") == 0)
@@ -52,8 +52,8 @@ int parse_args(int argc, char **argv, XTNArgs* ans) {
 				return print_err("distance must be a valid number ranging from 1-2");
 		}
 		else if (strcmp(current, "-n") == 0 || strcmp(current, "--input-length") == 0) {
-			ans->seq1Len = atoi(argv[++i]);
-			if (ans->seq1Len == 0)
+			ans->seqLen = atoi(argv[++i]);
+			if (ans->seqLen == 0)
 				return print_err("invalid input length");
 		}
 		else if (strcmp(current, "-N") == 0 || strcmp(current, "--info-length") == 0) {
@@ -74,10 +74,10 @@ int parse_args(int argc, char **argv, XTNArgs* ans) {
 			return print_err("unknown option");
 	}
 
-	if (ans->seq1Path == NULL)
-		return print_err("missing path for seq1");
-	if (ans->seq1Len == 0)
-		return print_err("missing length for seq1");
+	if (ans->seqPath == NULL)
+		return print_err("missing path for seq");
+	if (ans->seqLen == 0)
+		return print_err("missing length for seq");
 	if ((ans->infoPath == NULL) != (ans->infoLen == 0) )
 		return print_err("repertiore path or repertoire count is missing in overlap mode");
 
@@ -203,8 +203,8 @@ void file_handler_overlap(XTNOutput output) {
 	totalOutputLen += output.len;
 }
 
-int exit(Int3* seq1, SeqInfo* seqInfo, int returnCode, const char* msg) {
-	cudaFreeHost(seq1); gpuerr();
+int exit(Int3* seq, SeqInfo* seqInfo, int returnCode, const char* msg) {
+	cudaFreeHost(seq); gpuerr();
 	if (SeqInfo != NULL) {
 		cudaFreeHost(SeqInfo); gpuerr();
 	}
@@ -216,7 +216,7 @@ int exit(Int3* seq1, SeqInfo* seqInfo, int returnCode, const char* msg) {
 int main(int argc, char **argv) {
 	XTNArgs args;
 	int returnCode = SUCCESS;
-	Int3* seq1;
+	Int3* seq;
 	SeqInfo* seqInfo;
 
 	// 1. parse command line arguments
@@ -228,34 +228,34 @@ int main(int argc, char **argv) {
 
 	// 2. read input
 	bool overlapMode = args.infoPath != NULL;
-	cudaMallocHost(&seq1, sizeof(Int3) * args.seq1Len); gpuerr();
+	cudaMallocHost(&seq, sizeof(Int3) * args.seqLen); gpuerr();
 	if (overlapMode) {
-		cudaMallocHost(&seqInfo, sizeof(SeqInfo) * args.seq1Len); gpuerr();
+		cudaMallocHost(&seqInfo, sizeof(SeqInfo) * args.seqLen); gpuerr();
 		returnCode = parse_info(args.infoPath, seqInfo, args.infoLen);
 		if (returnCode != SUCCESS)
-			return exit(seq1, seqInfo, returnCode, NULL);
+			return exit(seq, seqInfo, returnCode, NULL);
 	}
-	returnCode = parse_input(args.seq1Path, seq1, seqInfo, args.seq1Len, overlapMode);
+	returnCode = parse_input(args.seqPath, seq, seqInfo, args.seqLen, overlapMode);
 	if (returnCode != SUCCESS)
-		return exit(seq1, seqInfo, returnCode, NULL);
+		return exit(seq, seqInfo, returnCode, NULL);
 
 	// 3. perform algorithm
 	if (verboseGlobal)
 		print_args(args);
 	if (args.outputPath != NULL) {
 		if (outputFile != NULL)
-			return exit(seq1, seqInfo, returnCode,
+			return exit(seq, seqInfo, returnCode,
 			            "output file has already been allocated, possibly due to concurrency");
 		outputFile = fopen(args.outputPath, "w");
 		if (outputFile == NULL)
-			return exit(seq1, seqInfo, returnCode, "output file opening failed");
-		xtn_perform(args, seq1, seqInfo,
+			return exit(seq, seqInfo, returnCode, "output file opening failed");
+		xtn_perform(args, seq, seqInfo,
 		            overlapMode ? file_handler_overlap : file_handler_nn);
 		fclose(outputFile);
 	} else {
-		xtn_perform(args, seq1, seqInfo, null_handler);
+		xtn_perform(args, seq, seqInfo, null_handler);
 	}
 
 	printf("total output length: %'lu\n", totalOutputLen);
-	return exit(seq1, seqInfo, returnCode, NULL);
+	return exit(seq, seqInfo, returnCode, NULL);
 }

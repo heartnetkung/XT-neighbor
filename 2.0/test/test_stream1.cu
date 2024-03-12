@@ -8,21 +8,21 @@ TEST(Stream1, {
 	int carry = 0;
 
 	//allocate inputs
-	Int3 * seq1d, *seq1h;
+	Int3 * seqd, *seqh;
 	std::vector<int*> histogramOutput;
 	MemoryContext ctx;
 
-	cudaMalloc(&seq1d, sizeof(Int3)*seqLen);
-	cudaMallocHost(&seq1h, sizeof(Int3)*seqLen);
+	cudaMalloc(&seqd, sizeof(Int3)*seqLen);
+	cudaMallocHost(&seqh, sizeof(Int3)*seqLen);
 
 	//make inputs
 	for (int i = 0; i < seqLen; i++)
-		seq1h[i] = str_encode(seqs[i]);
-	seq1d = host_to_device(seq1h, seqLen);
+		seqh[i] = str_encode(seqs[i]);
+	seqd = host_to_device(seqh, seqLen);
 
 	//do testing
 	Chunk<Int3> input;
-	input.ptr = seq1d;
+	input.ptr = seqd;
 	input.len = seqLen;
 	int* indexOutput;
 	Int3* deletionsOutput;
