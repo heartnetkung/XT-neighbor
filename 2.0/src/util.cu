@@ -41,6 +41,17 @@ void print_args(XTNArgs args) {
 	printf("}\n");
 }
 
+template <typename T1, typename T2>
+void _cudaMalloc(T1* &a, T2* &b, size_t len) {
+	cudaMalloc(&a, sizeof(T1)*len); gpuerr();
+	cudaMalloc(&b, sizeof(T2)*len); gpuerr();
+}
+template <typename T1, typename T2, typename T3>
+void _cudaMalloc(T1* &a, T2* &b, T3* &c, size_t len) {
+	cudaMalloc(&a, sizeof(T1)*len); gpuerr();
+	cudaMalloc(&b, sizeof(T2)*len); gpuerr();
+	cudaMalloc(&c, sizeof(T3)*len); gpuerr();
+}
 void _cudaFree(void* a) {
 	cudaFree(a); gpuerr();
 }
