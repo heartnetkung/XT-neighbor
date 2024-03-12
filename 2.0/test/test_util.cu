@@ -24,7 +24,7 @@ void check_device_arr(T* deviceArr, T* expectedArr, int n) {
 	T* hostArr;
 	size_t tempBytes = sizeof(T) * n;
 	cudaMallocHost(&hostArr, tempBytes);
-	cudaMemcpy(hostArr, arr, tempBytes, cudaMemcpyDeviceToHost);
+	cudaMemcpy(hostArr, deviceArr, tempBytes, cudaMemcpyDeviceToHost);
 	for (int i = 0; i < n; i++)
 		check(hostArr[i] == expectedArr[i]);
 	cudaFreeHost(hostArr);

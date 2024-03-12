@@ -41,7 +41,11 @@ TEST(OverlapInit, {
 	int expectedInfoOffset[] = {2, 3, 4};
 	check_device_arr(infoOffset, expectedInfoOffset, uniqueLen);
 
-	Int3 expectedSeqOut[] = {str_encode("CAAA"), str_encode("CADA"), str_encode("CDKD")};
+	char expectedSeqs[seqLen][6] = {"CAAA", "CADA", "CDKD"};
+	Int3 expectedSeqOut[];
+	cudaMallocHost(&expectedSeqOut, sizeof(Int3)*uniqueLen);
+	for (int i = 0; i < uniqueLen; i++)
+		expectedSeqOut[i] = str_encode(expectedSeqs[i]);
 	check_device_arr(seqOut, expectedSeqOut, uniqueLen);
 
 	Int2 expectedIndexPair[] = {{.x = 0, .y = 0}, {.x = 0, .y = 1}, {.x = 1, .y = 1}};
