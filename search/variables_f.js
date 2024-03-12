@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['uint_5fmin',['UINT_MIN',['../xtn__inner_8cu.html#a476236d2dbb7458d8c2c17e6b7bf849f',1,'xtn_inner.cu']]]
+  ['seq1len',['seq1Len',['../structXTNArgs.html#ac3d7b407558bf1ef815a52eafe764ba7',1,'XTNArgs']]],
+  ['seq1path',['seq1Path',['../structXTNArgs.html#a394d4f44fb29625ef2c9bbdb32a5fade',1,'XTNArgs']]]
 ];

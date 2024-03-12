@@ -90,9 +90,15 @@ Functions</h2></td></tr>
 <tr class="memitem:a93d49fad6792ec769fe2bb828157b765"><td class="memItemLeft" align="right" valign="top">__global__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#a93d49fad6792ec769fe2bb828157b765">cal_combination_len</a> (<a class="el" href="structInt3.html">Int3</a> *input, int distance, int *output, int n)</td></tr>
 <tr class="memdesc:a93d49fad6792ec769fe2bb828157b765"><td class="mdescLeft">&#160;</td><td class="mdescRight">precalculate the number of positions required in the output array of generate combination operation.  <a href="#a93d49fad6792ec769fe2bb828157b765">More...</a><br /></td></tr>
 <tr class="separator:a93d49fad6792ec769fe2bb828157b765"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a31acb2edf881ea05300e9dc5a25041a3"><td class="memItemLeft" align="right" valign="top">__global__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#a31acb2edf881ea05300e9dc5a25041a3">cal_pair_len</a> (int *input, int *output, int n)</td></tr>
-<tr class="memdesc:a31acb2edf881ea05300e9dc5a25041a3"><td class="mdescLeft">&#160;</td><td class="mdescRight">precalculate the number of positions required in the output array of generate pair operation.  <a href="#a31acb2edf881ea05300e9dc5a25041a3">More...</a><br /></td></tr>
-<tr class="separator:a31acb2edf881ea05300e9dc5a25041a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aceb317c8e1a0370ed4c5313dd4a1c0ab"><td class="memItemLeft" align="right" valign="top">__global__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#aceb317c8e1a0370ed4c5313dd4a1c0ab">cal_pair_len</a> (int *inputRange, int *outputRange, int n)</td></tr>
+<tr class="memdesc:aceb317c8e1a0370ed4c5313dd4a1c0ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">precalculate the output range of generate pair operation.  <a href="#aceb317c8e1a0370ed4c5313dd4a1c0ab">More...</a><br /></td></tr>
+<tr class="separator:aceb317c8e1a0370ed4c5313dd4a1c0ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adbe4dd82410fc66cb85e852acdabb3a7"><td class="memItemLeft" align="right" valign="top">__global__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#adbe4dd82410fc66cb85e852acdabb3a7">cal_pair_len_diag</a> (int *inputRange, int *outputRange, int n)</td></tr>
+<tr class="memdesc:adbe4dd82410fc66cb85e852acdabb3a7"><td class="mdescLeft">&#160;</td><td class="mdescRight">precalculate the output range of pair generation in diagonal position for overlap mode.  <a href="#adbe4dd82410fc66cb85e852acdabb3a7">More...</a><br /></td></tr>
+<tr class="separator:adbe4dd82410fc66cb85e852acdabb3a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4a6308e9ea1a3a54eca2a1282d4599d3"><td class="memItemLeft" align="right" valign="top">__global__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#a4a6308e9ea1a3a54eca2a1282d4599d3">cal_pair_len_nondiag</a> (<a class="el" href="structInt2.html">Int2</a> *pairs, int *seqOffset, int *outputRange, int n)</td></tr>
+<tr class="memdesc:a4a6308e9ea1a3a54eca2a1282d4599d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">precalculate the output range of pair generation in diagonal position for overlap mode.  <a href="#a4a6308e9ea1a3a54eca2a1282d4599d3">More...</a><br /></td></tr>
+<tr class="separator:a4a6308e9ea1a3a54eca2a1282d4599d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae6e92bcb4c8803523bb41169d1af42c6"><td class="memItemLeft" align="right" valign="top">__global__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#ae6e92bcb4c8803523bb41169d1af42c6">cal_pair_len_lowerbound</a> (int *indexes, int *inputOffsets, int *outputLengths, int lowerbound, int n)</td></tr>
 <tr class="memdesc:ae6e92bcb4c8803523bb41169d1af42c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">precalculate the number of positions required in the output array of generate pair operation with lower bound constratint.  <a href="#ae6e92bcb4c8803523bb41169d1af42c6">More...</a><br /></td></tr>
 <tr class="separator:ae6e92bcb4c8803523bb41169d1af42c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -111,12 +117,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a6bdcdc804e6ec7ed728a3722333c6c2c"><td class="memItemLeft" align="right" valign="top">__global__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#a6bdcdc804e6ec7ed728a3722333c6c2c">cal_distance</a> (<a class="el" href="structInt3.html">Int3</a> *seq, <a class="el" href="structInt2.html">Int2</a> *index, int distance, char measure, char *distanceOutput, char *flagOutput, int n, int seqLen)</td></tr>
 <tr class="memdesc:a6bdcdc804e6ec7ed728a3722333c6c2c"><td class="mdescLeft">&#160;</td><td class="mdescRight">calculate distances of strings from given pairs and flag ones exceeding the threshold.  <a href="#a6bdcdc804e6ec7ed728a3722333c6c2c">More...</a><br /></td></tr>
 <tr class="separator:a6bdcdc804e6ec7ed728a3722333c6c2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6fc8a6a33f6841f2a0f738e0fbbf2bb6"><td class="memItemLeft" align="right" valign="top">__device__ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#a6fc8a6a33f6841f2a0f738e0fbbf2bb6">binarySearch</a> (int query, int *db, int dbLen)</td></tr>
-<tr class="memdesc:a6fc8a6a33f6841f2a0f738e0fbbf2bb6"><td class="mdescLeft">&#160;</td><td class="mdescRight">perform binary search with round-down return of index value when not found.  <a href="#a6fc8a6a33f6841f2a0f738e0fbbf2bb6">More...</a><br /></td></tr>
-<tr class="separator:a6fc8a6a33f6841f2a0f738e0fbbf2bb6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aedf6a3a0ce32ea0e5fa533c359be38c7"><td class="memItemLeft" align="right" valign="top">__global__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#aedf6a3a0ce32ea0e5fa533c359be38c7">pair2rep</a> (<a class="el" href="structInt2.html">Int2</a> *pairs, size_t *values, <a class="el" href="structInt3.html">Int3</a> *seq, int *seqFreq, int *repSizes, int distance, char measure, int repCount, int n)</td></tr>
-<tr class="memdesc:aedf6a3a0ce32ea0e5fa533c359be38c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">turning pairs and frequencies from sequence format to repertoire format.  <a href="#aedf6a3a0ce32ea0e5fa533c359be38c7">More...</a><br /></td></tr>
-<tr class="separator:aedf6a3a0ce32ea0e5fa533c359be38c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a883c718299e1197e5705f4b20c496ee3"><td class="memItemLeft" align="right" valign="top">__global__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#a883c718299e1197e5705f4b20c496ee3">pair2rep</a> (<a class="el" href="structInt2.html">Int2</a> *pairs, <a class="el" href="structInt2.html">Int2</a> *indexOut, size_t *freqOut, <a class="el" href="structInt3.html">Int3</a> *seq, <a class="el" href="structSeqInfo.html">SeqInfo</a> *seqInfo, int *inputOffsets, int *outputOffsets, int distance, char measure, int n)</td></tr>
+<tr class="memdesc:a883c718299e1197e5705f4b20c496ee3"><td class="mdescLeft">&#160;</td><td class="mdescRight">turning pairs and frequencies from sequence format to repertoire format.  <a href="#a883c718299e1197e5705f4b20c496ee3">More...</a><br /></td></tr>
+<tr class="separator:a883c718299e1197e5705f4b20c496ee3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3daeef68f78ff43ed757994ec0697171"><td class="memItemLeft" align="right" valign="top">__global__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#a3daeef68f78ff43ed757994ec0697171">gen_assignment</a> (int *matrix, int *output, int nBit, int nRow, int nColumn)</td></tr>
 <tr class="memdesc:a3daeef68f78ff43ed757994ec0697171"><td class="mdescLeft">&#160;</td><td class="mdescRight">expand operation part of solving bin packing for 2D buffer.  <a href="#a3daeef68f78ff43ed757994ec0697171">More...</a><br /></td></tr>
 <tr class="separator:a3daeef68f78ff43ed757994ec0697171"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -132,9 +135,9 @@ Functions</h2></td></tr>
 <tr class="memitem:af93300e704ea8236b4df42938a641d27"><td class="memItemLeft" align="right" valign="top">__global__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#af93300e704ea8236b4df42938a641d27">toSizeT</a> (int *input, size_t *output, int n)</td></tr>
 <tr class="memdesc:af93300e704ea8236b4df42938a641d27"><td class="mdescLeft">&#160;</td><td class="mdescRight">utility to cast types.  <a href="#af93300e704ea8236b4df42938a641d27">More...</a><br /></td></tr>
 <tr class="separator:af93300e704ea8236b4df42938a641d27"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad3d7c5e84c9e1d7af3190975d226c68a"><td class="memItemLeft" align="right" valign="top">__global__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#ad3d7c5e84c9e1d7af3190975d226c68a">init_diagonal_overlap_output</a> (<a class="el" href="structInt2.html">Int2</a> *pairOut, size_t *freqOut, int *seqFreq, int *repSizes, int repCount, int n)</td></tr>
-<tr class="memdesc:ad3d7c5e84c9e1d7af3190975d226c68a"><td class="mdescLeft">&#160;</td><td class="mdescRight">generate patching diagonal results since our original algorithm doesn't support it.  <a href="#ad3d7c5e84c9e1d7af3190975d226c68a">More...</a><br /></td></tr>
-<tr class="separator:ad3d7c5e84c9e1d7af3190975d226c68a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3cc7396280779ad937a3d79543686f86"><td class="memItemLeft" align="right" valign="top">__global__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#a3cc7396280779ad937a3d79543686f86">init_overlap_output</a> (<a class="el" href="structSeqInfo.html">SeqInfo</a> *info, <a class="el" href="structInt2.html">Int2</a> *indexOut, size_t *freqOut, int *inputOffsets, int *outputOffsets, int n)</td></tr>
+<tr class="memdesc:a3cc7396280779ad937a3d79543686f86"><td class="mdescLeft">&#160;</td><td class="mdescRight">generate initial output of overlap mode.  <a href="#a3cc7396280779ad937a3d79543686f86">More...</a><br /></td></tr>
+<tr class="separator:a3cc7396280779ad937a3d79543686f86"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
@@ -180,50 +183,6 @@ Variables</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="a6fc8a6a33f6841f2a0f738e0fbbf2bb6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6fc8a6a33f6841f2a0f738e0fbbf2bb6">&#9670;&nbsp;</a></span>binarySearch()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">__device__ int binarySearch </td>
-          <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>query</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int *&#160;</td>
-          <td class="paramname"><em>db</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>dbLen</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>perform binary search with round-down return of index value when not found. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">query</td><td>value to search </td></tr>
-    <tr><td class="paramname">db</td><td>database for searching </td></tr>
-    <tr><td class="paramname">dbLen</td><td>number of rows in db </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
 <a id="a93d49fad6792ec769fe2bb828157b765"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a93d49fad6792ec769fe2bb828157b765">&#9670;&nbsp;</a></span>cal_combination_len()</h2>
 
@@ -354,8 +313,8 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a id="a31acb2edf881ea05300e9dc5a25041a3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a31acb2edf881ea05300e9dc5a25041a3">&#9670;&nbsp;</a></span>cal_pair_len()</h2>
+<a id="aceb317c8e1a0370ed4c5313dd4a1c0ab"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aceb317c8e1a0370ed4c5313dd4a1c0ab">&#9670;&nbsp;</a></span>cal_pair_len()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -364,13 +323,13 @@ Variables</h2></td></tr>
           <td class="memname">__global__ void cal_pair_len </td>
           <td>(</td>
           <td class="paramtype">int *&#160;</td>
-          <td class="paramname"><em>input</em>, </td>
+          <td class="paramname"><em>inputRange</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int *&#160;</td>
-          <td class="paramname"><em>output</em>, </td>
+          <td class="paramname"><em>outputRange</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -386,12 +345,56 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>precalculate the number of positions required in the output array of generate pair operation. </p>
+<p>precalculate the output range of generate pair operation. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">input</td><td>group size </td></tr>
-    <tr><td class="paramname">output</td><td>position requirement </td></tr>
-    <tr><td class="paramname">n</td><td>array length of input and output </td></tr>
+    <tr><td class="paramname">inputRange</td><td>range of each input group </td></tr>
+    <tr><td class="paramname">outputRange</td><td>range of each output group </td></tr>
+    <tr><td class="paramname">n</td><td>array length of inputRange and outputRange </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="adbe4dd82410fc66cb85e852acdabb3a7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adbe4dd82410fc66cb85e852acdabb3a7">&#9670;&nbsp;</a></span>cal_pair_len_diag()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">__global__ void cal_pair_len_diag </td>
+          <td>(</td>
+          <td class="paramtype">int *&#160;</td>
+          <td class="paramname"><em>inputRange</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *&#160;</td>
+          <td class="paramname"><em>outputRange</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>n</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>precalculate the output range of pair generation in diagonal position for overlap mode. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">inputRange</td><td>range of each input group </td></tr>
+    <tr><td class="paramname">outputRange</td><td>range of each output group </td></tr>
+    <tr><td class="paramname">n</td><td>array length of inputRange and outputRange </td></tr>
   </table>
   </dd>
 </dl>
@@ -450,6 +453,56 @@ Variables</h2></td></tr>
     <tr><td class="paramname">outputLengths</td><td>output position requirement </td></tr>
     <tr><td class="paramname">lowerbound</td><td>the processing limit for the indexes </td></tr>
     <tr><td class="paramname">n</td><td>array length </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a4a6308e9ea1a3a54eca2a1282d4599d3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4a6308e9ea1a3a54eca2a1282d4599d3">&#9670;&nbsp;</a></span>cal_pair_len_nondiag()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">__global__ void cal_pair_len_nondiag </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structInt2.html">Int2</a> *&#160;</td>
+          <td class="paramname"><em>pairs</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *&#160;</td>
+          <td class="paramname"><em>seqOffset</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *&#160;</td>
+          <td class="paramname"><em>outputRange</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>n</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>precalculate the output range of pair generation in diagonal position for overlap mode. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">inputRange</td><td>range of each input group </td></tr>
+    <tr><td class="paramname">outputRange</td><td>range of each output group </td></tr>
+    <tr><td class="paramname">n</td><td>array length of inputRange and outputRange </td></tr>
   </table>
   </dd>
 </dl>
@@ -826,17 +879,23 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a id="ad3d7c5e84c9e1d7af3190975d226c68a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad3d7c5e84c9e1d7af3190975d226c68a">&#9670;&nbsp;</a></span>init_diagonal_overlap_output()</h2>
+<a id="a3cc7396280779ad937a3d79543686f86"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3cc7396280779ad937a3d79543686f86">&#9670;&nbsp;</a></span>init_overlap_output()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">__global__ void init_diagonal_overlap_output </td>
+          <td class="memname">__global__ void init_overlap_output </td>
           <td>(</td>
+          <td class="paramtype"><a class="el" href="structSeqInfo.html">SeqInfo</a> *&#160;</td>
+          <td class="paramname"><em>info</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype"><a class="el" href="structInt2.html">Int2</a> *&#160;</td>
-          <td class="paramname"><em>pairOut</em>, </td>
+          <td class="paramname"><em>indexOut</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -848,19 +907,13 @@ Variables</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int *&#160;</td>
-          <td class="paramname"><em>seqFreq</em>, </td>
+          <td class="paramname"><em>inputOffsets</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int *&#160;</td>
-          <td class="paramname"><em>repSizes</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>repCount</em>, </td>
+          <td class="paramname"><em>outputOffsets</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -876,15 +929,15 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>generate patching diagonal results since our original algorithm doesn't support it. </p>
+<p>generate initial output of overlap mode. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">pairOut</td><td>initial diagonal pairs </td></tr>
-    <tr><td class="paramname">freqOut</td><td>initial diagonal frequencies </td></tr>
-    <tr><td class="paramname">seqFreq</td><td>frequency of each CDR3 sequence </td></tr>
-    <tr><td class="paramname">repSizes</td><td>size of each repertoire </td></tr>
-    <tr><td class="paramname">repCount</td><td>number of repertoires </td></tr>
-    <tr><td class="paramname">n</td><td>number of pairs </td></tr>
+    <tr><td class="paramname">info</td><td>information of each sequence </td></tr>
+    <tr><td class="paramname">indexOut</td><td>repertoire pair output </td></tr>
+    <tr><td class="paramname">freqOut</td><td>frequency output for the pair </td></tr>
+    <tr><td class="paramname">inputOffsets</td><td>index range of input to operate on </td></tr>
+    <tr><td class="paramname">outputOffsets</td><td>index range of output to operate on </td></tr>
+    <tr><td class="paramname">n</td><td>length of inputOffset and outputOffset </td></tr>
   </table>
   </dd>
 </dl>
@@ -972,8 +1025,8 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a id="aedf6a3a0ce32ea0e5fa533c359be38c7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aedf6a3a0ce32ea0e5fa533c359be38c7">&#9670;&nbsp;</a></span>pair2rep()</h2>
+<a id="a883c718299e1197e5705f4b20c496ee3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a883c718299e1197e5705f4b20c496ee3">&#9670;&nbsp;</a></span>pair2rep()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -987,8 +1040,14 @@ Variables</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype"><a class="el" href="structInt2.html">Int2</a> *&#160;</td>
+          <td class="paramname"><em>indexOut</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">size_t *&#160;</td>
-          <td class="paramname"><em>values</em>, </td>
+          <td class="paramname"><em>freqOut</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -999,14 +1058,20 @@ Variables</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">int *&#160;</td>
-          <td class="paramname"><em>seqFreq</em>, </td>
+          <td class="paramtype"><a class="el" href="structSeqInfo.html">SeqInfo</a> *&#160;</td>
+          <td class="paramname"><em>seqInfo</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int *&#160;</td>
-          <td class="paramname"><em>repSizes</em>, </td>
+          <td class="paramname"><em>inputOffsets</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *&#160;</td>
+          <td class="paramname"><em>outputOffsets</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1019,12 +1084,6 @@ Variables</h2></td></tr>
           <td></td>
           <td class="paramtype">char&#160;</td>
           <td class="paramname"><em>measure</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>repCount</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1044,13 +1103,14 @@ Variables</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">pairs</td><td>pair result from nearest neighbor search </td></tr>
-    <tr><td class="paramname">values</td><td>returning frequency of the corresponding pair </td></tr>
-    <tr><td class="paramname">seq</td><td>sequence input </td></tr>
-    <tr><td class="paramname">seqFreq</td><td>frequency of each CDR3 sequence </td></tr>
-    <tr><td class="paramname">repSizes</td><td>size of each repertoire </td></tr>
+    <tr><td class="paramname">indexOut</td><td>repertiore pair output </td></tr>
+    <tr><td class="paramname">freqOut</td><td>frequency output </td></tr>
+    <tr><td class="paramname">seq</td><td>CDR3 sequence input for distance calculation </td></tr>
+    <tr><td class="paramname">seqInfo</td><td>information of each CDR3 sequence </td></tr>
+    <tr><td class="paramname">inputOffsets</td><td>seqInfo Offset </td></tr>
+    <tr><td class="paramname">outputOffsets</td><td>output range of indexOut and freqOut </td></tr>
     <tr><td class="paramname">distance</td><td>Levenshtein/Hamming distance threshold </td></tr>
     <tr><td class="paramname">measure</td><td>enum representing Levenshtein/Hamming </td></tr>
-    <tr><td class="paramname">repCount</td><td>number of repertoires </td></tr>
     <tr><td class="paramname">n</td><td>number of pairs </td></tr>
   </table>
   </dd>

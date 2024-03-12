@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['unique',['unique',['../cub_8cu.html#a962850548e282e728f204c80d92567ba',1,'cub.cu']]],
-  ['unique_5fcounts',['unique_counts',['../cub_8cu.html#afd8093a2ef0bc4d09c8de16d0423585d',1,'cub.cu']]]
+  ['write',['write',['../classRAMSwapStream.html#a0c3c54b6a4684be783a5b06d8bd34867',1,'RAMSwapStream::write()'],['../classD2Stream.html#aaeac1c03f27671f9b3b0c2a4ebbd6c53',1,'D2Stream::write()']]],
+  ['write_5fb3',['write_b3',['../xtn_8cu.html#a0b89cdbbdede4057aea653506643e348',1,'xtn.cu']]]
 ];

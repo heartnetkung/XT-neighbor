@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['seq1len',['seq1Len',['../structXTNArgs.html#ac3d7b407558bf1ef815a52eafe764ba7',1,'XTNArgs']]],
-  ['seq1path',['seq1Path',['../structXTNArgs.html#a394d4f44fb29625ef2c9bbdb32a5fade',1,'XTNArgs']]]
+  ['ramsize',['ramSize',['../structMemoryContext.html#a087063d834c544331237592c08d50a0d',1,'MemoryContext']]],
+  ['repertoire',['repertoire',['../structSeqInfo.html#ac7d2836e37178e7e4dec14968e5bb9cb',1,'SeqInfo']]]
 ];

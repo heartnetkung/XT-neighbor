@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['tosizet',['toSizeT',['../kernel_8cu.html#af93300e704ea8236b4df42938a641d27',1,'kernel.cu']]],
-  ['transfer_5flast_5felement',['transfer_last_element',['../kernel_8cu.html#a31203c438395e36d5c227f410f317df1',1,'kernel.cu']]]
+  ['unique',['unique',['../cub_8cu.html#a962850548e282e728f204c80d92567ba',1,'cub.cu']]],
+  ['unique_5fcounts',['unique_counts',['../cub_8cu.html#afa0e2f03f952d7ea4514faab00e99ed7',1,'unique_counts(T *keys, int *output, T *uniqueOut, int *outputLen, int n):&#160;cub.cu'],['../cub_8cu.html#afd8093a2ef0bc4d09c8de16d0423585d',1,'unique_counts(T *keys, int *output, int *outputLen, int n):&#160;cub.cu']]]
 ];

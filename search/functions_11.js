@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['write',['write',['../classRAMSwapStream.html#a0c3c54b6a4684be783a5b06d8bd34867',1,'RAMSwapStream::write()'],['../classD2Stream.html#aaeac1c03f27671f9b3b0c2a4ebbd6c53',1,'D2Stream::write()']]],
-  ['write_5fb3',['write_b3',['../xtn_8cu.html#a0b89cdbbdede4057aea653506643e348',1,'xtn.cu']]]
+  ['xtn_5fperform',['xtn_perform',['../xtn_8cu.html#a0d27f98ed8b89f89c30ca4b3f9558a3e',1,'xtn_perform(XTNArgs args, Int3 *seq1, SeqInfo *seqInfoHost, void callback(XTNOutput)):&#160;xtn.cu'],['../xtn_8h.html#a0d27f98ed8b89f89c30ca4b3f9558a3e',1,'xtn_perform(XTNArgs args, Int3 *seq1, SeqInfo *seqInfoHost, void callback(XTNOutput)):&#160;xtn.cu']]]
 ];

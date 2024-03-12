@@ -85,6 +85,9 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structInt2.html">Int2</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">8-byte integer representation for pair of sequence index.  <a href="structInt2.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structSeqInfo.html">SeqInfo</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Information related to a sequence.  <a href="structSeqInfo.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structXTNArgs.html">XTNArgs</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">bundled representation for command line arguments.  <a href="structXTNArgs.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -106,9 +109,9 @@ Enumerations</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ac85cffbb3441d48e911a1c618d71e954"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xtn_8h.html#ac85cffbb3441d48e911a1c618d71e954">xtn_perform</a> (<a class="el" href="structXTNArgs.html">XTNArgs</a> args, <a class="el" href="structInt3.html">Int3</a> *seq1, int *seqFreqHost, int *repSizesHost, void callback(<a class="el" href="structXTNOutput.html">XTNOutput</a>))</td></tr>
-<tr class="memdesc:ac85cffbb3441d48e911a1c618d71e954"><td class="mdescLeft">&#160;</td><td class="mdescRight">the algorithm's API.  <a href="#ac85cffbb3441d48e911a1c618d71e954">More...</a><br /></td></tr>
-<tr class="separator:ac85cffbb3441d48e911a1c618d71e954"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0d27f98ed8b89f89c30ca4b3f9558a3e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xtn_8h.html#a0d27f98ed8b89f89c30ca4b3f9558a3e">xtn_perform</a> (<a class="el" href="structXTNArgs.html">XTNArgs</a> args, <a class="el" href="structInt3.html">Int3</a> *seq1, <a class="el" href="structSeqInfo.html">SeqInfo</a> *seqInfoHost, void callback(<a class="el" href="structXTNOutput.html">XTNOutput</a>))</td></tr>
+<tr class="memdesc:a0d27f98ed8b89f89c30ca4b3f9558a3e"><td class="mdescLeft">&#160;</td><td class="mdescRight">the algorithm's API.  <a href="#a0d27f98ed8b89f89c30ca4b3f9558a3e">More...</a><br /></td></tr>
+<tr class="separator:a0d27f98ed8b89f89c30ca4b3f9558a3e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
@@ -153,8 +156,8 @@ Variables</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="ac85cffbb3441d48e911a1c618d71e954"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac85cffbb3441d48e911a1c618d71e954">&#9670;&nbsp;</a></span>xtn_perform()</h2>
+<a id="a0d27f98ed8b89f89c30ca4b3f9558a3e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0d27f98ed8b89f89c30ca4b3f9558a3e">&#9670;&nbsp;</a></span>xtn_perform()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -174,14 +177,8 @@ Variables</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">int *&#160;</td>
-          <td class="paramname"><em>seqFreqHost</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int *&#160;</td>
-          <td class="paramname"><em>repSizesHost</em>, </td>
+          <td class="paramtype"><a class="el" href="structSeqInfo.html">SeqInfo</a> *&#160;</td>
+          <td class="paramname"><em>seqInfoHost</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -202,8 +199,7 @@ Variables</h2></td></tr>
   <table class="params">
     <tr><td class="paramname">args</td><td>algorithm's bundled arguments </td></tr>
     <tr><td class="paramname">seq1</td><td>list of CDR3 sequences </td></tr>
-    <tr><td class="paramname">seqFreqHost</td><td>frequency of each CDR3 sequence, only used in overlap mode </td></tr>
-    <tr><td class="paramname">repSizesHost</td><td>size of each repertiore, only used in overlap mode </td></tr>
+    <tr><td class="paramname">seqInfo</td><td>information of each CDR3 sequence, only used in overlap mode </td></tr>
     <tr><td class="paramname">callback</td><td>function to be invoked once a chunk of output is ready</td></tr>
   </table>
   </dd>
@@ -213,8 +209,7 @@ Variables</h2></td></tr>
   <table class="params">
     <tr><td class="paramname">args</td><td>all flags parsed from command line </td></tr>
     <tr><td class="paramname">seq1</td><td>sequence input </td></tr>
-    <tr><td class="paramname">seqFreqHost</td><td>frequency of each CDR3 sequence, only used in overlap mode </td></tr>
-    <tr><td class="paramname">repSizesHost</td><td>size of each repertiore, only used in overlap mode </td></tr>
+    <tr><td class="paramname">seqInfo</td><td>information of each CDR3 sequence, only used in overlap mode </td></tr>
     <tr><td class="paramname">callback</td><td>function to be invoked once a chunk of output is ready </td></tr>
   </table>
   </dd>
