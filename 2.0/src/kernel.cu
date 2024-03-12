@@ -83,6 +83,31 @@ void cal_pair_len_diag(int* inputRange, int* outputRange, int n) {
 }
 
 /**
+ * precalculate the output range of pair generation in diagonal position for overlap mode.
+ *
+ * @param inputRange range of each input group
+ * @param outputRange range of each output group
+ * @param n array length of inputRange and outputRange
+*/
+__global__
+void cal_pair_len_nondiag(Int2* pairs, int* seqOffset, int* outputRange, int n) {
+	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
+	if (tid >= n)
+		return;
+
+	// remove
+	Int2 pair = pairs[tid];
+	if (pair.x == pair.y) {
+		outputRange[tid] = 0;
+		return;
+	}
+
+	int len1 = (pair.x == 0) ? seqOffset[pair.x] : (seqOffset[pair.x] - seqOffset[pair.x - 1]);
+	int len2 = (pair.y == 0) ? seqOffset[pair.y] : (seqOffset[pair.y] - seqOffset[pair.y - 1]);
+	outputRange[tid] = len1 * len2;
+}
+
+/**
  * precalculate the number of positions required in the output array of generate pair operation with lower bound constratint.
  *
  * @param indexes value of seqIndexes to generate pair
@@ -291,49 +316,65 @@ void cal_distance(Int3* seq, Int2* index, int distance, char measure,
 	flagOutput[tid] =  newOutput <= distance;
 }
 
-// /**
-//  * turning pairs and frequencies from sequence format to repertoire format.
-//  *
-//  * @param pairs pair result from nearest neighbor search
-//  * @param values returning frequency of the corresponding pair
-//  * @param seq sequence input
-//  * @param seqFreq frequency of each CDR3 sequence
-//  * @param repSizes size of each repertoire
-//  * @param distance Levenshtein/Hamming distance threshold
-//  * @param measure enum representing Levenshtein/Hamming
-//  * @param repCount number of repertoires
-//  * @param n number of pairs
-// */
-// __global__
-// void pair2rep(Int2* pairs, size_t* values, Int3* seq, int* seqFreq, int* repSizes,
-//               int distance, char measure, int repCount, int n) {
-// 	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
-// 	if (tid >= n)
-// 		return;
+/**
+ * turning pairs and frequencies from sequence format to repertoire format.
+ *
+ * @param pairs pair result from nearest neighbor search
+ * @param indexOut repertiore pair output
+ * @param freqOut frequency output
+ * @param seq CDR3 sequence input for distance calculation
+ * @param seqInfo information of each CDR3 sequence
+ * @param inputOffsets seqInfo Offset
+ * @param outputOffsets output range of indexOut and freqOut
+ * @param distance Levenshtein/Hamming distance threshold
+ * @param measure enum representing Levenshtein/Hamming
+ * @param n number of pairs
+*/
+__global__
+void pair2rep(Int2* pairs, Int2* indexOut, size_t* freqOut, Int3* seq, SeqInfo* seqInfo,
+              int* inputOffsets, int* outputOffsets, int distance, char measure, int n) {
+	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
+	if (tid >= n)
+		return;
 
-// 	Int2 pair = pairs[tid];
-// 	int newX = binarySearch(pair.x, repSizes, repCount);
-// 	if (pair.x == pair.y) {
-// 		pairs[tid] = {.x = newX, .y = newX};
-// 		// filter
-// 		values[tid] = 0;
-// 		return;
-// 	}
+	// pseudo remove
+	Int2 pair = pairs[tid];
+	if (pair.x == pair.y)
+		return;
 
-// 	int newY = binarySearch(pair.y, repSizes, repCount);
-// 	char d = (measure == LEVENSHTEIN) ?
-// 	         levenshtein(seq[pair.x], seq[pair.y]) :
-// 	         hamming(seq[pair.x], seq[pair.y]);
-// 	pairs[tid] = {.x = newX, .y = newY};
-// 	if (d > distance)
-// 		// filter
-// 		values[tid] = 0;
-// 	else if (newX == newY)
-// 		// our nearest neighbor results only contain (i,j) pairs where i<j, so J>i cases must be accounted
-// 		values[tid] = ((size_t)seqFreq[pair.x]) * seqFreq[pair.y] * 2;
-// 	else
-// 		values[tid] = ((size_t)seqFreq[pair.x]) * seqFreq[pair.y];
-// }
+	int start1 = (pair.x == 0) ? 0 : inputOffsets[pair.x - 1];
+	int end1 = inputOffsets[pair.x];
+	int start2 = inputOffsets[pair.y - 1]; // pair.y >= pair.x >=0 and pair.x!=pair.y
+	int end2 = inputOffsets[pair.y];
+	int outputIndex = tid == 0 ? 0 : outputOffsets[tid - 1];
+
+	// pseudo remove2
+	char d = (measure == LEVENSHTEIN) ?
+	         levenshtein(seq[pair.x], seq[pair.y]) :
+	         hamming(seq[pair.x], seq[pair.y]);
+	if (d > distance) {
+		for (int i = start1; i < end1; i++)
+			for (int j = start2; j < end2; j++) {
+				indexOut[outputIndex] = {.x = 0, .y = 0};
+				freqOut[outputIndex++] = 0;
+			}
+		return;
+	}
+
+	// produce output
+	for (int i = start1; i < end1; i++) {
+		SeqInfo infoI = seqInfo[i];
+		for (int j = start2; j < end2; j++) {
+			SeqInfo infoJ = seqInfo[j];
+			indexOut[outputIndex] = {.x = infoI.repertoire, .y = infoJ.repertoire};
+			if (infoI.repertoire == infoJ.repertoire)
+				// same repertoire must be counted twice
+				freqOut[outputIndex++] = ((size_t)infoI.frequency) * infoJ.frequency*2;
+			else
+				freqOut[outputIndex++] = ((size_t)infoI.frequency) * infoJ.frequency;
+		}
+	}
+}
 
 
 /**
@@ -452,28 +493,6 @@ void toSizeT(int* input, size_t* output, int n) {
 		return;
 	output[tid] = input[tid];
 }
-
-// /**
-//  * generate patching diagonal results since our original algorithm doesn't support it.
-//  *
-//  * @param pairOut initial diagonal pairs
-//  * @param freqOut initial diagonal frequencies
-//  * @param seqFreq frequency of each CDR3 sequence
-//  * @param repSizes size of each repertoire
-//  * @param repCount number of repertoires
-//  * @param n number of pairs
-// */
-// __global__
-// void init_diagonal_overlap_output(Int2* pairOut, size_t* freqOut, int* seqFreq,
-//                                   int* repSizes, int repCount, int n) {
-// 	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
-// 	if (tid >= n)
-// 		return;
-
-// 	int rep = binarySearch(tid, repSizes, repCount);
-// 	pairOut[tid] = {.x = rep, .y = rep};
-// 	freqOut[tid] = ((size_t)seqFreq[tid]) * seqFreq[tid];
-// }
 
 /**
  * generate initial output of overlap mode.
