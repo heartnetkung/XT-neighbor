@@ -1,7 +1,7 @@
 #include "test_util.cu"
 #include "../src/xtn_inner.cu"
 
-void run() {
+TEST(OverlapInit, {
 	XTNOutput output;
 	int* buffer, *infoOffset;
 	Int3 * seq1d, *seq1h, *seqOut;
@@ -31,8 +31,4 @@ void run() {
 	print_int3_arr(seqOut, uniqueLen);
 	print_int2_arr(output.indexPairs);
 	print_size_t_arr(output.pairwiseFrequencies);
-};
-
-TEST(OverlapInit, {
-	run();
 })
