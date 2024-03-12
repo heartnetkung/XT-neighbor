@@ -21,9 +21,13 @@ void checkstr(const char* a, const char* b) {
 
 template <typename T>
 void check_device_arr(T* deviceArr, T* expectedArr, int n) {
-	T* hostArr = device_to_host(deviceArr, n);
+	T* hostArr;
+	size_t tempBytes = sizeof(T) * n;
+	cudaMallocHost(&hostArr, tempBytes);
+	cudaMemcpy(hostArr, arr, tempBytes, cudaMemcpyDeviceToHost);
 	for (int i = 0; i < n; i++)
 		check(hostArr[i] == expectedArr[i]);
+	cudaFreeHost(hostArr);
 }
 
 int _append(std::string name, void (*func)()) {
