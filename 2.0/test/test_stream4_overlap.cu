@@ -31,8 +31,8 @@ TEST(Stream4Overlap, {
 	for (int i = 0; i < seqLen; i++)
 		seq1_h[i] = str_encode(seqs[i]);
 	int count = 0;
-	for (int i = 0; i < 5; i++)
-		for (int j = i + 1; j < 5; j++)
+	for (int i = 0; i < seqLen; i++)
+		for (int j = i + 1; j < seqLen; j++)
 			pairs_h[count++] = {.x = i, .y = j};
 	seq1_d = host_to_device(seq1_h, seqLen);
 	pairs_d = host_to_device(pairs_h, pairLen);

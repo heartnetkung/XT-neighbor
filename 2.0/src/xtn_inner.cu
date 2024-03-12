@@ -487,6 +487,7 @@ void stream_handler4_overlap(Chunk<Int2> pairInput, XTNOutput &output, Int3* seq
 	// calculate output offset
 	cudaMalloc(&outputRange, sizeof(int)*uniqueLen);
 	print_int_arr(seqOffset, seq1Len);
+	print_int2_arr(uniquePairs, uniqueLen);
 	cal_pair_len_nondiag <<< NUM_BLOCK(uniqueLen), NUM_THREADS>>>(
 		uniquePairs, seqOffset, outputRange, uniqueLen); gpuerr();
 	print_int_arr(outputRange, uniqueLen);
