@@ -165,7 +165,7 @@ int parse_info(char* path, SeqInfo* result, int len, int seqLen) {
 		}
 		if (resultIndex + temp > seqLen) {
 			fclose(file);
-			return print_err("total repertoires' size does not match sequence count");
+			return print_err("total repertoires' size does not match sequence count [1]");
 		}
 		for (int i = 0; i < temp; i++)
 			result[resultIndex++].repertoire = inputCount;
@@ -176,7 +176,7 @@ int parse_info(char* path, SeqInfo* result, int len, int seqLen) {
 	if (inputCount != len)
 		return print_err("info length doesn't match with the actual");
 	if (resultIndex != seqLen)
-		return print_err("total repertoires' size does not match sequence count");
+		return print_err("total repertoires' size does not match sequence count [2]");
 
 	return SUCCESS;
 }
