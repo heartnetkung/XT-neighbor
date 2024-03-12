@@ -4,9 +4,9 @@
 TEST(Stream4Overlap, {
 	int seqLen = 4;
 	int infoLen = 5;
-	// char seqs[seqLen][6] = {"CAAA", "CADA", "CAAA", "CDKD", "CAAK"};
-	char useqs[seqLen][6] = {"CAAA", "CADA", "CDKD", "CAAK"};
-	SeqInfo info[] = {
+	// original sequence char seqs[seqLen][6] = {"CAAA", "CADA", "CAAA", "CDKD", "CAAK"};
+	char seqs[seqLen][6] = {"CAAA", "CADA", "CDKD", "CAAK"};
+	SeqInfo info_h[] = {
 		{.frequency = 3, .repertoire = 0}, {.frequency = 5, .repertoire = 1},
 		{.frequency = 4, .repertoire = 0}, {.frequency = 6, .repertoire = 1}, {.frequency = 7, .repertoire = 1}
 	};
