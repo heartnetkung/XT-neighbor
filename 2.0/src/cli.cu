@@ -94,7 +94,7 @@ int parse_input(char* path, Int3* seqOut, SeqInfo* freqOut, int len, bool double
 
 	const int BUFFER_SIZE = 500;/*header could be long*/
 	char line[BUFFER_SIZE];
-	int lineNumber = 0, inputCount = 0;
+	int lineNumber = 1, inputCount = 0;
 
 	// ignore header
 	fgets(line, BUFFER_SIZE, file);
@@ -148,7 +148,7 @@ int parse_info(char* path, SeqInfo* result, int len, int seqLen) {
 
 	const int BUFFER_SIZE = 500;/*header could be long*/
 	char line[BUFFER_SIZE];
-	int lineNumber = 0, inputCount = 0, resultIndex = 0;
+	int lineNumber = 1, inputCount = 0, resultIndex = 0;
 
 	// ignore header
 	fgets(line, BUFFER_SIZE, file);
@@ -169,7 +169,7 @@ int parse_info(char* path, SeqInfo* result, int len, int seqLen) {
 		}
 		for (int i = 0; i < temp; i++)
 			result[resultIndex++].repertoire = inputCount;
-		inputCount++
+		inputCount++;
 	}
 
 	fclose(file);
@@ -205,8 +205,8 @@ void file_handler_overlap(XTNOutput output) {
 
 int exit(Int3* seq, SeqInfo* seqInfo, int returnCode, const char* msg) {
 	cudaFreeHost(seq); gpuerr();
-	if (SeqInfo != NULL) {
-		cudaFreeHost(SeqInfo); gpuerr();
+	if (seqInfo != NULL) {
+		cudaFreeHost(seqInfo); gpuerr();
 	}
 	if (msg != NULL)
 		return print_err(msg);
@@ -231,7 +231,7 @@ int main(int argc, char **argv) {
 	cudaMallocHost(&seq, sizeof(Int3) * args.seqLen); gpuerr();
 	if (overlapMode) {
 		cudaMallocHost(&seqInfo, sizeof(SeqInfo) * args.seqLen); gpuerr();
-		returnCode = parse_info(args.infoPath, seqInfo, args.infoLen);
+		returnCode = parse_info(args.infoPath, seqInfo, args.infoLen, args.seqLen);
 		if (returnCode != SUCCESS)
 			return exit(seq, seqInfo, returnCode, NULL);
 	}
