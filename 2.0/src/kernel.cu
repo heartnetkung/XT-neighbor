@@ -96,6 +96,7 @@ void cal_pair_len_nondiag(Int2* pairs, int* seqOffset, int* outputRange, int n) 
 	if (tid >= n)
 		return;
 
+	Int2 pair = pairs[tid];
 	int len1 = (pair.x == 0) ? seqOffset[pair.x] : (seqOffset[pair.x] - seqOffset[pair.x - 1]);
 	int len2 = (pair.y == 0) ? seqOffset[pair.y] : (seqOffset[pair.y] - seqOffset[pair.y - 1]);
 	outputRange[tid] = len1 * len2;
