@@ -41,7 +41,7 @@ struct Int2 {
 */
 struct SeqInfo {
 	int frequency, repertoire;
-}
+};
 
 /**
  * bundled representation for command line arguments.
