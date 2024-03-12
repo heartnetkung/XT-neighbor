@@ -471,10 +471,12 @@ void stream_handler4_overlap(Chunk<Int2> pairInput, XTNOutput &output, Int3* seq
 	int* outputRange;
 
 	// find pairOut
+	printf("aa\n");
 	cudaMalloc(&uniquePairs, sizeof(Int2)*pairInput.len); gpuerr();
 	int uniqueLen = deduplicate(pairInput.ptr, uniquePairs, pairInput.len, buffer);
 
 	// calculate output offset
+	printf("bb\n");
 	cudaMalloc(&outputRange, sizeof(int)*uniqueLen); gpuerr();
 	cal_pair_len_nondiag <<< NUM_BLOCK(uniqueLen), NUM_THREADS>>>(
 	    uniquePairs, seqOffset, outputRange, uniqueLen); gpuerr();
@@ -483,6 +485,7 @@ void stream_handler4_overlap(Chunk<Int2> pairInput, XTNOutput &output, Int3* seq
 
 	// prepare output
 	int concatLen = outputLen + output.len;
+	printf("cc\n");
 	_cudaMalloc(pairOut, freqOut, concatLen);
 	cudaMemcpy(freqOut + outputLen, output.pairwiseFrequencies,
 	           sizeof(size_t)*output.len, cudaMemcpyDeviceToDevice); gpuerr();
@@ -496,6 +499,7 @@ void stream_handler4_overlap(Chunk<Int2> pairInput, XTNOutput &output, Int3* seq
 	    outputRange, distance, measure, outputLen); gpuerr();
 	_cudaFree(uniquePairs, outputRange);
 	sort_key_values2(pairOut, freqOut, concatLen);
+	printf("dd\n");
 	_cudaMalloc(pairOut2, freqOut2, concatLen);
 	sum_by_key(pairOut, pairOut2, freqOut, freqOut2, buffer, concatLen);
 
