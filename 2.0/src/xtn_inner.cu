@@ -176,19 +176,6 @@ void gen_next_chunk(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut,
 	valueInOut.len = outputLen;
 }
 
-/**
- * private function.
-*/
-void init_overlap(Int2* &indexPairs, size_t* &pairwiseFrequencies, int* seqFreq,
-                  int* repSizes, int seqLen, int repCount) {
-
-	inclusive_sum(repSizes, repCount);
-	cudaMalloc(&indexPairs, sizeof(Int2)*seqLen); gpuerr();
-	cudaMalloc(&pairwiseFrequencies, sizeof(size_t)*seqLen); gpuerr();
-	init_diagonal_overlap_output <<< NUM_BLOCK(seqLen), NUM_THREADS>>>(indexPairs,
-	        pairwiseFrequencies, seqFreq, repSizes, repCount, seqLen); gpuerr();
-}
-
 //=====================================
 // Public Functions
 //=====================================
@@ -490,33 +477,85 @@ void stream_handler4_nn(Chunk<Int2> pairInput, XTNOutput &output, Int3* seq1,
 void stream_handler4_overlap(Chunk<Int2> pairInput, XTNOutput &output, Int3* seq1,
                              int* seqFreq, int* repSizes, int repCount,
                              int seq1Len, int distance, char measure, int* buffer) {
-	Int2* pairBuffer, *pairOut;
-	size_t* freqBuffer, *freqOut;
+	// Int2* pairBuffer, *pairOut;
+	// size_t* freqBuffer, *freqOut;
 
-	// find pairOut
-	int paddedInputLen = pairInput.len + output.len;
-	cudaMalloc(&pairBuffer, sizeof(Int2)*paddedInputLen); gpuerr();
-	int uniqueLen = deduplicate(pairInput.ptr, pairBuffer, pairInput.len, buffer);
+	// // find pairOut
+	// int paddedInputLen = pairInput.len + output.len;
+	// cudaMalloc(&pairBuffer, sizeof(Int2)*paddedInputLen); gpuerr();
+	// int uniqueLen = deduplicate(pairInput.ptr, pairBuffer, pairInput.len, buffer);
 
-	// concat
-	int pairOutConcatLen = uniqueLen + output.len;
-	cudaMalloc(&freqBuffer, sizeof(size_t) * pairOutConcatLen); gpuerr();
-	cudaMemcpy(freqBuffer + uniqueLen, output.pairwiseFrequencies,
-	           sizeof(size_t)*output.len, cudaMemcpyDeviceToDevice); gpuerr();
-	cudaMemcpy(pairBuffer + uniqueLen, output.indexPairs,
-	           sizeof(Int2)*output.len, cudaMemcpyDeviceToDevice); gpuerr();
+	// // concat
+	// int pairOutConcatLen = uniqueLen + output.len;
+	// cudaMalloc(&freqBuffer, sizeof(size_t) * pairOutConcatLen); gpuerr();
+	// cudaMemcpy(freqBuffer + uniqueLen, output.pairwiseFrequencies,
+	//            sizeof(size_t)*output.len, cudaMemcpyDeviceToDevice); gpuerr();
+	// cudaMemcpy(pairBuffer + uniqueLen, output.indexPairs,
+	//            sizeof(Int2)*output.len, cudaMemcpyDeviceToDevice); gpuerr();
 
-	// calculate repertoire
-	pair2rep <<< NUM_BLOCK(uniqueLen), NUM_THREADS>>>(
-	    pairBuffer, freqBuffer, seq1, seqFreq, repSizes, distance, measure, repCount, uniqueLen); gpuerr();
-	cudaMalloc(&freqOut, sizeof(size_t) * pairOutConcatLen); gpuerr();
-	cudaMalloc(&pairOut, sizeof(Int2) * pairOutConcatLen); gpuerr();
-	sort_key_values2(pairBuffer, freqBuffer, pairOutConcatLen);
-	sum_by_key(pairBuffer, pairOut, freqBuffer, freqOut, buffer, pairOutConcatLen);
+	// // calculate repertoire
+	// pair2rep <<< NUM_BLOCK(uniqueLen), NUM_THREADS>>>(
+	//     pairBuffer, freqBuffer, seq1, seqFreq, repSizes, distance, measure, repCount, uniqueLen); gpuerr();
+	// cudaMalloc(&freqOut, sizeof(size_t) * pairOutConcatLen); gpuerr();
+	// cudaMalloc(&pairOut, sizeof(Int2) * pairOutConcatLen); gpuerr();
+	// sort_key_values2(pairBuffer, freqBuffer, pairOutConcatLen);
+	// sum_by_key(pairBuffer, pairOut, freqBuffer, freqOut, buffer, pairOutConcatLen);
 
-	//finish up
-	_cudaFree(output.indexPairs, output.pairwiseFrequencies, freqBuffer, pairBuffer);
-	output.indexPairs = pairOut;
-	output.pairwiseFrequencies = freqOut;
-	output.len = transfer_last_element(buffer, 1);
+	// //finish up
+	// _cudaFree(output.indexPairs, output.pairwiseFrequencies, freqBuffer, pairBuffer);
+	// output.indexPairs = pairOut;
+	// output.pairwiseFrequencies = freqOut;
+	// output.len = transfer_last_element(buffer, 1);
+}
+
+
+/**
+ * deduplicate input and initialize output variable
+ *
+ * @param seq input sequence
+ * @param seqOut deduplicated input sequence
+ * @param infoInOut information of each input sequence
+ * @param infoOffsetOut offset of each info for each unique sequence
+ * @param output final output of the function
+ * @param seqLen number of input sequence
+ * @param buffer integer buffer
+*/
+int overlap_mode_init(Int3* seq, Int3* &seqOut, SeqInfo* &infoInOut, int* &infoOffsetOut,
+                      XTNOutput &output, int seqLen, int* buffer) {
+	int* outputOffset;
+	Int2* indexPairs, indexPairs2;
+	size_t* pairwiseFreq, pairwiseFreq2;
+
+	// create grouping
+	sort_key_values(seq, infoInOut, seqLen);
+	cudaMalloc(&infoOffsetOut, seqLen * sizeof(int)); gpuerr();
+	cudaMalloc(&seqOut, seqLen * sizeof(Int3)); gpuerr();
+	unique_counts(seq, infoOffsetOut, seqOut, buffer, seqLen);
+	int uniqueLen = transfer_last_element(buffer, 1);
+
+	// cal offset
+	cudaMalloc(&outputOffset, uniqueLen * sizeof(int)); gpuerr();
+	cal_pair_len_diag <<< NUM_BLOCK(outputLen), NUM_THREADS>>>(infoOffsetOut, outputOffset, uniqueLen); gpuerr();
+	inclusive_sum(outputOffset, uniqueLen);
+	inclusive_sum(infoOffsetOut, uniqueLen);
+
+	// init output
+	int outputLen = transfer_last_element(outputOffset, uniqueLen);
+	cudaMalloc(&indexPairs, outputLen * sizeof(Int2)); gpuerr();
+	cudaMalloc(&pairwiseFreq, outputLen * sizeof(size_t)); gpuerr();
+	init_overlap_output <<< NUM_BLOCK(uniqueLen), NUM_THREADS>>>(infoInOut, indexPairs,
+	        pairwiseFreq, infoOffsetOut, outputOffset, uniqueLen); gpuerr();
+
+	// merge output
+	sort_key_values2(indexPairs, pairwiseFreq, outputLen);
+	cudaMalloc(&indexPairs2, outputLen * sizeof(Int2)); gpuerr();
+	cudaMalloc(&pairwiseFreq2, outputLen * sizeof(size_t)); gpuerr();
+	sum_by_key(indexPairs, indexPairs2, pairwiseFreq, pairwiseFreq2, buffer, outputLen);
+
+	// wrap up
+	output.indexPairs = indexPairs2;
+	output.pairwiseFreq = pairwiseFreq2;
+	output.len = transfer_last_element(buffer, 1);;
+	_cudaFree(seq, outputOffset, indexPairs, pairwiseFreq);
+	return uniqueLen;
 }

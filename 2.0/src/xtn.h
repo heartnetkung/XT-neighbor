@@ -37,6 +37,13 @@ struct Int2 {
 };
 
 /**
+ * Information related to a sequence
+*/
+struct SeqInfo {
+	int frequency, repertoire;
+}
+
+/**
  * bundled representation for command line arguments.
 */
 struct XTNArgs {
@@ -88,8 +95,7 @@ enum ReturnCode {SUCCESS, ERROR, EXIT};
  *
  * @param args algorithm's bundled arguments
  * @param seq1 list of CDR3 sequences
- * @param seqFreqHost frequency of each CDR3 sequence, only used in overlap mode
- * @param repSizesHost size of each repertiore, only used in overlap mode
+ * @param seqInfo information of each CDR3 sequence, only used in overlap mode
  * @param callback function to be invoked once a chunk of output is ready
 */
-void xtn_perform(XTNArgs args, Int3* seq1, int* seqFreqHost, int* repSizesHost, void callback (XTNOutput));
+void xtn_perform(XTNArgs args, Int3* seq1, SeqInfo* seqInfoHost, void callback (XTNOutput));
