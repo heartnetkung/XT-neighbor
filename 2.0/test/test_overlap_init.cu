@@ -15,9 +15,8 @@ TEST(OverlapInit, {
 	};
 
 	cudaMalloc(&buffer, sizeof(int));
-	cudaMalloc(&seq1d, sizeof(Int3)*seqLen);
+	_cudaMalloc(seq1d, infoD, seqLen);
 	cudaMallocHost(&seq1h, sizeof(Int3)*seqLen);
-	cudaMalloc(&infoD, sizeof(SeqInfo)*seqLen);
 
 	//make inputs
 	for (int i = 0; i < seqLen; i++)
