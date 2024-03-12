@@ -502,13 +502,10 @@ void init_overlap_output(SeqInfo* info, Int2* indexOut, size_t* freqOut,
 
 	for (int i = start; i < end; i++) {
 		SeqInfo infoI = info[i];
-		indexOut[outputIndex] = {.x = infoI.repertoire, .y = infoI.repertoire};
-		freqOut[outputIndex++] = ((size_t)infoI.frequency) * infoI.frequency;
-
-		for (int j = i + 1; j < end; j++) {
+		for (int j = i; j < end; j++) {
 			SeqInfo infoJ = info[j];
 			indexOut[outputIndex] = {.x = infoI.repertoire, .y = infoJ.repertoire};
-			freqOut[outputIndex++] = ((size_t)infoI.frequency) * infoJ.frequency * 2;
+			freqOut[outputIndex++] = ((size_t)infoI.frequency) * infoJ.frequency;
 		}
 	}
 }
