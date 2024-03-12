@@ -99,8 +99,9 @@ MemoryContext cal_memory_stream4(int seqLen, bool overlapMode) {
 	MemoryContext ans = initMemory(seqLen, true);
 	int multiplier;
 	if (overlapMode)
-		multiplier = 3 * sizeof(Int2) + // *pairBuffer, *pairOut, sortKeyValues
-		             3 * sizeof(size_t); // *freqBuffer, *freqOut, sortKeyValues
+		multiplier = 4 * sizeof(Int2) + // pairOut, *pairOut2, *uniquePairs, sortKeyValues
+		             3 * sizeof(size_t) + // *freqOut, *freqOut2, sortKeyValues
+		             sizeof(int); // outputRange
 	else
 		multiplier = 3 * sizeof(Int2) + //Int2* uniquePairs, sorting, pairOutput
 		             3 * sizeof(char); //char* uniqueDistances, *flags, distanceOutput
