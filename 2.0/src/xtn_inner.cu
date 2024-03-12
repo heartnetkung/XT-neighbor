@@ -122,16 +122,13 @@ int postprocessing(Int3* seq, Int2* uniquePairs, int distance, char measure,
 	char* uniqueDistances, *flags;
 
 	// cal levenshtein
-	size_t byteRequirement = sizeof(char) * uniqueLen;
-	cudaMalloc(&flags, byteRequirement); gpuerr();
-	cudaMalloc(&uniqueDistances, byteRequirement); gpuerr();
+	_cudaMalloc(flags, uniqueDistances, uniqueLen);
 	cal_distance <<< NUM_BLOCK(uniqueLen), NUM_THREADS>>>(
 	    seq, uniquePairs, distance, measure, uniqueDistances,
 	    flags, uniqueLen, seqLen); gpuerr();
 
 	// filter levenshtein
-	cudaMalloc(&pairOutput, sizeof(Int2)*uniqueLen); gpuerr();
-	cudaMalloc(&distanceOutput, byteRequirement); gpuerr();
+	_cudaMalloc(pairOutput, distanceOutput, uniqueLen);
 	flag(uniquePairs, flags, pairOutput, buffer, uniqueLen);
 	flag(uniqueDistances, flags, distanceOutput, buffer, uniqueLen);
 
@@ -445,9 +442,8 @@ void stream_handler4_nn(Chunk<Int2> pairInput, XTNOutput &output, Int3* seq,
 	int outputLen =
 	    postprocessing(seq, uniquePairs, distance, measure, pairOut, distanceOut,
 	                   uniqueLen, buffer, seqLen);
-	cudaFree(uniquePairs); gpuerr();
 	make_output(pairOut, distanceOut, outputLen, output);
-	_cudaFree(pairOut, distanceOut);
+	_cudaFree(uniquePairs, pairOut, distanceOut);
 }
 
 /**
@@ -466,20 +462,28 @@ void stream_handler4_nn(Chunk<Int2> pairInput, XTNOutput &output, Int3* seq,
 void stream_handler4_overlap(Chunk<Int2> pairInput, XTNOutput &output, Int3* seq,
                              SeqInfo* seqInfo, int* seqOffset,
                              int seqLen, int distance, char measure, int* buffer) {
-	Int2* pairOut, *pairOut2, *uniquePairs;
+	Int2* pairOut, *pairOut2, *uniquePairs, *pairOut3;
 	size_t* freqOut, *freqOut2;
 	int* outputRange;
+	char* flags;
 
-	// find pairOut
+	// find pairOut3
 	printf("aa\n");
 	cudaMalloc(&uniquePairs, sizeof(Int2)*pairInput.len); gpuerr();
 	int uniqueLen = deduplicate(pairInput.ptr, uniquePairs, pairInput.len, buffer);
+	_cudaMalloc(flags, pairOut3, uniqueLen);
+	cal_distance <<< NUM_BLOCK(uniqueLen), NUM_THREADS>>>(
+	    seq, uniquePairs, distance, measure, NULL,
+	    flags, uniqueLen, seqLen); gpuerr();
+	flag(uniquePairs, flags, pairOut3, buffer, uniqueLen);
+	_cudaFree(uniquePairs, flags);
+	uniqueLen = transfer_last_element(buffer, 1);
 
 	// calculate output offset
 	printf("bb\n");
 	cudaMalloc(&outputRange, sizeof(int)*uniqueLen); gpuerr();
 	cal_pair_len_nondiag <<< NUM_BLOCK(uniqueLen), NUM_THREADS>>>(
-	    uniquePairs, seqOffset, outputRange, uniqueLen); gpuerr();
+	    pairOut3, seqOffset, outputRange, uniqueLen); gpuerr();
 	inclusive_sum(outputRange, uniqueLen);
 	int outputLen = transfer_last_element(outputRange, uniqueLen);
 
@@ -495,9 +499,8 @@ void stream_handler4_overlap(Chunk<Int2> pairInput, XTNOutput &output, Int3* seq
 
 	// calculate repertoire
 	pair2rep <<< NUM_BLOCK(uniqueLen), NUM_THREADS>>>(
-	    uniquePairs, pairOut, freqOut, seq, seqInfo, seqOffset,
-	    outputRange, distance, measure, outputLen); gpuerr();
-	_cudaFree(uniquePairs, outputRange);
+	    pairOut3, pairOut, freqOut, seqInfo, seqOffset, outputRange, outputLen); gpuerr();
+	_cudaFree(pairOut3, outputRange);
 	sort_key_values2(pairOut, freqOut, concatLen);
 	printf("dd\n");
 	_cudaMalloc(pairOut2, freqOut2, concatLen);

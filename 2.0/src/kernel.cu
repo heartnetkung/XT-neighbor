@@ -96,13 +96,6 @@ void cal_pair_len_nondiag(Int2* pairs, int* seqOffset, int* outputRange, int n) 
 	if (tid >= n)
 		return;
 
-	// remove
-	Int2 pair = pairs[tid];
-	if (pair.x == pair.y) {
-		outputRange[tid] = 0;
-		return;
-	}
-
 	int len1 = (pair.x == 0) ? seqOffset[pair.x] : (seqOffset[pair.x] - seqOffset[pair.x - 1]);
 	int len2 = (pair.y == 0) ? seqOffset[pair.y] : (seqOffset[pair.y] - seqOffset[pair.y - 1]);
 	outputRange[tid] = len1 * len2;
@@ -286,7 +279,7 @@ char hamming(Int3 x1, Int3 x2) {
  * @param index pairs of sequence to calculate
  * @param distance Levenshtein/Hamming distance threshold
  * @param measure enum representing Levenshtein/Hamming
- * @param distanceOutput output distance
+ * @param distanceOutput output distance, maybe null
  * @param flagOutput array output flag
  * @param n array length of index
  * @param seqLen array length of seq
@@ -313,7 +306,8 @@ void cal_distance(Int3* seq, Int2* index, int distance, char measure,
 	char newOutput = (measure == LEVENSHTEIN) ?
 	                 levenshtein(seq[indexPair.x], seq[indexPair.y]) :
 	                 hamming(seq[indexPair.x], seq[indexPair.y]);
-	distanceOutput[tid] = newOutput;
+	if (distanceOutput != NULL)
+		distanceOutput[tid] = newOutput;
 	flagOutput[tid] =  newOutput <= distance;
 }
 
@@ -332,35 +326,18 @@ void cal_distance(Int3* seq, Int2* index, int distance, char measure,
  * @param n number of pairs
 */
 __global__
-void pair2rep(Int2* pairs, Int2* indexOut, size_t* freqOut, Int3* seq, SeqInfo* seqInfo,
-              int* inputOffsets, int* outputOffsets, int distance, char measure, int n) {
+void pair2rep(Int2* pairs, Int2* indexOut, size_t* freqOut, SeqInfo* seqInfo,
+              int* inputOffsets, int* outputOffsets, int n) {
 	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
 	if (tid >= n)
 		return;
 
-	// pseudo remove
 	Int2 pair = pairs[tid];
-	if (pair.x == pair.y)
-		return;
-
 	int start1 = (pair.x == 0) ? 0 : inputOffsets[pair.x - 1];
 	int end1 = inputOffsets[pair.x];
 	int start2 = inputOffsets[pair.y - 1]; // pair.y >= pair.x >=0 and pair.x!=pair.y
 	int end2 = inputOffsets[pair.y];
 	int outputIndex = tid == 0 ? 0 : outputOffsets[tid - 1];
-
-	// pseudo remove2
-	char d = (measure == LEVENSHTEIN) ?
-	         levenshtein(seq[pair.x], seq[pair.y]) :
-	         hamming(seq[pair.x], seq[pair.y]);
-	if (d > distance) {
-		for (int i = start1; i < end1; i++)
-			for (int j = start2; j < end2; j++) {
-				indexOut[outputIndex] = {.x = 0, .y = 0};
-				freqOut[outputIndex++] = 0;
-			}
-		return;
-	}
 
 	// produce output
 	for (int i = start1; i < end1; i++) {
