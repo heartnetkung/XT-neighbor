@@ -74,8 +74,7 @@ int gen_pairs(int* input, int* inputOffsets, int* outputLengths, Int2* &output,
 	int outputLen = transfer_last_element(outputOffsets, n);
 
 	//generate pairs
-	cudaMalloc(&output, sizeof(Int2)*outputLen); gpuerr();
-	cudaMalloc(&lesserIndex, sizeof(int)*outputLen); gpuerr();
+	_cudaMalloc(output, lesserIndex, outputLen);
 	generate_pairs <<< NUM_BLOCK(n), NUM_THREADS>>>(input, output,
 	        inputOffsets, outputOffsets, lesserIndex, lowerbound, carry, n); gpuerr();
 	sort_int2(output, outputLen);
@@ -158,10 +157,8 @@ void gen_next_chunk(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut,
 	Int3* keyOut;
 	int* valueOut;
 
-	cudaMalloc(&flags, sizeof(char)*valueInOut.len); gpuerr();
+	_cudaMalloc(flags, keyOut, valueOut, valueInOut.len);
 	cudaMemset(flags, 1, sizeof(char)*valueInOut.len); gpuerr();
-	cudaMalloc(&keyOut, sizeof(Int3)*valueInOut.len); gpuerr();
-	cudaMalloc(&valueOut, sizeof(int)*valueInOut.len); gpuerr();
 
 	flag_lowerbound <<< NUM_BLOCK(offsetLen), NUM_THREADS>>>(
 	    valueInOut.ptr, valueOffsets, flags, lowerbound, offsetLen); gpuerr();
@@ -224,11 +221,8 @@ int solve_bin_packing_lowerbounds(int* histograms, int* &lowerboundsOutput,
 	size_t* histogramIntermediate;
 
 	int nLevel = ctx.histogramSize, len2d = n * nLevel;
-	cudaMalloc(&rowIndex, sizeof(int) * len2d); gpuerr();
-	cudaMalloc(&output, sizeof(int) * nLevel); gpuerr();
-	cudaMalloc(&key, sizeof(int) * nLevel); gpuerr();
-	cudaMalloc(&value, sizeof(int) * nLevel); gpuerr();
-	cudaMalloc(&histogramIntermediate, sizeof(size_t) * len2d); gpuerr();
+	_cudaMalloc(output, key, value, nLevel);
+	_cudaMalloc(rowIndex, histogramIntermediate, len2d);
 
 	make_row_index <<< NUM_BLOCK(n), NUM_THREADS>>>(rowIndex, n, nLevel); gpuerr();
 	toSizeT <<< NUM_BLOCK(len2d), NUM_THREADS>>>(histograms, histogramIntermediate, len2d); gpuerr();
@@ -259,9 +253,7 @@ int solve_bin_packing_offsets(int* histograms, int** &offsetOutput,
 	int offsetLen;
 
 	int nLevel = ctx.histogramSize, len2d = n * nLevel;
-	cudaMalloc(&rowIndex, sizeof(int) * len2d); gpuerr();
-	cudaMalloc(&assignment, sizeof(int) * len2d); gpuerr();
-	cudaMalloc(&output1d, sizeof(int) * len2d); gpuerr();
+	_cudaMalloc(rowIndex, assignment, output1d, len2d);
 	cudaMallocHost(&offsetOutput, sizeof(int*) * n); gpuerr();
 
 	//solve bin packing
@@ -319,9 +311,7 @@ void stream_handler1(Chunk<Int3> input, Int3* &deletionsOutput, int* &indexOutpu
 	outputLen = transfer_last_element(combinationOffsets, input.len);
 
 	// generate combinations
-	cudaMalloc(&deletionsOutput, sizeof(Int3)*outputLen); gpuerr();
-	cudaMalloc(&indexOutput, sizeof(int)*outputLen); gpuerr();
-	cudaMalloc(&histogramValue, sizeof(unsigned int)*outputLen); gpuerr();
+	_cudaMalloc(deletionsOutput, indexOutput, histogramValue, outputLen);
 	gen_combination <<< NUM_BLOCK(input.len), NUM_THREADS >>> (
 	    input.ptr, combinationOffsets, distance, deletionsOutput,
 	    indexOutput, carry, histogramValue, input.len); gpuerr();
@@ -493,7 +483,7 @@ void stream_handler4_overlap(Chunk<Int2> pairInput, XTNOutput &output, Int3* seq
 
 	// prepare output
 	int concatLen = outputLen + output.len;
-	_cudaMalloc(pairOut, freqOut, concatLen); gpuerr();
+	_cudaMalloc(pairOut, freqOut, concatLen);
 	cudaMemcpy(freqOut + outputLen, output.pairwiseFrequencies,
 	           sizeof(size_t)*output.len, cudaMemcpyDeviceToDevice); gpuerr();
 	cudaMemcpy(pairOut + outputLen, output.indexPairs,
@@ -506,7 +496,7 @@ void stream_handler4_overlap(Chunk<Int2> pairInput, XTNOutput &output, Int3* seq
 	    outputRange, distance, measure, outputLen); gpuerr();
 	_cudaFree(uniquePairs, outputRange);
 	sort_key_values2(pairOut, freqOut, concatLen);
-	_cudaMalloc(pairOut2, freqOut2, concatLen); gpuerr();
+	_cudaMalloc(pairOut2, freqOut2, concatLen);
 	sum_by_key(pairOut, pairOut2, freqOut, freqOut2, buffer, concatLen);
 
 	//finish up
@@ -536,8 +526,7 @@ int overlap_mode_init(Int3* seq, Int3* &seqOut, SeqInfo* &infoInOut, int* &infoO
 
 	// create grouping
 	sort_key_values(seq, infoInOut, seqLen);
-	cudaMalloc(&infoOffsetOut, seqLen * sizeof(int)); gpuerr();
-	cudaMalloc(&seqOut, seqLen * sizeof(Int3)); gpuerr();
+	_cudaMalloc(infoOffsetOut, seqOut, seqLen);
 	unique_counts(seq, infoOffsetOut, seqOut, buffer, seqLen);
 	int uniqueLen = transfer_last_element(buffer, 1);
 
@@ -549,15 +538,13 @@ int overlap_mode_init(Int3* seq, Int3* &seqOut, SeqInfo* &infoInOut, int* &infoO
 
 	// init output
 	int outputLen = transfer_last_element(outputOffset, uniqueLen);
-	cudaMalloc(&indexPairs, outputLen * sizeof(Int2)); gpuerr();
-	cudaMalloc(&pairwiseFreq, outputLen * sizeof(size_t)); gpuerr();
+	_cudaMalloc(indexPairs, pairwiseFreq, outputLen);
 	init_overlap_output <<< NUM_BLOCK(uniqueLen), NUM_THREADS>>>(infoInOut, indexPairs,
 	        pairwiseFreq, infoOffsetOut, outputOffset, uniqueLen); gpuerr();
 
 	// merge output
 	sort_key_values2(indexPairs, pairwiseFreq, outputLen);
-	cudaMalloc(&indexPairs2, outputLen * sizeof(Int2)); gpuerr();
-	cudaMalloc(&pairwiseFreq2, outputLen * sizeof(size_t)); gpuerr();
+	_cudaMalloc(indexPairs2, pairwiseFreq2, outputLen);
 	sum_by_key(indexPairs, indexPairs2, pairwiseFreq, pairwiseFreq2, buffer, outputLen);
 
 	// wrap up
