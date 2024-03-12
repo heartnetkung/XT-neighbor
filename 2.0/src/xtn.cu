@@ -238,8 +238,9 @@ void xtn_perform(XTNArgs args, Int3* seq, SeqInfo* seqInfo, void callback(XTNOut
 
 	if (overlapMode) {
 		Int3* seqDedup;
+		seqInfoDevice = host_to_device(seqInfo, seqLen);
 		seqLen =  overlap_mode_init(seqDevice, seqDedup, seqInfoDevice, seqOffset,
-		                             finalOutput, seqLen, deviceInt);
+		                            finalOutput, seqLen, deviceInt);
 		cudaFree(seqDevice); gpuerr();
 		seqDevice = seqDedup;
 	}
