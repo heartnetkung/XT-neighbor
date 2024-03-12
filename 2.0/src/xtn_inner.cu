@@ -523,8 +523,8 @@ void stream_handler4_overlap(Chunk<Int2> pairInput, XTNOutput &output, Int3* seq
 int overlap_mode_init(Int3* seq, Int3* &seqOut, SeqInfo* &infoInOut, int* &infoOffsetOut,
                       XTNOutput &output, int seqLen, int* buffer) {
 	int* outputOffset;
-	Int2* indexPairs, indexPairs2;
-	size_t* pairwiseFreq, pairwiseFreq2;
+	Int2* indexPairs, *indexPairs2;
+	size_t* pairwiseFreq, *pairwiseFreq2;
 
 	// create grouping
 	sort_key_values(seq, infoInOut, seqLen);
@@ -554,7 +554,7 @@ int overlap_mode_init(Int3* seq, Int3* &seqOut, SeqInfo* &infoInOut, int* &infoO
 
 	// wrap up
 	output.indexPairs = indexPairs2;
-	output.pairwiseFreq = pairwiseFreq2;
+	output.pairwiseFrequencies = pairwiseFreq2;
 	output.len = transfer_last_element(buffer, 1);;
 	_cudaFree(seq, outputOffset, indexPairs, pairwiseFreq);
 	return uniqueLen;
