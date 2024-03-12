@@ -242,19 +242,19 @@ int main(int argc, char **argv) {
 	// 3. perform algorithm
 	if (verboseGlobal)
 		print_args(args);
-	if (args.outputPath != NULL) {
-		if (outputFile != NULL)
-			return exit(seq, seqInfo, returnCode,
-			            "output file has already been allocated, possibly due to concurrency");
-		outputFile = fopen(args.outputPath, "w");
-		if (outputFile == NULL)
-			return exit(seq, seqInfo, returnCode, "output file opening failed");
-		xtn_perform(args, seq, seqInfo,
-		            overlapMode ? file_handler_overlap : file_handler_nn);
-		fclose(outputFile);
-	} else {
-		xtn_perform(args, seq, seqInfo, null_handler);
-	}
+	// if (args.outputPath != NULL) {
+	// 	if (outputFile != NULL)
+	// 		return exit(seq, seqInfo, returnCode,
+	// 		            "output file has already been allocated, possibly due to concurrency");
+	// 	outputFile = fopen(args.outputPath, "w");
+	// 	if (outputFile == NULL)
+	// 		return exit(seq, seqInfo, returnCode, "output file opening failed");
+	// 	xtn_perform(args, seq, seqInfo,
+	// 	            overlapMode ? file_handler_overlap : file_handler_nn);
+	// 	fclose(outputFile);
+	// } else {
+	// 	xtn_perform(args, seq, seqInfo, null_handler);
+	// }
 
 	printf("total output length: %'lu\n", totalOutputLen);
 	return exit(seq, seqInfo, returnCode, NULL);
