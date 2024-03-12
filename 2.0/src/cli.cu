@@ -217,7 +217,7 @@ int main(int argc, char **argv) {
 	XTNArgs args;
 	int returnCode = SUCCESS;
 	Int3* seq;
-	SeqInfo* seqInfo;
+	SeqInfo* seqInfo = NULL;
 
 	// 1. parse command line arguments
 	setlocale(LC_ALL, "");
