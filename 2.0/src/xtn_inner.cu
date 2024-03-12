@@ -545,6 +545,7 @@ int overlap_mode_init(Int3* seq, Int3* &seqOut, SeqInfo* &infoInOut, int* &infoO
 	cudaMalloc(&pairwiseFreq, outputLen * sizeof(size_t)); gpuerr();
 	init_overlap_output <<< NUM_BLOCK(uniqueLen), NUM_THREADS>>>(infoInOut, indexPairs,
 	        pairwiseFreq, infoOffsetOut, outputOffset, uniqueLen); gpuerr();
+	print_seqinfo_arr(infoInOut, seqLen);
 
 	// merge output
 	sort_key_values2(indexPairs, pairwiseFreq, outputLen);

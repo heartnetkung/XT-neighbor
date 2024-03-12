@@ -196,6 +196,18 @@ void print_size_t_arr(size_t* arr, int n) {
 	cudaFreeHost(arr2); gpuerr();
 }
 
+void print_seqinfo_arr(SeqInfo* arr, int n) {
+	printf("[ ");
+	SeqInfo* arr2 = device_to_host(arr, n);
+	for (int i = 0; i < n; i++) {
+		printf("(%d %d)", arr2[i].frequency, arr2[i].repertoire);
+		if (i != n - 1)
+			printf(", ");
+	}
+	printf(" ] n=%d\n", n);
+	cudaFreeHost(arr2); gpuerr();
+}
+
 void print_gpu_memory() {
 	size_t mf, ma;
 	cudaMemGetInfo(&mf, &ma);
