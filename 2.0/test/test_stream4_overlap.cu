@@ -39,29 +39,20 @@ TEST(Stream4Overlap, {
 	info_d = host_to_device(info_h, infoLen);
 	inputOffsets_d = host_to_device(inputOffsets, seqLen);
 
-	//do testing
+	// do testing
 	Chunk<Int2> pairInput;
 	pairInput.ptr = pairs_d;
 	pairInput.len = pairLen;
 	stream_handler4_overlap(pairInput, output, seq1_d, info_d, inputOffsets_d,
 	                        seqLen, distance, LEVENSHTEIN, deviceInt);
 
-	print_int2_arr(output.indexPairs, output.len);
-	print_size_t_arr(output.pairwiseFrequencies, output.len);
-	// //expactation
-	// int expectedLen = 1;
-	// Int2 expectedPairs[] = {
-	// 	{.x = 0, .y = 0}
-	// };
-	// size_t expectedDistances[] = {206};
-	// output.indexPairs = device_to_host(output.indexPairs, output.len);
-	// output.pairwiseFrequencies = device_to_host(output.pairwiseFrequencies, output.len);
+	// checking
+	int expectedLen = 3;
+	check(output.len == expectedLen);
 
-	// //check
-	// check(output.len == expectedLen);
-	// for (int i = 0; i < expectedLen; i++) {
-	// 	check(expectedPairs[i].x == output.indexPairs[i].x);
-	// 	check(expectedPairs[i].y == output.indexPairs[i].y);
-	// 	check(expectedDistances[i] == output.pairwiseFrequencies[i]);
-	// }
+	Int2 expectedIndexPair[] = {{.x = 0, .y = 0}, {.x = 0, .y = 1}, {.x = 1, .y = 1}};
+	check_device_arr(output.indexPairs, expectedIndexPair, output.len);
+
+	size_t expectedFrequency[] = {24, 41, 70};
+	check_device_arr(output.pairwiseFrequencies, expectedFrequency, output.len);
 })
