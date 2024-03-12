@@ -551,6 +551,6 @@ int overlap_mode_init(Int3* seq, Int3* &seqOut, SeqInfo* &infoInOut, int* &infoO
 	output.indexPairs = indexPairs2;
 	output.pairwiseFrequencies = pairwiseFreq2;
 	output.len = transfer_last_element(buffer, 1);;
-	_cudaFree(seq, outputOffset, indexPairs, pairwiseFreq);
+	_cudaFree(outputOffset, indexPairs, pairwiseFreq);
 	return uniqueLen;
 }
