@@ -46,44 +46,40 @@ void cal_combination_len(Int3* input, int distance, int* output, int n) {
 }
 
 /**
- * precalculate the number of positions required in the output array of generate pair operation.
+ * precalculate the output range of generate pair operation.
  *
- * @param input group size
- * @param output position requirement
- * @param n array length of input and output
+ * @param inputRange range of each input group
+ * @param outputRange range of each output group
+ * @param n array length of inputRange and outputRange
 */
 __global__
-void cal_pair_len(int* input, int* output, int n) {
+void cal_pair_len(int* inputRange, int* outputRange, int n) {
 	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
 	if (tid >= n)
 		return;
 
-	size_t intermediate = input[tid];
+	size_t intermediate = inputRange[tid];
 	intermediate = intermediate * (intermediate - 1) / 2;
 	if (intermediate > MAX)
 		printf("cal_pair_len overflow\n");
-	output[tid] = intermediate;
+	outputRange[tid] = intermediate;
 }
 
 /**
- * precalculate the number of positions required in the output array of
- * generate pair operation including diagonal position.
+ * precalculate the output range of pair generation in diagonal position for overlap mode.
  *
- * @param input group size
- * @param output position requirement
- * @param n array length of input and output
+ * @param inputRange range of each input group
+ * @param outputRange range of each output group
+ * @param n array length of inputRange and outputRange
 */
 __global__
-void cal_pair_len_diag(int* input, int* output, int n) {
+void cal_pair_len_diag(int* inputRange, int* outputRange, int n) {
 	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
 	if (tid >= n)
 		return;
 
-	size_t intermediate = input[tid];
-	intermediate = intermediate * (intermediate + 1) / 2;
-	if (intermediate > MAX)
-		printf("cal_pair_len overflow\n");
-	output[tid] = intermediate;
+	int len = inputRange[tid];
+	outputRange[tid] = len * (len + 1) / 2;
 }
 
 /**
