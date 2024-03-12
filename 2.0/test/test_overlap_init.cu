@@ -29,6 +29,6 @@ TEST(OverlapInit, {
 	                                  output, seqLen, buffer);
 	printf("%d %d\n", uniqueLen, output.len);
 	print_int3_arr(seqOut, uniqueLen);
-	print_int2_arr(output.indexPairs);
-	print_size_t_arr(output.pairwiseFrequencies);
+	print_int2_arr(output.indexPairs, uniqueLen);
+	print_size_t_arr(output.pairwiseFrequencies, uniqueLen);
 })
