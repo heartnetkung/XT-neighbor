@@ -499,7 +499,7 @@ void stream_handler4_overlap(Chunk<Int2> pairInput, std::vector<XTNOutput> &allO
 		_cudaMalloc(pairOut, freqOut, outputLen);
 		pair2rep <<< NUM_BLOCK(nChunk), NUM_THREADS>>>(
 		    pairPtr, pairOut, freqOut, seqInfo, seqOffset, valueOffsets, nChunk); gpuerr();
-		_cudaFree(pairOut3, valueOffsets);
+		cudaFree(valueOffsets); gpuerr();
 		sort_key_values2(pairOut, freqOut, outputLen);
 		_cudaMalloc(pairOut2, freqOut2, outputLen);
 		sum_by_key(pairOut, pairOut2, freqOut, freqOut2, buffer, outputLen);
@@ -520,6 +520,7 @@ void stream_handler4_overlap(Chunk<Int2> pairInput, std::vector<XTNOutput> &allO
 		valueLengthsPtr += nChunk;
 	}
 	cudaFreeHost(valueLengthsHost); gpuerr();
+	cudaFree(pairOut3); gpuerr();
 }
 
 XTNOutput mergeOutput(std::vector<XTNOutput> allOutputs, int* buffer) {
