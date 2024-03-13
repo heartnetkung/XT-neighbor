@@ -601,9 +601,9 @@ int overlap_mode_init(Int3* seq, Int3* &seqOut, SeqInfo* &infoInOut, int* &infoO
 	// wrap up
 	int finalLen = transfer_last_element(buffer, 1);
 	XTNOutput newOutput = {
-		.len = finalLen,
 		.indexPairs = shrink(indexPairs2, finalLen),
-		.pairwiseFrequencies = shrink(pairwiseFreq2, finalLen)
+		.pairwiseFrequencies = shrink(pairwiseFreq2, finalLen),
+		.len = finalLen
 	};
 	allOutputs.push_back(newOutput);
 	return uniqueLen;
