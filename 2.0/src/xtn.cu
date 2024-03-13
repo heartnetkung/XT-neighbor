@@ -101,7 +101,7 @@ MemoryContext cal_memory_stream4(int seqLen, bool overlapMode) {
 	if (overlapMode) {
 		multiplier = 2 * sizeof(Int2) + // pairOut3, *uniquePairs
 		             sizeof(char); //flags
-		size_t temp =  ans.gpuSize / (2 * multiplier);
+		size_t temp =  ans.gpuSize / (3 * multiplier);
 		ans.bandwidth1 = (temp > MAX_PROCESSING) ? MAX_PROCESSING : temp;
 		ans.bandwidth2 = (temp > MAX_PROCESSING) ? MAX_PROCESSING : temp;
 	} else {
