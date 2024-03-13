@@ -31,7 +31,7 @@ TEST(OverlapInit, {
 	int expectedUniqueLen = 3, expectedOutputLen = 3, expectedOutputCount = 1;
 	check(uniqueLen == expectedUniqueLen);
 	check(output.len == expectedOutputLen);
-	check(output.size() == expectedOutputCount);
+	check(allOutputs.size() == expectedOutputCount);
 
 	SeqInfo expectedInfo[] = {
 		{.frequency = 3, .repertoire = 0}, {.frequency = 5, .repertoire = 1},
