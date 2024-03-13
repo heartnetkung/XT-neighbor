@@ -27,6 +27,7 @@ TEST(Stream4Overlap, {
 	cudaMalloc(&pairs_d, sizeof(Int2)*pairLen);
 	cudaMallocHost(&pairs_h, sizeof(Int2)*pairLen);
 	cudaMalloc(&info_d, sizeof(SeqInfo)*infoLen);
+	ctx.bandwidth2 = 100;
 
 	//make inputs
 	for (int i = 0; i < seqLen; i++)
