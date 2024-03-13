@@ -32,9 +32,8 @@ void print_args(XTNArgs args) {
 	printf("XTNArgs{\n");
 	printf("\tdistance: %d\n", args.distance);
 	printf("\tverbose: %d\n", args.verbose);
-	printf("\textendedBuffer: %d\n", args.extendedBuffer);
-	printf("\tseq1Len: %'d\n", args.seq1Len);
-	printf("\tseq1Path: \"%s\"\n", args.seq1Path);
+	printf("\tseqLen: %'d\n", args.seqLen);
+	printf("\tseqPath: \"%s\"\n", args.seqPath);
 	printf("\toutputPath: \"%s\"\n", args.outputPath);
 	printf("\tmeasure: \"%s\"\n", (args.measure == LEVENSHTEIN) ? "leven" : "hamming");
 	printf("\tinfoPath: \"%s\"\n", args.infoPath);
@@ -42,6 +41,17 @@ void print_args(XTNArgs args) {
 	printf("}\n");
 }
 
+template <typename T1, typename T2>
+void _cudaMalloc(T1* &a, T2* &b, size_t len) {
+	cudaMalloc(&a, sizeof(T1)*len); gpuerr();
+	cudaMalloc(&b, sizeof(T2)*len); gpuerr();
+}
+template <typename T1, typename T2, typename T3>
+void _cudaMalloc(T1* &a, T2* &b, T3* &c, size_t len) {
+	cudaMalloc(&a, sizeof(T1)*len); gpuerr();
+	cudaMalloc(&b, sizeof(T2)*len); gpuerr();
+	cudaMalloc(&c, sizeof(T3)*len); gpuerr();
+}
 void _cudaFree(void* a) {
 	cudaFree(a); gpuerr();
 }
@@ -143,6 +153,16 @@ T* host_to_device(T* arr, int n) {
 	return temp;
 }
 
+template <typename T>
+T* shrink(T* arr, int n){
+	T* temp;
+	size_t tempBytes = sizeof(T) * n;
+	cudaMalloc(&temp, tempBytes); gpuerr();
+	cudaMemcpy(temp, arr, tempBytes, cudaMemcpyDeviceToDevice); gpuerr();
+	cudaFree(arr); gpuerr();
+	return temp;
+}
+
 void print_int_arr(int* arr, int n) {
 	printf("[ ");
 	int* arr2 = device_to_host(arr, n);
@@ -190,6 +210,18 @@ void print_size_t_arr(size_t* arr, int n) {
 	size_t* arr2 = device_to_host(arr, n);
 	for (int i = 0; i < n; i++) {
 		printf("%lu", arr2[i]);
+		if (i != n - 1)
+			printf(", ");
+	}
+	printf(" ] n=%d\n", n);
+	cudaFreeHost(arr2); gpuerr();
+}
+
+void print_seqinfo_arr(SeqInfo* arr, int n) {
+	printf("[ ");
+	SeqInfo* arr2 = device_to_host(arr, n);
+	for (int i = 0; i < n; i++) {
+		printf("(%d %d)", arr2[i].frequency, arr2[i].repertoire);
 		if (i != n - 1)
 			printf(", ");
 	}

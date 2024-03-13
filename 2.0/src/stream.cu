@@ -17,6 +17,7 @@ public:
 	bool not_null() {return ptr != NULL;}
 };
 
+
 /**
  * A stream where the data is already fit inside the GPU memory, so
  * chunking is basically just shift the pointer around.

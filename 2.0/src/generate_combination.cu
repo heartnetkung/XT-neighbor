@@ -92,6 +92,7 @@ void expand_keys(Int3 seq, int distance, Int3* output, unsigned int* firstKeys, 
  * @param distance Levenshtein distance threshold
  * @param combinationKeys key output
  * @param combinationValues value output
+ * @param carry the offset of the current chunk
  * @param firstKeys partial key output for histogram
  * @param n array length of seqs and combinationOffsets
  *

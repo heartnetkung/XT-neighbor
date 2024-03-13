@@ -12,7 +12,7 @@ TEST(Stream2, {
 	std::vector<int*> histogramOutput;
 	MemoryContext ctx;
 	int* histogramOutputHost = (int*)calloc(ctx.histogramSize, sizeof(int));
-	size_t dummy=0;
+	size_t dummy = 0;
 
 	cudaMalloc(&deviceInt, sizeof(int));
 	Int3* keysInt3 = (Int3*)malloc(sizeof(Int3) * len);
@@ -33,15 +33,11 @@ TEST(Stream2, {
 	int expectedIndex[] = {0, 2, 1, 0, 0, 0, 1, 2, 2, 2, 0, 2, 1, 1, 1, 3, 3, 3, 3, 3};
 	int expectedHistogram[] = {17, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0, 0, 1, 0, 0, 0};
 	Int3* keyOut = device_to_host(keyInOut.ptr, keyInOut.len);
-	int* valueOut = device_to_host(valueInOut.ptr, valueInOut.len);
-	int* histogramOut = device_to_host(histogramOutput[0], ctx.histogramSize);
 
 	check(keyInOut.len == expectedLen);
 	check(valueInOut.len == expectedLen);
-	for (int i = 0; i < expectedLen; i++) {
+	for (int i = 0; i < expectedLen; i++)
 		checkstr(expectedPairs[i], str_decode(keyOut[i]));
-		check(expectedIndex[i] == valueOut[i]);
-	}
-	for (int i = 0; i < ctx.histogramSize; i++)
-		check(expectedHistogram[i] == histogramOut[i]);
+	check_device_arr(valueInOut.ptr, expectedIndex, valueInOut.len);
+	check_device_arr(histogramOutput[0], expectedHistogram, ctx.histogramSize);
 })

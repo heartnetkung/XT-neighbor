@@ -8,31 +8,31 @@ TEST(Stream4, {
 	int distance = 1;
 
 	//allocate inputs
-	Int3 * seq1d, *seq1h;
+	Int3 * seqd, *seqh;
 	Int2 * pairs_d, *pairs_h;
 	XTNOutput output;
 	int* deviceInt;
 	cudaMalloc(&deviceInt, sizeof(int));
-	cudaMalloc(&seq1d, sizeof(Int3)*seqLen);
-	cudaMallocHost(&seq1h, sizeof(Int3)*seqLen);
+	cudaMalloc(&seqd, sizeof(Int3)*seqLen);
+	cudaMallocHost(&seqh, sizeof(Int3)*seqLen);
 	cudaMalloc(&pairs_d, sizeof(Int2)*pairLen);
 	cudaMallocHost(&pairs_h, sizeof(Int2)*pairLen);
 
 	//make inputs
 	for (int i = 0; i < seqLen; i++)
-		seq1h[i] = str_encode(seqs[i]);
+		seqh[i] = str_encode(seqs[i]);
 	int count = 0;
 	for (int i = 0; i < 5; i++)
 		for (int j = i + 1; j < 5; j++)
 			pairs_h[count++] = {.x = i, .y = j};
-	seq1d = host_to_device(seq1h, seqLen);
+	seqd = host_to_device(seqh, seqLen);
 	pairs_d = host_to_device(pairs_h, pairLen);
 
 	//do testing
 	Chunk<Int2> pairInput;
 	pairInput.ptr = pairs_d;
 	pairInput.len = pairLen;
-	stream_handler4_nn(pairInput, output, seq1d, seqLen, distance, LEVENSHTEIN, deviceInt);
+	stream_handler4_nn(pairInput, output, seqd, seqLen, distance, LEVENSHTEIN, deviceInt);
 
 	//expactation
 	int expectedLen = 5;
@@ -43,9 +43,6 @@ TEST(Stream4, {
 
 	//check
 	check(output.len == expectedLen);
-	for (int i = 0; i < expectedLen; i++) {
-		check(expectedPairs[i].x == output.indexPairs[i].x);
-		check(expectedPairs[i].y == output.indexPairs[i].y);
-		check(expectedDistances[i] == output.pairwiseDistances[i]);
-	}
+	check_arr(output.indexPairs, expectedPairs, output.len);
+	check_arr(output.pairwiseDistances, expectedDistances, output.len);
 })

@@ -19,15 +19,15 @@ const int MAX_PROCESSING = 1 << 30;
 /**
  * private function.
 */
-MemoryContext initMemory(int seq1Len, bool isGPU) {
+MemoryContext initMemory(int seqLen, bool isGPU) {
 	MemoryContext ans;
 	if (isGPU)
 		ans.gpuSize = get_gpu_memory();
 	else
 		ans.ramSize = get_main_memory();
-	if (ans.histogramSize > seq1Len)
-		ans.histogramSize = seq1Len;
-	else if (seq1Len > 10000000)
+	if (ans.histogramSize > seqLen)
+		ans.histogramSize = seqLen;
+	else if (seqLen > 10000000)
 		// ans.histogramSize = 262144;
 		ans.histogramSize = 1048576;
 	return ans;
@@ -48,8 +48,8 @@ int cal_max_exponent(size_t input) {
 /**
  * calculate memory constraint for stream 1 using the upper bound of the memory allocation during the operation.
 */
-MemoryContext cal_memory_stream1(int seq1Len, int distance) {
-	MemoryContext ans = initMemory(seq1Len, true);
+MemoryContext cal_memory_stream1(int seqLen, int distance) {
+	MemoryContext ans = initMemory(seqLen, true);
 	int deletionMultiplier = (distance == 1) ? (18 + 1) : (153 + 18 + 1);
 	int multiplier =
 	    //bottleneck: Int3* &deletionsOutput int* &indexOutput sort_key_values
@@ -57,15 +57,15 @@ MemoryContext cal_memory_stream1(int seq1Len, int distance) {
 
 	size_t temp = ans.gpuSize / multiplier; /*safety factor is included in deletionMultiplier*/
 	ans.bandwidth1 = (temp > MAX_PROCESSING) ? MAX_PROCESSING : temp;
-	ans.chunkSize = (seq1Len < ans.bandwidth1) ? seq1Len : ans.bandwidth1;
+	ans.chunkSize = (seqLen < ans.bandwidth1) ? seqLen : ans.bandwidth1;
 	return ans;
 }
 
 /**
  * calculate memory constraint for stream 2 using the upper bound of the memory allocation during the operation.
 */
-MemoryContext cal_memory_stream2(int seq1Len) {
-	MemoryContext ans = initMemory(seq1Len, true);
+MemoryContext cal_memory_stream2(int seqLen) {
+	MemoryContext ans = initMemory(seqLen, true);
 	int multiplier =
 	    //bottleneck: input sort_key_values
 	    2 * sizeof(Int3) + 2 * sizeof(int);
@@ -80,8 +80,8 @@ MemoryContext cal_memory_stream2(int seq1Len) {
 /**
  * calculate memory constraint for stream 3 using the upper bound of the memory allocation during the operation.
 */
-MemoryContext cal_memory_stream3(int seq1Len) {
-	MemoryContext ans = initMemory(seq1Len, true);
+MemoryContext cal_memory_stream3(int seqLen) {
+	MemoryContext ans = initMemory(seqLen, true);
 	int multiplier =
 	    2 * sizeof(int) + // int* &inputOffsets, int* &outputLengths
 	    sizeof(char) + sizeof(Int3) + sizeof(int); //char* flags Int3* keyOut int* valueOut;
@@ -95,16 +95,22 @@ MemoryContext cal_memory_stream3(int seq1Len) {
 /**
  * calculate memory constraint for stream 4 using the upper bound of the memory allocattion during the operation.
 */
-MemoryContext cal_memory_stream4(int seq1Len, bool overlapMode) {
-	MemoryContext ans = initMemory(seq1Len, true);
-	int multiplier = 2 * sizeof(Int2) + //Int2* uniquePairs, sorting
-	                 2 * sizeof(char) + //char* uniqueDistances, *flags
-	                 sizeof(Int2);//Int2* &pairOutput
-	if (!overlapMode)
-		multiplier += sizeof(char); // char* &distanceOutput;
+MemoryContext cal_memory_stream4(int seqLen, bool overlapMode) {
+	MemoryContext ans = initMemory(seqLen, true);
+	int multiplier;
+	if (overlapMode) {
+		multiplier = 2 * sizeof(Int2) + // pairOut3, *uniquePairs
+		             sizeof(char); //flags
+		size_t temp =  ans.gpuSize / (3 * multiplier);
+		ans.bandwidth1 = (temp > MAX_PROCESSING) ? MAX_PROCESSING : temp;
+		ans.bandwidth2 = (temp > MAX_PROCESSING) ? MAX_PROCESSING : temp;
+	} else {
+		multiplier = 3 * sizeof(Int2) + //Int2* uniquePairs, sorting, pairOutput
+		             3 * sizeof(char); //char* uniqueDistances, *flags, distanceOutput
+		size_t temp = (8 * ans.gpuSize) / (10 * multiplier);
+		ans.bandwidth1 = (temp > MAX_PROCESSING) ? MAX_PROCESSING : temp;
+	}
 
-	size_t temp = (8 * ans.gpuSize) / (10 * multiplier);
-	ans.bandwidth1 = (temp > MAX_PROCESSING) ? MAX_PROCESSING : temp;
 	ans.maxThroughputExponent = cal_max_exponent(ans.bandwidth1);
 	return ans;
 }
@@ -112,8 +118,8 @@ MemoryContext cal_memory_stream4(int seq1Len, bool overlapMode) {
 /**
  * calculate RAM constraint for lower bound calculation.
 */
-MemoryContext cal_memory_lowerbound(int seq1Len) {
-	MemoryContext ans = initMemory(seq1Len, false);
+MemoryContext cal_memory_lowerbound(int seqLen) {
+	MemoryContext ans = initMemory(seqLen, false);
 	size_t bandwidth = 7 * ans.ramSize / (sizeof(Int2) * 10);
 	ans.maxThroughputExponent = cal_max_exponent(bandwidth);
 	return ans;
@@ -196,21 +202,25 @@ int** set_d2_offsets(std::vector<int*> histograms, D2Stream<T1> *s1, D2Stream<T2
  * the main function for XT-neighbor algorithm.
  *
  * @param args all flags parsed from command line
- * @param seq1 sequence input
+ * @param seq sequence input
+ * @param seqInfo information of each CDR3 sequence, only used in overlap mode
  * @param callback function to be invoked once a chunk of output is ready
 */
-void xtn_perform(XTNArgs args, Int3* seq1, int* seqFreqHost,
-                 int* repSizesHost, void callback(XTNOutput)) {
+void xtn_perform(XTNArgs args, Int3* seq, SeqInfo* seqInfo, void callback(XTNOutput)) {
 	clock_start();
 
-	int* deviceInt, *lowerbounds, *seqFreq = NULL, *repSizes = NULL;
-	Int3* seq1Device;
+	// normal variables
+	int* deviceInt, *lowerbounds, *seqOffset = NULL;
+	Int3* seqDevice;
 	std::vector<int*> histograms;
 	int** offsets;
+	SeqInfo* seqInfoDevice = NULL;
 	int lowerboundsLen;
-	int distance = args.distance, seq1Len = args.seq1Len;
+	int distance = args.distance, seqLen = args.seqLen;
 	bool overlapMode = (args.infoPath != NULL);
+	std::vector<XTNOutput> allOverlapOutputs;
 
+	// buffer related variables
 	GPUInputStream<Int3> *b0;
 	D2Stream<Int3> *b1key;
 	D2Stream<int> *b1value;
@@ -223,17 +233,30 @@ void xtn_perform(XTNArgs args, Int3* seq1, int* seqFreqHost,
 	int* b1valueOut;
 
 	cudaMalloc(&deviceInt, sizeof(int)); gpuerr();
-	seq1Device = host_to_device(seq1, seq1Len);
+	seqDevice = host_to_device(seq, seqLen);
 	print_v("0A");
+
+	//=====================================
+	// overlap mode input preparation
+	//=====================================
+
+	if (overlapMode) {
+		Int3* seqDedup;
+		seqInfoDevice = host_to_device(seqInfo, seqLen);
+		seqLen = overlap_mode_init(seqDevice, seqDedup, seqInfoDevice, seqOffset,
+		                           allOverlapOutputs, seqLen, deviceInt);
+		cudaFree(seqDevice); gpuerr();
+		seqDevice = seqDedup;
+	}
 
 	//=====================================
 	// stream 1: generate deletions
 	//=====================================
 
-	MemoryContext ctx1 = cal_memory_stream1(seq1Len, distance);
+	MemoryContext ctx1 = cal_memory_stream1(seqLen, distance);
 	int outputLen, carry = 0;
 
-	b0 = new GPUInputStream<Int3>(seq1Device, seq1Len, ctx1.chunkSize);
+	b0 = new GPUInputStream<Int3>(seqDevice, seqLen, ctx1.chunkSize);
 	b1key = new D2Stream<Int3>();
 	b1value = new D2Stream<int>();
 	print_v("1A");
@@ -257,7 +280,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, int* seqFreqHost,
 	// stream 2: group key values
 	//=====================================
 
-	MemoryContext ctx2 = cal_memory_stream2(seq1Len);
+	MemoryContext ctx2 = cal_memory_stream2(seqLen);
 	int offsetLen;
 	size_t totalLen2B = 0;
 
@@ -273,7 +296,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, int* seqFreqHost,
 		b1valueChunk = b1value->read();
 		print_bandwidth(b1keyChunk.len, ctx2.bandwidth1, "2");
 		stream_handler2(b1keyChunk, b1valueChunk, histograms, totalLen2B,
-		                distance, seq1Len, deviceInt, ctx2);
+		                distance, seqLen, deviceInt, ctx2);
 		b2key->write(b1keyChunk.ptr, b1keyChunk.len);
 		b2value->write(b1valueChunk.ptr, b1valueChunk.len);
 		print_v("2B");
@@ -290,17 +313,10 @@ void xtn_perform(XTNArgs args, Int3* seq1, int* seqFreqHost,
 	//=====================================
 
 	size_t totalLen3B = 0;
-	XTNOutput finalOutput;
-	lowerboundsLen = cal_lowerbounds(histograms, lowerbounds, seq1Len, deviceInt);
+	lowerboundsLen = cal_lowerbounds(histograms, lowerbounds, seqLen, deviceInt);
 	histograms.clear();
 	if (verboseGlobal)
 		print_int_arr(lowerbounds, lowerboundsLen);
-
-	if (overlapMode) {
-		seqFreq = host_to_device(seqFreqHost, args.seq1Len);
-		repSizes = host_to_device(repSizesHost, args.infoLen);
-		inclusive_sum(repSizes, args.infoLen); gpuerr();
-	}
 
 	for (int i = 0; i < lowerboundsLen; i++) {
 		int lowerbound = lowerbounds[i];
@@ -311,7 +327,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, int* seqFreqHost,
 		// stream 3: generate pairs
 		//=====================================
 
-		MemoryContext ctx3 = cal_memory_stream3(seq1Len);
+		MemoryContext ctx3 = cal_memory_stream3(seqLen);
 		b2key->swap();
 		b2value->swap();
 		b2key->set_max_readable_size(ctx3.bandwidth1);
@@ -323,7 +339,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, int* seqFreqHost,
 			b2valueChunk = b2value->read();
 			print_bandwidth(b2keyChunk.len, ctx3.bandwidth1, "3");
 			stream_handler3(b2keyChunk, b2valueChunk, write_b3, histograms,
-			                lowerbound, seq1Len, deviceInt, ctx3);
+			                lowerbound, seqLen, deviceInt, ctx3);
 			b2key->write(b2keyChunk.ptr, b2keyChunk.len);
 			b2value->write(b2valueChunk.ptr, b2valueChunk.len);
 
@@ -339,7 +355,7 @@ void xtn_perform(XTNArgs args, Int3* seq1, int* seqFreqHost,
 		// stream 4: postprocessing
 		//=====================================
 
-		MemoryContext ctx4 = cal_memory_stream4(seq1Len, overlapMode);
+		MemoryContext ctx4 = cal_memory_stream4(seqLen, overlapMode);
 		D2Stream<int> *dummy = NULL;
 		size_t totalLen4 = 0;
 
@@ -351,18 +367,19 @@ void xtn_perform(XTNArgs args, Int3* seq1, int* seqFreqHost,
 		while ((b3Chunk = b3->read()).not_null()) {
 			print_bandwidth(b3Chunk.len, ctx4.bandwidth1, "4");
 
-			if (overlapMode)
-				stream_handler4_overlap(b3Chunk, finalOutput, seq1Device,
-				                        seqFreq, repSizes, args.infoLen,
-				                        seq1Len, distance, args.measure, deviceInt);
-			else {
-				stream_handler4_nn(b3Chunk, finalOutput, seq1Device, seq1Len,
+			if (overlapMode) {
+				stream_handler4_overlap(b3Chunk, allOverlapOutputs, seqDevice, seqInfoDevice,
+				                        seqOffset, seqLen, distance, args.measure, deviceInt, ctx4);
+				totalLen4 += allOverlapOutputs.back().len;
+			} else {
+				XTNOutput finalOutput;
+				stream_handler4_nn(b3Chunk, finalOutput, seqDevice, seqLen,
 				                   distance, args.measure, deviceInt);
 				callback(finalOutput);
 				_cudaFreeHost(finalOutput.indexPairs, finalOutput.pairwiseDistances);
+				totalLen4 += finalOutput.len;
 			}
 
-			totalLen4 += finalOutput.len;
 			print_v("4B");
 		}
 
@@ -372,22 +389,17 @@ void xtn_perform(XTNArgs args, Int3* seq1, int* seqFreqHost,
 	}
 
 	if (overlapMode) {
-		Int2* indexPairs = device_to_host(finalOutput.indexPairs, finalOutput.len);
-		size_t* pairwiseFreq = device_to_host(
-		                           finalOutput.pairwiseFrequencies, finalOutput.len);
-		_cudaFree(seqFreq, repSizes, finalOutput.indexPairs,
-		          finalOutput.pairwiseFrequencies);
-		finalOutput.indexPairs = indexPairs;
-		finalOutput.pairwiseFrequencies = pairwiseFreq;
+		_cudaFree(seqOffset, seqInfoDevice);
+		XTNOutput finalOutput = mergeOutput(allOverlapOutputs, deviceInt);
 		callback(finalOutput);
-		_cudaFreeHost(indexPairs, pairwiseFreq);
+		_cudaFreeHost(finalOutput.indexPairs, finalOutput.pairwiseFrequencies);
 	}
 
 	//=====================================
 	// boilerplate: deallocalte
 	//=====================================
 	cudaFreeHost(lowerbounds); gpuerr();
-	_cudaFree(deviceInt, seq1Device);
+	_cudaFree(deviceInt, seqDevice);
 	b2key->deconstruct();
 	b2value->deconstruct();
 	if (verboseGlobal)

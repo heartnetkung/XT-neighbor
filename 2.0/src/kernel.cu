@@ -46,23 +46,60 @@ void cal_combination_len(Int3* input, int distance, int* output, int n) {
 }
 
 /**
- * precalculate the number of positions required in the output array of generate pair operation.
+ * precalculate the output range of generate pair operation.
  *
- * @param input group size
- * @param output position requirement
- * @param n array length of input and output
+ * @param inputRange range of each input group
+ * @param outputRange range of each output group
+ * @param n array length of inputRange and outputRange
 */
 __global__
-void cal_pair_len(int* input, int* output, int n) {
+void cal_pair_len(int* inputRange, int* outputRange, int n) {
 	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
 	if (tid >= n)
 		return;
 
-	size_t intermediate = input[tid];
+	size_t intermediate = inputRange[tid];
 	intermediate = intermediate * (intermediate - 1) / 2;
 	if (intermediate > MAX)
 		printf("cal_pair_len overflow\n");
-	output[tid] = intermediate;
+	outputRange[tid] = intermediate;
+}
+
+/**
+ * precalculate the output range of pair generation in diagonal position for overlap mode.
+ *
+ * @param inputRange range of each input group
+ * @param outputRange range of each output group
+ * @param n array length of inputRange and outputRange
+*/
+__global__
+void cal_pair_len_diag(int* inputRange, int* outputRange, int n) {
+	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
+	if (tid >= n)
+		return;
+
+	int len = inputRange[tid];
+	outputRange[tid] = len * (len + 1) / 2;
+}
+
+/**
+ * precalculate the output range of pair generation in diagonal position for overlap mode.
+ *
+ * @param pairs pairs of sequences
+ * @param seqOffset range of each input group
+ * @param outputRange range of each output group
+ * @param n array length of inputRange and outputRange
+*/
+__global__
+void cal_pair_len_nondiag(Int2* pairs, int* seqOffset, int* outputRange, int n) {
+	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
+	if (tid >= n)
+		return;
+
+	Int2 pair = pairs[tid];
+	int len1 = (pair.x == 0) ? seqOffset[pair.x] : (seqOffset[pair.x] - seqOffset[pair.x - 1]);
+	int len2 = (pair.y == 0) ? seqOffset[pair.y] : (seqOffset[pair.y] - seqOffset[pair.y - 1]);
+	outputRange[tid] = len1 * len2;
 }
 
 /**
@@ -243,7 +280,7 @@ char hamming(Int3 x1, Int3 x2) {
  * @param index pairs of sequence to calculate
  * @param distance Levenshtein/Hamming distance threshold
  * @param measure enum representing Levenshtein/Hamming
- * @param distanceOutput output distance, if null the output won't be written
+ * @param distanceOutput output distance, maybe null
  * @param flagOutput array output flag
  * @param n array length of index
  * @param seqLen array length of seq
@@ -256,7 +293,7 @@ void cal_distance(Int3* seq, Int2* index, int distance, char measure,
 		return;
 
 	Int2 indexPair = index[tid];
-	if ((distanceOutput != NULL) && (indexPair.x == indexPair.y)) {
+	if (indexPair.x == indexPair.y) {
 		flagOutput[tid] =  0;
 		return;
 	}
@@ -267,13 +304,60 @@ void cal_distance(Int3* seq, Int2* index, int distance, char measure,
 		return;
 	}
 
-	char newOutput = measure == LEVENSHTEIN ?
+	char newOutput = (measure == LEVENSHTEIN) ?
 	                 levenshtein(seq[indexPair.x], seq[indexPair.y]) :
 	                 hamming(seq[indexPair.x], seq[indexPair.y]);
 	if (distanceOutput != NULL)
 		distanceOutput[tid] = newOutput;
 	flagOutput[tid] =  newOutput <= distance;
 }
+
+/**
+ * turning pairs and frequencies from sequence format to repertoire format.
+ *
+ * @param pairs pair result from nearest neighbor search
+ * @param indexOut repertiore pair output
+ * @param freqOut frequency output
+ * @param seq CDR3 sequence input for distance calculation
+ * @param seqInfo information of each CDR3 sequence
+ * @param inputOffsets seqInfo Offset
+ * @param outputOffsets output range of indexOut and freqOut
+ * @param distance Levenshtein/Hamming distance threshold
+ * @param measure enum representing Levenshtein/Hamming
+ * @param n number of pairs
+*/
+__global__
+void pair2rep(Int2* pairs, Int2* indexOut, size_t* freqOut, SeqInfo* seqInfo,
+              int* inputOffsets, int* outputOffsets, int n) {
+	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
+	if (tid >= n)
+		return;
+
+	Int2 pair = pairs[tid];
+	int start1 = (pair.x == 0) ? 0 : inputOffsets[pair.x - 1];
+	int end1 = inputOffsets[pair.x];
+	int start2 = inputOffsets[pair.y - 1]; // pair.y >= pair.x >=0 and pair.x!=pair.y
+	int end2 = inputOffsets[pair.y];
+	int outputIndex = tid == 0 ? 0 : outputOffsets[tid - 1];
+
+	// produce output
+	for (int i = start1; i < end1; i++) {
+		SeqInfo infoI = seqInfo[i];
+		for (int j = start2; j < end2; j++) {
+			SeqInfo infoJ = seqInfo[j];
+			if (infoI.repertoire > infoJ.repertoire)
+				indexOut[outputIndex] = {.x = infoJ.repertoire, .y = infoI.repertoire};
+			else
+				indexOut[outputIndex] = {.x = infoI.repertoire, .y = infoJ.repertoire};
+			if (infoI.repertoire == infoJ.repertoire)
+				// same repertoire must be counted twice
+				freqOut[outputIndex++] = ((size_t)infoI.frequency) * infoJ.frequency * 2;
+			else
+				freqOut[outputIndex++] = ((size_t)infoI.frequency) * infoJ.frequency;
+		}
+	}
+}
+
 
 /**
  * expand operation part of solving bin packing for 2D buffer.
@@ -393,46 +477,32 @@ void toSizeT(int* input, size_t* output, int n) {
 }
 
 /**
- * perform binary search with round-down return of index value when not found.
+ * generate initial output of overlap mode.
  *
- * @param query value to search
- * @param db database for searching
- * @param dbLen number of rows in db
-*/
-__device__
-int binarySearch(int query, int* db , int dbLen) {
-	int start = 0, end = dbLen;
-	while ((end - start) > 1) {
-		int currentIndex = (end - start) / 2;
-		int current = db[currentIndex];
-		if (current == query)
-			return currentIndex;
-		else if (current > query)
-			start = currentIndex + 1;
-		else
-			end = currentIndex;
-	}
-	return start;
-}
-
-/**
- * turning pairs and frequencies from sequence format to repertoire format.
- *
- * @param pairs pair result from nearest neighbor search
- * @param values returning frequency of the corresponding pair
- * @param seqFreq frequency of each CDR3 sequence
- * @param repSizes size of each repertoire
- * @param repCount number of repertoires
- * @param n number of pairs
+ * @param info information of each sequence
+ * @param indexOut repertoire pair output
+ * @param freqOut frequency output for the pair
+ * @param inputOffsets index range of input to operate on
+ * @param outputOffsets index range of output to operate on
+ * @param n length of inputOffset and outputOffset
 */
 __global__
-void pair2rep(Int2* pairs, size_t* values, int* seqFreq,
-              int* repSizes, int repCount, int n) {
+void init_overlap_output(SeqInfo* info, Int2* indexOut, size_t* freqOut,
+                         int* inputOffsets, int* outputOffsets, int n) {
 	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
 	if (tid >= n)
 		return;
-	Int2 pair = pairs[tid];
-	values[tid] = seqFreq[pair.x] * seqFreq[pair.y];
-	pair.x = binarySearch(pair.x, repSizes, repCount);
-	pair.y = binarySearch(pair.y, repSizes, repCount);
+
+	int start = tid == 0 ? 0 : inputOffsets[tid - 1];
+	int end = inputOffsets[tid];
+	int outputIndex = tid == 0 ? 0 : outputOffsets[tid - 1];
+
+	for (int i = start; i < end; i++) {
+		SeqInfo infoI = info[i];
+		for (int j = i; j < end; j++) {
+			SeqInfo infoJ = info[j];
+			indexOut[outputIndex] = {.x = infoI.repertoire, .y = infoJ.repertoire};
+			freqOut[outputIndex++] = ((size_t)infoI.frequency) * infoJ.frequency;
+		}
+	}
 }

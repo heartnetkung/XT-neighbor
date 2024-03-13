@@ -14,7 +14,6 @@ const char HELP_TEXT[] = "xt_neighbor: perform either nearest neighbor search fo
                          "\t -v or --version: print the version of the program then exit\n"
                          "\t -h or --help: print the help text of the program then exit\n"
                          "\t -V or --verbose: print extra detail as the program runs for debugging purpose\n"
-                         "\t -x or --extended-buffer: switch to the alternate buffer implementation that can be enlarged using disc memory\n"
                          "\t====================\n\t Nearest Neighbor Options\n\t====================\n"
                          "\t -i or --input-path [str] (required): path of csv input file containing exactly 1 column: CDR3 amino acid sequences\n"
                          "\t -n or --input-length [number] (required): number of rows given in the input file\n"
@@ -41,10 +40,8 @@ int parse_args(int argc, char **argv, XTNArgs* ans) {
 		}
 		else if (strcmp(current, "-V") == 0 || strcmp(current, "--verbose") == 0)
 			ans->verbose = 1;
-		else if (strcmp(current, "-x") == 0 || strcmp(current, "--extended-buffer") == 0)
-			ans->extendedBuffer = 1;
 		else if (strcmp(current, "-i") == 0 || strcmp(current, "--input-path") == 0)
-			ans->seq1Path = argv[++i];
+			ans->seqPath = argv[++i];
 		else if (strcmp(current, "-I") == 0 || strcmp(current, "--info-path") == 0)
 			ans->infoPath = argv[++i];
 		else if (strcmp(current, "-o") == 0 || strcmp(current, "--output-path") == 0)
@@ -55,8 +52,8 @@ int parse_args(int argc, char **argv, XTNArgs* ans) {
 				return print_err("distance must be a valid number ranging from 1-2");
 		}
 		else if (strcmp(current, "-n") == 0 || strcmp(current, "--input-length") == 0) {
-			ans->seq1Len = atoi(argv[++i]);
-			if (ans->seq1Len == 0)
+			ans->seqLen = atoi(argv[++i]);
+			if (ans->seqLen == 0)
 				return print_err("invalid input length");
 		}
 		else if (strcmp(current, "-N") == 0 || strcmp(current, "--info-length") == 0) {
@@ -77,10 +74,10 @@ int parse_args(int argc, char **argv, XTNArgs* ans) {
 			return print_err("unknown option");
 	}
 
-	if (ans->seq1Path == NULL)
-		return print_err("missing path for seq1");
-	if (ans->seq1Len == 0)
-		return print_err("missing length for seq1");
+	if (ans->seqPath == NULL)
+		return print_err("missing path for seq");
+	if (ans->seqLen == 0)
+		return print_err("missing length for seq");
 	if ((ans->infoPath == NULL) != (ans->infoLen == 0) )
 		return print_err("repertiore path or repertoire count is missing in overlap mode");
 
@@ -90,14 +87,14 @@ int parse_args(int argc, char **argv, XTNArgs* ans) {
 /**
  * read and parse input csv file to Int3* and maybe int*
 */
-int parse_input(char* path, Int3* seqOut, int* freqOut, int len, bool doubleCol) {
+int parse_input(char* path, Int3* seqOut, SeqInfo* freqOut, int len, bool doubleCol) {
 	FILE* file = fopen(path, "r");
 	if (file == NULL)
 		return print_err("input file reading failed");
 
 	const int BUFFER_SIZE = 500;/*header could be long*/
 	char line[BUFFER_SIZE];
-	int lineNumber = 0, inputCount = 0;
+	int lineNumber = 1, inputCount = 0;
 
 	// ignore header
 	fgets(line, BUFFER_SIZE, file);
@@ -112,7 +109,7 @@ int parse_input(char* path, Int3* seqOut, int* freqOut, int len, bool doubleCol)
 			fclose(file);
 			return print_err_line("input parsing error (only upper-cased amino acids with max length of 18 are allowed)", lineNumber);
 		}
-		seqOut[inputCount++] = newInt3;
+		seqOut[inputCount] = newInt3;
 
 		if (doubleCol) {
 			char* line2 = strchr(line, ',');
@@ -126,8 +123,10 @@ int parse_input(char* path, Int3* seqOut, int* freqOut, int len, bool doubleCol)
 				fclose(file);
 				return print_err_line("input parsing error (invalid number)", lineNumber);
 			}
-			freqOut[inputCount] = temp;
+			freqOut[inputCount].frequency = temp;
 		}
+
+		inputCount++;
 	}
 
 	fclose(file);
@@ -142,14 +141,14 @@ int parse_input(char* path, Int3* seqOut, int* freqOut, int len, bool doubleCol)
 /**
  * read and parse info csv file to int*
 */
-int parse_info(char* path, int* result, int len) {
+int parse_info(char* path, SeqInfo* result, int len, int seqLen) {
 	FILE* file = fopen(path, "r");
 	if (file == NULL)
 		return print_err("info file reading failed");
 
 	const int BUFFER_SIZE = 500;/*header could be long*/
 	char line[BUFFER_SIZE];
-	int lineNumber = 0, inputCount = 0;
+	int lineNumber = 1, inputCount = 0, resultIndex = 0;
 
 	// ignore header
 	fgets(line, BUFFER_SIZE, file);
@@ -164,12 +163,20 @@ int parse_info(char* path, int* result, int len) {
 			fclose(file);
 			return print_err_line("info parsing error (invalid number)", lineNumber);
 		}
-		result[inputCount++] = temp;
+		if (resultIndex + temp > seqLen) {
+			fclose(file);
+			return print_err("total repertoires' size does not match sequence count [1]");
+		}
+		for (int i = 0; i < temp; i++)
+			result[resultIndex++].repertoire = inputCount;
+		inputCount++;
 	}
 
 	fclose(file);
 	if (inputCount != len)
 		return print_err("info length doesn't match with the actual");
+	if (resultIndex != seqLen)
+		return print_err("total repertoires' size does not match sequence count [2]");
 
 	return SUCCESS;
 }
@@ -196,31 +203,21 @@ void file_handler_overlap(XTNOutput output) {
 	totalOutputLen += output.len;
 }
 
-int sum_check(int* repSizes, int seqLen, int n) {
-	int sum = 0;
-	for (int i = 0; i < n; i++)
-		sum += repSizes[i];
-	if (sum != seqLen)
-		return print_err("total repertoires' size does not match sequence count");
-	return SUCCESS;
-}
-
-int free_all(Int3* seq1, int* seqFreq, int* repSizes, int returnCode) {
-	cudaFreeHost(seq1); gpuerr();
-	if (seqFreq != NULL) {
-		cudaFreeHost(seqFreq); gpuerr();
+int exit(Int3* seq, SeqInfo* seqInfo, int returnCode, const char* msg) {
+	cudaFreeHost(seq); gpuerr();
+	if (seqInfo != NULL) {
+		cudaFreeHost(seqInfo); gpuerr();
 	}
-	if (repSizes != NULL) {
-		cudaFreeHost(repSizes); gpuerr();
-	}
+	if (msg != NULL)
+		return print_err(msg);
 	return returnCode;
 }
 
 int main(int argc, char **argv) {
 	XTNArgs args;
-	int returnCode;
-	Int3* seq1;
-	int* seqFreq = NULL, *repSizes = NULL;
+	int returnCode = SUCCESS;
+	Int3* seq;
+	SeqInfo* seqInfo = NULL;
 
 	// 1. parse command line arguments
 	setlocale(LC_ALL, "");
@@ -231,39 +228,34 @@ int main(int argc, char **argv) {
 
 	// 2. read input
 	bool overlapMode = args.infoPath != NULL;
-	cudaMallocHost(&seq1, sizeof(Int3) * args.seq1Len); gpuerr();
+	cudaMallocHost(&seq, sizeof(Int3) * args.seqLen); gpuerr();
 	if (overlapMode) {
-		cudaMallocHost(&repSizes, sizeof(int) * args.infoLen); gpuerr();
-		cudaMallocHost(&seqFreq, sizeof(int) * args.seq1Len); gpuerr();
-		returnCode = parse_info(args.infoPath, repSizes, args.infoLen);
+		cudaMallocHost(&seqInfo, sizeof(SeqInfo) * args.seqLen); gpuerr();
+		returnCode = parse_info(args.infoPath, seqInfo, args.infoLen, args.seqLen);
 		if (returnCode != SUCCESS)
-			return free_all(seq1, seqFreq, repSizes, returnCode);
+			return exit(seq, seqInfo, returnCode, NULL);
 	}
-	returnCode = parse_input(args.seq1Path, seq1, seqFreq, args.seq1Len, overlapMode);
+	returnCode = parse_input(args.seqPath, seq, seqInfo, args.seqLen, overlapMode);
 	if (returnCode != SUCCESS)
-		return free_all(seq1, seqFreq, repSizes, returnCode);
-	if (overlapMode) {
-		returnCode = sum_check(repSizes, args.seq1Len, args.infoLen);
-		if (returnCode != SUCCESS)
-			return free_all(seq1, seqFreq, repSizes, returnCode);
-	}
+		return exit(seq, seqInfo, returnCode, NULL);
 
 	// 3. perform algorithm
 	if (verboseGlobal)
 		print_args(args);
 	if (args.outputPath != NULL) {
 		if (outputFile != NULL)
-			return print_err("output file has already been allocated, possibly due to concurrency");
+			return exit(seq, seqInfo, returnCode,
+			            "output file has already been allocated, possibly due to concurrency");
 		outputFile = fopen(args.outputPath, "w");
 		if (outputFile == NULL)
-			return print_err("output file opening failed");
-		xtn_perform(args, seq1, seqFreq, repSizes,
+			return exit(seq, seqInfo, returnCode, "output file opening failed");
+		xtn_perform(args, seq, seqInfo,
 		            overlapMode ? file_handler_overlap : file_handler_nn);
 		fclose(outputFile);
 	} else {
-		xtn_perform(args, seq1, seqFreq, repSizes, null_handler);
+		xtn_perform(args, seq, seqInfo, null_handler);
 	}
 
 	printf("total output length: %'lu\n", totalOutputLen);
-	return free_all(seq1, seqFreq, repSizes, SUCCESS);
+	return exit(seq, seqInfo, returnCode, NULL);
 }

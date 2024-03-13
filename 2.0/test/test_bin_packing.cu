@@ -26,8 +26,7 @@ TEST(bin_packing_offsets, {
 
 	check(offsetLen == expectedOffsetLen);
 	for (int i = 0; i < len; i++)
-		for (int j = 0; j < offsetLen; j++)
-			check(expectedOut[i][j] == output[i][j]);
+		check_arr(expectedOut[i], output[i], offsetLen);
 })
 
 TEST(bin_packing_lowerbounds, {
@@ -47,12 +46,11 @@ TEST(bin_packing_lowerbounds, {
 	ctx.histogramSize = nLevel;
 
 	int* output;
-	int offsetLen =  solve_bin_packing_lowerbounds(histogramInput_d, output, len, seqLen, deviceInt, ctx);
+	int offsetLen = solve_bin_packing_lowerbounds(histogramInput_d, output, len, seqLen, deviceInt, ctx);
 
 	int expectedOffsetLen = 2;
 	int expectedOut[] = {22, 34};
 
 	check(offsetLen == expectedOffsetLen);
-	for (int i = 0; i < offsetLen; i++)
-		check(expectedOut[i] == output[i]);
+	check_arr(output, expectedOut, offsetLen);
 })

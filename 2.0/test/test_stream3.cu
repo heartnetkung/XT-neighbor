@@ -4,18 +4,16 @@
 void callback(Int2* pairOut, int len) {
 	int expectedLen = 20;
 	Int2 expectedPairs[] = {
-		{.x = 0, .y = 2}, {.x = 0, .y = 0}, {.x = 0, .y = 0}, {.x = 0, .y = 1}, {.x = 0, .y = 2},
-		{.x = 0, .y = 2}, {.x = 0, .y = 2}, {.x = 0, .y = 0}, {.x = 0, .y = 1}, {.x = 0, .y = 2},
-		{.x = 0, .y = 2}, {.x = 0, .y = 2}, {.x = 0, .y = 1}, {.x = 0, .y = 2}, {.x = 0, .y = 2},
-		{.x = 0, .y = 2}, {.x = 1, .y = 2}, {.x = 1, .y = 2}, {.x = 1, .y = 2}, {.x = 0, .y = 2}
+		{.x = 0, .y = 0}, {.x = 0, .y = 0}, {.x = 0, .y = 0},
+		{.x = 0, .y = 1}, {.x = 0, .y = 1}, {.x = 0, .y = 1},
+		{.x = 0, .y = 2}, {.x = 0, .y = 2}, {.x = 0, .y = 2},
+		{.x = 0, .y = 2}, {.x = 0, .y = 2}, {.x = 0, .y = 2},
+		{.x = 0, .y = 2}, {.x = 0, .y = 2}, {.x = 0, .y = 2},
+		{.x = 0, .y = 2}, {.x = 0, .y = 2},
+		{.x = 1, .y = 2}, {.x = 1, .y = 2}, {.x = 1, .y = 2}
 	};
-	Int2* pairOut2 = device_to_host(pairOut, len);
-
 	check(len == expectedLen);
-	for (int i = 0; i < expectedLen; i++) {
-		check(pairOut2[i].x == expectedPairs[i].x);
-		check(pairOut2[i].y == expectedPairs[i].y);
-	}
+	check_device_arr(pairOut, expectedPairs, len);
 }
 
 TEST(Stream3, {
@@ -45,16 +43,12 @@ TEST(Stream3, {
 	char expectedKey[][5] = {"CAA", "CAA", "CAA", "CKD", "CKD"};
 	int expectedValue[] = {2, 2, 2, 3, 3};
 
-	Int3* keyOut = device_to_host(keyIn.ptr, keyIn.len);
-	int* valueOut = device_to_host(valueIn.ptr, valueIn.len);
-	int* histogramOutput2 = device_to_host(histogramOutput[0], ctx.histogramSize);
-
 	check(keyIn.len == expectedLen);
 	check(valueIn.len == expectedLen);
-	for (int i = 0; i < expectedLen; i++) {
-		check(expectedValue[i] == valueOut[i]);
+	check_device_arr(valueIn.ptr, expectedValue, valueIn.len);
+	check_device_arr(histogramOutput[0], expectedHistogram, ctx.histogramSize);
+
+	Int3* keyOut = device_to_host(keyIn.ptr, keyIn.len);
+	for (int i = 0; i < expectedLen; i++)
 		checkstr(expectedKey[i], str_decode(keyOut[i]));
-	}
-	for (int i = 0; i < ctx.histogramSize; i++)
-		check(expectedHistogram[i] == histogramOutput2[i]);
 })

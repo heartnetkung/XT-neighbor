@@ -19,7 +19,7 @@ const char HAMMING = 1;
 */
 struct Int3 {
 	unsigned int entry[3] = {0, 0, 0};
-	__device__
+	__device__ __host__
 	bool operator==(const Int3& t) const {
 		return (entry[0] == t.entry[0]) && (entry[1] == t.entry[1]) && (entry[2] == t.entry[2]);
 	}
@@ -30,9 +30,19 @@ struct Int3 {
 */
 struct Int2 {
 	int x = 0, y = 0;
-	__device__
+	__device__ __host__
 	bool operator==(const Int2& t) const {
 		return (x == t.x) && (y == t.y);
+	}
+};
+
+/**
+ * Information related to a sequence
+*/
+struct SeqInfo {
+	int frequency, repertoire;
+	bool operator==(const SeqInfo& t) const {
+		return (frequency == t.frequency) && (repertoire == t.repertoire);
 	}
 };
 
@@ -42,9 +52,8 @@ struct Int2 {
 struct XTNArgs {
 	int distance = 1;
 	int verbose = 0;
-	int extendedBuffer = 0;
-	char* seq1Path = NULL;
-	int seq1Len = 0;
+	char* seqPath = NULL;
+	int seqLen = 0;
 	char* outputPath = NULL;
 	char measure = LEVENSHTEIN;
 	char* infoPath = NULL;
@@ -88,9 +97,8 @@ enum ReturnCode {SUCCESS, ERROR, EXIT};
  * the algorithm's API.
  *
  * @param args algorithm's bundled arguments
- * @param seq1 list of CDR3 sequences
- * @param seqFreq frequency of each CDR3 sequence
- * @param repSizes size of each repertoire
+ * @param seq list of CDR3 sequences
+ * @param seqInfo information of each CDR3 sequence, only used in overlap mode
  * @param callback function to be invoked once a chunk of output is ready
 */
-void xtn_perform(XTNArgs args, Int3* seq1, int* seqFreq, int* repSizes, void callback (XTNOutput));
+void xtn_perform(XTNArgs args, Int3* seq, SeqInfo* seqInfo, void callback (XTNOutput));
