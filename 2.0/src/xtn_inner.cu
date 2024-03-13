@@ -499,9 +499,11 @@ void stream_handler4_overlap(Chunk<Int2> pairInput, std::vector<XTNOutput> &allO
 		// cal repertoire
 		_cudaMalloc(pairOut, freqOut, outputLen);
 		pair2rep <<< NUM_BLOCK(outputLen), NUM_THREADS>>>(
-		    pairOut3, pairOut, freqOut, seqInfo, seqOffset, valueOffsets, outputLen); gpuerr();
+		    pairPtr, pairOut, freqOut, seqInfo, seqOffset, valueOffsets, outputLen); gpuerr();
 		print_int2_arr(pairOut, outputLen);
 		print_size_t_arr(freqOut, outputLen);
+		print_seqinfo_arr(seqInfo, seqLen);
+		print_int_arr(seqOffset, 4);
 		printf("gg, %d\n", outputLen);
 		_cudaFree(pairOut3, valueOffsets);
 		sort_key_values2(pairOut, freqOut, outputLen);
