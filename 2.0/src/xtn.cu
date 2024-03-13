@@ -370,7 +370,7 @@ void xtn_perform(XTNArgs args, Int3* seq, SeqInfo* seqInfo, void callback(XTNOut
 
 			if (overlapMode) {
 				stream_handler4_overlap(b3Chunk, allOverlapOutputs, seqDevice, seqInfoDevice,
-				                        seqOffset, seqLen, distance, args.measure, deviceInt);
+				                        seqOffset, seqLen, distance, args.measure, deviceInt, ctx4);
 				totalLen4 += allOverlapOutputs.back().len;
 			} else {
 				XTNOutput finalOutput;
@@ -391,7 +391,7 @@ void xtn_perform(XTNArgs args, Int3* seq, SeqInfo* seqInfo, void callback(XTNOut
 
 	if (overlapMode) {
 		_cudaFree(seqOffset, seqInfoDevice);
-		XTNOutput finalOutput = mergeOutput(allOverlapOutputs, buffer);
+		XTNOutput finalOutput = mergeOutput(allOverlapOutputs, deviceInt);
 		callback(finalOutput);
 		_cudaFreeHost(finalOutput.indexPairs, finalOutput.pairwiseFrequencies);
 	}
