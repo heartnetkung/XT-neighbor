@@ -569,7 +569,7 @@ XTNOutput mergeOutput(std::vector<XTNOutput> allOutputs, int* buffer) {
  * @param buffer integer buffer
 */
 int overlap_mode_init(Int3* seq, Int3* &seqOut, SeqInfo* &infoInOut, int* &infoOffsetOut,
-                      XTNOutput &output, int seqLen, int* buffer) {
+                      std::vector<XTNOutput> &allOutputs, int seqLen, int* buffer) {
 	int* outputOffset;
 	Int2* indexPairs, *indexPairs2;
 	size_t* pairwiseFreq, *pairwiseFreq2;
@@ -599,8 +599,11 @@ int overlap_mode_init(Int3* seq, Int3* &seqOut, SeqInfo* &infoInOut, int* &infoO
 	_cudaFree(outputOffset, indexPairs, pairwiseFreq);
 
 	// wrap up
-	output.len = transfer_last_element(buffer, 1);
-	output.indexPairs = shrink(indexPairs2, output.len);
-	output.pairwiseFrequencies = shrink(pairwiseFreq2, output.len);
+	XTNOutput newOutput = {
+		.len = transfer_last_element(buffer, 1),
+		.indexPairs = shrink(indexPairs2, output.len),
+		.pairwiseFrequencies = shrink(pairwiseFreq2, output.len)
+	};
+	allOutputs.push_back(newOutput);
 	return uniqueLen;
 }
