@@ -459,16 +459,15 @@ void stream_handler4_nn(Chunk<Int2> pairInput, XTNOutput &output, Int3* seq,
  * @param measure type of measurement (levenshtein/hamming)
  * @param buffer integer buffer
 */
-void stream_handler4_overlap(Chunk<Int2> pairInput, XTNOutput &output, Int3* seq,
-                             SeqInfo* seqInfo, int* seqOffset,
-                             int seqLen, int distance, char measure, int* buffer) {
+void stream_handler4_overlap(Chunk<Int2> pairInput, std::vector<XTNOutput> &allOutputs, Int3* seq,
+                             SeqInfo* seqInfo, int* seqOffset, int seqLen, int distance,
+                             char measure, int* buffer, MemoryContext ctx) {
 	Int2* pairOut, *pairOut2, *uniquePairs, *pairOut3;
 	size_t* freqOut, *freqOut2;
-	int* outputRange;
+	int* outputRange, *valueLengths, *valueLengthsHost;
 	char* flags;
 
 	// find pairOut3
-	printf("aa\n");
 	cudaMalloc(&uniquePairs, sizeof(Int2)*pairInput.len); gpuerr();
 	int uniqueLen = deduplicate(pairInput.ptr, uniquePairs, pairInput.len, buffer);
 	_cudaMalloc(flags, pairOut3, uniqueLen);
@@ -479,40 +478,83 @@ void stream_handler4_overlap(Chunk<Int2> pairInput, XTNOutput &output, Int3* seq
 	_cudaFree(uniquePairs, flags);
 	uniqueLen = transfer_last_element(buffer, 1);
 
-	// calculate output offset
-	printf("bb\n");
-	cudaMalloc(&outputRange, sizeof(int)*uniqueLen); gpuerr();
+	// cal value Lengths
+	cudaMalloc(&valueLengths, sizeof(int)*uniqueLen); gpuerr();
 	cal_pair_len_nondiag <<< NUM_BLOCK(uniqueLen), NUM_THREADS>>>(
-	    pairOut3, seqOffset, outputRange, uniqueLen); gpuerr();
-	inclusive_sum(outputRange, uniqueLen);
-	int outputLen = transfer_last_element(outputRange, uniqueLen);
+	    pairOut3, seqOffset, valueLengths, uniqueLen); gpuerr();
+	valueLengthsHost = device_to_host(valueLengths, uniqueLen);
 
-	// prepare output
-	int concatLen = outputLen + output.len;
-	printf("cc %d %d\n", pairInput.len, outputLen);
-	_cudaMalloc(pairOut, freqOut, concatLen);
-	cudaMemcpy(freqOut + outputLen, output.pairwiseFrequencies,
-	           sizeof(size_t)*output.len, cudaMemcpyDeviceToDevice); gpuerr();
-	cudaMemcpy(pairOut + outputLen, output.indexPairs,
-	           sizeof(Int2)*output.len, cudaMemcpyDeviceToDevice); gpuerr();
-	_cudaFree(output.pairwiseFrequencies, output.indexPairs);
+	int start = 0, nChunk;
+	int* pairPtr = pairOut3, *valueLengthsPtr = valueLengths;
+	while ((nChunk = solve_next_bin(valueLengthsHost, start, ctx.bandwidth2, uniqueLen)) > 0) {
+		// cal valueOffsets
+		int* valueOffsets;
+		cudaMalloc(&valueOffsets, nChunk * sizeof(int)); gpuerr();
+		inclusive_sum(valueLengthsPtr, valueOffsets, nChunk);
+		int outputLen = transfer_last_element(valueOffsets, nChunk);
 
-	// calculate repertoire
-	pair2rep <<< NUM_BLOCK(uniqueLen), NUM_THREADS>>>(
-	    pairOut3, pairOut, freqOut, seqInfo, seqOffset, outputRange, outputLen); gpuerr();
-	_cudaFree(pairOut3, outputRange);
-	sort_key_values2(pairOut, freqOut, concatLen);
-	printf("dd\n");
-	_cudaMalloc(pairOut2, freqOut2, concatLen);
-	sum_by_key(pairOut, pairOut2, freqOut, freqOut2, buffer, concatLen);
+		// cal repertoire
+		_cudaMalloc(pairOut, freqOut, outputLen);
+		pair2rep <<< NUM_BLOCK(outputLen), NUM_THREADS>>>(
+		    pairOut3, pairOut, freqOut, seqInfo, seqOffset, valueOffsets, outputLen); gpuerr();
+		_cudaFree(pairOut3, valueOffsets);
+		sort_key_values2(pairOut, freqOut, outputLen);
+		_cudaMalloc(pairOut2, freqOut2, outputLen);
+		sum_by_key(pairOut, pairOut2, freqOut, freqOut2, buffer, outputLen);
+		_cudaFree(pairOut, freqOut);
 
-	//finish up
-	_cudaFree(pairOut, freqOut);
-	output.indexPairs = pairOut2;
-	output.pairwiseFrequencies = freqOut2;
-	output.len = transfer_last_element(buffer, 1);
+		// wrap up
+		int finalLen = transfer_last_element(buffer, 1);
+		XTNOutput newValue = {
+			.indexPairs = shrink(pairOut2, finalLen),
+			.pairwiseFrequencies = shrink(freqOut2, finalLen),
+			.len = finalLen
+		};
+		allOutputs.push_back(newValue);
+
+		// increment
+		start += nChunk;
+		pairPtr += nChunk;
+		valueLengthsPtr += nChunk;
+	}
+	cudaFreeHost(valueLengthsHost); gpuerr();
 }
 
+XTNOutput mergeOutput(std::vector<XTNOutput> allOutputs, int* buffer) {
+	int totalLen = 0;
+	for (auto &element : allOutputs)
+		totalLen += element.len;
+
+	Int2* indexBuffer, *indexOut;
+	size_t* freqBuffer, *freqOut;
+	_cudaMalloc(indexBuffer, freqBuffer, totalLen);
+
+	Int2* indexBufferP = indexBuffer;
+	size_t* freqBufferP = freqBuffer;
+	for (auto &element : allOutputs) {
+		if (element.len == 0)
+			continue;
+		cudaMemcpy(indexBufferP, element.indexPairs,
+		           sizeof(Int2)*element.len, cudaMemcpyDeviceToDevice); gpuerr();
+		cudaMemcpy(freqBufferP, element.pairwiseFrequencies,
+		           sizeof(size_t)*element.len, cudaMemcpyDeviceToDevice); gpuerr();
+		_cudaFree(element.indexPairs, element.pairwiseFrequencies);
+		indexBufferP += element.len;
+		freqBufferP += element.len;
+	}
+
+	sort_key_values2(indexBuffer, freqBuffer, totalLen);
+	_cudaMalloc(indexOut, freqOut, totalLen);
+	sum_by_key(indexBuffer, indexOut, freqBuffer, freqOut, buffer, totalLen);
+
+	XTNOutput ans = {
+		.indexPairs = device_to_host(indexOut, totalLen),
+		.pairwiseFrequencies = device_to_host(pairOut, totalLen),
+		.len = transfer_last_element(buffer, 1)
+	};
+	_cudaFree(indexOut, freqOut);
+	return ans;
+}
 
 /**
  * deduplicate input and initialize output variable
@@ -553,11 +595,11 @@ int overlap_mode_init(Int3* seq, Int3* &seqOut, SeqInfo* &infoInOut, int* &infoO
 	sort_key_values2(indexPairs, pairwiseFreq, outputLen);
 	_cudaMalloc(indexPairs2, pairwiseFreq2, outputLen);
 	sum_by_key(indexPairs, indexPairs2, pairwiseFreq, pairwiseFreq2, buffer, outputLen);
+	_cudaFree(outputOffset, indexPairs, pairwiseFreq);
 
 	// wrap up
-	output.indexPairs = indexPairs2;
-	output.pairwiseFrequencies = pairwiseFreq2;
-	output.len = transfer_last_element(buffer, 1);;
-	_cudaFree(outputOffset, indexPairs, pairwiseFreq);
+	output.len = transfer_last_element(buffer, 1);
+	output.indexPairs = shrink(indexPairs2, output.len);
+	output.pairwiseFrequencies = shrink(pairwiseFreq2, output.len);
 	return uniqueLen;
 }

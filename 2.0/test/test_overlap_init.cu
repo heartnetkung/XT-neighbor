@@ -2,7 +2,7 @@
 #include "../src/xtn_inner.cu"
 
 TEST(OverlapInit, {
-	XTNOutput output;
+	std::vector<XTNOutput> allOutputs;
 	int* buffer, *infoOffset;
 	Int3 * seqd, *seqh, *seqOut;
 	SeqInfo* infoD;
@@ -25,11 +25,13 @@ TEST(OverlapInit, {
 	infoD = host_to_device(info, seqLen);
 
 	int uniqueLen = overlap_mode_init(seqd, seqOut, infoD, infoOffset,
-	                                  output, seqLen, buffer);
+	                                  allOutputs, seqLen, buffer);
+	XTNOutput output = allOutputs.back();
 
-	int expectedUniqueLen = 3, expectedOutputLen = 3;
+	int expectedUniqueLen = 3, expectedOutputLen = 3, expectedOutputCount = 1;
 	check(uniqueLen == expectedUniqueLen);
 	check(output.len == expectedOutputLen);
+	check(output.size() == expectedOutputCount);
 
 	SeqInfo expectedInfo[] = {
 		{.frequency = 3, .repertoire = 0}, {.frequency = 5, .repertoire = 1},

@@ -17,7 +17,7 @@ TEST(Stream4Overlap, {
 	//allocate inputs
 	Int3 * seq_d, *seq_h;
 	Int2 * pairs_d, *pairs_h;
-	XTNOutput output;
+	std::vector<XTNOutput> allOutputs;
 	int* deviceInt, *inputOffsets_d;
 	SeqInfo* info_d;
 	cudaMalloc(&deviceInt, sizeof(int));
@@ -45,10 +45,12 @@ TEST(Stream4Overlap, {
 	pairInput.len = pairLen;
 	stream_handler4_overlap(pairInput, output, seq_d, info_d, inputOffsets_d,
 	                        seqLen, distance, LEVENSHTEIN, deviceInt);
+	XTNOutput output = allOutputs.back();
 
 	// checking
-	int expectedLen = 3;
+	int expectedLen = 3, expectedCount = 1;
 	check(output.len == expectedLen);
+	check(allOutputs.size() == expectedCount);
 
 	Int2 expectedIndexPair[] = {{.x = 0, .y = 0}, {.x = 0, .y = 1}, {.x = 1, .y = 1}};
 	check_device_arr(output.indexPairs, expectedIndexPair, output.len);

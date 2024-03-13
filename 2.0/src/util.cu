@@ -153,6 +153,16 @@ T* host_to_device(T* arr, int n) {
 	return temp;
 }
 
+template <typename T>
+T* shrink(T* arr, int n){
+	T* temp;
+	size_t tempBytes = sizeof(T) * n;
+	cudaMalloc(&temp, tempBytes); gpuerr();
+	cudaMemcpy(temp, arr, tempBytes, cudaMemcpyDeviceToDevice); gpuerr();
+	cudaFree(arr); gpuerr();
+	return temp;
+}
+
 void print_int_arr(int* arr, int n) {
 	printf("[ ");
 	int* arr2 = device_to_host(arr, n);

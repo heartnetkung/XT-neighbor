@@ -98,16 +98,20 @@ MemoryContext cal_memory_stream3(int seqLen) {
 MemoryContext cal_memory_stream4(int seqLen, bool overlapMode) {
 	MemoryContext ans = initMemory(seqLen, true);
 	int multiplier;
-	if (overlapMode)
-		multiplier = 4 * sizeof(Int2) + // pairOut, *pairOut2, *uniquePairs, sortKeyValues
-		             3 * sizeof(size_t) + // *freqOut, *freqOut2, sortKeyValues
-		             sizeof(int); // outputRange
-	else
+	if (overlapMode) {
+		multiplier = 3 * sizeof(Int2) + // pairOut3, *uniquePairs, sortKeyValues
+		             sizeof(int) + //valueLengths
+		             sizeof(char); //flags
+		size_t temp =  ans.gpuSize / (3 * multiplier);
+		ans.bandwidth1 = (temp > MAX_PROCESSING) ? MAX_PROCESSING : temp;
+		ans.bandwidth2 = (temp > MAX_PROCESSING) ? MAX_PROCESSING : temp;
+	} else {
 		multiplier = 3 * sizeof(Int2) + //Int2* uniquePairs, sorting, pairOutput
 		             3 * sizeof(char); //char* uniqueDistances, *flags, distanceOutput
+		size_t temp = (8 * ans.gpuSize) / (10 * multiplier);
+		ans.bandwidth1 = (temp > MAX_PROCESSING) ? MAX_PROCESSING : temp;
+	}
 
-	size_t temp = (8 * ans.gpuSize) / (10 * multiplier);
-	ans.bandwidth1 = (temp > MAX_PROCESSING) ? MAX_PROCESSING : temp;
 	ans.maxThroughputExponent = cal_max_exponent(ans.bandwidth1);
 	return ans;
 }
@@ -215,7 +219,7 @@ void xtn_perform(XTNArgs args, Int3* seq, SeqInfo* seqInfo, void callback(XTNOut
 	int lowerboundsLen;
 	int distance = args.distance, seqLen = args.seqLen;
 	bool overlapMode = (args.infoPath != NULL);
-	XTNOutput finalOutput;
+	std::vector<XTNOutput> allOverlapOutputs;
 
 	// buffer related variables
 	GPUInputStream<Int3> *b0;
@@ -240,8 +244,8 @@ void xtn_perform(XTNArgs args, Int3* seq, SeqInfo* seqInfo, void callback(XTNOut
 	if (overlapMode) {
 		Int3* seqDedup;
 		seqInfoDevice = host_to_device(seqInfo, seqLen);
-		seqLen =  overlap_mode_init(seqDevice, seqDedup, seqInfoDevice, seqOffset,
-		                            finalOutput, seqLen, deviceInt);
+		seqLen = overlap_mode_init(seqDevice, seqDedup, seqInfoDevice, seqOffset,
+		                           allOverlapOutputs, seqLen, deviceInt);
 		cudaFree(seqDevice); gpuerr();
 		seqDevice = seqDedup;
 	}
@@ -364,17 +368,19 @@ void xtn_perform(XTNArgs args, Int3* seq, SeqInfo* seqInfo, void callback(XTNOut
 		while ((b3Chunk = b3->read()).not_null()) {
 			print_bandwidth(b3Chunk.len, ctx4.bandwidth1, "4");
 
-			if (overlapMode)
-				stream_handler4_overlap(b3Chunk, finalOutput, seqDevice, seqInfoDevice,
+			if (overlapMode) {
+				stream_handler4_overlap(b3Chunk, allOverlapOutputs, seqDevice, seqInfoDevice,
 				                        seqOffset, seqLen, distance, args.measure, deviceInt);
-			else {
+				totalLen4 += allOverlapOutputs.back().len;
+			} else {
+				XTNOutput finalOutput;
 				stream_handler4_nn(b3Chunk, finalOutput, seqDevice, seqLen,
 				                   distance, args.measure, deviceInt);
 				callback(finalOutput);
 				_cudaFreeHost(finalOutput.indexPairs, finalOutput.pairwiseDistances);
+				totalLen4 += finalOutput.len;
 			}
 
-			totalLen4 += finalOutput.len;
 			print_v("4B");
 		}
 
@@ -384,15 +390,10 @@ void xtn_perform(XTNArgs args, Int3* seq, SeqInfo* seqInfo, void callback(XTNOut
 	}
 
 	if (overlapMode) {
-		Int2* indexPairs = device_to_host(finalOutput.indexPairs, finalOutput.len);
-		size_t* pairwiseFreq = device_to_host(
-		                           finalOutput.pairwiseFrequencies, finalOutput.len);
-		_cudaFree(seqOffset, seqInfoDevice, finalOutput.indexPairs,
-		          finalOutput.pairwiseFrequencies);
-		finalOutput.indexPairs = indexPairs;
-		finalOutput.pairwiseFrequencies = pairwiseFreq;
+		_cudaFree(seqOffset, seqInfoDevice);
+		XTNOutput finalOutput = mergeOutput(allOverlapOutputs, buffer);
 		callback(finalOutput);
-		_cudaFreeHost(indexPairs, pairwiseFreq);
+		_cudaFreeHost(finalOutput.indexPairs, finalOutput.pairwiseFrequencies);
 	}
 
 	//=====================================
