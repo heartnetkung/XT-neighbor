@@ -99,8 +99,7 @@ MemoryContext cal_memory_stream4(int seqLen, bool overlapMode) {
 	MemoryContext ans = initMemory(seqLen, true);
 	int multiplier;
 	if (overlapMode) {
-		multiplier = 3 * sizeof(Int2) + // pairOut3, *uniquePairs, sortKeyValues
-		             sizeof(int) + //valueLengths
+		multiplier = 2 * sizeof(Int2) + // pairOut3, *uniquePairs
 		             sizeof(char); //flags
 		size_t temp =  ans.gpuSize / (2 * multiplier);
 		ans.bandwidth1 = (temp > MAX_PROCESSING) ? MAX_PROCESSING : temp;
