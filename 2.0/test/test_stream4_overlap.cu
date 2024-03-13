@@ -43,7 +43,7 @@ TEST(Stream4Overlap, {
 	Chunk<Int2> pairInput;
 	pairInput.ptr = pairs_d;
 	pairInput.len = pairLen;
-	stream_handler4_overlap(pairInput, output, seq_d, info_d, inputOffsets_d,
+	stream_handler4_overlap(pairInput, allOutputs, seq_d, info_d, inputOffsets_d,
 	                        seqLen, distance, LEVENSHTEIN, deviceInt);
 	XTNOutput output = allOutputs.back();
 
