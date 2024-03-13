@@ -51,9 +51,9 @@ TEST(Stream4Overlap, {
 
 	// checking
 	int expectedLen = 3, expectedCount = 1;
-	print("a %d %d\n", output.len, expectedLen);
+	printf("a %d %d\n", output.len, expectedLen);
 	check(output.len == expectedLen);
-	print("a %lu %d\n", allOutputs.size(), expectedCount);
+	printf("a %lu %d\n", allOutputs.size(), expectedCount);
 	check(allOutputs.size() == expectedCount);
 
 	Int2 expectedIndexPair[] = {{.x = 0, .y = 0}, {.x = 0, .y = 1}, {.x = 1, .y = 1}};
