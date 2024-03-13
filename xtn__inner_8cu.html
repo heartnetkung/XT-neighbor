@@ -129,12 +129,14 @@ Functions</h2></td></tr>
 <tr class="memitem:af6390c0bd0b9c3e320f8a5f296f65146"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xtn__inner_8cu.html#af6390c0bd0b9c3e320f8a5f296f65146">stream_handler4_nn</a> (<a class="el" href="classChunk.html">Chunk</a>&lt; <a class="el" href="structInt2.html">Int2</a> &gt; pairInput, <a class="el" href="structXTNOutput.html">XTNOutput</a> &amp;output, <a class="el" href="structInt3.html">Int3</a> *seq, int seqLen, int distance, char measure, int *buffer)</td></tr>
 <tr class="memdesc:af6390c0bd0b9c3e320f8a5f296f65146"><td class="mdescLeft">&#160;</td><td class="mdescRight">handle all GPU operations in stream 4 nn mode.  <a href="#af6390c0bd0b9c3e320f8a5f296f65146">More...</a><br /></td></tr>
 <tr class="separator:af6390c0bd0b9c3e320f8a5f296f65146"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aba1f474720482aaaba6f756560a60a40"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xtn__inner_8cu.html#aba1f474720482aaaba6f756560a60a40">stream_handler4_overlap</a> (<a class="el" href="classChunk.html">Chunk</a>&lt; <a class="el" href="structInt2.html">Int2</a> &gt; pairInput, <a class="el" href="structXTNOutput.html">XTNOutput</a> &amp;output, <a class="el" href="structInt3.html">Int3</a> *seq, <a class="el" href="structSeqInfo.html">SeqInfo</a> *seqInfo, int *seqOffset, int seqLen, int distance, char measure, int *buffer)</td></tr>
-<tr class="memdesc:aba1f474720482aaaba6f756560a60a40"><td class="mdescLeft">&#160;</td><td class="mdescRight">handle all GPU operations in stream 4 overlap mode.  <a href="#aba1f474720482aaaba6f756560a60a40">More...</a><br /></td></tr>
-<tr class="separator:aba1f474720482aaaba6f756560a60a40"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a54662df18289f61f08b3a29be1ecdbd0"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xtn__inner_8cu.html#a54662df18289f61f08b3a29be1ecdbd0">overlap_mode_init</a> (<a class="el" href="structInt3.html">Int3</a> *seq, <a class="el" href="structInt3.html">Int3</a> *&amp;seqOut, <a class="el" href="structSeqInfo.html">SeqInfo</a> *&amp;infoInOut, int *&amp;infoOffsetOut, <a class="el" href="structXTNOutput.html">XTNOutput</a> &amp;output, int seqLen, int *buffer)</td></tr>
-<tr class="memdesc:a54662df18289f61f08b3a29be1ecdbd0"><td class="mdescLeft">&#160;</td><td class="mdescRight">deduplicate input and initialize output variable  <a href="#a54662df18289f61f08b3a29be1ecdbd0">More...</a><br /></td></tr>
-<tr class="separator:a54662df18289f61f08b3a29be1ecdbd0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa0839c34b8b9b44bf450a1b3af874552"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xtn__inner_8cu.html#aa0839c34b8b9b44bf450a1b3af874552">stream_handler4_overlap</a> (<a class="el" href="classChunk.html">Chunk</a>&lt; <a class="el" href="structInt2.html">Int2</a> &gt; pairInput, std::vector&lt; <a class="el" href="structXTNOutput.html">XTNOutput</a> &gt; &amp;allOutputs, <a class="el" href="structInt3.html">Int3</a> *seq, <a class="el" href="structSeqInfo.html">SeqInfo</a> *seqInfo, int *seqOffset, int seqLen, int distance, char measure, int *buffer, <a class="el" href="structMemoryContext.html">MemoryContext</a> ctx)</td></tr>
+<tr class="memdesc:aa0839c34b8b9b44bf450a1b3af874552"><td class="mdescLeft">&#160;</td><td class="mdescRight">handle all GPU operations in stream 4 overlap mode.  <a href="#aa0839c34b8b9b44bf450a1b3af874552">More...</a><br /></td></tr>
+<tr class="separator:aa0839c34b8b9b44bf450a1b3af874552"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac01e583b9f506f5536fd67ca6ad1f620"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structXTNOutput.html">XTNOutput</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xtn__inner_8cu.html#ac01e583b9f506f5536fd67ca6ad1f620">mergeOutput</a> (std::vector&lt; <a class="el" href="structXTNOutput.html">XTNOutput</a> &gt; allOutputs, int *buffer)</td></tr>
+<tr class="separator:ac01e583b9f506f5536fd67ca6ad1f620"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a69cac08e5a880c3f510c690bedba4421"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xtn__inner_8cu.html#a69cac08e5a880c3f510c690bedba4421">overlap_mode_init</a> (<a class="el" href="structInt3.html">Int3</a> *seq, <a class="el" href="structInt3.html">Int3</a> *&amp;seqOut, <a class="el" href="structSeqInfo.html">SeqInfo</a> *&amp;infoInOut, int *&amp;infoOffsetOut, std::vector&lt; <a class="el" href="structXTNOutput.html">XTNOutput</a> &gt; &amp;allOutputs, int seqLen, int *buffer)</td></tr>
+<tr class="memdesc:a69cac08e5a880c3f510c690bedba4421"><td class="mdescLeft">&#160;</td><td class="mdescRight">deduplicate input and initialize output variable  <a href="#a69cac08e5a880c3f510c690bedba4421">More...</a><br /></td></tr>
+<tr class="separator:a69cac08e5a880c3f510c690bedba4421"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
@@ -518,6 +520,34 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a id="ac01e583b9f506f5536fd67ca6ad1f620"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac01e583b9f506f5536fd67ca6ad1f620">&#9670;&nbsp;</a></span>mergeOutput()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structXTNOutput.html">XTNOutput</a> mergeOutput </td>
+          <td>(</td>
+          <td class="paramtype">std::vector&lt; <a class="el" href="structXTNOutput.html">XTNOutput</a> &gt;&#160;</td>
+          <td class="paramname"><em>allOutputs</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *&#160;</td>
+          <td class="paramname"><em>buffer</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a6910bcd0d7b04390b2680a0f681a8888"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a6910bcd0d7b04390b2680a0f681a8888">&#9670;&nbsp;</a></span>NUM_BLOCK()</h2>
 
@@ -538,8 +568,8 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a id="a54662df18289f61f08b3a29be1ecdbd0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a54662df18289f61f08b3a29be1ecdbd0">&#9670;&nbsp;</a></span>overlap_mode_init()</h2>
+<a id="a69cac08e5a880c3f510c690bedba4421"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a69cac08e5a880c3f510c690bedba4421">&#9670;&nbsp;</a></span>overlap_mode_init()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -571,8 +601,8 @@ Variables</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structXTNOutput.html">XTNOutput</a> &amp;&#160;</td>
-          <td class="paramname"><em>output</em>, </td>
+          <td class="paramtype">std::vector&lt; <a class="el" href="structXTNOutput.html">XTNOutput</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>allOutputs</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1165,8 +1195,8 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a id="aba1f474720482aaaba6f756560a60a40"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aba1f474720482aaaba6f756560a60a40">&#9670;&nbsp;</a></span>stream_handler4_overlap()</h2>
+<a id="aa0839c34b8b9b44bf450a1b3af874552"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa0839c34b8b9b44bf450a1b3af874552">&#9670;&nbsp;</a></span>stream_handler4_overlap()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1180,8 +1210,8 @@ Variables</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structXTNOutput.html">XTNOutput</a> &amp;&#160;</td>
-          <td class="paramname"><em>output</em>, </td>
+          <td class="paramtype">std::vector&lt; <a class="el" href="structXTNOutput.html">XTNOutput</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>allOutputs</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1223,7 +1253,13 @@ Variables</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int *&#160;</td>
-          <td class="paramname"><em>buffer</em>&#160;</td>
+          <td class="paramname"><em>buffer</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structMemoryContext.html">MemoryContext</a>&#160;</td>
+          <td class="paramname"><em>ctx</em>&#160;</td>
         </tr>
         <tr>
           <td></td>

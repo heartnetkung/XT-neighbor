@@ -10,5 +10,6 @@ var searchData=
   ['maxthroughputexponent',['maxThroughputExponent',['../structMemoryContext.html#a8960d670163115c9b3583871475d5ecd',1,'MemoryContext']]],
   ['measure',['measure',['../structXTNArgs.html#a3b4cbfcf3ad2a95c8f64ec0059beb30b',1,'XTNArgs']]],
   ['memorycontext',['MemoryContext',['../structMemoryContext.html',1,'']]],
+  ['mergeoutput',['mergeOutput',['../xtn__inner_8cu.html#ac01e583b9f506f5536fd67ca6ad1f620',1,'xtn_inner.cu']]],
   ['min3',['MIN3',['../kernel_8cu.html#a4887ceeae88266064841cbbc11ef8b53',1,'kernel.cu']]]
 ];

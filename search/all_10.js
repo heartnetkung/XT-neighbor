@@ -19,7 +19,7 @@ var searchData=
   ['stream_5fhandler2',['stream_handler2',['../xtn__inner_8cu.html#a6106aa3872c6f87041c72b4ce0db6e76',1,'xtn_inner.cu']]],
   ['stream_5fhandler3',['stream_handler3',['../xtn__inner_8cu.html#a0c797d489251ff552b4f19bf85aabcbf',1,'xtn_inner.cu']]],
   ['stream_5fhandler4_5fnn',['stream_handler4_nn',['../xtn__inner_8cu.html#af6390c0bd0b9c3e320f8a5f296f65146',1,'xtn_inner.cu']]],
-  ['stream_5fhandler4_5foverlap',['stream_handler4_overlap',['../xtn__inner_8cu.html#aba1f474720482aaaba6f756560a60a40',1,'xtn_inner.cu']]],
+  ['stream_5fhandler4_5foverlap',['stream_handler4_overlap',['../xtn__inner_8cu.html#aa0839c34b8b9b44bf450a1b3af874552',1,'xtn_inner.cu']]],
   ['success',['SUCCESS',['../xtn_8h.html#a5a2236a3693e3930b2c9fbe1fe7144ecac7f69f7c9e5aea9b8f54cf02870e2bf8',1,'xtn.h']]],
   ['sum',['Sum',['../structSum.html',1,'']]],
   ['sum_5fby_5fkey',['sum_by_key',['../cub_8cu.html#a31ed98a50d89ec5ef254d49d6246506d',1,'cub.cu']]],

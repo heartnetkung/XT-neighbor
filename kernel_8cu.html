@@ -117,9 +117,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a6bdcdc804e6ec7ed728a3722333c6c2c"><td class="memItemLeft" align="right" valign="top">__global__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#a6bdcdc804e6ec7ed728a3722333c6c2c">cal_distance</a> (<a class="el" href="structInt3.html">Int3</a> *seq, <a class="el" href="structInt2.html">Int2</a> *index, int distance, char measure, char *distanceOutput, char *flagOutput, int n, int seqLen)</td></tr>
 <tr class="memdesc:a6bdcdc804e6ec7ed728a3722333c6c2c"><td class="mdescLeft">&#160;</td><td class="mdescRight">calculate distances of strings from given pairs and flag ones exceeding the threshold.  <a href="#a6bdcdc804e6ec7ed728a3722333c6c2c">More...</a><br /></td></tr>
 <tr class="separator:a6bdcdc804e6ec7ed728a3722333c6c2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a883c718299e1197e5705f4b20c496ee3"><td class="memItemLeft" align="right" valign="top">__global__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#a883c718299e1197e5705f4b20c496ee3">pair2rep</a> (<a class="el" href="structInt2.html">Int2</a> *pairs, <a class="el" href="structInt2.html">Int2</a> *indexOut, size_t *freqOut, <a class="el" href="structInt3.html">Int3</a> *seq, <a class="el" href="structSeqInfo.html">SeqInfo</a> *seqInfo, int *inputOffsets, int *outputOffsets, int distance, char measure, int n)</td></tr>
-<tr class="memdesc:a883c718299e1197e5705f4b20c496ee3"><td class="mdescLeft">&#160;</td><td class="mdescRight">turning pairs and frequencies from sequence format to repertoire format.  <a href="#a883c718299e1197e5705f4b20c496ee3">More...</a><br /></td></tr>
-<tr class="separator:a883c718299e1197e5705f4b20c496ee3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4051473b65887a419392736f59a7b2ab"><td class="memItemLeft" align="right" valign="top">__global__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#a4051473b65887a419392736f59a7b2ab">pair2rep</a> (<a class="el" href="structInt2.html">Int2</a> *pairs, <a class="el" href="structInt2.html">Int2</a> *indexOut, size_t *freqOut, <a class="el" href="structSeqInfo.html">SeqInfo</a> *seqInfo, int *inputOffsets, int *outputOffsets, int n)</td></tr>
+<tr class="memdesc:a4051473b65887a419392736f59a7b2ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">turning pairs and frequencies from sequence format to repertoire format.  <a href="#a4051473b65887a419392736f59a7b2ab">More...</a><br /></td></tr>
+<tr class="separator:a4051473b65887a419392736f59a7b2ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3daeef68f78ff43ed757994ec0697171"><td class="memItemLeft" align="right" valign="top">__global__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#a3daeef68f78ff43ed757994ec0697171">gen_assignment</a> (int *matrix, int *output, int nBit, int nRow, int nColumn)</td></tr>
 <tr class="memdesc:a3daeef68f78ff43ed757994ec0697171"><td class="mdescLeft">&#160;</td><td class="mdescRight">expand operation part of solving bin packing for 2D buffer.  <a href="#a3daeef68f78ff43ed757994ec0697171">More...</a><br /></td></tr>
 <tr class="separator:a3daeef68f78ff43ed757994ec0697171"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -303,7 +303,7 @@ Variables</h2></td></tr>
     <tr><td class="paramname">index</td><td>pairs of sequence to calculate </td></tr>
     <tr><td class="paramname">distance</td><td>Levenshtein/Hamming distance threshold </td></tr>
     <tr><td class="paramname">measure</td><td>enum representing Levenshtein/Hamming </td></tr>
-    <tr><td class="paramname">distanceOutput</td><td>output distance </td></tr>
+    <tr><td class="paramname">distanceOutput</td><td>output distance, maybe null </td></tr>
     <tr><td class="paramname">flagOutput</td><td>array output flag </td></tr>
     <tr><td class="paramname">n</td><td>array length of index </td></tr>
     <tr><td class="paramname">seqLen</td><td>array length of seq </td></tr>
@@ -1026,8 +1026,8 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a id="a883c718299e1197e5705f4b20c496ee3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a883c718299e1197e5705f4b20c496ee3">&#9670;&nbsp;</a></span>pair2rep()</h2>
+<a id="a4051473b65887a419392736f59a7b2ab"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4051473b65887a419392736f59a7b2ab">&#9670;&nbsp;</a></span>pair2rep()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1053,12 +1053,6 @@ Variables</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structInt3.html">Int3</a> *&#160;</td>
-          <td class="paramname"><em>seq</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
           <td class="paramtype"><a class="el" href="structSeqInfo.html">SeqInfo</a> *&#160;</td>
           <td class="paramname"><em>seqInfo</em>, </td>
         </tr>
@@ -1073,18 +1067,6 @@ Variables</h2></td></tr>
           <td></td>
           <td class="paramtype">int *&#160;</td>
           <td class="paramname"><em>outputOffsets</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>distance</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">char&#160;</td>
-          <td class="paramname"><em>measure</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
