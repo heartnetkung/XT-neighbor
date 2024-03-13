@@ -477,6 +477,8 @@ void stream_handler4_overlap(Chunk<Int2> pairInput, std::vector<XTNOutput> &allO
 	flag(uniquePairs, flags, pairOut3, buffer, uniqueLen);
 	_cudaFree(uniquePairs, flags);
 	uniqueLen = transfer_last_element(buffer, 1);
+	printf("ax %d\n", uniqueLen);
+	print_int2_arr(pairOut3, uniqueLen);
 
 	// cal value Lengths
 	cudaMalloc(&valueLengths, sizeof(int)*uniqueLen); gpuerr();
