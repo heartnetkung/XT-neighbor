@@ -464,7 +464,7 @@ void stream_handler4_overlap(Chunk<Int2> pairInput, std::vector<XTNOutput> &allO
                              char measure, int* buffer, MemoryContext ctx) {
 	Int2* pairOut, *pairOut2, *uniquePairs, *pairOut3;
 	size_t* freqOut, *freqOut2;
-	int* outputRange, *valueLengths, *valueLengthsHost;
+	int* valueLengths, *valueLengthsHost;
 	char* flags;
 
 	// find pairOut3
