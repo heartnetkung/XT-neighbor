@@ -493,6 +493,7 @@ void stream_handler4_overlap(Chunk<Int2> pairInput, std::vector<XTNOutput> &allO
 		cudaMalloc(&valueOffsets, nChunk * sizeof(int)); gpuerr();
 		inclusive_sum(valueLengthsPtr, valueOffsets, nChunk);
 		int outputLen = transfer_last_element(valueOffsets, nChunk);
+		print_bandwidth(outputLen, ctx.bandwidth2, "4b");
 
 		// cal repertoire
 		_cudaMalloc(pairOut, freqOut, outputLen);
