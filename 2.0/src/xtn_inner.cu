@@ -485,7 +485,8 @@ void stream_handler4_overlap(Chunk<Int2> pairInput, std::vector<XTNOutput> &allO
 	valueLengthsHost = device_to_host(valueLengths, uniqueLen);
 
 	int start = 0, nChunk;
-	int* pairPtr = pairOut3, *valueLengthsPtr = valueLengths;
+	Int2* pairPtr = pairOut3;
+	int* valueLengthsPtr = valueLengths;
 	while ((nChunk = solve_next_bin(valueLengthsHost, start, ctx.bandwidth2, uniqueLen)) > 0) {
 		// cal valueOffsets
 		int* valueOffsets;
@@ -549,7 +550,7 @@ XTNOutput mergeOutput(std::vector<XTNOutput> allOutputs, int* buffer) {
 
 	XTNOutput ans = {
 		.indexPairs = device_to_host(indexOut, totalLen),
-		.pairwiseFrequencies = device_to_host(pairOut, totalLen),
+		.pairwiseFrequencies = device_to_host(freqOut, totalLen),
 		.len = transfer_last_element(buffer, 1)
 	};
 	_cudaFree(indexOut, freqOut);
