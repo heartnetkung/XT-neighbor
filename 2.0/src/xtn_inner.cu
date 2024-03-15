@@ -453,7 +453,7 @@ void stream_handler4_nn(Chunk<Int2> pairInput, XTNOutput &output, Int3* seq,
  * handle all GPU operations in stream 4 overlap mode.
  *
  * @param pairInput nearest neighbor pairs
- * @param output returning output
+ * @param allOutputs container of generated results
  * @param seq input CDR3 sequences
  * @param seqInfo information of each sequence
  * @param seqOffset offset of seqInfo array
@@ -461,6 +461,7 @@ void stream_handler4_nn(Chunk<Int2> pairInput, XTNOutput &output, Int3* seq,
  * @param distance distance threshold
  * @param measure type of measurement (levenshtein/hamming)
  * @param buffer integer buffer
+ * @param ctx memory context
 */
 void stream_handler4_overlap(Chunk<Int2> pairInput, std::vector<XTNOutput> &allOutputs, Int3* seq,
                              SeqInfo* seqInfo, int* seqOffset, int seqLen, int distance,
@@ -529,7 +530,7 @@ void stream_handler4_overlap(Chunk<Int2> pairInput, std::vector<XTNOutput> &allO
 /**
  *	merge all outputs by grouping the index keys and summing the frequency values.
  *
- * @param allOutputs container of generated result
+ * @param allOutputs container of generated results
  * @param buffer integer buffer
  * @return merged results
 */
@@ -576,7 +577,7 @@ XTNOutput mergeOutput(std::vector<XTNOutput> allOutputs, int* buffer) {
  * @param seqOut deduplicated input sequence
  * @param infoInOut information of each input sequence
  * @param infoOffsetOut offset of each info for each unique sequence
- * @param allOutputs container of final outputs
+ * @param allOutputs container of generated result
  * @param seqLen number of input sequence
  * @param buffer integer buffer
  * @return the length of seqOut
