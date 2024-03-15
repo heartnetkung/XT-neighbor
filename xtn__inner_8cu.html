@@ -133,6 +133,7 @@ Functions</h2></td></tr>
 <tr class="memdesc:aa0839c34b8b9b44bf450a1b3af874552"><td class="mdescLeft">&#160;</td><td class="mdescRight">handle all GPU operations in stream 4 overlap mode.  <a href="#aa0839c34b8b9b44bf450a1b3af874552">More...</a><br /></td></tr>
 <tr class="separator:aa0839c34b8b9b44bf450a1b3af874552"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac01e583b9f506f5536fd67ca6ad1f620"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structXTNOutput.html">XTNOutput</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xtn__inner_8cu.html#ac01e583b9f506f5536fd67ca6ad1f620">mergeOutput</a> (std::vector&lt; <a class="el" href="structXTNOutput.html">XTNOutput</a> &gt; allOutputs, int *buffer)</td></tr>
+<tr class="memdesc:ac01e583b9f506f5536fd67ca6ad1f620"><td class="mdescLeft">&#160;</td><td class="mdescRight">merge all outputs by grouping the index keys and summing the frequency values.  <a href="#ac01e583b9f506f5536fd67ca6ad1f620">More...</a><br /></td></tr>
 <tr class="separator:ac01e583b9f506f5536fd67ca6ad1f620"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a69cac08e5a880c3f510c690bedba4421"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xtn__inner_8cu.html#a69cac08e5a880c3f510c690bedba4421">overlap_mode_init</a> (<a class="el" href="structInt3.html">Int3</a> *seq, <a class="el" href="structInt3.html">Int3</a> *&amp;seqOut, <a class="el" href="structSeqInfo.html">SeqInfo</a> *&amp;infoInOut, int *&amp;infoOffsetOut, std::vector&lt; <a class="el" href="structXTNOutput.html">XTNOutput</a> &gt; &amp;allOutputs, int seqLen, int *buffer)</td></tr>
 <tr class="memdesc:a69cac08e5a880c3f510c690bedba4421"><td class="mdescLeft">&#160;</td><td class="mdescRight">deduplicate input and initialize output variable  <a href="#a69cac08e5a880c3f510c690bedba4421">More...</a><br /></td></tr>
@@ -546,6 +547,16 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>merge all outputs by grouping the index keys and summing the frequency values. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">allOutputs</td><td>container of generated result </td></tr>
+    <tr><td class="paramname">buffer</td><td>integer buffer </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>merged results </dd></dl>
+
 </div>
 </div>
 <a id="a6910bcd0d7b04390b2680a0f681a8888"></a>
@@ -631,12 +642,13 @@ Variables</h2></td></tr>
     <tr><td class="paramname">seqOut</td><td>deduplicated input sequence </td></tr>
     <tr><td class="paramname">infoInOut</td><td>information of each input sequence </td></tr>
     <tr><td class="paramname">infoOffsetOut</td><td>offset of each info for each unique sequence </td></tr>
-    <tr><td class="paramname">output</td><td>final output of the function </td></tr>
+    <tr><td class="paramname">allOutputs</td><td>container of final outputs </td></tr>
     <tr><td class="paramname">seqLen</td><td>number of input sequence </td></tr>
     <tr><td class="paramname">buffer</td><td>integer buffer </td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>the length of seqOut </dd></dl>
 
 </div>
 </div>
@@ -774,6 +786,7 @@ Variables</h2></td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>the length of lowerboundsOutput array </dd></dl>
 
 </div>
 </div>
@@ -832,6 +845,7 @@ Variables</h2></td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>the second dimension of offsetOutput matrix </dd></dl>
 
 </div>
 </div>
@@ -883,6 +897,7 @@ Variables</h2></td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>the number of chunks to process </dd></dl>
 
 </div>
 </div>
