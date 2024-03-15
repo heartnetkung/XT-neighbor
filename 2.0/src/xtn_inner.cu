@@ -181,6 +181,7 @@ void gen_next_chunk(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut,
  * @param start offset of the latest processed chunk
  * @param maxSize bin size
  * @param n array length of chunkSizes
+ * @return the number of chunks to process
 */
 int solve_next_bin(int* chunksizes, int start, int maxSize, int n) {
 	int ans = 0;
@@ -211,6 +212,7 @@ int solve_next_bin(int* chunksizes, int start, int maxSize, int n) {
  * @param seqLen array length of sequences
  * @param buffer reusable 4-byte buffer
  * @param ctx memory constraints and info
+ * @return the length of lowerboundsOutput array
 */
 int solve_bin_packing_lowerbounds(int* histograms, int* &lowerboundsOutput,
                                   int n, int seqLen, int* buffer, MemoryContext ctx) {
@@ -243,6 +245,7 @@ int solve_bin_packing_lowerbounds(int* histograms, int* &lowerboundsOutput,
  * @param n row count of histograms
  * @param buffer reusable 4-byte buffer
  * @param ctx memory constraints and info
+ * @return the second dimension of offsetOutput matrix
 */
 int solve_bin_packing_offsets(int* histograms, int** &offsetOutput,
                               int n, int* buffer, MemoryContext ctx) {
@@ -523,6 +526,13 @@ void stream_handler4_overlap(Chunk<Int2> pairInput, std::vector<XTNOutput> &allO
 	cudaFree(pairOut3); gpuerr();
 }
 
+/**
+ *	merge all outputs by grouping the index keys and summing the frequency values.
+ *
+ * @param allOutputs container of generated result
+ * @param buffer integer buffer
+ * @return merged results
+*/
 XTNOutput mergeOutput(std::vector<XTNOutput> allOutputs, int* buffer) {
 	int totalLen = 0;
 	for (auto &element : allOutputs)
@@ -566,9 +576,10 @@ XTNOutput mergeOutput(std::vector<XTNOutput> allOutputs, int* buffer) {
  * @param seqOut deduplicated input sequence
  * @param infoInOut information of each input sequence
  * @param infoOffsetOut offset of each info for each unique sequence
- * @param output final output of the function
+ * @param allOutputs container of final outputs
  * @param seqLen number of input sequence
  * @param buffer integer buffer
+ * @return the length of seqOut
 */
 int overlap_mode_init(Int3* seq, Int3* &seqOut, SeqInfo* &infoInOut, int* &infoOffsetOut,
                       std::vector<XTNOutput> &allOutputs, int seqLen, int* buffer) {

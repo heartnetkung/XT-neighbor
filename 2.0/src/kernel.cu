@@ -318,12 +318,9 @@ void cal_distance(Int3* seq, Int2* index, int distance, char measure,
  * @param pairs pair result from nearest neighbor search
  * @param indexOut repertiore pair output
  * @param freqOut frequency output
- * @param seq CDR3 sequence input for distance calculation
  * @param seqInfo information of each CDR3 sequence
  * @param inputOffsets seqInfo Offset
  * @param outputOffsets output range of indexOut and freqOut
- * @param distance Levenshtein/Hamming distance threshold
- * @param measure enum representing Levenshtein/Hamming
  * @param n number of pairs
 */
 __global__
