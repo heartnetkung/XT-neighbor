@@ -1,5 +1,5 @@
 ## Description
-XT-neighbor is a fast scalable computational method for nearest neighbor search of T-cell receptors (TCR) using GPU. In simple terms, our inputs are CDR3 regions of TCR represented as a string of amino acids and the algorithm find all pairs of TCR such that their similarity is within the specified Levenshtein distance threshold. The key feature of our algorithm is orders of magnitude faster and more scalable than the current fastest method thanks to algorithmic advancemence, GPU adaptation, and memory optimization techniques. To read more about XT-neighbor, the research paper is available on [arxiv website](https://arxiv.org/abs/1706.03762).
+XT-neighbor is a fast scalable computational method for nearest neighbor search of T-cell receptors (TCR) using GPU. In simple terms, our inputs are CDR3 regions of TCR represented as a string of amino acids and the algorithm find all pairs of TCR such that their similarity is within the specified Levenshtein distance threshold. The key feature of our algorithm is orders of magnitude faster and more scalable than the current fastest method thanks to algorithmic advancemence, GPU adaptation, and memory optimization techniques. To read more about XT-neighbor, the research paper is available on [arxiv website](https://arxiv.org/abs/2403.09010).
 
 ## Requirement
 - CUDA SDK version 11.0+
@@ -28,12 +28,12 @@ cd 2.0/build; ./test_codec
 
 ## Citation
 ```bibtex
-@misc{vaswani2023attention,
-      title={Attention Is All You Need}, 
-      author={Ashish Vaswani and Noam Shazeer and Niki Parmar and Jakob Uszkoreit and Llion Jones and Aidan N. Gomez and Lukasz Kaiser and Illia Polosukhin},
-      year={2023},
-      eprint={1706.03762},
+@misc{chotisorayuth2024lightningfast,
+      title={Lightning-fast adaptive immune receptor similarity search by symmetric deletion lookup}, 
+      author={Touchchai Chotisorayuth and Andreas Tiffeau-Mayer},
+      year={2024},
+      eprint={2403.09010},
       archivePrefix={arXiv},
-      primaryClass={cs.CL}
+      primaryClass={q-bio.QM}
 }
 ```
