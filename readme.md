@@ -8,7 +8,7 @@ XT-neighbor is a fast scalable computational method for nearest neighbor search 
 ## Usage
 - [link to Google Colab demo with examples and all the benchmarking code](https://colab.research.google.com/drive/13zHkThcsIpe_dYMLb6IlbcTn2wAzfox7)
 
-```bash
+```txt
 xt_neighbor: perform either nearest neighbor search for CDR3 sequences or immune repertoire overlap using GPU-based xt_neighbor algorithm.
 	====================
 	 Common Options
