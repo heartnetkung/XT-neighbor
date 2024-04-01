@@ -10,7 +10,7 @@ This is [the Google Colab Notebook](https://colab.research.google.com/drive/1JbR
 
 XTNeighbor has been tested with:
 - CUDA SDK version 11.0+
-- Nvidia T4 GPU (see [Google Colab demo](https://colab.research.google.com/drive/13zHkThcsIpe_dYMLb6IlbcTn2wAzfox7))
+- Nvidia T4 GPU (see [Google Colab demo](https://colab.research.google.com/drive/1UrTLHNcW0XAp_6jL2ys1FVNutaoJOX9K))
 - Linux OS or Google Colab runtime
 - [Pyrepseq 1.4.2](https://github.com/andim/pyrepseq)
 
