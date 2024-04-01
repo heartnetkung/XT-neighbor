@@ -4,7 +4,7 @@ XTNeighbor is a fast scalable method for nearest neighbor search of adaptive imm
 
 ## Quick Usage
 
-This is the link to [Google Colab Notebook](https://colab.research.google.com/drive/1JbRLtRrmUv9zZollSfT9xp6WqOy7LB7q#scrollTo=emF0vifFye6s) that allows user to quickly use this tool without setting up the GPU environment.
+This is [the Google Colab Notebook](https://colab.research.google.com/drive/1JbRLtRrmUv9zZollSfT9xp6WqOy7LB7q#scrollTo=emF0vifFye6s) that allows user to quickly use this tool from web browser without setting up the GPU environment.
 
 ## Installation Requirements:
 
