@@ -6,6 +6,7 @@ XTNeighbor is a fast scalable method for nearest neighbor search of adaptive imm
 
 XTNeighbor has been tested with:
 - CUDA SDK version 11.0+
+- Nvidia T4 GPU (see [Google Colab demo](https://colab.research.google.com/drive/13zHkThcsIpe_dYMLb6IlbcTn2wAzfox7))
 - Linux OS or Google Colab runtime
 - [Pyrepseq 1.4.2](https://github.com/andim/pyrepseq)
 
