@@ -1,12 +1,17 @@
 ## Description
-XT-neighbor is a fast scalable computational method for nearest neighbor search of T-cell receptors (TCR) using GPU. In simple terms, our inputs are CDR3 regions of TCR represented as a string of amino acids and the algorithm find all pairs of TCR such that their similarity is within the specified Levenshtein distance threshold. The key feature of our algorithm is orders of magnitude faster and more scalable than the current fastest method thanks to algorithmic advancemence, GPU adaptation, and memory optimization techniques. To read more about XT-neighbor, the research paper is available on [arxiv website](https://arxiv.org/abs/2403.09010).
 
-## Requirement
+XTNeighbor is a fast scalable method for nearest neighbor search of adaptive immune receptors (AIRs) using GPU. In simple terms, our inputs are CDR3 regions of AIRs represented as a string of amino acids and the algorithm finds all pairs of AIRs such that their similarity is within a specified Levenshtein distance threshold. XTNeighbor is orders of magnitude faster than current methods thanks to a symmetric deletion algorithmic approach, GPU acceleration, and memory optimization. A detailed description of the method is provide in our [arXiv preprint](https://arxiv.org/abs/2403.09010).
+
+## Installation Requirements:
+
+XTNeighbor has been tested with:
 - CUDA SDK version 11.0+
 - Linux OS or Google Colab runtime
+- [Pyrepseq 1.4.2](https://github.com/andim/pyrepseq)
 
-## Usage
-- [link to Google Colab demo with examples and all the benchmarking code](https://colab.research.google.com/drive/13zHkThcsIpe_dYMLb6IlbcTn2wAzfox7)
+## Installation and usage
+
+Detailed installation instructions, examples, and benchmarking code are provided via a [Google Colab demo](https://colab.research.google.com/drive/13zHkThcsIpe_dYMLb6IlbcTn2wAzfox7)
 
 ```txt
 xt_neighbor: perform either nearest neighbor search for CDR3 sequences or immune repertoire overlap using GPU-based xt_neighbor algorithm.
@@ -32,6 +37,10 @@ xt_neighbor: perform either nearest neighbor search for CDR3 sequences or immune
 	 -I or --info-path [str] (required): path of csv input file containing exactly 1 column: repertoire sizes. Note that the order of input sequence must be sorted according to this repertoire info
 	 -N or --info-length [number] (required): number of repertoires given in the info file
 ```
+
+## Reproducibility
+
+Notebooks to produce the figures from the preprint are provided in the /pub folder.
 
 ## Deduplication Warning
 - A major factor in runtime of the program is duplication in the input. Please drop all duplicates before using it as input. If duplication matters, you should decuplicate, give it to XT-neighbor, then recombine it with your original input.
