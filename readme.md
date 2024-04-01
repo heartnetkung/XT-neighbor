@@ -14,9 +14,9 @@ XTNeighbor has been tested with:
 - Linux OS or Google Colab runtime
 - [Pyrepseq 1.4.2](https://github.com/andim/pyrepseq)
 
-## Installation and usage
+## Installation and Usage
 
-Detailed installation instructions, examples, and benchmarking code are provided via a [Google Colab demo](https://colab.research.google.com/drive/13zHkThcsIpe_dYMLb6IlbcTn2wAzfox7)
+Detailed installation instructions, examples, and testing code are provided via a [Google Colab demo]([https://colab.research.google.com/drive/13zHkThcsIpe_dYMLb6IlbcTn2wAzfox7](https://colab.research.google.com/drive/1UrTLHNcW0XAp_6jL2ys1FVNutaoJOX9K)
 
 ```txt
 xt_neighbor: perform either nearest neighbor search for CDR3 sequences or immune repertoire overlap using GPU-based xt_neighbor algorithm.
@@ -43,9 +43,10 @@ xt_neighbor: perform either nearest neighbor search for CDR3 sequences or immune
 	 -N or --info-length [number] (required): number of repertoires given in the info file
 ```
 
-## Reproducibility
-
-Notebooks to produce the figures from the preprint are provided in the /pub folder.
+## Benchmarking and Reproducibility
+- benchmarking code on nearest neighbor search is provided via [Google Colab Notebook](aaa)
+- benchmarking code on immune repertoire comparison is provided via [Google Colab Notebook](aaa)
+- source code for producing figures in the preprint in provided in the `/pub` folder
 
 ## Deduplication Warning
 - A major factor in runtime of the program is duplication in the input. Please drop all duplicates before using it as input. If duplication matters, you should decuplicate, give it to XT-neighbor, then recombine it with your original input.
@@ -54,21 +55,6 @@ Notebooks to produce the figures from the preprint are provided in the /pub fold
 
 ## Documentation
 - [link to auto generated documentation](https://heartnetkung.github.io/XT-neighbor/files.html)
-
-## Dev Commands
-```sh
-# compile just the binary
-cd 2.0; mkdir build; cd build; cmake ..; make
-
-# compile the binary and all the test cases
-cd 2.0; mkdir build; cd build; cmake .. -DBUILD_CUB=ON -DBUILD_NON_CUB=ON -DBUILD_BINARY=ON; make
-
-# run test
-cd 2.0/build; ./test_codec
-
-# update doc
-# follow instructions in 2.0/make_doc.sh
-```
 
 ## Citation
 ```bibtex
