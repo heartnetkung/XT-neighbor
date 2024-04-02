@@ -6,17 +6,17 @@ XTNeighbor is a fast scalable method for nearest neighbor search of adaptive imm
 
 This is [the Google Colab Notebook](https://colab.research.google.com/drive/1JbRLtRrmUv9zZollSfT9xp6WqOy7LB7q) that allows user to quickly use this tool from web browser without setting up the GPU environment.
 
-## Installation Requirements
+## Installation
 
 XTNeighbor has been tested with:
 - CUDA SDK version 11.0+
-- Nvidia T4 GPU (see [Google Colab demo](https://colab.research.google.com/drive/1UrTLHNcW0XAp_6jL2ys1FVNutaoJOX9K))
+- Nvidia T4 GPU (see Google Colab demo below)
 - Linux OS or Google Colab runtime
 - [Pyrepseq 1.4.2](https://github.com/andim/pyrepseq)
 
-## Installation and Usage
-
 Detailed installation instructions, examples, and testing code are provided via a [Google Colab demo](https://colab.research.google.com/drive/1UrTLHNcW0XAp_6jL2ys1FVNutaoJOX9K).
+
+## Usage
 
 ```txt
 xt_neighbor: perform either nearest neighbor search for CDR3 sequences or immune repertoire overlap using GPU-based xt_neighbor algorithm.
