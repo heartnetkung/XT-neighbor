@@ -4,7 +4,7 @@ XTNeighbor is a fast scalable method for nearest neighbor search of adaptive imm
 
 ## Quick Usage
 
-This is [the Google Colab Notebook](https://colab.research.google.com/drive/1JbRLtRrmUv9zZollSfT9xp6WqOy7LB7q#scrollTo=emF0vifFye6s) that allows user to quickly use this tool from web browser without setting up the GPU environment.
+This is [the Google Colab Notebook](https://colab.research.google.com/drive/1JbRLtRrmUv9zZollSfT9xp6WqOy7LB7q) that allows user to quickly use this tool from web browser without setting up the GPU environment.
 
 ## Installation Requirements
 
@@ -44,8 +44,8 @@ xt_neighbor: perform either nearest neighbor search for CDR3 sequences or immune
 ```
 
 ## Benchmarking and Reproducibility
-- Benchmarking code on nearest neighbor search is provided via [Google Colab Notebook](aaa).
-- Benchmarking code on immune repertoire comparison is provided via [Google Colab Notebook](aaa).
+- Benchmarking code on nearest neighbor search is provided via [Google Colab Notebook](https://colab.research.google.com/drive/1j-DO11k2NQPlNJF966BNjRKhHPY94sJJ).
+- Benchmarking code on immune repertoire comparison is provided via [Google Colab Notebook](https://colab.research.google.com/drive/1OsAXYWaUvXeqv512uMj6Ez-8EKRYcFEl).
 - Source code for producing figures in the preprint is provided in the `/pub` folder.
 
 ## Deduplication Warning
