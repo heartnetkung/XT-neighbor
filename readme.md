@@ -45,7 +45,7 @@ xt_neighbor: perform either nearest neighbor search for CDR3 sequences or immune
 
 ## Benchmarking and Reproducibility
 - Benchmarking code on nearest neighbor search is provided via [Google Colab Notebook](https://colab.research.google.com/drive/1j-DO11k2NQPlNJF966BNjRKhHPY94sJJ).
-- Benchmarking code on immune repertoire comparison is provided via [Google Colab Notebook](https://colab.research.google.com/drive/1OsAXYWaUvXeqv512uMj6Ez-8EKRYcFEl).
+- Benchmarking code on immune repertoire comparison is provided via [Google Colab Notebook](https://colab.research.google.com/drive/19Qh1cgw-Zgs2aWQRIV-WkbzdGJBi0zGg).
 - Source code for producing figures in the preprint is provided in the `/pub` folder.
 
 ## Deduplication Warning
