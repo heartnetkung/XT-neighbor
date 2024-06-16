@@ -304,7 +304,7 @@ void stream_handler1(Chunk<Int3> input, Int3* &deletionsOutput, int* &indexOutpu
 	int* histogram;
 
 	// cal combinationOffsets
-	cudaMalloc(&combinationOffsets, sizeof(int)*input.len);	gpuerr();
+	cudaMalloc(&combinationOffsets, sizeof(int)*input.len); gpuerr();
 	cal_combination_len <<< NUM_BLOCK(input.len), NUM_THREADS >>>(
 	    input.ptr, distance, combinationOffsets, input.len); gpuerr();
 	inclusive_sum(combinationOffsets, input.len);
@@ -359,7 +359,7 @@ void stream_handler2(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, std::vector<
 
 		throughput2B += chunkLen;
 		print_bandwidth(chunkLen, ctx.bandwidth2, "2b");
-		cudaMalloc(&histogram, sizeof(int)*ctx.histogramSize);	gpuerr();
+		cudaMalloc(&histogram, sizeof(int)*ctx.histogramSize);  gpuerr();
 		cal_histogram(indexes, histogram, ctx.histogramSize , 0, seqLen, chunkLen);
 		histogramOutput.push_back(histogram);
 
@@ -406,7 +406,7 @@ void stream_handler3(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, void callbac
 		                         pairOutput, lesserIndex, lowerbound, carry, nChunk, seqLen);
 		print_bandwidth(chunkLen, ctx.bandwidth2, "3b");
 		callback(pairOutput, chunkLen);
-		cudaMalloc(&histogram, sizeof(int)*ctx.histogramSize);	gpuerr();
+		cudaMalloc(&histogram, sizeof(int)*ctx.histogramSize);  gpuerr();
 		cal_histogram(lesserIndex, histogram, ctx.histogramSize , 0, seqLen, chunkLen);
 		histogramOutput.push_back(histogram);
 
@@ -511,11 +511,10 @@ void stream_handler4_overlap(Chunk<Int2> pairInput, std::vector<XTNOutput> &allO
 
 		// wrap up
 		int finalLen = transfer_last_element(buffer, 1);
-		XTNOutput newValue = {
-			.indexPairs = shrink(pairOut2, finalLen),
-			.pairwiseFrequencies = shrink(freqOut2, finalLen),
-			.len = finalLen
-		};
+		XTNOutput newValue;
+		newValue.indexPairs = shrink(pairOut2, finalLen);
+		newValue.pairwiseFrequencies = shrink(freqOut2, finalLen);
+		newValue.len = finalLen;
 		allOutputs.push_back(newValue);
 
 		// increment
@@ -528,7 +527,7 @@ void stream_handler4_overlap(Chunk<Int2> pairInput, std::vector<XTNOutput> &allO
 }
 
 /**
- *	merge all outputs by grouping the index keys and summing the frequency values.
+ *      merge all outputs by grouping the index keys and summing the frequency values.
  *
  * @param allOutputs container of generated results
  * @param buffer integer buffer
@@ -561,11 +560,10 @@ XTNOutput mergeOutput(std::vector<XTNOutput> allOutputs, int* buffer) {
 	_cudaMalloc(indexOut, freqOut, totalLen);
 	sum_by_key(indexBuffer, indexOut, freqBuffer, freqOut, buffer, totalLen);
 
-	XTNOutput ans = {
-		.indexPairs = device_to_host(indexOut, totalLen),
-		.pairwiseFrequencies = device_to_host(freqOut, totalLen),
-		.len = transfer_last_element(buffer, 1)
-	};
+	XTNOutput ans;
+	ans.indexPairs = device_to_host(indexOut, totalLen);
+	ans.pairwiseFrequencies = device_to_host(freqOut, totalLen);
+	ans.len = transfer_last_element(buffer, 1);
 	_cudaFree(indexOut, freqOut);
 	return ans;
 }
@@ -614,11 +612,10 @@ int overlap_mode_init(Int3* seq, Int3* &seqOut, SeqInfo* &infoInOut, int* &infoO
 
 	// wrap up
 	int finalLen = transfer_last_element(buffer, 1);
-	XTNOutput newOutput = {
-		.indexPairs = shrink(indexPairs2, finalLen),
-		.pairwiseFrequencies = shrink(pairwiseFreq2, finalLen),
-		.len = finalLen
-	};
+	XTNOutput newOutput;
+	newOutput.indexPairs = shrink(indexPairs2, finalLen);
+	newOutput.pairwiseFrequencies = shrink(pairwiseFreq2, finalLen);
+	newOutput.len = finalLen;
 	allOutputs.push_back(newOutput);
 	return uniqueLen;
 }
