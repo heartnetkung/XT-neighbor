@@ -8,11 +8,10 @@ This is [the Google Colab Notebook](https://colab.research.google.com/drive/1JbR
 
 ## Installation
 
-XTNeighbor has been tested with:
+XTNeighbor has been tested with the following environment:
 - CUDA SDK version 11.0+
 - Nvidia T4 GPU, Nvidia V100 GPU (see Google Colab demo below)
 - Linux OS or Google Colab runtime
-- [Pyrepseq 1.4.2](https://github.com/andim/pyrepseq)
 
 Detailed installation instructions, examples, and testing code are provided via a [Google Colab demo](https://colab.research.google.com/drive/1UrTLHNcW0XAp_6jL2ys1FVNutaoJOX9K).
 
