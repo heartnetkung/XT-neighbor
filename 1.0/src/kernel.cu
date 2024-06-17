@@ -14,14 +14,21 @@ void cal_combination_len(Int3* input, int distance, int* output, int n) {
 		return;
 
 	int len = len_decode(input[tid]);
-	int newValue = 1 + len;
-	switch (distance < len ? distance : len) {
-	case 4:
-		newValue += len * (len - 1) * (len - 2) * (len - 3) / 24;
-	case 3:
-		newValue += len * (len - 1) * (len - 2) / 6;
-	case 2:
+	int newValue = 1 + len; // d=1
+
+	// d>=2
+	if ((distance > 1) && (len > 1))
 		newValue += len * (len - 1) / 2;
+
+	// d>2 case
+	if ((distance > 2) && (len > 2)) {
+		int latestValue = len * (len - 1) / 2;
+		for (int i = 3; i <= distance; i++) {
+			latestValue = latestValue * (len - i + 1) / i;
+			if (latestValue <= 0)
+				break;
+			newValue += latestValue;
+		}
 	}
 	output[tid] = newValue;
 }

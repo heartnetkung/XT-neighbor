@@ -39,8 +39,8 @@ int parse_args(int argc, char **argv, XTNArgs* ans) {
 			ans->outputPath = argv[++i];
 		else if (strcmp(current, "-d") == 0 || strcmp(current, "--distance") == 0) {
 			int distance = ans->distance = atoi(argv[++i]);
-			if (distance < 1 || distance > MAX_DISTANCE)
-				return print_err("distance must be a valid number ranging from 1-2");
+			if (distance < 1)
+				return print_err("distance must be a valid number larger than 0");
 		}
 		else if (strcmp(current, "-n") == 0 || strcmp(current, "--input-length") == 0) {
 			ans->seq1Len = atoi(argv[++i]);

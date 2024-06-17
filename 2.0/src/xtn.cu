@@ -51,6 +51,16 @@ int cal_max_exponent(size_t input) {
 MemoryContext cal_memory_stream1(int seqLen, int distance) {
 	MemoryContext ans = initMemory(seqLen, true);
 	int deletionMultiplier = (distance == 1) ? (18 + 1) : (153 + 18 + 1);
+	if (distance > 2) {
+		int temp = 153;
+		for (int i = 3; i <= distance; i++) {
+			temp = temp * (18 - i + 1) / i;
+			if (temp <= 0)
+				break;
+			deletionMultiplier += temp;
+		}
+	}
+
 	int multiplier =
 	    //bottleneck: Int3* &deletionsOutput int* &indexOutput sort_key_values
 	    deletionMultiplier * (2 * sizeof(Int3) + 2 * sizeof(int));

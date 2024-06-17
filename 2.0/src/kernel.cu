@@ -37,11 +37,22 @@ void cal_combination_len(Int3* input, int distance, int* output, int n) {
 		return;
 
 	int len = len_decode(input[tid]);
-	int newValue = 1 + len;
-	if (distance == 2)
-		newValue += len * (len - 1) / 2;
-	// distance larger than 2 is not supported
+	int newValue = 1 + len; // d=1
 
+	// d>=2
+	if ((distance > 1) && (len > 1))
+		newValue += len * (len - 1) / 2;
+
+	// d>2 case
+	if ((distance > 2) && (len > 2)) {
+		int latestValue = len * (len - 1) / 2;
+		for (int i = 3; i <= distance; i++) {
+			latestValue = latestValue * (len - i + 1) / i;
+			if (latestValue <= 0)
+				break;
+			newValue += latestValue;
+		}
+	}
 	output[tid] = newValue;
 }
 

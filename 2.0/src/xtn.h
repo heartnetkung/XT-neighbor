@@ -5,8 +5,6 @@
 
 /**CDR3 length limit for compression*/
 const int MAX_INPUT_LENGTH = 18;
-/**distance limit for immunology use case*/
-const int MAX_DISTANCE = 2;
 /**control printing of each method*/
 int verboseGlobal = 0;
 /**enum for distant type*/
