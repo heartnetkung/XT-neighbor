@@ -59,7 +59,8 @@ xt_neighbor: perform either nearest neighbor search for CDR3 sequences or immune
 
 ## Note on 1.0 and 2.0 Version of the Algorithm
 - The code in this repo contains both 1.0 and 2.0 versions which is named XTNeighbor and XTNeighbor-streaming in the paper.
-- 1.0 has the limitation on CDR3-length not exceeding 18 which might not be practical for most users. All users are adviced to use the 2.0 version which does not have this limitation.
+- All users are adviced to use the 2.0 version since 1.0 version won't be maintained. It is implemented to help explaining the algorithm in the paper.
+- In addition, 1.0 has several limitations including distance threshold restriction, cdr3-length restriction, and no documentation.
 
 ## FAQ
 - Is multiple GPU supported?
