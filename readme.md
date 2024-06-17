@@ -50,20 +50,25 @@ xt_neighbor: perform either nearest neighbor search for CDR3 sequences or immune
 - Source code for producing figures in the preprint is provided in the `/pub` folder.
 
 ## Deduplication Warning
-- A major factor in runtime of the program is duplication in the input. Please drop all duplicates before using it as input. If duplication matters, you should decuplicate, give it to XT-neighbor, then recombine it with your original input.
+- A major factor in runtime of the program is duplication in the input. Please drop all duplicates before using it as input. If duplication matters, you should deduplicate, give it to XT-neighbor, then recombine it with your original input.
 - Without deduplication, the number of output triplets usually grow at least quadratically to the input size, thus the runtime also grows quadratically.
-- The reason is that, assume your data contains a cluster of size `N`, any additional member to these clusters add `N` more redundant results, thus introduce quadratic scaling. In real datasets, TCR are distributed in clusters.
+- The reason is that, assume your data contains a cluster of size `N`, any additional member to these clusters add `N` more redundant results, thus introduce quadratic scaling. In real datasets, TCRs are distributed in clusters.
 
 ## Documentation
 - [link to auto generated documentation](https://heartnetkung.github.io/XT-neighbor/files.html)
 
 ## Note on 1.0 and 2.0 Version of the Algorithm
 - The code in this repo contains both 1.0 and 2.0 versions which is named XTNeighbor and XTNeighbor-streaming in the paper.
-- 1.0 has the limitation on CDR3-length not exceeding 18 which might not be practical for most users. All users are adviced to use the 2.0 version which does not have this limitation.
+- All users are adviced to use the 2.0 version since 1.0 version won't be maintained. It is implemented to help explaining the algorithm in the paper.
+- In addition, 1.0 has several limitations including cdr3-length restriction, AIR compatibility, and no documentation.
 
 ## FAQ
 - Is multiple GPU supported?
   - No, but contribution is welcomed.
+- Is there a CPU version?
+  - Yes. The CPU version (also implemented by the same author) is included in a Python library toolkit for immune repertoire analysis called [Pyrepseq](https://github.com/andim/pyrepseq) (the function is pyrepseq.nn.symdel). In fact for average-load task, it is more convenient to use that package since it's pip-installable, whereas this package requires GPU, CUDA driver/SDK installation. The sample code can be seen in this [Google Colab.](https://colab.research.google.com/drive/1Tsv5Yiinj6PPJdp58-fch_gCm_AbQ5vs#scrollTo=roHKguZq4F6N)
+- How can I be confident about the correctness of this approach coming from biology background?
+  - We provide this [Colab Notebook](https://colab.research.google.com/drive/1Tsv5Yiinj6PPJdp58-fch_gCm_AbQ5vs#scrollTo=FKQHIC8J4L1c) to present the correctness of our approach by showing that our approach produce the same correct result as the one produce by simple for-loop approach. In addition, if you find a bug or mistake, you can use that code as a template for bug report as well.
 
 ## Citation
 ```bibtex
