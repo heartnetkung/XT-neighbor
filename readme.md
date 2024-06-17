@@ -52,7 +52,7 @@ xt_neighbor: perform either nearest neighbor search for CDR3 sequences or immune
 ## Deduplication Warning
 - A major factor in runtime of the program is duplication in the input. Please drop all duplicates before using it as input. If duplication matters, you should decuplicate, give it to XT-neighbor, then recombine it with your original input.
 - Without deduplication, the number of output triplets usually grow at least quadratically to the input size, thus the runtime also grows quadratically.
-- The reason is that, assume your data contains a cluster of size `N`, any additional member to these clusters add `N` more redundant results, thus introduce quadratic scaling. In real datasets, TCR are distributed in clusters.
+- The reason is that, assume your data contains a cluster of size `N`, any additional member to these clusters add `N` more redundant results, thus introduce quadratic scaling. In real datasets, TCRs are distributed in clusters.
 
 ## Documentation
 - [link to auto generated documentation](https://heartnetkung.github.io/XT-neighbor/files.html)
