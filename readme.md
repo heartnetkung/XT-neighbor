@@ -65,7 +65,7 @@ xt_neighbor: perform either nearest neighbor search for CDR3 sequences or immune
 - Is multiple GPU supported?
   - No, but contribution is welcomed.
 - Is there a CPU version?
-  - Yes. The CPU version (also implemented by the same author) is included in a Python library toolkit for immune repertoire analysis called [Pyrepseq](https://github.com/andim/pyrepseq) (the function is pyrepseq.nn.symdel). In fact for average-load task, it is more convenient to use that package since it's pip-installable, whereas this package requires GPU, CUDA driver/SDK installation.
+  - Yes. The CPU version (also implemented by the same author) is included in a Python library toolkit for immune repertoire analysis called [Pyrepseq](https://github.com/andim/pyrepseq) (the function is pyrepseq.nn.symdel). In fact for average-load task, it is more convenient to use that package since it's pip-installable, whereas this package requires GPU, CUDA driver/SDK installation. The sample code can be seen in this [Google Colab.](https://colab.research.google.com/drive/1Tsv5Yiinj6PPJdp58-fch_gCm_AbQ5vs#scrollTo=roHKguZq4F6N)
 
 ## Citation
 ```bibtex
