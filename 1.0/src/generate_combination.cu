@@ -27,8 +27,8 @@ void expand_keys(Int3 seq, int distance, Int3* output, int start, int end) {
 	const int effectiveDistance = distance < len ? distance : len;
 
 	//init stacks
-	int indexStack[effectiveDistance + 1];
-	Int3 seqStack[effectiveDistance + 1];
+	int *indexStack = new int[effectiveDistance + 1];
+	Int3 *seqStack = new Int3[effectiveDistance + 1];
 	seqStack[0] = seq;
 	for (int i = 1; i <= effectiveDistance; i++) {
 		indexStack[i] = i - 1;
@@ -64,6 +64,8 @@ void expand_keys(Int3 seq, int distance, Int3* output, int start, int end) {
 
 	// last step
 	output[end - 1] = seqStack[0];
+	free(indexStack);
+	free(seqStack);
 }
 
 #ifdef TEST_ENV
