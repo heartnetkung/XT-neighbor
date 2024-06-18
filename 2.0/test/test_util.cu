@@ -15,6 +15,10 @@ void check(int result) {
 	}
 }
 
+void checkd(int result) {
+	printf("%d\n",result);
+}
+
 void checkstr(const char* a, const char* b) {
 	check(!strcmp(a, b));
 }
