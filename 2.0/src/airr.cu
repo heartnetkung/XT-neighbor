@@ -85,7 +85,7 @@ int parse_airr_input(char* path, Int3* seqOut, SeqInfo* freqOut, int len, bool d
 		return print_err("input file reading failed");
 
 	char line[DEFAULT_LINE_SIZE];
-	int lineNumber = -1, inputCount = -1, seqIndex = -1, freqIndex = -1;
+	int lineNumber = -1, inputCount = 0, seqIndex = -1, freqIndex = -1;
 
 	// read header line
 	fgets(line, DEFAULT_LINE_SIZE, file);
@@ -99,9 +99,9 @@ int parse_airr_input(char* path, Int3* seqOut, SeqInfo* freqOut, int len, bool d
 		Int3 seq;
 		int freq;
 		int success = extract_data(line, seqIndex, freqIndex, nColumn, lineNumber, seq, freq, doubleCol);
-		if (!success){
+		if (success != SUCCESS) {
 			fclose(file);
-			return print_err_line("",lineNumber);
+			return print_err_line("line parsing error", lineNumber);
 		}
 
 		seqOut[inputCount] = seq;
@@ -112,10 +112,8 @@ int parse_airr_input(char* path, Int3* seqOut, SeqInfo* freqOut, int len, bool d
 	}
 
 	fclose(file);
-	if (inputCount != len) {
-		printf("ab %d %d", inputCount, len);
+	if (inputCount != len)
 		return print_err("input length doesn't match with the actual");
-	}
 
 	return SUCCESS;
 }

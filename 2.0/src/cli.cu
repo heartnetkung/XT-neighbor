@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <locale.h>
 #include "xtn.cu"
+#include "airr.cu"
 
 FILE* outputFile = NULL; /*global variable for callback*/
 size_t totalOutputLen = 0; /*global variable for callback*/
@@ -133,10 +134,8 @@ int parse_input(char* path, Int3* seqOut, SeqInfo* freqOut, int len, bool double
 	}
 
 	fclose(file);
-	if (inputCount != len) {
-		printf("ab %d %d", inputCount, len);
+	if (inputCount != len)
 		return print_err("input length doesn't match with the actual");
-	}
 
 	return SUCCESS;
 }
