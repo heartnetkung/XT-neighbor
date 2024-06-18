@@ -30,6 +30,7 @@ xt_neighbor: perform either nearest neighbor search for CDR3 sequences or immune
 	 -v or --version: print the version of the program then exit
 	 -h or --help: print the help text of the program then exit
 	 -V or --verbose: print extra detail as the program runs for debugging purpose
+	 -a or --airr: use AIRR format for input-path instead. Relevant fields are cdr3_aa and duplicate_count
 	====================
 	 Nearest Neighbor Options
 	====================

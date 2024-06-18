@@ -42,7 +42,7 @@ Int3 str_encode(char *str) {
 	Int3 ans;
 	for (int i = 0; i < MAX_INPUT_LENGTH; i++) {
 		char c = str[i];
-		if ((c == '\0') || (c == '\n') || (c == ','))
+		if ((c == '\0') || (c == '\n') || (c == ',') || (c == '\t'))
 			break; // end
 
 		int value = char_encode(c);

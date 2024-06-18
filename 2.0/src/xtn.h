@@ -56,6 +56,7 @@ struct XTNArgs {
 	char measure = LEVENSHTEIN;
 	char* infoPath = NULL;
 	int infoLen = 0;
+	int airr = 0;
 };
 
 /**

@@ -14,6 +14,7 @@ const char HELP_TEXT[] = "xt_neighbor: perform either nearest neighbor search fo
                          "\t -v or --version: print the version of the program then exit\n"
                          "\t -h or --help: print the help text of the program then exit\n"
                          "\t -V or --verbose: print extra detail as the program runs for debugging purpose\n"
+                         "\t -a or --airr: use AIRR format for input-path instead. Relevant fields are cdr3_aa and duplicate_count\n"
                          "\t====================\n\t Nearest Neighbor Options\n\t====================\n"
                          "\t -i or --input-path [str] (required): path of csv input file containing exactly 1 column: CDR3 amino acid sequences\n"
                          "\t -n or --input-length [number] (required): number of rows given in the input file\n"
@@ -40,6 +41,8 @@ int parse_args(int argc, char **argv, XTNArgs* ans) {
 		}
 		else if (strcmp(current, "-V") == 0 || strcmp(current, "--verbose") == 0)
 			ans->verbose = 1;
+		else if (strcmp(current, "-a") == 0 || strcmp(current, "--airr") == 0)
+			ans->airr = 1;
 		else if (strcmp(current, "-i") == 0 || strcmp(current, "--input-path") == 0)
 			ans->seqPath = argv[++i];
 		else if (strcmp(current, "-I") == 0 || strcmp(current, "--info-path") == 0)
@@ -235,7 +238,10 @@ int main(int argc, char **argv) {
 		if (returnCode != SUCCESS)
 			return exit(seq, seqInfo, returnCode, NULL);
 	}
-	returnCode = parse_input(args.seqPath, seq, seqInfo, args.seqLen, overlapMode);
+	if(args.airr)
+		returnCode = parse_input(args.seqPath, seq, seqInfo, args.seqLen, overlapMode);
+	else
+		returnCode = parse_airr_input(args.seqPath, seq, seqInfo, args.seqLen, overlapMode);
 	if (returnCode != SUCCESS)
 		return exit(seq, seqInfo, returnCode, NULL);
 
