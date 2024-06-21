@@ -233,17 +233,17 @@ __device__
 char levenshtein(Int3 x1, Int3 x2) {
 	char s1len = (char)len_decode(x1), s2len = (char)len_decode(x2);
 	char x, y, lastdiag, olddiag;
-	char s1[MAX_INPUT_LENGTH];
-	char s2[MAX_INPUT_LENGTH];
-	char column[MAX_INPUT_LENGTH + 1];
+	char s1[MAX_COMPRESSED_LENGTH];
+	char s2[MAX_COMPRESSED_LENGTH];
+	char column[MAX_COMPRESSED_LENGTH + 1];
 
-	for (int i = 0; i < MAX_INPUT_LENGTH; i++) {
+	for (int i = 0; i < MAX_COMPRESSED_LENGTH; i++) {
 		char c = (x1.entry[i / 6] >> (27 - 5 * (i % 6))) & 0x1F;
 		if (c == 0)
 			break;
 		s1[i] = BEFORE_A_CHAR + c;
 	}
-	for (int i = 0; i < MAX_INPUT_LENGTH; i++) {
+	for (int i = 0; i < MAX_COMPRESSED_LENGTH; i++) {
 		char c = (x2.entry[i / 6] >> (27 - 5 * (i % 6))) & 0x1F;
 		if (c == 0)
 			break;

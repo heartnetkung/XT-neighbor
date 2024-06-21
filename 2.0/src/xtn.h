@@ -4,7 +4,7 @@
  */
 
 /**CDR3 length limit for compression*/
-const int MAX_INPUT_LENGTH = 18;
+const int MAX_COMPRESSED_LENGTH = 18;
 /**control printing of each method*/
 int verboseGlobal = 0;
 /**enum for distant type*/
