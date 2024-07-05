@@ -103,8 +103,9 @@ private:
 public:
 	SeqArray(int seqLen);
 	int append(char* inputStr);
-	__device__ __host__
+	__device__
 	int getItem(int index, char* &result);
+	int getItemCPU(int index, char* &result);
 	void toDevice();
 	void destroy();
 	int getSize();

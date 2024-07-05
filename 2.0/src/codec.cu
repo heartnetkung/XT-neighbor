@@ -190,15 +190,22 @@ int SeqArray::append(char* inputStr) {
 	}
 	if (i == 0)
 		return SUCCESS; //empty line is fine
-	offsets[1 + size++] = offsets[size] + i;
+	offsets[size + 1] = offsets[size] + i;
+	size++;
 	return SUCCESS;
 }
 
-__device__ __host__
+__device__
 int SeqArray::getItem(int index, char* &result) {
 	unsigned int start = offsets_d[index];
 	result = seqs_d + start;
 	return offsets_d[index + 1] - start;
+}
+
+int SeqArray::getItemCPU(int index, char* &result) {
+	unsigned int start = offsets[index];
+	result = seqs.data() + start;
+	return offsets[index + 1] - start;
 }
 
 void SeqArray::toDevice() {

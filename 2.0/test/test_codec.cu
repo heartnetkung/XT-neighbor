@@ -69,5 +69,13 @@ TEST(seq_array, {
 	check(seqArr->append(input2) == SUCCESS);
 	check(seqArr->append(input3) == SUCCESS);
 	check(seqArr->getSize() == 2);
+	len = seqArr->getItemCPU(0, result);
+	check(len == 3);
+	for (int i = 0; i < len; i++)
+		check(input1[i] == result[i]);
+	len = seqArr->getItemCPU(1, result);
+	check(len == 4);
+	for (int i = 0; i < len; i++)
+		check(input2[i] == result[i]);
 	seqArr->destroy();
 })
