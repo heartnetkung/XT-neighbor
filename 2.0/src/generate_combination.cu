@@ -92,7 +92,7 @@ void expand_keys(Int3 seq, int distance, Int3* output, unsigned int* firstKeys, 
 __host__
 #endif
 __device__
-void expand_keys2(Int3 seq, int distance, Int3* output, unsigned int* firstKeys, int start, int end) {
+void expand_keys_static(Int3 seq, int distance, Int3* output, unsigned int* firstKeys, int start, int end) {
 	int len = len_decode(seq);
 	const int effectiveDistance = distance < len ? distance : len;
 
@@ -167,7 +167,7 @@ void gen_combination(Int3* seqs, int* combinationOffsets, int distance,
 
 	expand_values(carry + tid, combinationValues, start, end);
 	if (distance <= 2)
-		expand_keys2(seqs[tid], distance, combinationKeys, firstKeys, start, end);
+		expand_keys_static(seqs[tid], distance, combinationKeys, firstKeys, start, end);
 	else
 		expand_keys(seqs[tid], distance, combinationKeys, firstKeys, start, end);
 }

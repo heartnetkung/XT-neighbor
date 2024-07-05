@@ -3,36 +3,35 @@
 
 TEST(Stream4, {
 	int seqLen = 5;
-	char seqs[seqLen][6] = {"CAAA", "CADA", "CAAA", "CDKD", "CAAK"};
+	char seq_h[21] = "CAAACADACAAACDKDCAAK";
+	int offsets_h[] = {0, 4, 8, 12, 16, 20};
 	int pairLen = 10;
 	int distance = 1;
 
 	//allocate inputs
-	Int3 * seqd, *seqh;
+	char* seq_d;
+	int* offsets_d;
 	Int2 * pairs_d, *pairs_h;
 	XTNOutput output;
 	int* deviceInt;
 	cudaMalloc(&deviceInt, sizeof(int));
-	cudaMalloc(&seqd, sizeof(Int3)*seqLen);
-	cudaMallocHost(&seqh, sizeof(Int3)*seqLen);
 	cudaMalloc(&pairs_d, sizeof(Int2)*pairLen);
 	cudaMallocHost(&pairs_h, sizeof(Int2)*pairLen);
 
 	//make inputs
-	for (int i = 0; i < seqLen; i++)
-		seqh[i] = str_encode(seqs[i]);
 	int count = 0;
 	for (int i = 0; i < 5; i++)
 		for (int j = i + 1; j < 5; j++)
 			pairs_h[count++] = {.x = i, .y = j};
-	seqd = host_to_device(seqh, seqLen);
+	seq_d = host_to_device(seq_h, 20);
 	pairs_d = host_to_device(pairs_h, pairLen);
+	offsets_d = host_to_device(offsets_h, seqLen);
 
 	//do testing
 	Chunk<Int2> pairInput;
 	pairInput.ptr = pairs_d;
 	pairInput.len = pairLen;
-	stream_handler4_nn(pairInput, output, seqd, seqLen, distance, LEVENSHTEIN, deviceInt);
+	stream_handler4_nn(pairInput, output, seq_d, offsets_d, seqLen, distance, LEVENSHTEIN, deviceInt);
 
 	//expactation
 	int expectedLen = 5;

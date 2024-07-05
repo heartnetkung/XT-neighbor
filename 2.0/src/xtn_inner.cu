@@ -33,6 +33,7 @@ int NUM_BLOCK(int len) {
 int cal_offsets(Int3* inputKeys, int* &inputOffsets, int* &outputLengths, int n, int* buffer) {
 	// cal inputOffsets
 	cudaMalloc(&inputOffsets, sizeof(int)*n); gpuerr();
+	//FIXME double check
 	unique_counts(inputKeys, inputOffsets, buffer, n);
 	int nUnique = transfer_last_element(buffer, 1);
 
@@ -50,6 +51,7 @@ int cal_offsets_lowerbound(Int3* inputKeys, int* inputValues, int* &inputOffsets
                            int* &outputLengths, int lowerbound, int n, int* buffer) {
 	// cal inputOffsets
 	cudaMalloc(&inputOffsets, sizeof(int)*n); gpuerr();
+	//FIXME double check
 	unique_counts(inputKeys, inputOffsets, buffer, n);
 	int nUnique = transfer_last_element(buffer, 1);
 	inclusive_sum(inputOffsets, nUnique);
@@ -116,7 +118,7 @@ int deduplicate(Int2* input, Int2* output, int n, int* buffer) {
 /**
  * private function.
 */
-int postprocessing(Int3* seq, Int2* uniquePairs, int distance, char measure,
+int postprocessing(char* allStr, unsigned int* allStrOffsets, Int2* uniquePairs, int distance, char measure,
                    Int2* &pairOutput, char* &distanceOutput,
                    int uniqueLen, int* buffer, int seqLen) {
 	char* uniqueDistances, *flags;
@@ -124,7 +126,7 @@ int postprocessing(Int3* seq, Int2* uniquePairs, int distance, char measure,
 	// cal levenshtein
 	_cudaMalloc(flags, uniqueDistances, uniqueLen);
 	cal_distance <<< NUM_BLOCK(uniqueLen), NUM_THREADS>>>(
-	    seq, uniquePairs, distance, measure, uniqueDistances,
+	    allStr, allStrOffsets, uniquePairs, distance, measure, uniqueDistances,
 	    flags, uniqueLen, seqLen); gpuerr();
 
 	// filter levenshtein
@@ -429,13 +431,14 @@ void stream_handler3(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, void callbac
  *
  * @param pairInput nearest neighbor pairs
  * @param output returning output
- * @param seq input CDR3 sequences
+ * @param allStr all CDR3 sequences
+ * @param allStrOffsets offset of CDR3 sequences
  * @param seqLen number of input CDR3 sequences
  * @param distance distance threshold
  * @param measure type of measurement (levenshtein/hamming)
  * @param buffer integer buffer
 */
-void stream_handler4_nn(Chunk<Int2> pairInput, XTNOutput &output, Int3* seq,
+void stream_handler4_nn(Chunk<Int2> pairInput, XTNOutput &output, char* allStr, unsigned int* allStrOffsets,
                         int seqLen, int distance, char measure, int* buffer) {
 	Int2* pairOut, *uniquePairs;
 	char* distanceOut;
@@ -443,7 +446,7 @@ void stream_handler4_nn(Chunk<Int2> pairInput, XTNOutput &output, Int3* seq,
 	cudaMalloc(&uniquePairs, sizeof(Int2)*pairInput.len); gpuerr();
 	int uniqueLen = deduplicate(pairInput.ptr, uniquePairs, pairInput.len, buffer);
 	int outputLen =
-	    postprocessing(seq, uniquePairs, distance, measure, pairOut, distanceOut,
+	    postprocessing(allStr, allStrOffsets, uniquePairs, distance, measure, pairOut, distanceOut,
 	                   uniqueLen, buffer, seqLen);
 	make_output(pairOut, distanceOut, outputLen, output);
 	_cudaFree(uniquePairs, pairOut, distanceOut);
@@ -463,7 +466,7 @@ void stream_handler4_nn(Chunk<Int2> pairInput, XTNOutput &output, Int3* seq,
  * @param buffer integer buffer
  * @param ctx memory context
 */
-void stream_handler4_overlap(Chunk<Int2> pairInput, std::vector<XTNOutput> &allOutputs, Int3* seq,
+void stream_handler4_overlap(Chunk<Int2> pairInput, std::vector<XTNOutput> &allOutputs, char* allStr, unsigned int* allStrOffsets,
                              SeqInfo* seqInfo, int* seqOffset, int seqLen, int distance,
                              char measure, int* buffer, MemoryContext ctx) {
 	Int2* pairOut, *pairOut2, *uniquePairs, *pairOut3;
@@ -476,7 +479,7 @@ void stream_handler4_overlap(Chunk<Int2> pairInput, std::vector<XTNOutput> &allO
 	int uniqueLen = deduplicate(pairInput.ptr, uniquePairs, pairInput.len, buffer);
 	_cudaMalloc(flags, pairOut3, uniqueLen);
 	cal_distance <<< NUM_BLOCK(uniqueLen), NUM_THREADS>>>(
-	    seq, uniquePairs, distance, measure, NULL,
+	    allStr, allStrOffsets, uniquePairs, distance, measure, NULL,
 	    flags, uniqueLen, seqLen); gpuerr();
 	flag(uniquePairs, flags, pairOut3, buffer, uniqueLen);
 	_cudaFree(uniquePairs, flags);
@@ -589,6 +592,7 @@ int overlap_mode_init(Int3* seq, Int3* &seqOut, SeqInfo* &infoInOut, int* &infoO
 	// create grouping
 	sort_key_values(seq, infoInOut, seqLen);
 	_cudaMalloc(infoOffsetOut, seqOut, seqLen);
+	//FIXME unique compressed sequence is not unique sequence
 	unique_counts(seq, infoOffsetOut, seqOut, buffer, seqLen);
 	int uniqueLen = transfer_last_element(buffer, 1);
 

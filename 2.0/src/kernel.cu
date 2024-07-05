@@ -225,62 +225,77 @@ void generate_smaller_index(int* indexes, int* outputs, int* inputOffsets,
 #define MIN3(a, b, c) ((a) < (b) ? ((a) < (c) ? (a) : (c)) : ((b) < (c) ? (b) : (c)))
 
 /**
- * calculate Levenshtein distance of 2 strings in GPU.
- * @param x1 first string
- * @param x2 second string
+ * calculate Levenshtein distance of 2 strings in GPU where len1,len2<=18.
+ * @param allStr database of all sequences
+ * @param start1 start index of string one
+ * @param start2 start index of string two
+ * @param len1 length of string one
+ * @param len2 length of string two
 */
 __device__
-char levenshtein(Int3 x1, Int3 x2) {
-	char s1len = (char)len_decode(x1), s2len = (char)len_decode(x2);
+char levenshtein_static(char* allStr, unsigned int start1, unsigned int start2, int len1, int len2) {
 	char x, y, lastdiag, olddiag;
-	char s1[MAX_COMPRESSED_LENGTH];
-	char s2[MAX_COMPRESSED_LENGTH];
 	char column[MAX_COMPRESSED_LENGTH + 1];
 
-	for (int i = 0; i < MAX_COMPRESSED_LENGTH; i++) {
-		char c = (x1.entry[i / 6] >> (27 - 5 * (i % 6))) & 0x1F;
-		if (c == 0)
-			break;
-		s1[i] = BEFORE_A_CHAR + c;
-	}
-	for (int i = 0; i < MAX_COMPRESSED_LENGTH; i++) {
-		char c = (x2.entry[i / 6] >> (27 - 5 * (i % 6))) & 0x1F;
-		if (c == 0)
-			break;
-		s2[i] = BEFORE_A_CHAR + c;
-	}
-
-	for (y = 1; y <= s1len; y++)
+	for (y = 1; y <= len1; y++)
 		column[y] = y;
-	for (x = 1; x <= s2len; x++) {
+	for (x = 1; x <= len2; x++) {
 		column[0] = x;
-		for (y = 1, lastdiag = x - 1; y <= s1len; y++) {
+		for (y = 1, lastdiag = x - 1; y <= len1; y++) {
 			olddiag = column[y];
-			column[y] = MIN3(column[y] + 1, column[y - 1] + 1, lastdiag + (s1[y - 1] == s2[x - 1] ? 0 : 1));
+			column[y] = MIN3(column[y] + 1, column[y - 1] + 1, lastdiag +
+			                 (allStr[start1 + y - 1] == allStr[start2 + x - 1] ? 0 : 1));
 			lastdiag = olddiag;
 		}
 	}
-	return column[s1len];
+	return column[len1];
+}
+
+/**
+ * calculate Levenshtein distance of 2 strings in GPU where len1>18 or len2>18.
+ * @param allStr database of all sequences
+ * @param start1 start index of string one
+ * @param start2 start index of string two
+ * @param len1 length of string one
+ * @param len2 length of string two
+*/
+__device__
+char levenshtein(char* allStr, unsigned int start1, unsigned int start2, int len1, int len2) {
+	char x, y, lastdiag, olddiag;
+	char* column = new char[(len1 > len2) ? len1 : len2];
+
+	for (y = 1; y <= len1; y++)
+		column[y] = y;
+	for (x = 1; x <= len2; x++) {
+		column[0] = x;
+		for (y = 1, lastdiag = x - 1; y <= len1; y++) {
+			olddiag = column[y];
+			column[y] = MIN3(column[y] + 1, column[y - 1] + 1, lastdiag +
+			                 (allStr[start1 + y - 1] == allStr[start2 + x - 1] ? 0 : 1));
+			lastdiag = olddiag;
+		}
+	}
+	free(column);
+	return column[len1];
 }
 
 /**
  * calculate Hamming distance of 2 strings in GPU.
- * @param x1 first string
- * @param x2 second string
+ * @param allStr database of all sequences
+ * @param start1 start index of string one
+ * @param start2 start index of string two
+ * @param len1 length of string one
+ * @param len2 length of string two
 */
 __device__
-char hamming(Int3 x1, Int3 x2) {
-	char s1len = (char)len_decode(x1), s2len = (char)len_decode(x2);
-	if (s1len != s2len)
+char hamming(char* allStr, unsigned int start1, unsigned int start2, int len1, int len2) {
+	if (len1 != len2)
 		return 77;
 
 	char ans = 0;
-	for (int i = 0; i < s1len; i++) {
-		char c1 = (x1.entry[i / 6] >> (27 - 5 * (i % 6))) & 0x1F;
-		char c2 = (x2.entry[i / 6] >> (27 - 5 * (i % 6))) & 0x1F;
-		if (c1 != c2)
+	for (int i = 0; i < len1; i++)
+		if (allStr[start1 + i] != allStr[start2 + i])
 			ans++;
-	}
 	return ans;
 }
 
@@ -297,7 +312,7 @@ char hamming(Int3 x1, Int3 x2) {
  * @param seqLen array length of seq
 */
 __global__
-void cal_distance(Int3* seq, Int2* index, int distance, char measure,
+void cal_distance(char* allStr, unsigned int* offsets, Int2* index, int distance, char measure,
                   char* distanceOutput, char* flagOutput, int n, int seqLen) {
 	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
 	if (tid >= n)
@@ -315,9 +330,17 @@ void cal_distance(Int3* seq, Int2* index, int distance, char measure,
 		return;
 	}
 
-	char newOutput = (measure == LEVENSHTEIN) ?
-	                 levenshtein(seq[indexPair.x], seq[indexPair.y]) :
-	                 hamming(seq[indexPair.x], seq[indexPair.y]);
+	unsigned int start1 = offsets[indexPair.x], start2 = offsets[indexPair.y];
+	int len1 = offsets[indexPair.x + 1] - offsets[indexPair.x];
+	int len2 = offsets[indexPair.y + 1] - offsets[indexPair.y];
+	char newOutput;
+	if (measure == HAMMING)
+		newOutput = hamming(allStr, start1, start2, len1, len2);
+	else if ((len1 > MAX_COMPRESSED_LENGTH) || (len2 > MAX_COMPRESSED_LENGTH))
+		newOutput = levenshtein(allStr, start1, start2, len1, len2);
+	else
+		newOutput = levenshtein_static(allStr, start1, start2, len1, len2);
+
 	if (distanceOutput != NULL)
 		distanceOutput[tid] = newOutput;
 	flagOutput[tid] =  newOutput <= distance;
@@ -513,4 +536,21 @@ void init_overlap_output(SeqInfo* info, Int2* indexOut, size_t* freqOut,
 			freqOut[outputIndex++] = ((size_t)infoI.frequency) * infoJ.frequency;
 		}
 	}
+}
+
+__global__
+void toInt3(char* inputs, unsigned int* offsets, Int3* output, int n) {
+	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
+	if (tid >= n)
+		return;
+
+	unsigned int start = offsets[tid], end = offsets[tid + 1];
+	Int3 ans;
+	if (end > MAX_COMPRESSED_LENGTH)
+		end = MAX_COMPRESSED_LENGTH;
+	for (int i = start; i < end; i++) {
+		int value = inputs[i] - BEFORE_A_CHAR;
+		ans.entry[i / 6] |= value << (27 - 5 * (i % 6));
+	}
+	output[tid] = ans;
 }
