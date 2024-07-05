@@ -85,7 +85,7 @@ char* str_decode(Int3 binary) {
 */
 __device__ __host__
 int len_decode(Int3 binary) {
-	int ans = 18;
+	int ans = MAX_COMPRESSED_LENGTH;
 	int lastIndex = 2;
 	unsigned int* entry = binary.entry;
 	if (entry[2] == 0) {
