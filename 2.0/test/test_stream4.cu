@@ -4,7 +4,7 @@
 TEST(Stream4, {
 	int seqLen = 5;
 	char seq_h[21] = "CAAACADACAAACDKDCAAK";
-	int offsets_h[] = {0, 4, 8, 12, 16, 20};
+	unsigned int offsets_h[] = {0, 4, 8, 12, 16, 20};
 	int pairLen = 10;
 	int distance = 1;
 
