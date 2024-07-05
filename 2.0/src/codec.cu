@@ -238,7 +238,7 @@ char* SeqArray::getSeqs_d() {
 	return offsets_d;
 }
 
-unsigned int SeqArray::getOffsets_d() {
+unsigned int* SeqArray::getOffsets_d() {
 	return seqs_d;
 }
 
