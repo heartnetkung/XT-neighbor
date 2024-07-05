@@ -111,7 +111,7 @@ public:
 	void destroy();
 	int getSize();
 	char* getSeqs_d();
-	unsigned int getOffsets_d();
+	unsigned int* getOffsets_d();
 };
 
 /**
