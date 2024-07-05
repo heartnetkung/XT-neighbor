@@ -25,7 +25,7 @@ TEST(Stream4, {
 			pairs_h[count++] = {.x = i, .y = j};
 	seq_d = host_to_device(seq_h, 20);
 	pairs_d = host_to_device(pairs_h, pairLen);
-	offsets_d = host_to_device(offsets_h, seqLen);
+	offsets_d = host_to_device(offsets_h, seqLen + 1);
 
 	//do testing
 	Chunk<Int2> pairInput;
