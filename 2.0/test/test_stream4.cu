@@ -10,7 +10,7 @@ TEST(Stream4, {
 
 	//allocate inputs
 	char* seq_d;
-	int* offsets_d;
+	unsigned int* offsets_d;
 	Int2 * pairs_d, *pairs_h;
 	XTNOutput output;
 	int* deviceInt;
