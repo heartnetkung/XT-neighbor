@@ -22,20 +22,29 @@ TEST(find_header, {
 })
 
 TEST(extract_data, {
-	Int3 output1;
-	int output2, retval;
+	int output, retval, len;
+	SeqArray* seqArr = new SeqArray(2);
+	char* result;
+	char expectStr[] = "CAAK";
 
 	char input1[10] = "";
-	retval = extract_data(input1, 3, 6, 8, 0, output1, output2, true);
+	retval = extract_data(input1, 3, 6, 8, 0, seqArr, output, true);
 	check(retval == ERROR);
+	check(seqArr->getSize() == 0);
 
 	char input2[50] = "0\t1\t2\tCAAK\t4\t\t6\t7";
-	retval = extract_data(input2, 3, 6, 8, 0, output1, output2, true);
-	checkstr(str_decode(output1), "CAAK");
-	check(output2 == 6);
+	retval = extract_data(input2, 3, 6, 8, 0, seqArr, output, true);
+	len = seqArr->getItemCPU(0, result);
+	for (int i = 0; i < len; i++)
+		check(expectStr[i] == result[i]);
+	check(output == 6);
 	check(retval == SUCCESS);
-	retval = extract_data(input2, 3, 6, 8, 0, output1, output2, false);
-	checkstr(str_decode(output1), "CAAK");
-	check(output2 == -1);
+	check(seqArr->getSize() == 1);
+	retval = extract_data(input2, 3, 6, 8, 0, seqArr, output, false);
+	len = seqArr->getItemCPU(0, result);
+	for (int i = 0; i < len; i++)
+		check(expectStr[i] == result[i]);
+	check(output == -1);
 	check(retval == SUCCESS);
+	check(seqArr->getSize() == 2);
 })

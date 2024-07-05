@@ -45,7 +45,7 @@ int find_header(char* line, int &cdrIndexOut, int &freqIndexOut, bool doubleCol)
 }
 
 int extract_data(char* line, int cdrIndex, int freqIndex, int nColumn, int lineNumber,
-                 Int3 &seqOut, int &freqOut, bool doubleCol) {
+                 SeqArray* seqOut, int &freqOut, bool doubleCol) {
 	int* offsets;
 	cudaMallocHost(&offsets, nColumn * sizeof(int)); gpuerr();
 	int offsetLen = split_offset(line, offsets, nColumn);
@@ -54,8 +54,8 @@ int extract_data(char* line, int cdrIndex, int freqIndex, int nColumn, int lineN
 		return ERROR; // empty line
 	}
 
-	seqOut = str_encode(line + offsets[cdrIndex]);
-	if (seqOut.entry[0] == 0) {
+	int appendResult = seqOut->append(line + offsets[cdrIndex]);
+	if (appendResult == ERROR) {
 		cudaFreeHost(offsets);
 		return print_err_line("invalid seq", lineNumber);
 	}
@@ -79,7 +79,7 @@ int extract_data(char* line, int cdrIndex, int freqIndex, int nColumn, int lineN
 	return SUCCESS;
 }
 
-int parse_airr_input(char* path, Int3* seqOut, SeqInfo* freqOut, int len, bool doubleCol) {
+int parse_airr_input(char* path, SeqArray* seqOut, SeqInfo* freqOut, int len, bool doubleCol) {
 	FILE* file = fopen(path, "r");
 	if (file == NULL)
 		return print_err("input file reading failed");
@@ -96,15 +96,13 @@ int parse_airr_input(char* path, Int3* seqOut, SeqInfo* freqOut, int len, bool d
 		if (strcmp(line, "\n") == 0 || strcmp(line, " \n") == 0)
 			continue;
 
-		Int3 seq;
 		int freq;
-		int success = extract_data(line, seqIndex, freqIndex, nColumn, lineNumber, seq, freq, doubleCol);
+		int success = extract_data(line, seqIndex, freqIndex, nColumn, lineNumber, seqOut, freq, doubleCol);
 		if (success != SUCCESS) {
 			fclose(file);
 			return print_err_line("line parsing error", lineNumber);
 		}
 
-		seqOut[inputCount] = seq;
 		if (doubleCol)
 			freqOut[inputCount].frequency = freq;
 
