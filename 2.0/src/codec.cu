@@ -235,11 +235,11 @@ int SeqArray::getSize() {
 }
 
 char* SeqArray::getSeqs_d() {
-	return offsets_d;
+	return seqs_d;
 }
 
 unsigned int* SeqArray::getOffsets_d() {
-	return seqs_d;
+	return offsets_d;
 }
 
 #endif
