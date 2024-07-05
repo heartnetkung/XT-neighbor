@@ -91,7 +91,7 @@ int parse_args(int argc, char **argv, XTNArgs* ans) {
 /**
  * read and parse input csv file to Int3* and maybe int*
 */
-int parse_input(char* path, Int3* seqOut, SeqInfo* freqOut, int len, bool doubleCol) {
+int parse_input(char* path, SeqArray* seqOut, SeqInfo* freqOut, int len, bool doubleCol) {
 	FILE* file = fopen(path, "r");
 	if (file == NULL)
 		return print_err("input file reading failed");
@@ -108,12 +108,11 @@ int parse_input(char* path, Int3* seqOut, SeqInfo* freqOut, int len, bool double
 		if (strcmp(line, "\n") == 0 || strcmp(line, " \n") == 0)
 			continue;
 
-		Int3 newInt3 = str_encode(line);
-		if (newInt3.entry[0] == 0) {
+		int appendResult = seqOut->append(line);
+		if (appendResult == ERROR) {
 			fclose(file);
-			return print_err_line("input parsing error (only upper-cased amino acids with max length of 18 are allowed)", lineNumber);
+			return print_err_line("input parsing error", lineNumber);
 		}
-		seqOut[inputCount] = newInt3;
 
 		if (doubleCol) {
 			char* line2 = strchr(line, ',');
@@ -205,8 +204,8 @@ void file_handler_overlap(XTNOutput output) {
 	totalOutputLen += output.len;
 }
 
-int exit(Int3* seq, SeqInfo* seqInfo, int returnCode, const char* msg) {
-	cudaFreeHost(seq); gpuerr();
+int exit(SeqArray* seqArr, SeqInfo* seqInfo, int returnCode, const char* msg) {
+	seqArr->destroy();
 	if (seqInfo != NULL) {
 		cudaFreeHost(seqInfo); gpuerr();
 	}
@@ -218,8 +217,8 @@ int exit(Int3* seq, SeqInfo* seqInfo, int returnCode, const char* msg) {
 int main(int argc, char **argv) {
 	XTNArgs args;
 	int returnCode = SUCCESS;
-	Int3* seq;
 	SeqInfo* seqInfo = NULL;
+	SeqArray* seqArr = NULL;
 
 	// 1. parse command line arguments
 	setlocale(LC_ALL, "");
@@ -230,37 +229,38 @@ int main(int argc, char **argv) {
 
 	// 2. read input
 	bool overlapMode = args.infoPath != NULL;
-	cudaMallocHost(&seq, sizeof(Int3) * args.seqLen); gpuerr();
+	seqArr = new SeqArray(args.seqLen);
 	if (overlapMode) {
 		cudaMallocHost(&seqInfo, sizeof(SeqInfo) * args.seqLen); gpuerr();
 		returnCode = parse_info(args.infoPath, seqInfo, args.infoLen, args.seqLen);
 		if (returnCode != SUCCESS)
-			return exit(seq, seqInfo, returnCode, NULL);
+			return exit(seqArr, seqInfo, returnCode, NULL);
 	}
-	if(args.airr)
-		returnCode = parse_input(args.seqPath, seq, seqInfo, args.seqLen, overlapMode);
+	if (args.airr)
+		returnCode = parse_airr_input(args.seqPath, seqArr, seqInfo, args.seqLen, overlapMode);
 	else
-		returnCode = parse_airr_input(args.seqPath, seq, seqInfo, args.seqLen, overlapMode);
+		returnCode = parse_input(args.seqPath, seqArr, seqInfo, args.seqLen, overlapMode);
 	if (returnCode != SUCCESS)
-		return exit(seq, seqInfo, returnCode, NULL);
+		return exit(seqArr, seqInfo, returnCode, NULL);
 
 	// 3. perform algorithm
 	if (verboseGlobal)
 		print_args(args);
+	seqArr->toDevice();
 	if (args.outputPath != NULL) {
 		if (outputFile != NULL)
-			return exit(seq, seqInfo, returnCode,
+			return exit(seqArr, seqInfo, returnCode,
 			            "output file has already been allocated, possibly due to concurrency");
 		outputFile = fopen(args.outputPath, "w");
 		if (outputFile == NULL)
-			return exit(seq, seqInfo, returnCode, "output file opening failed");
-		xtn_perform(args, seq, seqInfo,
+			return exit(seqArr, seqInfo, returnCode, "output file opening failed");
+		xtn_perform(args, seqArr, seqInfo,
 		            overlapMode ? file_handler_overlap : file_handler_nn);
 		fclose(outputFile);
 	} else {
-		xtn_perform(args, seq, seqInfo, null_handler);
+		xtn_perform(args, seqArr, seqInfo, null_handler);
 	}
 
 	printf("total output length: %'lu\n", totalOutputLen);
-	return exit(seq, seqInfo, returnCode, NULL);
+	return exit(seqArr, seqInfo, returnCode, NULL);
 }
