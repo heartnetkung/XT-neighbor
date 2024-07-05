@@ -92,12 +92,31 @@ struct XTNOutput {
 */
 enum ReturnCode {SUCCESS, ERROR, EXIT};
 
+class SeqArray {
+private:
+	unsigned int *offsets, *offsets_d = NULL;
+	std::vector<char> seqs;
+	char* seqs_d = NULL;
+	int size = 0;
+	int maxSize = 0;
+
+public:
+	SeqArray(int seqLen);
+	int append(char* inputStr);
+	__device__ __host__
+	int getItem(int index, char* &result);
+	void toDevice();
+	void destroy();
+	int getSize();
+};
+
 /**
  * the algorithm's API.
  *
  * @param args algorithm's bundled arguments
- * @param seq list of CDR3 sequences
+ * @param seq list of CDR3 sequences in compressed length
+ * @param seqArr list of CDR3 sequences in full length
  * @param seqInfo information of each CDR3 sequence, only used in overlap mode
  * @param callback function to be invoked once a chunk of output is ready
 */
-void xtn_perform(XTNArgs args, Int3* seq, SeqInfo* seqInfo, void callback (XTNOutput));
+void xtn_perform(XTNArgs args, Int3* seq, SeqArray seqArr, SeqInfo* seqInfo, void callback (XTNOutput));

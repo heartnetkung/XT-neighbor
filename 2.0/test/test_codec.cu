@@ -58,3 +58,16 @@ TEST(remove_char, {
 	checkstr(str_decode(remove_char(binForm2, 1)), "AD");
 	checkstr(str_decode(remove_char(binForm2, 2)), "AC");
 })
+
+TEST(seq_array, {
+	char input1[] = "CAD\tDEF\2\n", input2[] = "CAAK\n", input3[] = "";
+	char* result;
+	int len;
+
+	SeqArray* seqArr = new SeqArray(5);
+	check(seqArr->append(input1) == SUCCESS);
+	check(seqArr->append(input2) == SUCCESS);
+	check(seqArr->append(input3) == SUCCESS);
+	check(seqArr->getSize() == 2);
+	seqArr->destroy();
+})

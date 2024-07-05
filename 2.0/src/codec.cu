@@ -14,6 +14,8 @@
 const int A_CHAR = (int)'A';
 const int BEFORE_A_CHAR = A_CHAR - 1;
 const int Y_CHAR = (int) 'Y';
+const int ESTIMATE_LENGTH = 18;
+const int MAX_INPUT_LENGTH = 500;
 
 
 /**
@@ -40,7 +42,7 @@ int char_encode(char amino_acid) {
 */
 Int3 str_encode(char *str) {
 	Int3 ans;
-	for (int i = 0; i < MAX_INPUT_LENGTH; i++) {
+	for (int i = 0; i < MAX_COMPRESSED_LENGTH; i++) {
 		char c = str[i];
 		if ((c == '\0') || (c == '\n') || (c == ',') || (c == '\t'))
 			break; // end
@@ -62,9 +64,9 @@ Int3 str_encode(char *str) {
  * decode binary form into peptide string.
 */
 char* str_decode(Int3 binary) {
-	char* ans = (char*) malloc((MAX_INPUT_LENGTH + 1) * sizeof(char));
+	char* ans = (char*) malloc((MAX_COMPRESSED_LENGTH + 1) * sizeof(char));
 
-	for (int i = 0; i < MAX_INPUT_LENGTH; i++) {
+	for (int i = 0; i < MAX_COMPRESSED_LENGTH; i++) {
 		char c = (binary.entry[i / 6] >> (27 - 5 * (i % 6))) & 0x1F;
 		if (c == 0) {
 			ans[i] = '\0';
@@ -74,7 +76,7 @@ char* str_decode(Int3 binary) {
 		ans[i] = BEFORE_A_CHAR + c;
 	}
 
-	ans[MAX_INPUT_LENGTH] = '\0';
+	ans[MAX_COMPRESSED_LENGTH] = '\0';
 	return ans;
 }
 
@@ -161,6 +163,68 @@ void print_int3_arr(Int3* arr, int n) {
 	if (n > 0) {
 		cudaFreeHost(arr2); gpuerr();
 	}
+}
+
+SeqArray::SeqArray(int seqLen) {
+	seqs.reserve(seqLen * ESTIMATE_LENGTH);
+	cudaMallocHost(&offsets, sizeof(unsigned int) * (seqLen + 1) ); gpuerr();
+	offsets[0] = 0;
+	maxSize = seqLen;
+}
+
+int SeqArray::append(char* inputStr) {
+	if (size >= maxSize)
+		return print_err("SeqArray exceeding max length");
+
+	char c;
+	int i = 0;
+	while (i < MAX_INPUT_LENGTH) {
+		c = inputStr[i];
+		if ((c == '\0') || (c == '\n') || (c == ',') || (c == '\t'))
+			break;
+		i++;
+		int value = char_encode(c);
+		if (value == -1)
+			return print_err("invalid char");
+		seqs.push_back(c);
+	}
+	if (i == 0)
+		return SUCCESS; //empty line is fine
+	offsets[1 + size++] = offsets[size] + i;
+	return SUCCESS;
+}
+
+__device__ __host__
+int SeqArray::getItem(int index, char* &result) {
+	unsigned int start = offsets_d[index];
+	result = seqs_d + start;
+	return offsets_d[index + 1] - start;
+}
+
+void SeqArray::toDevice() {
+	offsets_d = host_to_device(offsets, size + 1);
+	cudaFree(offsets);
+	cudaMalloc(&seqs_d, sizeof(char)*seqs.size()); gpuerr();
+	cudaMemcpy(seqs_d, seqs.data(), sizeof(char)*seqs.size(), cudaMemcpyHostToDevice); gpuerr();
+	seqs.clear();
+	offsets = NULL;
+}
+
+// may be called multiple times
+void SeqArray::destroy() {
+	if (offsets_d != NULL) {
+		_cudaFree(offsets_d, seqs_d);
+		offsets_d = NULL;
+	}
+	if (offsets != NULL) {
+		seqs.clear();
+		cudaFreeHost(offsets); gpuerr();
+		offsets = NULL;
+	}
+}
+
+int SeqArray::getSize() {
+	return size;
 }
 
 #endif
