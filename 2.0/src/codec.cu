@@ -234,4 +234,12 @@ int SeqArray::getSize() {
 	return size;
 }
 
+char* SeqArray::getSeqs_d() {
+	return offsets_d;
+}
+
+unsigned int SeqArray::getOffsets_d() {
+	return seqs_d;
+}
+
 #endif

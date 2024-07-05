@@ -1,3 +1,4 @@
+#include <vector>
 /**
  * @file
  * Listing of all shared data structures, constants, and exporting method.
@@ -109,15 +110,16 @@ public:
 	void toDevice();
 	void destroy();
 	int getSize();
+	char* getSeqs_d();
+	unsigned int getOffsets_d();
 };
 
 /**
  * the algorithm's API.
  *
  * @param args algorithm's bundled arguments
- * @param seq list of CDR3 sequences in compressed length
- * @param seqArr list of CDR3 sequences in full length
+ * @param seqArr list of CDR3 sequences
  * @param seqInfo information of each CDR3 sequence, only used in overlap mode
  * @param callback function to be invoked once a chunk of output is ready
 */
-void xtn_perform(XTNArgs args, Int3* seq, SeqArray seqArr, SeqInfo* seqInfo, void callback (XTNOutput));
+void xtn_perform(XTNArgs args, SeqArray seqArr, SeqInfo* seqInfo, void callback (XTNOutput));
