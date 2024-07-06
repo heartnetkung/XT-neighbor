@@ -53,6 +53,31 @@ struct Sum {
 	}
 };
 
+struct SeqInfoComparator {
+	char* allStr = NULL;
+	unsigned int* offsets = NULL;
+
+	CUB_RUNTIME_FUNCTION __forceinline__ __device__
+	bool operator()(const SeqInfo &el1, const SeqInfo &el2) {
+		unsigned int start1 = offsets[el1.originalIndex], start2 = offsets[el2.originalIndex];
+		int len1 = offsets[el1.originalIndex + 1] - start1;
+		int len2 = offsets[el2.originalIndex + 1] - start2;
+		int shorterLen = (len1 < len2) ? len1 : len2;
+
+		for (int i = 0; i < shorterLen; i++) {
+			char c1 = allStr[start1 + i], c2 = allStr[start2 + i];
+			if (c1 != c2)
+				return c1 < c2;
+		}
+
+		// exact equal but irreflexive property is needed
+		// https://en.cppreference.com/w/cpp/concepts/strict_weak_order
+		if (len1 == len2)
+			return false;
+		return len1 < len2;
+	}
+}
+
 template <typename T>
 void inclusive_sum(T* input, T* output, int n) {
 	void *buffer = NULL;
@@ -93,6 +118,16 @@ void sort_int2(Int2* input, int n) {
 	void *buffer = NULL;
 	size_t bufferSize = 0;
 	Int2Comparator op;
+	cub::DeviceMergeSort::SortKeys(buffer, bufferSize, input, n, op); gpuerr();
+	cudaMalloc(&buffer, bufferSize); gpuerr(); /*8x memory*/
+	cub::DeviceMergeSort::SortKeys(buffer, bufferSize, input, n, op); gpuerr();
+	cudaFree(buffer); gpuerr();
+}
+
+void sort_info(SeqInfo* input, char* allStr, int* offsets, int n) {
+	void *buffer = NULL;
+	size_t bufferSize = 0;
+	SeqInfoComparator op = {.allStr = allStr, .offsets = offsets};
 	cub::DeviceMergeSort::SortKeys(buffer, bufferSize, input, n, op); gpuerr();
 	cudaMalloc(&buffer, bufferSize); gpuerr(); /*8x memory*/
 	cub::DeviceMergeSort::SortKeys(buffer, bufferSize, input, n, op); gpuerr();

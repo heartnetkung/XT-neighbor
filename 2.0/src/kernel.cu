@@ -554,3 +554,21 @@ void toInt3(char* inputs, unsigned int* offsets, Int3* output, int n) {
 	}
 	output[tid] = ans;
 }
+
+__global__
+void toInt3(char* inputs, unsigned int* offsets, SeqInfo* seqInfo, Int3* output, int n) {
+	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
+	if (tid >= n)
+		return;
+
+	int index = seqInfo[tid].originalIndex;
+	unsigned int start = offsets[index], end = offsets[index + 1];
+	Int3 ans;
+	if (end > MAX_COMPRESSED_LENGTH)
+		end = MAX_COMPRESSED_LENGTH;
+	for (int i = start; i < end; i++) {
+		int value = inputs[i] - BEFORE_A_CHAR;
+		ans.entry[i / 6] |= value << (27 - 5 * (i % 6));
+	}
+	output[tid] = ans;
+}

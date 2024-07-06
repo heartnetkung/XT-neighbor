@@ -172,11 +172,14 @@ int overlap_mode_init(Int3* seq, Int3* &seqOut, SeqInfo* &infoInOut, int* &infoO
 	return uniqueLen;
 }
 
+//=====================================
+// private functions
+//=====================================
+
 __device__
 char* _allStr = NULL; /*global variable for callback*/
 __device__
 unsigned int* _allStrOffset = NULL; /*global variable for callback*/
-
 __global__
 void _setGlobalVar(char* allStr, unsigned int* allStrOffset) {
 	_allStr = allStr;
@@ -196,4 +199,34 @@ bool SeqInfo::operator==(const SeqInfo& t) const {
 			return false;
 	}
 	return true;
+}
+
+/**
+ * deduplicate the sequence on the full length level and generate related data
+ *
+ * @param allStr container of all sequences
+ * @param allStrOffsets start/end position of each sequence
+ * @param info information of each input sequence, will be sorted as the side-effect of this operation
+ * @param seqOut deduplicated sequence in Int3 form
+ * @param infoLenOut , has the same length as seqOut
+ * @param seqLen number of input sequence
+ * @param buffer integer buffer
+ * @return the length of seqOut
+*/
+int deduplicate_full_length(char* allStr, unsigned int* allStrOffsets, SeqInfo* &info,
+               Int3* &seqOut, int* &infoLenOut, int seqLen, int* buffer) {
+	SeqInfo* uniqueSeqInfo;
+
+	_setGlobalVar(allStr, allStrOffsets);
+	sort_info(info, allStr, allStrOffsets, seqLen);
+
+	_cudaMalloc(infoLenOut, uniqueSeqInfo, seqLen);
+	unique_counts(info, infoLenOut, uniqueSeqInfo, buffer, seqLen);
+	int uniqueLen = transfer_last_element(buffer, 1);
+
+	cudaMalloc(&seqOut, sizeof(Int3)*seqLen); gpuerr();
+	toInt3 <<< NUM_BLOCK(uniqueLen), NUM_THREADS>>>(
+	    allStr, allStrOffsets, uniqueSeqInfo, seqOut, uniqueLen); gpuerr();
+	cudaFree(uniqueSeqInfo); gpuerr();
+	return uniqueLen;
 }
