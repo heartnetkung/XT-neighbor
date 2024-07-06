@@ -50,7 +50,7 @@ TEST(DeduplicateFullLength, {
 
 	//move to device
 	char* allStr_d = host_to_device(allStr, totalLen);
-	unsigned int* offsets_d = host_to_device(offsets, seqLen);
+	unsigned int* offsets_d = host_to_device(offsets, seqLen + 1);
 	SeqInfo* info_d = host_to_device(info, seqLen);
 
 	int uniqueLen = deduplicate_full_length(allStr_d, offsets_d, info_d, seqOut, infoLenOut , seqLen, buffer);
