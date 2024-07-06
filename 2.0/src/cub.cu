@@ -53,7 +53,9 @@ struct Sum {
 	}
 };
 
+__device__ __host__
 char* _allStr = NULL; /*global variable for callback*/
+__device__ __host__
 unsigned int* _allStrOffset = NULL; /*global variable for callback*/
 __device__ __host__
 bool SeqInfo::operator==(const SeqInfo& t) const {
@@ -105,7 +107,6 @@ void sort_key_values2(Int2* keys, size_t* values, int n) {
 	cub::DeviceMergeSort::SortPairs(buffer, bufferSize, keys, values, n, op); gpuerr();
 	cudaFree(buffer); gpuerr();
 }
-
 
 void sort_int2(Int2* input, int n) {
 	void *buffer = NULL;
