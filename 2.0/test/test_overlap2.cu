@@ -21,7 +21,7 @@ TEST(SeqInfoEquality, {
 	SeqInfo info2 = {.frequency = 2, .repertoire = 1, .originalIndex = 1};
 	SeqInfo info3 = {.frequency = 3, .repertoire = 2, .originalIndex = 2};
 	SeqInfo lefts_h[] = {info1, info2, info3, info1, info2, info1};
-	SeqInfo rights_h[] = {info1, info2, info3, info1, info3, info3};
+	SeqInfo rights_h[] = {info1, info2, info3, info2, info3, info3};
 	SeqInfo* lefts_d = host_to_device(lefts_h, infoLen);
 	SeqInfo* rights_d = host_to_device(rights_h, infoLen);
 
