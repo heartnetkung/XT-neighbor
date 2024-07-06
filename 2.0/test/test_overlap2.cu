@@ -54,4 +54,8 @@ TEST(DeduplicateFullLength, {
 	SeqInfo* info_d = host_to_device(info, seqLen);
 
 	int uniqueLen = deduplicate_full_length(allStr_d, offsets_d, info_d, seqOut, infoLenOut , seqLen, buffer);
+	printf("ul %d\n", uniqueLen);
+	print_int_arr(infoLenOut, uniqueLen);
+	print_int3_arr(seqOut, uniqueLen);
+	print_seqinfo_arr(info_d, seqLen);
 })

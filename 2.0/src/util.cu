@@ -221,7 +221,7 @@ void print_seqinfo_arr(SeqInfo* arr, int n) {
 	printf("[ ");
 	SeqInfo* arr2 = device_to_host(arr, n);
 	for (int i = 0; i < n; i++) {
-		printf("(%d %d)", arr2[i].frequency, arr2[i].repertoire);
+		printf("(%d %d %d)", arr2[i].frequency, arr2[i].repertoire, arr2[i].originalIndex);
 		if (i != n - 1)
 			printf(", ");
 	}
