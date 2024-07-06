@@ -3,9 +3,9 @@
 
 TEST(Stream4, {
 	int seqLen = 7;
-	char seq_h[21] = "CAAACADACAAACDKDCAAKCAAAAAAAAAAAAAAAAAAAAKCAAAAAAAAAAAAAAAAAAAAD";
 	int totalLen = 64;
-	unsigned int offsets_h[] = {0, 4, 8, 12, 16, 20, 42, totalLen};
+	char seq_h[totalLen+1] = "CAAACADACAAACDKDCAAKCAAAAAAAAAAAAAAAAAAAAKCAAAAAAAAAAAAAAAAAAAAD";
+	unsigned int offsets_h[] = {0, 4, 8, 12, 16, 20, 42, 64};
 	int pairLen = seqLen * (seqLen - 1) / 2;
 	int distance = 1;
 
