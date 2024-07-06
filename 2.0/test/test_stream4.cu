@@ -2,10 +2,11 @@
 #include "../src/xtn_inner.cu"
 
 TEST(Stream4, {
-	int seqLen = 5;
-	char seq_h[21] = "CAAACADACAAACDKDCAAK";
-	unsigned int offsets_h[] = {0, 4, 8, 12, 16, 20};
-	int pairLen = 10;
+	int seqLen = 7;
+	char seq_h[21] = "CAAACADACAAACDKDCAAKCAAAAAAAAAAAAAAAAAAAAKCAAAAAAAAAAAAAAAAAAAAD";
+	int totalLen = 64;
+	unsigned int offsets_h[] = {0, 4, 8, 12, 16, 20, 42, totalLen};
+	int pairLen = seqLen * (seqLen - 1) / 2;
 	int distance = 1;
 
 	//allocate inputs
@@ -20,10 +21,10 @@ TEST(Stream4, {
 
 	//make inputs
 	int count = 0;
-	for (int i = 0; i < 5; i++)
-		for (int j = i + 1; j < 5; j++)
+	for (int i = 0; i < seqLen; i++)
+		for (int j = i + 1; j < seqLen; j++)
 			pairs_h[count++] = {.x = i, .y = j};
-	seq_d = host_to_device(seq_h, 20);
+	seq_d = host_to_device(seq_h, totalLen);
 	pairs_d = host_to_device(pairs_h, pairLen);
 	offsets_d = host_to_device(offsets_h, seqLen + 1);
 
@@ -34,11 +35,11 @@ TEST(Stream4, {
 	stream_handler4_nn(pairInput, output, seq_d, offsets_d, seqLen, distance, LEVENSHTEIN, deviceInt);
 
 	//expactation
-	int expectedLen = 5;
+	int expectedLen = 6;
 	Int2 expectedPairs[] = {
-		{.x = 0, .y = 1}, {.x = 0, .y = 2}, {.x = 0, .y = 4}, {.x = 1, .y = 2}, {.x = 2, .y = 4}
+		{.x = 0, .y = 1}, {.x = 0, .y = 2}, {.x = 0, .y = 4}, {.x = 1, .y = 2}, {.x = 2, .y = 4}, {.x = 5, .y = 6}
 	};
-	char expectedDistances[] = {1, 0, 1, 1, 1};
+	char expectedDistances[] = {1, 0, 1, 1, 1, 1};
 
 	//check
 	check(output.len == expectedLen);
