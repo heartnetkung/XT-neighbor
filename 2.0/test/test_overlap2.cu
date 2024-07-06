@@ -62,11 +62,18 @@ TEST(DeduplicateFullLength, {
 		{.frequency = 2, .repertoire = 1, .originalIndex = 1}
 	};
 	Int3* seqOut_h = device_to_host(seqOut, uniqueLen);
+	SeqInfo* info_h = device_to_host(info_d, seqLen);
 
 	//check
 	check(uniqueLen == expectedLen);
 	check_device_arr(infoLenOut, expectedInfoLenOut, uniqueLen);
-	check_device_arr(info_d, expectedInfo, uniqueLen);
-	checkstr( str_decode(seqOut_h[0]), "CAAA" );
-	checkstr( str_decode(seqOut_h[1]), "CAAD" );
+	checkstr(str_decode(seqOut_h[0]), "CAAA" );
+	checkstr(str_decode(seqOut_h[1]), "CAAD" );
+
+	//manual checking expectedInfo since equality testing doesn't work
+	for (int i = 0; i < seqLen; i++) {
+		check(info_h[i].frequency == expectedInfo[i].frequency);
+		check(info_h[i].repertoire == expectedInfo[i].repertoire);
+		check(info_h[i].originalIndex == expectedInfo[i].originalIndex);
+	}
 })
