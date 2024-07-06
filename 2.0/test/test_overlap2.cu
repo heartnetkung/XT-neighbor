@@ -1,6 +1,7 @@
 #include "test_util.cu"
 #include "../src/xtn_overlap_inner.cu"
 
+__global__
 void do_eq(SeqInfo* left, SeqInfo* right, bool* out, int n) {
 	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
 	if (tid >= n)
