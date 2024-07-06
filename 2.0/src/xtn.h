@@ -39,10 +39,10 @@ struct Int2 {
  * Information related to a sequence
 */
 struct SeqInfo {
-	int frequency, repertoire;
-	bool operator==(const SeqInfo& t) const {
-		return (frequency == t.frequency) && (repertoire == t.repertoire);
-	}
+	int frequency, repertoire, originalIndex;
+	//TODO remove?
+	__device__ __host__
+	bool operator==(const SeqInfo& t) const;
 };
 
 /**

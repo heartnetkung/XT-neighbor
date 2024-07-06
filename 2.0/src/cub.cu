@@ -53,6 +53,23 @@ struct Sum {
 	}
 };
 
+char* _allStr = NULL; /*global variable for callback*/
+unsigned int* _allStrOffset = NULL; /*global variable for callback*/
+__device__ __host__
+bool SeqInfo::operator==(const SeqInfo& t) const {
+	unsigned int start1 = _allStrOffset[originalIndex], start2 = _allStrOffset[t.originalIndex];
+	int len1 = _allStrOffset[originalIndex + 1] - start1;
+	int len2 = _allStrOffset[t.originalIndex + 1] - start2;
+	if (len1 != len2) return false;
+
+	for (int i = 0; i < len1; i++) {
+		char c1 = _allStr[start1 + i], c2 = _allStr[start2 + i];
+		if (c1 != c2)
+			return false;
+	}
+	return true;
+}
+
 template <typename T>
 void inclusive_sum(T* input, T* output, int n) {
 	void *buffer = NULL;

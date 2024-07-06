@@ -168,8 +168,11 @@ int parse_info(char* path, SeqInfo* result, int len, int seqLen) {
 			fclose(file);
 			return print_err("total repertoires' size does not match sequence count [1]");
 		}
-		for (int i = 0; i < temp; i++)
-			result[resultIndex++].repertoire = inputCount;
+		for (int i = 0; i < temp; i++) {
+			result[resultIndex].repertoire = inputCount;
+			result[resultIndex].originalIndex = resultIndex;
+			resultIndex++;
+		}
 		inputCount++;
 	}
 

@@ -18,6 +18,7 @@ if(BUILD_CUB)
 	add_executable(test_stream4 test/test_stream4.cu)
 	add_executable(test_stream4_overlap test/test_stream4_overlap.cu)
 	add_executable(test_overlap_init test/test_overlap_init.cu)
+	add_executable(test_overlap2 test/test_overlap2.cu)
 endif(BUILD_CUB)
 
 if(BUILD_NON_CUB)
