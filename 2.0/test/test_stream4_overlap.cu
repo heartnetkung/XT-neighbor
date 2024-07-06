@@ -1,5 +1,5 @@
 #include "test_util.cu"
-#include "../src/xtn_inner.cu"
+#include "../src/xtn_overlap_inner.cu"
 
 TEST(Stream4Overlap, {
 	int seqLen = 4;
