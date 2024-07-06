@@ -6,7 +6,7 @@ void do_eq(SeqInfo* left, SeqInfo* right, bool* out, int n) {
 	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
 	if (tid >= n)
 		return;
-	out[tid] = (left == right);
+	out[tid] = (left[tid] == right[tid]);
 }
 
 TEST(SeqInfoEquality, {
