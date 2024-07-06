@@ -545,7 +545,7 @@ void toInt3(char* inputs, unsigned int* offsets, Int3* output, int n) {
 		return;
 
 	unsigned int start = offsets[tid];
-	int len = offsets[index + 1] - start;
+	int len = offsets[tid + 1] - start;
 	Int3 ans;
 	if (len > MAX_COMPRESSED_LENGTH)
 		len = MAX_COMPRESSED_LENGTH;
