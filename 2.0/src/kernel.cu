@@ -546,8 +546,8 @@ void toInt3(char* inputs, unsigned int* offsets, Int3* output, int n) {
 
 	unsigned int start = offsets[tid], end = offsets[tid + 1];
 	Int3 ans;
-	if (end > MAX_COMPRESSED_LENGTH)
-		end = MAX_COMPRESSED_LENGTH;
+	if ((end - start) > MAX_COMPRESSED_LENGTH)
+		end = start + MAX_COMPRESSED_LENGTH;
 	for (int i = start; i < end; i++) {
 		int value = inputs[i] - BEFORE_A_CHAR;
 		ans.entry[i / 6] |= value << (27 - 5 * (i % 6));
@@ -564,9 +564,9 @@ void toInt3(char* inputs, unsigned int* offsets, SeqInfo* seqInfo, Int3* output,
 	int index = seqInfo[tid].originalIndex;
 	unsigned int start = offsets[index], end = offsets[index + 1];
 	Int3 ans;
-	if (end > MAX_COMPRESSED_LENGTH)
-		end = MAX_COMPRESSED_LENGTH;
-	for (int i = start; i < end; i++) {
+	if ((end - start) > MAX_COMPRESSED_LENGTH)
+		end = start + MAX_COMPRESSED_LENGTH;
+	for (unsigned int i = start; i < end; i++) {
 		int value = inputs[i] - BEFORE_A_CHAR;
 		ans.entry[i / 6] |= value << (27 - 5 * (i % 6));
 	}
