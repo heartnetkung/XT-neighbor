@@ -76,7 +76,7 @@ struct SeqInfoComparator {
 			return false;
 		return len1 < len2;
 	}
-}
+};
 
 template <typename T>
 void inclusive_sum(T* input, T* output, int n) {
