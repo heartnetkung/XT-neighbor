@@ -124,7 +124,7 @@ void sort_int2(Int2* input, int n) {
 	cudaFree(buffer); gpuerr();
 }
 
-void sort_info(SeqInfo* input, char* allStr, int* offsets, int n) {
+void sort_info(SeqInfo* input, char* allStr, unsigned int* offsets, int n) {
 	void *buffer = NULL;
 	size_t bufferSize = 0;
 	SeqInfoComparator op = {.allStr = allStr, .offsets = offsets};
