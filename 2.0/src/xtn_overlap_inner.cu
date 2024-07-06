@@ -214,10 +214,10 @@ bool SeqInfo::operator==(const SeqInfo& t) const {
  * @return the length of seqOut
 */
 int deduplicate_full_length(char* allStr, unsigned int* allStrOffsets, SeqInfo* &info,
-               Int3* &seqOut, int* &infoLenOut, int seqLen, int* buffer) {
+                            Int3* &seqOut, int* &infoLenOut, int seqLen, int* buffer) {
 	SeqInfo* uniqueSeqInfo;
 
-	_setGlobalVar(allStr, allStrOffsets);
+	_setGlobalVar <<< 1, 1>>>(allStr, allStrOffsets);
 	sort_info(info, allStr, allStrOffsets, seqLen);
 
 	_cudaMalloc(infoLenOut, uniqueSeqInfo, seqLen);
