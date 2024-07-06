@@ -40,8 +40,7 @@ struct Int2 {
 */
 struct SeqInfo {
 	int frequency, repertoire, originalIndex;
-	//TODO remove?
-	__device__ __host__
+	__device__
 	bool operator==(const SeqInfo& t) const;
 };
 

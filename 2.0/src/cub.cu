@@ -53,11 +53,11 @@ struct Sum {
 	}
 };
 
-__device__ __host__
+__device__
 char* _allStr = NULL; /*global variable for callback*/
-__device__ __host__
+__device__
 unsigned int* _allStrOffset = NULL; /*global variable for callback*/
-__device__ __host__
+__device__
 bool SeqInfo::operator==(const SeqInfo& t) const {
 	unsigned int start1 = _allStrOffset[originalIndex], start2 = _allStrOffset[t.originalIndex];
 	int len1 = _allStrOffset[originalIndex + 1] - start1;
