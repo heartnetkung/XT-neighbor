@@ -171,3 +171,29 @@ int overlap_mode_init(Int3* seq, Int3* &seqOut, SeqInfo* &infoInOut, int* &infoO
 	allOutputs.push_back(newOutput);
 	return uniqueLen;
 }
+
+__device__
+char* _allStr = NULL; /*global variable for callback*/
+__device__
+unsigned int* _allStrOffset = NULL; /*global variable for callback*/
+
+__global__
+void _setGlobalVar(char* allStr, unsigned int* allStrOffset) {
+	_allStr = allStr;
+	_allStrOffset = allStrOffset;
+}
+
+__device__
+bool SeqInfo::operator==(const SeqInfo& t) const {
+	unsigned int start1 = _allStrOffset[originalIndex], start2 = _allStrOffset[t.originalIndex];
+	int len1 = _allStrOffset[originalIndex + 1] - start1;
+	int len2 = _allStrOffset[t.originalIndex + 1] - start2;
+	if (len1 != len2) return false;
+
+	for (int i = 0; i < len1; i++) {
+		char c1 = _allStr[start1 + i], c2 = _allStr[start2 + i];
+		if (c1 != c2)
+			return false;
+	}
+	return true;
+}

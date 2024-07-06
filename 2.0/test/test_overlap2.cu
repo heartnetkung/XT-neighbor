@@ -12,8 +12,8 @@ TEST(SeqInfoEquality, {
 	//CAAA CAAD CAAA
 	char allStr[] = "CAAACAADCAAA";
 	unsigned int offsets[] = {0, 4, 8, 12};
-	_allStr = host_to_device(allStr, 12);
-	_allStrOffset = host_to_device(offsets, 4);
+	char* allStr_d = host_to_device(allStr, 12);
+	unsigned int* offsets_d = host_to_device(offsets, 4);
 
 	int infoLen = 6;
 	SeqInfo info1 = {.frequency = 1, .repertoire = 0, .originalIndex = 0};
@@ -26,7 +26,9 @@ TEST(SeqInfoEquality, {
 
 	bool* output;
 	cudaMallocHost(&output, sizeof(bool)*infoLen);
-	do_eq <<< 1, 1>>>(lefts_d, rights_d, output, infoLen);
+	_setGlobalVar <<< 1, 1>>>(allStr_d, offsets_d);
+	do_eq <<< infoLen, 1>>>(lefts_d, rights_d, output, infoLen);
+
 	bool expected[] = {true, true, true, false, false, true};
 	check_device_arr(output, expected, infoLen);
 })
