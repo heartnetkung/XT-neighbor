@@ -26,7 +26,7 @@ TEST(SeqInfoEquality, {
 
 	bool* output;
 	cudaMallocHost(&output, sizeof(bool)*infoLen);
-	do_eq <<< 1, 1>>>(lefts_d, rights_d, infoLen);
+	do_eq <<< 1, 1>>>(lefts_d, rights_d, output, infoLen);
 	bool expected[] = {true, true, true, false, false, true};
 	check_device_arr(output, expected, infoLen);
 })

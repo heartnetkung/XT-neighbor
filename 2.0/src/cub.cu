@@ -53,9 +53,9 @@ struct Sum {
 	}
 };
 
-__device__
+__global__
 char* _allStr = NULL; /*global variable for callback*/
-__device__
+__global__
 unsigned int* _allStrOffset = NULL; /*global variable for callback*/
 __device__
 bool SeqInfo::operator==(const SeqInfo& t) const {
