@@ -48,14 +48,25 @@ TEST(DeduplicateFullLength, {
 	Int3* seqOut;
 	cudaMalloc(&buffer, sizeof(int));
 
-	//move to device
+	//run
 	char* allStr_d = host_to_device(allStr, totalLen);
 	unsigned int* offsets_d = host_to_device(offsets, seqLen + 1);
 	SeqInfo* info_d = host_to_device(info, seqLen);
-
 	int uniqueLen = deduplicate_full_length(allStr_d, offsets_d, info_d, seqOut, infoLenOut , seqLen, buffer);
-	printf("ul %d\n", uniqueLen);
-	print_int_arr(infoLenOut, uniqueLen);
-	print_int3_arr(seqOut, uniqueLen);
-	print_seqinfo_arr(info_d, seqLen);
+
+	//expected
+	int expectedLen = 2;
+	int expectedInfoLenOut[] = {2, 1};
+	SeqInfo expectedInfo[] = {{.frequency = 1, .repertoire = 0, .originalIndex = 0},
+		{.frequency = 3, .repertoire = 2, .originalIndex = 2},
+		{.frequency = 2, .repertoire = 1, .originalIndex = 1}
+	};
+	Int3* seqOut_h = device_to_host(seqOut, uniqueLen);
+
+	//check
+	check(uniqueLen == expectedLen);
+	check_device_arr(infoLenOut, expectedInfoLenOut, uniqueLen);
+	check_device_arr(info_d, expectedInfo, uniqueLen);
+	checkstr( str_decode(seqOut_h[0]), "CAAA" );
+	checkstr( str_decode(seqOut_h[1]), "CAAD" );
 })

@@ -225,8 +225,6 @@ int deduplicate_full_length(char* allStr, unsigned int* allStrOffsets, SeqInfo* 
 	int uniqueLen = transfer_last_element(buffer, 1);
 
 	cudaMalloc(&seqOut, sizeof(Int3)*uniqueLen); gpuerr();
-	printf("555");
-	print_seqinfo_arr(uniqueSeqInfo, uniqueLen);
 	toInt3 <<< NUM_BLOCK(uniqueLen), NUM_THREADS>>>(
 	    allStr, allStrOffsets, uniqueSeqInfo, seqOut, uniqueLen); gpuerr();
 	cudaFree(uniqueSeqInfo); gpuerr();
