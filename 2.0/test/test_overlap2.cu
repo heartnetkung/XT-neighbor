@@ -33,3 +33,25 @@ TEST(SeqInfoEquality, {
 	bool expected[] = {true, true, true, false, false, true};
 	check_device_arr(output, expected, infoLen);
 })
+
+TEST(DeduplicateFullLength, {
+	int totalLen = 12;
+	int seqLen = 3;
+	char allStr[] = "CAAACAADCAAA";
+	unsigned int offsets[] = {0, 4, 8, 12};
+	SeqInfo info[] = {{.frequency = 1, .repertoire = 0, .originalIndex = 0},
+		{.frequency = 2, .repertoire = 1, .originalIndex = 1},
+		{.frequency = 3, .repertoire = 2, .originalIndex = 2}
+	};
+	int* buffer;
+	int* infoLenOut;
+	Int3* seqOut;
+	cudaMalloc(&buffer, sizeof(int));
+
+	//move to device
+	char* allStr_d = host_to_device(allStr, totalLen);
+	unsigned int* offsets_d = host_to_device(offsets, seqLen);
+	SeqInfo* info_d = host_to_device(info, seqLen);
+
+	int uniqueLen = deduplicate_full_length(allStr_d, offsets_d, info_d, seqOut, infoLenOut , seqLen, buffer);
+})
