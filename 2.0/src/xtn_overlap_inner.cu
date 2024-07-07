@@ -9,13 +9,13 @@
 // private functions
 //=====================================
 
+/** private variable */
 __device__
 char* _allStr = NULL; /*global variable for callback*/
+/** private variable */
 __device__
 unsigned int* _allStrOffset = NULL; /*global variable for callback*/
-/**
- * private function
- */
+/** private function */
 __global__
 void _setGlobalVar(char* allStr, unsigned int* allStrOffset) {
 	_allStr = allStr;
