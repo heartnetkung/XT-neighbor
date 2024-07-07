@@ -51,16 +51,16 @@ TEST(OverlapInit, {
 	int expectedInfoOffset[] = {2, 3, 4};
 	check_device_arr(infoOffsetOut, expectedInfoOffset, uniqueLen);
 
-	// char expectedSeqs[seqLen][6] = {"CAAA", "CADA", "CDKD"};
-	// Int3* expectedSeqOut;
-	// cudaMallocHost(&expectedSeqOut, sizeof(Int3)*uniqueLen);
-	// for (int i = 0; i < uniqueLen; i++)
-	// 	expectedSeqOut[i] = str_encode(expectedSeqs[i]);
-	// check_device_arr(seqOut, expectedSeqOut, uniqueLen);
+	char expectedSeqs[seqLen][6] = {"CAAA", "CADA", "CDKD"};
+	Int3* expectedSeqOut;
+	cudaMallocHost(&expectedSeqOut, sizeof(Int3)*uniqueLen);
+	for (int i = 0; i < uniqueLen; i++)
+		expectedSeqOut[i] = str_encode(expectedSeqs[i]);
+	check_device_arr(seqOut, expectedSeqOut, uniqueLen);
 
-	// Int2 expectedIndexPair[] = {{.x = 0, .y = 0}, {.x = 0, .y = 1}, {.x = 1, .y = 1}};
-	// check_device_arr(output.indexPairs, expectedIndexPair, output.len);
+	Int2 expectedIndexPair[] = {{.x = 0, .y = 0}, {.x = 0, .y = 1}, {.x = 1, .y = 1}};
+	check_device_arr(output.indexPairs, expectedIndexPair, output.len);
 
-	// size_t expectedPairwiseFreq[] = {25, 15, 61};
-	// check_device_arr(output.pairwiseFrequencies, expectedPairwiseFreq, output.len);
+	size_t expectedPairwiseFreq[] = {25, 15, 61};
+	check_device_arr(output.pairwiseFrequencies, expectedPairwiseFreq, output.len);
 })
