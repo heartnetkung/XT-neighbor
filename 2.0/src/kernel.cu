@@ -302,7 +302,8 @@ char hamming(char* allStr, unsigned int start1, unsigned int start2, int len1, i
 /**
  * calculate distances of strings from given pairs and flag ones exceeding the threshold.
  *
- * @param seq sequence input
+ * @param allStr container of all sequences
+ * @param offsets start/end position of each sequence
  * @param index pairs of sequence to calculate
  * @param distance Levenshtein/Hamming distance threshold
  * @param measure enum representing Levenshtein/Hamming
@@ -538,6 +539,14 @@ void init_overlap_output(SeqInfo* info, Int2* indexOut, size_t* freqOut,
 	}
 }
 
+/**
+ * generate Int3 sequence representation from allStr
+ *
+ * @param inputs container of all sequences
+ * @param offsets start/end position of each sequence
+ * @param output array of Int3 result with the length of n
+ * @param n length of offsets
+*/
 __global__
 void toInt3(char* inputs, unsigned int* offsets, Int3* output, int n) {
 	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
@@ -556,6 +565,15 @@ void toInt3(char* inputs, unsigned int* offsets, Int3* output, int n) {
 	output[tid] = ans;
 }
 
+/**
+ * generate Int3 sequence representation from allStr, filtered by seqInfo
+ *
+ * @param inputs container of all sequences
+ * @param offsets start/end position of each sequence
+ * @param seqInfo selection of strings to generate output, denoted by originalIndex
+ * @param output array of Int3 result with the length of n
+ * @param n length of seqInfo
+*/
 __global__
 void toInt3(char* inputs, unsigned int* offsets, SeqInfo* seqInfo, Int3* output, int n) {
 	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;

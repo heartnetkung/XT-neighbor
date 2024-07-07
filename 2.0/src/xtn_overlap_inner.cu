@@ -1,5 +1,10 @@
 #include "xtn_inner.cu"
 
+/**
+ * @file
+ * A collection of patching functions that add repertoire-comparison functionality to xtn_overlap.cu.
+ */
+
 //=====================================
 // private functions
 //=====================================
@@ -8,12 +13,20 @@ __device__
 char* _allStr = NULL; /*global variable for callback*/
 __device__
 unsigned int* _allStrOffset = NULL; /*global variable for callback*/
+/**
+ * private function
+ */
 __global__
 void _setGlobalVar(char* allStr, unsigned int* allStrOffset) {
 	_allStr = allStr;
 	_allStrOffset = allStrOffset;
 }
 
+/**
+ * check the equality of SeqInfo, not by its value but by the equality of sequence denoted by originalIndex
+ * @param t SeqInfo object to check against
+ * @return isEqual
+ */
 __device__
 bool SeqInfo::operator==(const SeqInfo& t) const {
 	unsigned int start1 = _allStrOffset[originalIndex], start2 = _allStrOffset[t.originalIndex];
@@ -36,7 +49,7 @@ bool SeqInfo::operator==(const SeqInfo& t) const {
  * @param allStrOffsets start/end position of each sequence
  * @param info information of each input sequence, will be sorted as the side-effect of this operation
  * @param seqOut deduplicated sequence in Int3 form
- * @param infoLenOut , has the same length as seqOut
+ * @param infoLenOut count of each duplicated sequence, has the same length as seqOut
  * @param seqLen number of input sequence
  * @param buffer integer buffer
  * @return the length of seqOut
@@ -111,7 +124,8 @@ int overlap_mode_init(char* allStr, unsigned int* allStrOffsets, Int3* &seqOut, 
  *
  * @param pairInput nearest neighbor pairs
  * @param allOutputs container of generated results
- * @param seq input CDR3 sequences
+ * @param allStr container of all sequences
+ * @param allStrOffsets start/end position of each sequence
  * @param seqInfo information of each sequence
  * @param seqOffset offset of seqInfo array
  * @param seqLen number of input CDR3 sequences

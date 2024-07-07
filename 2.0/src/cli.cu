@@ -89,7 +89,14 @@ int parse_args(int argc, char **argv, XTNArgs* ans) {
 }
 
 /**
- * read and parse input csv file to Int3* and maybe int*
+ * read and parse input csv file to SeqArray and maybe SeqInfo
+ *
+ * @param path file path to read
+ * @param seqOut output sequences
+ * @param freqOut output frequency, if doubleCol is set to true
+ * @param len expected length
+ * @param doubleCol if true, read freqOut
+ * @return execution result
 */
 int parse_input(char* path, SeqArray* seqOut, SeqInfo* freqOut, int len, bool doubleCol) {
 	FILE* file = fopen(path, "r");
