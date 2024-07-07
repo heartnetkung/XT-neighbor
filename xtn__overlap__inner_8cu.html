@@ -74,6 +74,7 @@ $(function() {
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:ab5f16ee4836a20f415259984ac4c48c4"><td class="memItemLeft" align="right" valign="top">__global__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xtn__overlap__inner_8cu.html#ab5f16ee4836a20f415259984ac4c48c4">_setGlobalVar</a> (char *allStr, unsigned int *allStrOffset)</td></tr>
+<tr class="memdesc:ab5f16ee4836a20f415259984ac4c48c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">private function  <a href="#ab5f16ee4836a20f415259984ac4c48c4">More...</a><br /></td></tr>
 <tr class="separator:ab5f16ee4836a20f415259984ac4c48c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a61cc9af693863d8d2f67d4f2cb1801d5"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xtn__overlap__inner_8cu.html#a61cc9af693863d8d2f67d4f2cb1801d5">deduplicate_full_length</a> (char *allStr, unsigned int *allStrOffsets, <a class="el" href="structSeqInfo.html">SeqInfo</a> *&amp;info, <a class="el" href="structInt3.html">Int3</a> *&amp;seqOut, int *&amp;infoLenOut, int seqLen, int *buffer)</td></tr>
 <tr class="memdesc:a61cc9af693863d8d2f67d4f2cb1801d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">deduplicate the sequence on the full length level and generate related data  <a href="#a61cc9af693863d8d2f67d4f2cb1801d5">More...</a><br /></td></tr>
@@ -121,6 +122,8 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>private function </p>
 
 </div>
 </div>
@@ -187,7 +190,7 @@ Variables</h2></td></tr>
     <tr><td class="paramname">allStrOffsets</td><td>start/end position of each sequence </td></tr>
     <tr><td class="paramname">info</td><td>information of each input sequence, will be sorted as the side-effect of this operation </td></tr>
     <tr><td class="paramname">seqOut</td><td>deduplicated sequence in <a class="el" href="structInt3.html" title="12-byte integer representation for CDR3 string. ">Int3</a> form </td></tr>
-    <tr><td class="paramname">infoLenOut,has</td><td>the same length as seqOut </td></tr>
+    <tr><td class="paramname">infoLenOut</td><td>count of each duplicated sequence, has the same length as seqOut </td></tr>
     <tr><td class="paramname">seqLen</td><td>number of input sequence </td></tr>
     <tr><td class="paramname">buffer</td><td>integer buffer </td></tr>
   </table>
@@ -400,7 +403,8 @@ Variables</h2></td></tr>
   <table class="params">
     <tr><td class="paramname">pairInput</td><td>nearest neighbor pairs </td></tr>
     <tr><td class="paramname">allOutputs</td><td>container of generated results </td></tr>
-    <tr><td class="paramname">seq</td><td>input CDR3 sequences </td></tr>
+    <tr><td class="paramname">allStr</td><td>container of all sequences </td></tr>
+    <tr><td class="paramname">allStrOffsets</td><td>start/end position of each sequence </td></tr>
     <tr><td class="paramname">seqInfo</td><td>information of each sequence </td></tr>
     <tr><td class="paramname">seqOffset</td><td>offset of seqInfo array </td></tr>
     <tr><td class="paramname">seqLen</td><td>number of input CDR3 sequences </td></tr>

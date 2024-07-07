@@ -142,8 +142,10 @@ Functions</h2></td></tr>
 <tr class="memdesc:a3cc7396280779ad937a3d79543686f86"><td class="mdescLeft">&#160;</td><td class="mdescRight">generate initial output of overlap mode.  <a href="#a3cc7396280779ad937a3d79543686f86">More...</a><br /></td></tr>
 <tr class="separator:a3cc7396280779ad937a3d79543686f86"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad5d69af264c47640482e9c47a0eef8c4"><td class="memItemLeft" align="right" valign="top">__global__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#ad5d69af264c47640482e9c47a0eef8c4">toInt3</a> (char *inputs, unsigned int *offsets, <a class="el" href="structInt3.html">Int3</a> *output, int n)</td></tr>
+<tr class="memdesc:ad5d69af264c47640482e9c47a0eef8c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">generate <a class="el" href="structInt3.html" title="12-byte integer representation for CDR3 string. ">Int3</a> sequence representation from allStr  <a href="#ad5d69af264c47640482e9c47a0eef8c4">More...</a><br /></td></tr>
 <tr class="separator:ad5d69af264c47640482e9c47a0eef8c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a796a42e1b6529b18b6a4a49fa44465de"><td class="memItemLeft" align="right" valign="top">__global__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#a796a42e1b6529b18b6a4a49fa44465de">toInt3</a> (char *inputs, unsigned int *offsets, <a class="el" href="structSeqInfo.html">SeqInfo</a> *seqInfo, <a class="el" href="structInt3.html">Int3</a> *output, int n)</td></tr>
+<tr class="memdesc:a796a42e1b6529b18b6a4a49fa44465de"><td class="mdescLeft">&#160;</td><td class="mdescRight">generate <a class="el" href="structInt3.html" title="12-byte integer representation for CDR3 string. ">Int3</a> sequence representation from allStr, filtered by seqInfo  <a href="#a796a42e1b6529b18b6a4a49fa44465de">More...</a><br /></td></tr>
 <tr class="separator:a796a42e1b6529b18b6a4a49fa44465de"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
@@ -313,7 +315,7 @@ Variables</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">allStr</td><td>container of all sequences </td></tr>
-    <tr><td class="paramname">allStrOffsets</td><td>start/end position of each sequence </td></tr>
+    <tr><td class="paramname">offsets</td><td>start/end position of each sequence </td></tr>
     <tr><td class="paramname">index</td><td>pairs of sequence to calculate </td></tr>
     <tr><td class="paramname">distance</td><td>Levenshtein/Hamming distance threshold </td></tr>
     <tr><td class="paramname">measure</td><td>enum representing Levenshtein/Hamming </td></tr>
@@ -1250,6 +1252,17 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>generate <a class="el" href="structInt3.html" title="12-byte integer representation for CDR3 string. ">Int3</a> sequence representation from allStr </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">inputs</td><td>container of all sequences </td></tr>
+    <tr><td class="paramname">offsets</td><td>start/end position of each sequence </td></tr>
+    <tr><td class="paramname">output</td><td>array of <a class="el" href="structInt3.html" title="12-byte integer representation for CDR3 string. ">Int3</a> result with the length of n </td></tr>
+    <tr><td class="paramname">n</td><td>length of offsets </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
 <a id="a796a42e1b6529b18b6a4a49fa44465de"></a>
@@ -1295,6 +1308,18 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>generate <a class="el" href="structInt3.html" title="12-byte integer representation for CDR3 string. ">Int3</a> sequence representation from allStr, filtered by seqInfo </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">inputs</td><td>container of all sequences </td></tr>
+    <tr><td class="paramname">offsets</td><td>start/end position of each sequence </td></tr>
+    <tr><td class="paramname">seqInfo</td><td>selection of strings to generate output, denoted by originalIndex </td></tr>
+    <tr><td class="paramname">output</td><td>array of <a class="el" href="structInt3.html" title="12-byte integer representation for CDR3 string. ">Int3</a> result with the length of n </td></tr>
+    <tr><td class="paramname">n</td><td>length of seqInfo </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
