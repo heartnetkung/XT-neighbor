@@ -86,7 +86,7 @@ int overlap_mode_init(char* allStr, unsigned int* allStrOffsets, Int3* &seqOut, 
 	// init output
 	int outputLen = transfer_last_element(outputOffset, uniqueLen);
 	_cudaMalloc(indexPairs, pairwiseFreq, outputLen);
-	init_overlap_output <<< NUM_BLOCK(uniqueLen), NUM_THREADS>>>(infoInOut, indexPairs,
+	init_overlap_output <<< NUM_BLOCK(uniqueLen), NUM_THREADS>>>(info, indexPairs,
 	        pairwiseFreq, infoOffsetOut, outputOffset, uniqueLen); gpuerr();
 
 	// merge output

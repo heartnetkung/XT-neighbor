@@ -3,9 +3,11 @@
 
 TEST(OverlapInit, {
 	std::vector<XTNOutput> allOutputs;
-	int* buffer, *infoOffsetOut, offsets_d;
+	int* buffer, *infoOffsetOut;
+	unsigned int* offsets_d;
 	Int3 *seqOut;
 	SeqInfo* info_d;
+	char* allStr_d;
 
 	int seqLen = 4;
 	char allStr[] = "CAAACAADCAAA";
@@ -18,11 +20,11 @@ TEST(OverlapInit, {
 	};
 
 	cudaMalloc(&buffer, sizeof(int));
-	cudaMalloc(&info_d, sizeof(SeqInfo)*seqLen);
 	info_d = host_to_device(info, seqLen);
 	offsets_d = host_to_device(offsets, seqLen + 1);
+	allStr_d = host_to_device(allStr, seqLen);
 
-	int uniqueLen = overlap_mode_init(allStr, offsets, seqOut, info_d, infoOffsetOut,
+	int uniqueLen = overlap_mode_init(allStr_d, offsets_d, seqOut, info_d, infoOffsetOut,
 	                                  allOutputs, seqLen, buffer);
 	XTNOutput output = allOutputs.back();
 	printf("aa %d", uniqueLen);
