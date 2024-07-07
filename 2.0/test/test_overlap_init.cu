@@ -28,21 +28,28 @@ TEST(OverlapInit, {
 	int uniqueLen = overlap_mode_init(allStr_d, offsets_d, seqOut, info_d, infoOffsetOut,
 	                                  allOutputs, seqLen, buffer);
 	XTNOutput output = allOutputs.back();
-	printf("aa %d", uniqueLen);
 
-	// int expectedUniqueLen = 3, expectedOutputLen = 3, expectedOutputCount = 1;
-	// check(uniqueLen == expectedUniqueLen);
-	// check(output.len == expectedOutputLen);
-	// check(allOutputs.size() == expectedOutputCount);
+	// check
+	int expectedUniqueLen = 3, expectedOutputLen = 3, expectedOutputCount = 1;
+	check(uniqueLen == expectedUniqueLen);
+	check(output.len == expectedOutputLen);
+	check(allOutputs.size() == expectedOutputCount);
 
-	// SeqInfo expectedInfo[] = {
-	// 	{.frequency = 3, .repertoire = 0}, {.frequency = 5, .repertoire = 1},
-	// 	{.frequency = 4, .repertoire = 0}, {.frequency = 6, .repertoire = 1}
-	// };
-	// check_device_arr(infoD, expectedInfo, seqLen);
+	SeqInfo expectedInfo[] = {
+		{.frequency = 3, .repertoire = 0, .originalIndex = 0},
+		{.frequency = 5, .repertoire = 1, .originalIndex = 2},
+		{.frequency = 4, .repertoire = 0, .originalIndex = 1},
+		{.frequency = 6, .repertoire = 1, .originalIndex = 3}
+	};
+	SeqInfo* info_h = device_to_host(info_d, seqLen);
+	for (int i = 0; i < seqLen; i++) {
+		check(info_h[i].frequency == expectedInfo[i].frequency);
+		check(info_h[i].repertoire == expectedInfo[i].repertoire);
+		check(info_h[i].originalIndex == expectedInfo[i].originalIndex);
+	}
 
-	// int expectedInfoOffset[] = {2, 3, 4};
-	// check_device_arr(infoOffset, expectedInfoOffset, uniqueLen);
+	int expectedInfoOffset[] = {2, 3, 4};
+	check_device_arr(infoOffsetOut, expectedInfoOffset, uniqueLen);
 
 	// char expectedSeqs[seqLen][6] = {"CAAA", "CADA", "CDKD"};
 	// Int3* expectedSeqOut;
