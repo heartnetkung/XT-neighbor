@@ -1,5 +1,110 @@
 #include "xtn_inner.cu"
 
+//=====================================
+// private functions
+//=====================================
+
+__device__
+char* _allStr = NULL; /*global variable for callback*/
+__device__
+unsigned int* _allStrOffset = NULL; /*global variable for callback*/
+__global__
+void _setGlobalVar(char* allStr, unsigned int* allStrOffset) {
+	_allStr = allStr;
+	_allStrOffset = allStrOffset;
+}
+
+__device__
+bool SeqInfo::operator==(const SeqInfo& t) const {
+	unsigned int start1 = _allStrOffset[originalIndex], start2 = _allStrOffset[t.originalIndex];
+	int len1 = _allStrOffset[originalIndex + 1] - start1;
+	int len2 = _allStrOffset[t.originalIndex + 1] - start2;
+	if (len1 != len2) return false;
+
+	for (int i = 0; i < len1; i++) {
+		char c1 = _allStr[start1 + i], c2 = _allStr[start2 + i];
+		if (c1 != c2)
+			return false;
+	}
+	return true;
+}
+
+/**
+ * deduplicate the sequence on the full length level and generate related data
+ *
+ * @param allStr container of all sequences
+ * @param allStrOffsets start/end position of each sequence
+ * @param info information of each input sequence, will be sorted as the side-effect of this operation
+ * @param seqOut deduplicated sequence in Int3 form
+ * @param infoLenOut , has the same length as seqOut
+ * @param seqLen number of input sequence
+ * @param buffer integer buffer
+ * @return the length of seqOut
+*/
+int deduplicate_full_length(char* allStr, unsigned int* allStrOffsets, SeqInfo* &info,
+                            Int3* &seqOut, int* &infoLenOut, int seqLen, int* buffer) {
+	SeqInfo* uniqueSeqInfo;
+
+	_setGlobalVar <<< 1, 1>>>(allStr, allStrOffsets);
+	sort_info(info, allStr, allStrOffsets, seqLen);
+
+	_cudaMalloc(infoLenOut, uniqueSeqInfo, seqLen);
+	unique_counts(info, infoLenOut, uniqueSeqInfo, buffer, seqLen);
+	int uniqueLen = transfer_last_element(buffer, 1);
+
+	cudaMalloc(&seqOut, sizeof(Int3)*uniqueLen); gpuerr();
+	toInt3 <<< NUM_BLOCK(uniqueLen), NUM_THREADS>>>(
+	    allStr, allStrOffsets, uniqueSeqInfo, seqOut, uniqueLen); gpuerr();
+	cudaFree(uniqueSeqInfo); gpuerr();
+	return uniqueLen;
+}
+
+/**
+ * deduplicate input and initialize output variable
+ *
+ * @param allStr container of all sequences
+ * @param allStrOffsets start/end position of each sequence
+ * @param seqOut return sequence in Int3 form
+ * @param info information of each input sequence, will be sorted as the side-effect of this operation
+ * @param infoOffsetOut offset of each info for each unique sequence
+ * @param allOutputs container of generated result
+ * @param seqLen number of input sequence
+ * @param buffer integer buffer
+ * @return the length of seqOut
+*/
+int overlap_mode_init(char* allStr, unsigned int* allStrOffsets, Int3* &seqOut, SeqInfo* &info,
+                      int* &infoOffsetOut, std::vector<XTNOutput> &allOutputs, int seqLen, int* buffer) {
+	int* outputOffset;
+	Int2* indexPairs, *indexPairs2;
+	size_t* pairwiseFreq, *pairwiseFreq2;
+
+	int uniqueLen = deduplicate_full_length(allStr, allStrOffsets, info, seqOut, outputOffset, seqLen, buffer);
+	cal_pair_len_diag <<< NUM_BLOCK(uniqueLen), NUM_THREADS>>>(infoOffsetOut, outputOffset, uniqueLen); gpuerr();
+	inclusive_sum(outputOffset, uniqueLen);
+	inclusive_sum(infoOffsetOut, uniqueLen);
+
+	// init output
+	int outputLen = transfer_last_element(outputOffset, uniqueLen);
+	_cudaMalloc(indexPairs, pairwiseFreq, outputLen);
+	init_overlap_output <<< NUM_BLOCK(uniqueLen), NUM_THREADS>>>(infoInOut, indexPairs,
+	        pairwiseFreq, infoOffsetOut, outputOffset, uniqueLen); gpuerr();
+
+	// merge output
+	sort_key_values2(indexPairs, pairwiseFreq, outputLen);
+	_cudaMalloc(indexPairs2, pairwiseFreq2, outputLen);
+	sum_by_key(indexPairs, indexPairs2, pairwiseFreq, pairwiseFreq2, buffer, outputLen);
+	_cudaFree(outputOffset, indexPairs, pairwiseFreq);
+
+	// wrap up
+	int finalLen = transfer_last_element(buffer, 1);
+	XTNOutput newOutput;
+	newOutput.indexPairs = shrink(indexPairs2, finalLen);
+	newOutput.pairwiseFrequencies = shrink(pairwiseFreq2, finalLen);
+	newOutput.len = finalLen;
+	allOutputs.push_back(newOutput);
+	return uniqueLen;
+}
+
 /**
  * handle all GPU operations in stream 4 overlap mode.
  *
@@ -117,116 +222,4 @@ XTNOutput mergeOutput(std::vector<XTNOutput> allOutputs, int* buffer) {
 	ans.len = transfer_last_element(buffer, 1);
 	_cudaFree(indexOut, freqOut);
 	return ans;
-}
-
-/**
- * deduplicate input and initialize output variable
- *
- * @param seq input sequence
- * @param seqOut deduplicated input sequence
- * @param infoInOut information of each input sequence
- * @param infoOffsetOut offset of each info for each unique sequence
- * @param allOutputs container of generated result
- * @param seqLen number of input sequence
- * @param buffer integer buffer
- * @return the length of seqOut
-*/
-int overlap_mode_init(Int3* seq, Int3* &seqOut, SeqInfo* &infoInOut, int* &infoOffsetOut,
-                      std::vector<XTNOutput> &allOutputs, int seqLen, int* buffer) {
-	int* outputOffset;
-	Int2* indexPairs, *indexPairs2;
-	size_t* pairwiseFreq, *pairwiseFreq2;
-
-	// create grouping
-	sort_key_values(seq, infoInOut, seqLen);
-	_cudaMalloc(infoOffsetOut, seqOut, seqLen);
-	//FIXME unique compressed sequence is not unique sequence
-	unique_counts(seq, infoOffsetOut, seqOut, buffer, seqLen);
-	int uniqueLen = transfer_last_element(buffer, 1);
-
-	// cal offset
-	cudaMalloc(&outputOffset, uniqueLen * sizeof(int)); gpuerr();
-	cal_pair_len_diag <<< NUM_BLOCK(uniqueLen), NUM_THREADS>>>(infoOffsetOut, outputOffset, uniqueLen); gpuerr();
-	inclusive_sum(outputOffset, uniqueLen);
-	inclusive_sum(infoOffsetOut, uniqueLen);
-
-	// init output
-	int outputLen = transfer_last_element(outputOffset, uniqueLen);
-	_cudaMalloc(indexPairs, pairwiseFreq, outputLen);
-	init_overlap_output <<< NUM_BLOCK(uniqueLen), NUM_THREADS>>>(infoInOut, indexPairs,
-	        pairwiseFreq, infoOffsetOut, outputOffset, uniqueLen); gpuerr();
-
-	// merge output
-	sort_key_values2(indexPairs, pairwiseFreq, outputLen);
-	_cudaMalloc(indexPairs2, pairwiseFreq2, outputLen);
-	sum_by_key(indexPairs, indexPairs2, pairwiseFreq, pairwiseFreq2, buffer, outputLen);
-	_cudaFree(outputOffset, indexPairs, pairwiseFreq);
-
-	// wrap up
-	int finalLen = transfer_last_element(buffer, 1);
-	XTNOutput newOutput;
-	newOutput.indexPairs = shrink(indexPairs2, finalLen);
-	newOutput.pairwiseFrequencies = shrink(pairwiseFreq2, finalLen);
-	newOutput.len = finalLen;
-	allOutputs.push_back(newOutput);
-	return uniqueLen;
-}
-
-//=====================================
-// private functions
-//=====================================
-
-__device__
-char* _allStr = NULL; /*global variable for callback*/
-__device__
-unsigned int* _allStrOffset = NULL; /*global variable for callback*/
-__global__
-void _setGlobalVar(char* allStr, unsigned int* allStrOffset) {
-	_allStr = allStr;
-	_allStrOffset = allStrOffset;
-}
-
-__device__
-bool SeqInfo::operator==(const SeqInfo& t) const {
-	unsigned int start1 = _allStrOffset[originalIndex], start2 = _allStrOffset[t.originalIndex];
-	int len1 = _allStrOffset[originalIndex + 1] - start1;
-	int len2 = _allStrOffset[t.originalIndex + 1] - start2;
-	if (len1 != len2) return false;
-
-	for (int i = 0; i < len1; i++) {
-		char c1 = _allStr[start1 + i], c2 = _allStr[start2 + i];
-		if (c1 != c2)
-			return false;
-	}
-	return true;
-}
-
-/**
- * deduplicate the sequence on the full length level and generate related data
- *
- * @param allStr container of all sequences
- * @param allStrOffsets start/end position of each sequence
- * @param info information of each input sequence, will be sorted as the side-effect of this operation
- * @param seqOut deduplicated sequence in Int3 form
- * @param infoLenOut , has the same length as seqOut
- * @param seqLen number of input sequence
- * @param buffer integer buffer
- * @return the length of seqOut
-*/
-int deduplicate_full_length(char* allStr, unsigned int* allStrOffsets, SeqInfo* &info,
-                            Int3* &seqOut, int* &infoLenOut, int seqLen, int* buffer) {
-	SeqInfo* uniqueSeqInfo;
-
-	_setGlobalVar <<< 1, 1>>>(allStr, allStrOffsets);
-	sort_info(info, allStr, allStrOffsets, seqLen);
-
-	_cudaMalloc(infoLenOut, uniqueSeqInfo, seqLen);
-	unique_counts(info, infoLenOut, uniqueSeqInfo, buffer, seqLen);
-	int uniqueLen = transfer_last_element(buffer, 1);
-
-	cudaMalloc(&seqOut, sizeof(Int3)*uniqueLen); gpuerr();
-	toInt3 <<< NUM_BLOCK(uniqueLen), NUM_THREADS>>>(
-	    allStr, allStrOffsets, uniqueSeqInfo, seqOut, uniqueLen); gpuerr();
-	cudaFree(uniqueSeqInfo); gpuerr();
-	return uniqueLen;
 }
