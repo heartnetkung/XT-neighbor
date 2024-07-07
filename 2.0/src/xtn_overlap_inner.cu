@@ -72,6 +72,10 @@ int deduplicate_full_length(char* allStr, unsigned int* allStrOffsets, SeqInfo* 
 	return uniqueLen;
 }
 
+//=====================================
+// public functions
+//=====================================
+
 /**
  * deduplicate input and initialize output variable
  *
@@ -134,9 +138,9 @@ int overlap_mode_init(char* allStr, unsigned int* allStrOffsets, Int3* &seqOut, 
  * @param buffer integer buffer
  * @param ctx memory context
 */
-void stream_handler4_overlap(Chunk<Int2> pairInput, std::vector<XTNOutput> &allOutputs, char* allStr, unsigned int* allStrOffsets,
-                             SeqInfo* seqInfo, int* seqOffset, int seqLen, int distance,
-                             char measure, int* buffer, MemoryContext ctx) {
+void stream_handler4_overlap(Chunk<Int2> pairInput, std::vector<XTNOutput> &allOutputs, char* allStr,
+                             unsigned int* allStrOffsets, SeqInfo* seqInfo, int* seqOffset, int seqLen,
+                             int distance, char measure, int* buffer, MemoryContext ctx) {
 	Int2* pairOut, *pairOut2, *uniquePairs, *pairOut3;
 	size_t* freqOut, *freqOut2;
 	int* valueLengths, *valueLengthsHost;
@@ -145,9 +149,10 @@ void stream_handler4_overlap(Chunk<Int2> pairInput, std::vector<XTNOutput> &allO
 	// find pairOut3
 	cudaMalloc(&uniquePairs, sizeof(Int2)*pairInput.len); gpuerr();
 	int uniqueLen = deduplicate(pairInput.ptr, uniquePairs, pairInput.len, buffer);
+
 	_cudaMalloc(flags, pairOut3, uniqueLen);
 	cal_distance <<< NUM_BLOCK(uniqueLen), NUM_THREADS>>>(
-	    allStr, allStrOffsets, uniquePairs, distance, measure, NULL,
+	    allStr, allStrOffsets, uniquePairs, seqInfo, seqOffset, distance, measure, NULL,
 	    flags, uniqueLen, seqLen); gpuerr();
 	flag(uniquePairs, flags, pairOut3, buffer, uniqueLen);
 	_cudaFree(uniquePairs, flags);

@@ -305,6 +305,8 @@ char hamming(char* allStr, unsigned int start1, unsigned int start2, int len1, i
  * @param allStr container of all sequences
  * @param offsets start/end position of each sequence
  * @param index pairs of sequence to calculate
+ * @param seqInfo info to lookup originalIndex
+ * @param seqOffset offset to lookup seqInfo
  * @param distance Levenshtein/Hamming distance threshold
  * @param measure enum representing Levenshtein/Hamming
  * @param distanceOutput output distance, maybe null
@@ -312,6 +314,48 @@ char hamming(char* allStr, unsigned int start1, unsigned int start2, int len1, i
  * @param n array length of index
  * @param seqLen array length of seq
 */
+__global__
+void cal_distance(char* allStr, unsigned int* offsets, Int2* index, SeqInfo* seqInfo, int* seqOffset,
+                  int distance, char measure, char* distanceOutput, char* flagOutput, int n, int seqLen) {
+	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
+	if (tid >= n)
+		return;
+
+	Int2 indexPair = index[tid];
+	if (indexPair.x == indexPair.y) {
+		flagOutput[tid] =  0;
+		return;
+	}
+
+	if (indexPair.x >= seqLen || indexPair.y >= seqLen) {
+		printf("curious case! %d %d\n", indexPair.x, indexPair.y);
+		flagOutput[tid] =  0;
+		return;
+	}
+
+	// multiple lookups are required the original sequences pass through multiple transformations
+	// 1. lookup seqOffset to reverse deduplication effect
+	// 2. lookup seqInfo to reverse sorting effect
+	// 3. lookup offsets to go to the actual position in allStr
+	int originalIndex1 = seqInfo[seqOffset[indexPair.x]].originalIndex;
+	int originalIndex2 = seqInfo[seqOffset[indexPair.y]].originalIndex;
+
+	unsigned int start1 = offsets[originalIndex1], start2 = offsets[originalIndex2];
+	int len1 = offsets[originalIndex1 + 1] - start1;
+	int len2 = offsets[originalIndex2 + 1] - start2;
+	char newOutput;
+	if (measure == HAMMING)
+		newOutput = hamming(allStr, start1, start2, len1, len2);
+	else if ((len1 > MAX_COMPRESSED_LENGTH) || (len2 > MAX_COMPRESSED_LENGTH))
+		newOutput = levenshtein(allStr, start1, start2, len1, len2);
+	else
+		newOutput = levenshtein_static(allStr, start1, start2, len1, len2);
+
+	if (distanceOutput != NULL)
+		distanceOutput[tid] = newOutput;
+	flagOutput[tid] =  newOutput <= distance;
+}
+
 __global__
 void cal_distance(char* allStr, unsigned int* offsets, Int2* index, int distance, char measure,
                   char* distanceOutput, char* flagOutput, int n, int seqLen) {
