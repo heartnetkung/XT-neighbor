@@ -15,7 +15,7 @@ TEST(Stream4Overlap, {
 		{.frequency = 6, .repertoire = 1, .originalIndex = 3},
 		{.frequency = 7, .repertoire = 1, .originalIndex = 4}
 	};
-	unsigned int[] allStrOffset = {0, 4, 8, 12, 16, 20};
+	unsigned int allStrOffset[] = {0, 4, 8, 12, 16, 20};
 	int inputOffsets[] = {2, 3, 4, 5};
 	int pairLen = 6;
 	int distance = 1;
@@ -30,8 +30,6 @@ TEST(Stream4Overlap, {
 	ctx.bandwidth2 = 100;
 
 	//make inputs
-	for (int i = 0; i < seqLen; i++)
-		seq_h[i] = str_encode(seqs[i]);
 	int count = 0;
 	for (int i = 0; i < seqLen; i++)
 		for (int j = i + 1; j < seqLen; j++)

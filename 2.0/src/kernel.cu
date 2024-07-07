@@ -337,8 +337,8 @@ void cal_distance(char* allStr, unsigned int* offsets, Int2* index, SeqInfo* seq
 	// 1. lookup seqOffset to reverse deduplication effect
 	// 2. lookup seqInfo to reverse sorting effect
 	// 3. lookup offsets to go to the actual position in allStr
-	int originalIndex1 = seqInfo[seqOffset[indexPair.x]].originalIndex;
-	int originalIndex2 = seqInfo[seqOffset[indexPair.y]].originalIndex;
+	int originalIndex1 = seqInfo[seqOffset[indexPair.x]-1].originalIndex;
+	int originalIndex2 = seqInfo[seqOffset[indexPair.y]-1].originalIndex;
 
 	unsigned int start1 = offsets[originalIndex1], start2 = offsets[originalIndex2];
 	int len1 = offsets[originalIndex1 + 1] - start1;
