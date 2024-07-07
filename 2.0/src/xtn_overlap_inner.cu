@@ -45,7 +45,7 @@ int deduplicate_full_length(char* allStr, unsigned int* allStrOffsets, SeqInfo* 
                             Int3* &seqOut, int* &infoLenOut, int seqLen, int* buffer) {
 	SeqInfo* uniqueSeqInfo;
 
-	_setGlobalVar <<< 1, 1>>>(allStr, allStrOffsets);
+	_setGlobalVar <<< 1, 1>>>(allStr, allStrOffsets); gpuerr();
 	sort_info(info, allStr, allStrOffsets, seqLen);
 
 	_cudaMalloc(infoLenOut, uniqueSeqInfo, seqLen);
@@ -78,7 +78,8 @@ int overlap_mode_init(char* allStr, unsigned int* allStrOffsets, Int3* &seqOut, 
 	Int2* indexPairs, *indexPairs2;
 	size_t* pairwiseFreq, *pairwiseFreq2;
 
-	int uniqueLen = deduplicate_full_length(allStr, allStrOffsets, info, seqOut, outputOffset, seqLen, buffer);
+	int uniqueLen = deduplicate_full_length(allStr, allStrOffsets, info, seqOut, infoOffsetOut, seqLen, buffer);
+	cudaMalloc(&outputOffset, uniqueLen * sizeof(int)); gpuerr();
 	cal_pair_len_diag <<< NUM_BLOCK(uniqueLen), NUM_THREADS>>>(infoOffsetOut, outputOffset, uniqueLen); gpuerr();
 	inclusive_sum(outputOffset, uniqueLen);
 	inclusive_sum(infoOffsetOut, uniqueLen);
