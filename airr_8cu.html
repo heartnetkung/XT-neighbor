@@ -69,6 +69,9 @@ $(function() {
 <div class="title">airr.cu File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>A collection of patching functions that add airr-format compatibility to cli.cu.  
+<a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;stdio.h&gt;</code><br />
 <code>#include &lt;string.h&gt;</code><br />
 <code>#include &quot;<a class="el" href="codec_8cu.html">codec.cu</a>&quot;</code><br />
@@ -76,30 +79,42 @@ $(function() {
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:abbcf1f83cffcd7b9a9f575ecd0dc5307"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="airr_8cu.html#abbcf1f83cffcd7b9a9f575ecd0dc5307">split_offset</a> (char *str, int *&amp;offsetOutput, int nColumn)</td></tr>
+<tr class="memdesc:abbcf1f83cffcd7b9a9f575ecd0dc5307"><td class="mdescLeft">&#160;</td><td class="mdescRight">private function  <a href="#abbcf1f83cffcd7b9a9f575ecd0dc5307">More...</a><br /></td></tr>
 <tr class="separator:abbcf1f83cffcd7b9a9f575ecd0dc5307"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a279f6403dba8809b7f63cc1305ca2bb6"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="airr_8cu.html#a279f6403dba8809b7f63cc1305ca2bb6">find_idx</a> (char *haystack, const char *needle, int *offsets, int offsetLen)</td></tr>
+<tr class="memdesc:a279f6403dba8809b7f63cc1305ca2bb6"><td class="mdescLeft">&#160;</td><td class="mdescRight">private function  <a href="#a279f6403dba8809b7f63cc1305ca2bb6">More...</a><br /></td></tr>
 <tr class="separator:a279f6403dba8809b7f63cc1305ca2bb6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7a62406fdb4c7c4b6bd04f566121a6d7"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="airr_8cu.html#a7a62406fdb4c7c4b6bd04f566121a6d7">find_header</a> (char *line, int &amp;cdrIndexOut, int &amp;freqIndexOut, bool doubleCol)</td></tr>
+<tr class="memdesc:a7a62406fdb4c7c4b6bd04f566121a6d7"><td class="mdescLeft">&#160;</td><td class="mdescRight">private function  <a href="#a7a62406fdb4c7c4b6bd04f566121a6d7">More...</a><br /></td></tr>
 <tr class="separator:a7a62406fdb4c7c4b6bd04f566121a6d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a457d033d5815d65430208627ceca4985"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="airr_8cu.html#a457d033d5815d65430208627ceca4985">extract_data</a> (char *line, int cdrIndex, int freqIndex, int nColumn, int lineNumber, <a class="el" href="classSeqArray.html">SeqArray</a> *seqOut, int &amp;freqOut, bool doubleCol)</td></tr>
+<tr class="memdesc:a457d033d5815d65430208627ceca4985"><td class="mdescLeft">&#160;</td><td class="mdescRight">private function  <a href="#a457d033d5815d65430208627ceca4985">More...</a><br /></td></tr>
 <tr class="separator:a457d033d5815d65430208627ceca4985"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1c482abf6e2decc1ebd1962b52622730"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="airr_8cu.html#a1c482abf6e2decc1ebd1962b52622730">parse_airr_input</a> (char *path, <a class="el" href="classSeqArray.html">SeqArray</a> *seqOut, <a class="el" href="structSeqInfo.html">SeqInfo</a> *freqOut, int len, bool doubleCol)</td></tr>
+<tr class="memdesc:a1c482abf6e2decc1ebd1962b52622730"><td class="mdescLeft">&#160;</td><td class="mdescRight">read and parse input airr file to <a class="el" href="classSeqArray.html">SeqArray</a> and maybe <a class="el" href="structSeqInfo.html" title="Information related to a sequence. ">SeqInfo</a>  <a href="#a1c482abf6e2decc1ebd1962b52622730">More...</a><br /></td></tr>
 <tr class="separator:a1c482abf6e2decc1ebd1962b52622730"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
 <tr class="memitem:a0ecd0ac86bedd5164f34949bb58784de"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="airr_8cu.html#a0ecd0ac86bedd5164f34949bb58784de">DEFAULT_MAX_COLUMN</a> = 300</td></tr>
+<tr class="memdesc:a0ecd0ac86bedd5164f34949bb58784de"><td class="mdescLeft">&#160;</td><td class="mdescRight">maximum number of tsv columns  <a href="#a0ecd0ac86bedd5164f34949bb58784de">More...</a><br /></td></tr>
 <tr class="separator:a0ecd0ac86bedd5164f34949bb58784de"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9c0638fa75636686b0d5ce32a4a98c56"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="airr_8cu.html#a9c0638fa75636686b0d5ce32a4a98c56">DEFAULT_LINE_SIZE</a> = 5000</td></tr>
+<tr class="memdesc:a9c0638fa75636686b0d5ce32a4a98c56"><td class="mdescLeft">&#160;</td><td class="mdescRight">maximum number of characters in a line  <a href="#a9c0638fa75636686b0d5ce32a4a98c56">More...</a><br /></td></tr>
 <tr class="separator:a9c0638fa75636686b0d5ce32a4a98c56"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a32d67795a8b119935e98ba0da0d5be5f"><td class="memItemLeft" align="right" valign="top">const char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="airr_8cu.html#a32d67795a8b119935e98ba0da0d5be5f">DELIMITER</a> = '\t'</td></tr>
+<tr class="memdesc:a32d67795a8b119935e98ba0da0d5be5f"><td class="mdescLeft">&#160;</td><td class="mdescRight">tsv delimitter  <a href="#a32d67795a8b119935e98ba0da0d5be5f">More...</a><br /></td></tr>
 <tr class="separator:a32d67795a8b119935e98ba0da0d5be5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adb6dd1b213d78e1138a137135beb2c2f"><td class="memItemLeft" align="right" valign="top">const char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="airr_8cu.html#adb6dd1b213d78e1138a137135beb2c2f">CDR_FIELD</a> [8] = &quot;cdr3_aa&quot;</td></tr>
+<tr class="memdesc:adb6dd1b213d78e1138a137135beb2c2f"><td class="mdescLeft">&#160;</td><td class="mdescRight">field header for sequence data  <a href="#adb6dd1b213d78e1138a137135beb2c2f">More...</a><br /></td></tr>
 <tr class="separator:adb6dd1b213d78e1138a137135beb2c2f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aefa13f8fba4aab054168ba2392bc0d56"><td class="memItemLeft" align="right" valign="top">const char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="airr_8cu.html#aefa13f8fba4aab054168ba2392bc0d56">FREQ_FIELD</a> [16] = &quot;duplicate_count&quot;</td></tr>
+<tr class="memdesc:aefa13f8fba4aab054168ba2392bc0d56"><td class="mdescLeft">&#160;</td><td class="mdescRight">field header for sequence data  <a href="#aefa13f8fba4aab054168ba2392bc0d56">More...</a><br /></td></tr>
 <tr class="separator:aefa13f8fba4aab054168ba2392bc0d56"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Function Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>A collection of patching functions that add airr-format compatibility to cli.cu. </p>
+</div><h2 class="groupheader">Function Documentation</h2>
 <a id="a457d033d5815d65430208627ceca4985"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a457d033d5815d65430208627ceca4985">&#9670;&nbsp;</a></span>extract_data()</h2>
 
@@ -162,6 +177,8 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>private function </p>
+
 </div>
 </div>
 <a id="a7a62406fdb4c7c4b6bd04f566121a6d7"></a>
@@ -202,6 +219,8 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>private function </p>
+
 </div>
 </div>
 <a id="a279f6403dba8809b7f63cc1305ca2bb6"></a>
@@ -241,6 +260,8 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>private function </p>
 
 </div>
 </div>
@@ -288,6 +309,19 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>read and parse input airr file to <a class="el" href="classSeqArray.html">SeqArray</a> and maybe <a class="el" href="structSeqInfo.html" title="Information related to a sequence. ">SeqInfo</a> </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">path</td><td>file path to read </td></tr>
+    <tr><td class="paramname">seqOut</td><td>output sequences </td></tr>
+    <tr><td class="paramname">freqOut</td><td>output frequency, if doubleCol is set to true </td></tr>
+    <tr><td class="paramname">len</td><td>expected length </td></tr>
+    <tr><td class="paramname">doubleCol</td><td>if true, read freqOut </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>execution result </dd></dl>
+
 </div>
 </div>
 <a id="abbcf1f83cffcd7b9a9f575ecd0dc5307"></a>
@@ -322,6 +356,8 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>private function </p>
+
 </div>
 </div>
 <h2 class="groupheader">Variable Documentation</h2>
@@ -337,6 +373,8 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>field header for sequence data </p>
+
 </div>
 </div>
 <a id="a9c0638fa75636686b0d5ce32a4a98c56"></a>
@@ -350,6 +388,8 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>maximum number of characters in a line </p>
 
 </div>
 </div>
@@ -365,6 +405,8 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>maximum number of tsv columns </p>
+
 </div>
 </div>
 <a id="a32d67795a8b119935e98ba0da0d5be5f"></a>
@@ -379,6 +421,8 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>tsv delimitter </p>
+
 </div>
 </div>
 <a id="aefa13f8fba4aab054168ba2392bc0d56"></a>
@@ -392,6 +436,8 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>field header for sequence data </p>
 
 </div>
 </div>
