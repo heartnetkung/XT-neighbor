@@ -1,9 +1,11 @@
 var searchData=
 [
-  ['ramsize',['ramSize',['../structMemoryContext.html#a087063d834c544331237592c08d50a0d',1,'MemoryContext']]],
-  ['ramswapstream',['RAMSwapStream',['../classRAMSwapStream.html',1,'']]],
-  ['read',['read',['../classGPUInputStream.html#a5dd180752ac54dce56b3bc91ba023a37',1,'GPUInputStream::read()'],['../classRAMSwapStream.html#a5bba4c1953c9bc4362f2664418cb6c85',1,'RAMSwapStream::read()'],['../classD2Stream.html#ab61c377b9f79bea11f158cb9d6a31287',1,'D2Stream::read()']]],
-  ['remove_5fchar',['remove_char',['../codec_8cu.html#a681c13f5f31204316905307611784ce5',1,'codec.cu']]],
-  ['repertoire',['repertoire',['../structSeqInfo.html#ac7d2836e37178e7e4dec14968e5bb9cb',1,'SeqInfo']]],
-  ['returncode',['ReturnCode',['../xtn_8h.html#a5a2236a3693e3930b2c9fbe1fe7144ec',1,'xtn.h']]]
+  ['pair2rep',['pair2rep',['../kernel_8cu.html#a4051473b65887a419392736f59a7b2ab',1,'kernel.cu']]],
+  ['pairwisedistances',['pairwiseDistances',['../structXTNOutput.html#a26de3fb3a3ebc0c3619520fc608a4a5d',1,'XTNOutput']]],
+  ['pairwisefrequencies',['pairwiseFrequencies',['../structXTNOutput.html#a0fabef901f6040a0b98172c5b00a44ae',1,'XTNOutput']]],
+  ['parse_5fairr_5finput',['parse_airr_input',['../airr_8cu.html#a1c482abf6e2decc1ebd1962b52622730',1,'airr.cu']]],
+  ['postprocessing',['postprocessing',['../xtn__inner_8cu.html#ab2edb011bcdf97c8bb3190212a0f154a',1,'xtn_inner.cu']]],
+  ['print_5fint3_5farr',['print_int3_arr',['../codec_8cu.html#a73b37ea0cd6d15cd37f4a3bb8a6730ce',1,'codec.cu']]],
+  ['printstack',['printStack',['../generate__combination_8cu.html#aa91d5008805961aceb0d937a4dfcbb7c',1,'generate_combination.cu']]],
+  ['ptr',['ptr',['../classChunk.html#a1a4ac41f9a7d5285dcf472bdc47bc704',1,'Chunk']]]
 ];

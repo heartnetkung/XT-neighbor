@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['make_5foutput',['make_output',['../xtn__inner_8cu.html#afb57a1bf6297c3f38d2523f24183b92e',1,'xtn_inner.cu']]],
-  ['make_5frow_5findex',['make_row_index',['../kernel_8cu.html#aa6d81aea34a3d94544b9224e5d154a94',1,'kernel.cu']]],
-  ['max_5fby_5fkey',['max_by_key',['../cub_8cu.html#a1fb93551563c1bad68dc426062f8ba02',1,'cub.cu']]],
-  ['mergeoutput',['mergeOutput',['../xtn__inner_8cu.html#ac01e583b9f506f5536fd67ca6ad1f620',1,'xtn_inner.cu']]]
+  ['inclusive_5fsum',['inclusive_sum',['../cub_8cu.html#a3cf5653bdd2338147316d12aefdd3ff6',1,'inclusive_sum(T *input, T *output, int n):&#160;cub.cu'],['../cub_8cu.html#a8927d517930d12c6ac455588699dcb00',1,'inclusive_sum(T *input, int n):&#160;cub.cu']]],
+  ['inclusive_5fsum_5fby_5fkey',['inclusive_sum_by_key',['../cub_8cu.html#aba92e668947833bb3a9f5a7d04d4e8e7',1,'cub.cu']]],
+  ['init_5foverlap_5foutput',['init_overlap_output',['../kernel_8cu.html#a3cc7396280779ad937a3d79543686f86',1,'kernel.cu']]],
+  ['initmemory',['initMemory',['../xtn_8cu.html#afb8a1ee5f383cc28db209ae4298d0b50',1,'xtn.cu']]]
 ];

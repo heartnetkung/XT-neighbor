@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['stream_2ecu',['stream.cu',['../stream_8cu.html',1,'']]]
+  ['kernel_2ecu',['kernel.cu',['../kernel_8cu.html',1,'']]]
 ];

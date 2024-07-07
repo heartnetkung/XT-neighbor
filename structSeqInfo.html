@@ -74,8 +74,8 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a05b3bdbd7c043d626c019047c689a6ed"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structSeqInfo.html#a05b3bdbd7c043d626c019047c689a6ed">operator==</a> (const <a class="el" href="structSeqInfo.html">SeqInfo</a> &amp;t) const</td></tr>
-<tr class="separator:a05b3bdbd7c043d626c019047c689a6ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4e7124f84e3505ec167a358bc74aed0b"><td class="memItemLeft" align="right" valign="top">__device__ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structSeqInfo.html#a4e7124f84e3505ec167a358bc74aed0b">operator==</a> (const <a class="el" href="structSeqInfo.html">SeqInfo</a> &amp;t) const</td></tr>
+<tr class="separator:a4e7124f84e3505ec167a358bc74aed0b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -83,32 +83,26 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a6e5c6dfa6fb6d1a7d8b9e7029a14f3ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac7d2836e37178e7e4dec14968e5bb9cb"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structSeqInfo.html#ac7d2836e37178e7e4dec14968e5bb9cb">repertoire</a></td></tr>
 <tr class="separator:ac7d2836e37178e7e4dec14968e5bb9cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab45f68be68cad5643cfbfdfbb45a02f0"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structSeqInfo.html#ab45f68be68cad5643cfbfdfbb45a02f0">originalIndex</a></td></tr>
+<tr class="separator:ab45f68be68cad5643cfbfdfbb45a02f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Information related to a sequence. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a05b3bdbd7c043d626c019047c689a6ed"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a05b3bdbd7c043d626c019047c689a6ed">&#9670;&nbsp;</a></span>operator==()</h2>
+<a id="a4e7124f84e3505ec167a358bc74aed0b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4e7124f84e3505ec167a358bc74aed0b">&#9670;&nbsp;</a></span>operator==()</h2>
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">bool SeqInfo::operator== </td>
+          <td class="memname">__device__ bool SeqInfo::operator== </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="structSeqInfo.html">SeqInfo</a> &amp;&#160;</td>
           <td class="paramname"><em>t</em></td><td>)</td>
           <td> const</td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 </div>
@@ -122,6 +116,20 @@ Public Attributes</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">int SeqInfo::frequency</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ab45f68be68cad5643cfbfdfbb45a02f0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab45f68be68cad5643cfbfdfbb45a02f0">&#9670;&nbsp;</a></span>originalIndex</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int SeqInfo::originalIndex</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -142,8 +150,9 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<hr/>The documentation for this struct was generated from the following file:<ul>
+<hr/>The documentation for this struct was generated from the following files:<ul>
 <li>src/<a class="el" href="xtn_8h_source.html">xtn.h</a></li>
+<li>src/<a class="el" href="xtn__overlap__inner_8cu.html">xtn_overlap_inner.cu</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

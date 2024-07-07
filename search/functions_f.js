@@ -1,5 +1,24 @@
 var searchData=
 [
-  ['unique',['unique',['../cub_8cu.html#a962850548e282e728f204c80d92567ba',1,'cub.cu']]],
-  ['unique_5fcounts',['unique_counts',['../cub_8cu.html#afa0e2f03f952d7ea4514faab00e99ed7',1,'unique_counts(T *keys, int *output, T *uniqueOut, int *outputLen, int n):&#160;cub.cu'],['../cub_8cu.html#afd8093a2ef0bc4d09c8de16d0423585d',1,'unique_counts(T *keys, int *output, int *outputLen, int n):&#160;cub.cu']]]
+  ['seqarray',['SeqArray',['../classSeqArray.html#a569034cadfe6baf7dbf84fcc23c701c8',1,'SeqArray']]],
+  ['set_5fd2_5foffsets',['set_d2_offsets',['../xtn_8cu.html#a6a62aecf3e02f35fed93860918198e87',1,'xtn.cu']]],
+  ['set_5fmax_5freadable_5fsize',['set_max_readable_size',['../classRAMSwapStream.html#a71c0d105cf16af093b2127de0438b6d6',1,'RAMSwapStream']]],
+  ['set_5foffsets',['set_offsets',['../classD2Stream.html#ad344d443f6bd53d12d8d187eb5cce499',1,'D2Stream']]],
+  ['solve_5fbin_5fpacking_5flowerbounds',['solve_bin_packing_lowerbounds',['../xtn__inner_8cu.html#a51fa3e433c73e45b6bf6a12ae95e5d45',1,'xtn_inner.cu']]],
+  ['solve_5fbin_5fpacking_5foffsets',['solve_bin_packing_offsets',['../xtn__inner_8cu.html#a2439e4f4c36eb921aaf923032b837e12',1,'xtn_inner.cu']]],
+  ['solve_5fnext_5fbin',['solve_next_bin',['../xtn__inner_8cu.html#a595d82476664147a0f679c110aa755fb',1,'xtn_inner.cu']]],
+  ['sort_5finfo',['sort_info',['../cub_8cu.html#ae8dacd5e1da4f0c35ff4ba57fde9b1fd',1,'cub.cu']]],
+  ['sort_5fint2',['sort_int2',['../cub_8cu.html#adae57cf10081d0d4c8f616d47b77dba7',1,'cub.cu']]],
+  ['sort_5fkey_5fvalues',['sort_key_values',['../cub_8cu.html#aa92697b7dfa6565398769aa745439a5c',1,'cub.cu']]],
+  ['sort_5fkey_5fvalues2',['sort_key_values2',['../cub_8cu.html#a47941c6e13e35bb6c410cf6e12f9d11f',1,'cub.cu']]],
+  ['split_5foffset',['split_offset',['../airr_8cu.html#abbcf1f83cffcd7b9a9f575ecd0dc5307',1,'airr.cu']]],
+  ['str_5fdecode',['str_decode',['../codec_8cu.html#a440fbe49ce4e067d58cf18b11f034eb3',1,'codec.cu']]],
+  ['str_5fencode',['str_encode',['../codec_8cu.html#a76b7e107e712a40af79b7f31696d4b49',1,'codec.cu']]],
+  ['stream_5fhandler1',['stream_handler1',['../xtn__inner_8cu.html#a204393aaec3c484980a3369a283365ed',1,'xtn_inner.cu']]],
+  ['stream_5fhandler2',['stream_handler2',['../xtn__inner_8cu.html#a6106aa3872c6f87041c72b4ce0db6e76',1,'xtn_inner.cu']]],
+  ['stream_5fhandler3',['stream_handler3',['../xtn__inner_8cu.html#a0c797d489251ff552b4f19bf85aabcbf',1,'xtn_inner.cu']]],
+  ['stream_5fhandler4_5fnn',['stream_handler4_nn',['../xtn__inner_8cu.html#a6fafd0e15edeeb40e3fe7826bbc16c7b',1,'xtn_inner.cu']]],
+  ['stream_5fhandler4_5foverlap',['stream_handler4_overlap',['../xtn__overlap__inner_8cu.html#a0bb2d68342970a429ae913e0e1f9dd17',1,'xtn_overlap_inner.cu']]],
+  ['sum_5fby_5fkey',['sum_by_key',['../cub_8cu.html#a31ed98a50d89ec5ef254d49d6246506d',1,'cub.cu']]],
+  ['swap',['swap',['../classRAMSwapStream.html#ab6e5906de5291b15764f42aa3853edf7',1,'RAMSwapStream']]]
 ];

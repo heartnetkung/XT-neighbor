@@ -63,7 +63,8 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#func-members">Functions</a>  </div>
+<a href="#func-members">Functions</a> &#124;
+<a href="#var-members">Variables</a>  </div>
   <div class="headertitle">
 <div class="title">generate_combination.cu File Reference</div>  </div>
 </div><!--header-->
@@ -84,9 +85,17 @@ Functions</h2></td></tr>
 <tr class="memitem:aec7896cb1ea7c3a6a15483a74810d04e"><td class="memItemLeft" align="right" valign="top">__device__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="generate__combination_8cu.html#aec7896cb1ea7c3a6a15483a74810d04e">expand_keys</a> (<a class="el" href="structInt3.html">Int3</a> seq, int distance, <a class="el" href="structInt3.html">Int3</a> *output, unsigned int *firstKeys, int start, int end)</td></tr>
 <tr class="memdesc:aec7896cb1ea7c3a6a15483a74810d04e"><td class="mdescLeft">&#160;</td><td class="mdescRight">private method  <a href="#aec7896cb1ea7c3a6a15483a74810d04e">More...</a><br /></td></tr>
 <tr class="separator:aec7896cb1ea7c3a6a15483a74810d04e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad761f0377611161d5f1c2c707c6674c8"><td class="memItemLeft" align="right" valign="top">__device__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="generate__combination_8cu.html#ad761f0377611161d5f1c2c707c6674c8">expand_keys_static</a> (<a class="el" href="structInt3.html">Int3</a> seq, int distance, <a class="el" href="structInt3.html">Int3</a> *output, unsigned int *firstKeys, int start, int end)</td></tr>
+<tr class="memdesc:ad761f0377611161d5f1c2c707c6674c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">private method  <a href="#ad761f0377611161d5f1c2c707c6674c8">More...</a><br /></td></tr>
+<tr class="separator:ad761f0377611161d5f1c2c707c6674c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac2688a017c9243c4e97b1aa793b3a6fc"><td class="memItemLeft" align="right" valign="top">__global__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="generate__combination_8cu.html#ac2688a017c9243c4e97b1aa793b3a6fc">gen_combination</a> (<a class="el" href="structInt3.html">Int3</a> *seqs, int *combinationOffsets, int distance, <a class="el" href="structInt3.html">Int3</a> *combinationKeys, int *combinationValues, int carry, unsigned int *firstKeys, int n)</td></tr>
 <tr class="memdesc:ac2688a017c9243c4e97b1aa793b3a6fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate all combinations of deletion for sequences using expand primitive.  <a href="#ac2688a017c9243c4e97b1aa793b3a6fc">More...</a><br /></td></tr>
 <tr class="separator:ac2688a017c9243c4e97b1aa793b3a6fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
+Variables</h2></td></tr>
+<tr class="memitem:a92f077e1a646cb3ae0b7d453ba5096ed"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="generate__combination_8cu.html#a92f077e1a646cb3ae0b7d453ba5096ed">MAX_DISTANCE</a> = 2</td></tr>
+<tr class="separator:a92f077e1a646cb3ae0b7d453ba5096ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A single method which generates all possible deletions of a CDR3 string within a given Levenshtein threshold. </p>
@@ -99,6 +108,60 @@ Functions</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">__device__ void expand_keys </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structInt3.html">Int3</a>&#160;</td>
+          <td class="paramname"><em>seq</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>distance</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structInt3.html">Int3</a> *&#160;</td>
+          <td class="paramname"><em>output</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int *&#160;</td>
+          <td class="paramname"><em>firstKeys</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>start</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>end</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>private method </p>
+
+</div>
+</div>
+<a id="ad761f0377611161d5f1c2c707c6674c8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad761f0377611161d5f1c2c707c6674c8">&#9670;&nbsp;</a></span>expand_keys_static()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">__device__ void expand_keys_static </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="structInt3.html">Int3</a>&#160;</td>
           <td class="paramname"><em>seq</em>, </td>
@@ -295,6 +358,21 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>private method </p>
+
+</div>
+</div>
+<h2 class="groupheader">Variable Documentation</h2>
+<a id="a92f077e1a646cb3ae0b7d453ba5096ed"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a92f077e1a646cb3ae0b7d453ba5096ed">&#9670;&nbsp;</a></span>MAX_DISTANCE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const int MAX_DISTANCE = 2</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
 
 </div>
 </div>

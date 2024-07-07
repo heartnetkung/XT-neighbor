@@ -108,15 +108,18 @@ Functions</h2></td></tr>
 <tr class="memitem:a5a87b4f4ea6527a2332733f457f7ead1"><td class="memItemLeft" align="right" valign="top">__global__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#a5a87b4f4ea6527a2332733f457f7ead1">generate_smaller_index</a> (int *indexes, int *outputs, int *inputOffsets, int *outputOffsets, int carry, int n)</td></tr>
 <tr class="memdesc:a5a87b4f4ea6527a2332733f457f7ead1"><td class="mdescLeft">&#160;</td><td class="mdescRight">combinatorially generate pairs of indexes within the same group but record only the partial output.  <a href="#a5a87b4f4ea6527a2332733f457f7ead1">More...</a><br /></td></tr>
 <tr class="separator:a5a87b4f4ea6527a2332733f457f7ead1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6e6b1eafe46948d017de5a19aa0b1d5c"><td class="memItemLeft" align="right" valign="top">__device__ char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#a6e6b1eafe46948d017de5a19aa0b1d5c">levenshtein</a> (<a class="el" href="structInt3.html">Int3</a> x1, <a class="el" href="structInt3.html">Int3</a> x2)</td></tr>
-<tr class="memdesc:a6e6b1eafe46948d017de5a19aa0b1d5c"><td class="mdescLeft">&#160;</td><td class="mdescRight">calculate Levenshtein distance of 2 strings in GPU.  <a href="#a6e6b1eafe46948d017de5a19aa0b1d5c">More...</a><br /></td></tr>
-<tr class="separator:a6e6b1eafe46948d017de5a19aa0b1d5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a50d3ec5a7bc185bc22ed8a586f2d693d"><td class="memItemLeft" align="right" valign="top">__device__ char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#a50d3ec5a7bc185bc22ed8a586f2d693d">hamming</a> (<a class="el" href="structInt3.html">Int3</a> x1, <a class="el" href="structInt3.html">Int3</a> x2)</td></tr>
-<tr class="memdesc:a50d3ec5a7bc185bc22ed8a586f2d693d"><td class="mdescLeft">&#160;</td><td class="mdescRight">calculate Hamming distance of 2 strings in GPU.  <a href="#a50d3ec5a7bc185bc22ed8a586f2d693d">More...</a><br /></td></tr>
-<tr class="separator:a50d3ec5a7bc185bc22ed8a586f2d693d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6bdcdc804e6ec7ed728a3722333c6c2c"><td class="memItemLeft" align="right" valign="top">__global__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#a6bdcdc804e6ec7ed728a3722333c6c2c">cal_distance</a> (<a class="el" href="structInt3.html">Int3</a> *seq, <a class="el" href="structInt2.html">Int2</a> *index, int distance, char measure, char *distanceOutput, char *flagOutput, int n, int seqLen)</td></tr>
-<tr class="memdesc:a6bdcdc804e6ec7ed728a3722333c6c2c"><td class="mdescLeft">&#160;</td><td class="mdescRight">calculate distances of strings from given pairs and flag ones exceeding the threshold.  <a href="#a6bdcdc804e6ec7ed728a3722333c6c2c">More...</a><br /></td></tr>
-<tr class="separator:a6bdcdc804e6ec7ed728a3722333c6c2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6bdc2afc7912f151738c21be39b4d6e3"><td class="memItemLeft" align="right" valign="top">__device__ char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#a6bdc2afc7912f151738c21be39b4d6e3">levenshtein_static</a> (char *allStr, unsigned int start1, unsigned int start2, int len1, int len2)</td></tr>
+<tr class="memdesc:a6bdc2afc7912f151738c21be39b4d6e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">calculate Levenshtein distance of 2 strings in GPU where len1,len2&lt;=18.  <a href="#a6bdc2afc7912f151738c21be39b4d6e3">More...</a><br /></td></tr>
+<tr class="separator:a6bdc2afc7912f151738c21be39b4d6e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5783063dc4115bdaae75fec4d2661c36"><td class="memItemLeft" align="right" valign="top">__device__ char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#a5783063dc4115bdaae75fec4d2661c36">levenshtein</a> (char *allStr, unsigned int start1, unsigned int start2, int len1, int len2)</td></tr>
+<tr class="memdesc:a5783063dc4115bdaae75fec4d2661c36"><td class="mdescLeft">&#160;</td><td class="mdescRight">calculate Levenshtein distance of 2 strings in GPU where len1&gt;18 or len2&gt;18.  <a href="#a5783063dc4115bdaae75fec4d2661c36">More...</a><br /></td></tr>
+<tr class="separator:a5783063dc4115bdaae75fec4d2661c36"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a24f7088f65ecf1180e1fbaa6ece69c1e"><td class="memItemLeft" align="right" valign="top">__device__ char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#a24f7088f65ecf1180e1fbaa6ece69c1e">hamming</a> (char *allStr, unsigned int start1, unsigned int start2, int len1, int len2)</td></tr>
+<tr class="memdesc:a24f7088f65ecf1180e1fbaa6ece69c1e"><td class="mdescLeft">&#160;</td><td class="mdescRight">calculate Hamming distance of 2 strings in GPU.  <a href="#a24f7088f65ecf1180e1fbaa6ece69c1e">More...</a><br /></td></tr>
+<tr class="separator:a24f7088f65ecf1180e1fbaa6ece69c1e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a26f9ace65a68cd113327fbc0bd14c306"><td class="memItemLeft" align="right" valign="top">__global__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#a26f9ace65a68cd113327fbc0bd14c306">cal_distance</a> (char *allStr, unsigned int *offsets, <a class="el" href="structInt2.html">Int2</a> *index, int distance, char measure, char *distanceOutput, char *flagOutput, int n, int seqLen)</td></tr>
+<tr class="memdesc:a26f9ace65a68cd113327fbc0bd14c306"><td class="mdescLeft">&#160;</td><td class="mdescRight">calculate distances of strings from given pairs and flag ones exceeding the threshold.  <a href="#a26f9ace65a68cd113327fbc0bd14c306">More...</a><br /></td></tr>
+<tr class="separator:a26f9ace65a68cd113327fbc0bd14c306"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4051473b65887a419392736f59a7b2ab"><td class="memItemLeft" align="right" valign="top">__global__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#a4051473b65887a419392736f59a7b2ab">pair2rep</a> (<a class="el" href="structInt2.html">Int2</a> *pairs, <a class="el" href="structInt2.html">Int2</a> *indexOut, size_t *freqOut, <a class="el" href="structSeqInfo.html">SeqInfo</a> *seqInfo, int *inputOffsets, int *outputOffsets, int n)</td></tr>
 <tr class="memdesc:a4051473b65887a419392736f59a7b2ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">turning pairs and frequencies from sequence format to repertoire format.  <a href="#a4051473b65887a419392736f59a7b2ab">More...</a><br /></td></tr>
 <tr class="separator:a4051473b65887a419392736f59a7b2ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -138,6 +141,10 @@ Functions</h2></td></tr>
 <tr class="memitem:a3cc7396280779ad937a3d79543686f86"><td class="memItemLeft" align="right" valign="top">__global__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#a3cc7396280779ad937a3d79543686f86">init_overlap_output</a> (<a class="el" href="structSeqInfo.html">SeqInfo</a> *info, <a class="el" href="structInt2.html">Int2</a> *indexOut, size_t *freqOut, int *inputOffsets, int *outputOffsets, int n)</td></tr>
 <tr class="memdesc:a3cc7396280779ad937a3d79543686f86"><td class="mdescLeft">&#160;</td><td class="mdescRight">generate initial output of overlap mode.  <a href="#a3cc7396280779ad937a3d79543686f86">More...</a><br /></td></tr>
 <tr class="separator:a3cc7396280779ad937a3d79543686f86"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad5d69af264c47640482e9c47a0eef8c4"><td class="memItemLeft" align="right" valign="top">__global__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#ad5d69af264c47640482e9c47a0eef8c4">toInt3</a> (char *inputs, unsigned int *offsets, <a class="el" href="structInt3.html">Int3</a> *output, int n)</td></tr>
+<tr class="separator:ad5d69af264c47640482e9c47a0eef8c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a796a42e1b6529b18b6a4a49fa44465de"><td class="memItemLeft" align="right" valign="top">__global__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#a796a42e1b6529b18b6a4a49fa44465de">toInt3</a> (char *inputs, unsigned int *offsets, <a class="el" href="structSeqInfo.html">SeqInfo</a> *seqInfo, <a class="el" href="structInt3.html">Int3</a> *output, int n)</td></tr>
+<tr class="separator:a796a42e1b6529b18b6a4a49fa44465de"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
@@ -234,8 +241,8 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a id="a6bdcdc804e6ec7ed728a3722333c6c2c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6bdcdc804e6ec7ed728a3722333c6c2c">&#9670;&nbsp;</a></span>cal_distance()</h2>
+<a id="a26f9ace65a68cd113327fbc0bd14c306"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a26f9ace65a68cd113327fbc0bd14c306">&#9670;&nbsp;</a></span>cal_distance()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -243,8 +250,14 @@ Variables</h2></td></tr>
         <tr>
           <td class="memname">__global__ void cal_distance </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structInt3.html">Int3</a> *&#160;</td>
-          <td class="paramname"><em>seq</em>, </td>
+          <td class="paramtype">char *&#160;</td>
+          <td class="paramname"><em>allStr</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int *&#160;</td>
+          <td class="paramname"><em>offsets</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -843,8 +856,8 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a id="a50d3ec5a7bc185bc22ed8a586f2d693d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a50d3ec5a7bc185bc22ed8a586f2d693d">&#9670;&nbsp;</a></span>hamming()</h2>
+<a id="a24f7088f65ecf1180e1fbaa6ece69c1e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a24f7088f65ecf1180e1fbaa6ece69c1e">&#9670;&nbsp;</a></span>hamming()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -852,14 +865,32 @@ Variables</h2></td></tr>
         <tr>
           <td class="memname">__device__ char hamming </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structInt3.html">Int3</a>&#160;</td>
-          <td class="paramname"><em>x1</em>, </td>
+          <td class="paramtype">char *&#160;</td>
+          <td class="paramname"><em>allStr</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structInt3.html">Int3</a>&#160;</td>
-          <td class="paramname"><em>x2</em>&#160;</td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>start1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>start2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>len1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>len2</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -872,8 +903,11 @@ Variables</h2></td></tr>
 <p>calculate Hamming distance of 2 strings in GPU. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">x1</td><td>first string </td></tr>
-    <tr><td class="paramname">x2</td><td>second string </td></tr>
+    <tr><td class="paramname">allStr</td><td>database of all sequences </td></tr>
+    <tr><td class="paramname">start1</td><td>start index of string one </td></tr>
+    <tr><td class="paramname">start2</td><td>start index of string two </td></tr>
+    <tr><td class="paramname">len1</td><td>length of string one </td></tr>
+    <tr><td class="paramname">len2</td><td>length of string two </td></tr>
   </table>
   </dd>
 </dl>
@@ -945,8 +979,8 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a id="a6e6b1eafe46948d017de5a19aa0b1d5c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6e6b1eafe46948d017de5a19aa0b1d5c">&#9670;&nbsp;</a></span>levenshtein()</h2>
+<a id="a5783063dc4115bdaae75fec4d2661c36"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5783063dc4115bdaae75fec4d2661c36">&#9670;&nbsp;</a></span>levenshtein()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -954,14 +988,32 @@ Variables</h2></td></tr>
         <tr>
           <td class="memname">__device__ char levenshtein </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structInt3.html">Int3</a>&#160;</td>
-          <td class="paramname"><em>x1</em>, </td>
+          <td class="paramtype">char *&#160;</td>
+          <td class="paramname"><em>allStr</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structInt3.html">Int3</a>&#160;</td>
-          <td class="paramname"><em>x2</em>&#160;</td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>start1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>start2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>len1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>len2</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -971,11 +1023,72 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>calculate Levenshtein distance of 2 strings in GPU. </p>
+<p>calculate Levenshtein distance of 2 strings in GPU where len1&gt;18 or len2&gt;18. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">x1</td><td>first string </td></tr>
-    <tr><td class="paramname">x2</td><td>second string </td></tr>
+    <tr><td class="paramname">allStr</td><td>database of all sequences </td></tr>
+    <tr><td class="paramname">start1</td><td>start index of string one </td></tr>
+    <tr><td class="paramname">start2</td><td>start index of string two </td></tr>
+    <tr><td class="paramname">len1</td><td>length of string one </td></tr>
+    <tr><td class="paramname">len2</td><td>length of string two </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a6bdc2afc7912f151738c21be39b4d6e3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6bdc2afc7912f151738c21be39b4d6e3">&#9670;&nbsp;</a></span>levenshtein_static()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">__device__ char levenshtein_static </td>
+          <td>(</td>
+          <td class="paramtype">char *&#160;</td>
+          <td class="paramname"><em>allStr</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>start1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>start2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>len1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>len2</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>calculate Levenshtein distance of 2 strings in GPU where len1,len2&lt;=18. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">allStr</td><td>database of all sequences </td></tr>
+    <tr><td class="paramname">start1</td><td>start index of string one </td></tr>
+    <tr><td class="paramname">start2</td><td>start index of string two </td></tr>
+    <tr><td class="paramname">len1</td><td>length of string one </td></tr>
+    <tr><td class="paramname">len2</td><td>length of string two </td></tr>
   </table>
   </dd>
 </dl>
@@ -1095,6 +1208,92 @@ Variables</h2></td></tr>
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a id="ad5d69af264c47640482e9c47a0eef8c4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad5d69af264c47640482e9c47a0eef8c4">&#9670;&nbsp;</a></span>toInt3() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">__global__ void toInt3 </td>
+          <td>(</td>
+          <td class="paramtype">char *&#160;</td>
+          <td class="paramname"><em>inputs</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int *&#160;</td>
+          <td class="paramname"><em>offsets</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structInt3.html">Int3</a> *&#160;</td>
+          <td class="paramname"><em>output</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>n</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a796a42e1b6529b18b6a4a49fa44465de"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a796a42e1b6529b18b6a4a49fa44465de">&#9670;&nbsp;</a></span>toInt3() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">__global__ void toInt3 </td>
+          <td>(</td>
+          <td class="paramtype">char *&#160;</td>
+          <td class="paramname"><em>inputs</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int *&#160;</td>
+          <td class="paramname"><em>offsets</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structSeqInfo.html">SeqInfo</a> *&#160;</td>
+          <td class="paramname"><em>seqInfo</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structInt3.html">Int3</a> *&#160;</td>
+          <td class="paramname"><em>output</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>n</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
 
 </div>
 </div>

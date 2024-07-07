@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['pairwisedistances',['pairwiseDistances',['../structXTNOutput.html#a26de3fb3a3ebc0c3619520fc608a4a5d',1,'XTNOutput']]],
-  ['pairwisefrequencies',['pairwiseFrequencies',['../structXTNOutput.html#a0fabef901f6040a0b98172c5b00a44ae',1,'XTNOutput']]],
-  ['ptr',['ptr',['../classChunk.html#a1a4ac41f9a7d5285dcf472bdc47bc704',1,'Chunk']]]
+  ['offsets',['offsets',['../structSeqInfoComparator.html#a9e57782f5f2ed071d7f3c3ba43b5ff2e',1,'SeqInfoComparator']]],
+  ['originalindex',['originalIndex',['../structSeqInfo.html#ab45f68be68cad5643cfbfdfbb45a02f0',1,'SeqInfo']]],
+  ['outputpath',['outputPath',['../structXTNArgs.html#aa29d37c6c9fcb8aa8bfb12c4adba20ea',1,'XTNArgs']]]
 ];

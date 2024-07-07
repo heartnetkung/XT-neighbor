@@ -1,4 +1,10 @@
 var searchData=
 [
-  ['num_5fthreads',['NUM_THREADS',['../xtn__inner_8cu.html#aff9a2523f2975f5feab7ae5b61a451b6',1,'xtn_inner.cu']]]
+  ['max',['MAX',['../kernel_8cu.html#ad8f73cc75eda84e3c058d127609b22d3',1,'kernel.cu']]],
+  ['max_5fcompressed_5flength',['MAX_COMPRESSED_LENGTH',['../xtn_8h.html#ae94b3c81743a25702034f8718fbd03c9',1,'xtn.h']]],
+  ['max_5fdistance',['MAX_DISTANCE',['../generate__combination_8cu.html#a92f077e1a646cb3ae0b7d453ba5096ed',1,'generate_combination.cu']]],
+  ['max_5finput_5flength',['MAX_INPUT_LENGTH',['../codec_8cu.html#a6eeac21364bb491a9483497c337ee982',1,'codec.cu']]],
+  ['max_5fprocessing',['MAX_PROCESSING',['../xtn_8cu.html#adef074dc8f10889cd373041c3505ff9f',1,'xtn.cu']]],
+  ['maxthroughputexponent',['maxThroughputExponent',['../structMemoryContext.html#a8960d670163115c9b3583871475d5ecd',1,'MemoryContext']]],
+  ['measure',['measure',['../structXTNArgs.html#a3b4cbfcf3ad2a95c8f64ec0059beb30b',1,'XTNArgs']]]
 ];

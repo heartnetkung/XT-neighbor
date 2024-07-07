@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['generate_5fcombination_2ecu',['generate_combination.cu',['../generate__combination_8cu.html',1,'']]]
+  ['codec_2ecu',['codec.cu',['../codec_8cu.html',1,'']]],
+  ['cub_2ecu',['cub.cu',['../cub_8cu.html',1,'']]]
 ];

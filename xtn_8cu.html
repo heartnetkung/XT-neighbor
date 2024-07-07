@@ -75,7 +75,7 @@ $(function() {
 <div class="textblock"><code>#include &lt;stdio.h&gt;</code><br />
 <code>#include &lt;stdlib.h&gt;</code><br />
 <code>#include &lt;math.h&gt;</code><br />
-<code>#include &quot;<a class="el" href="xtn__inner_8cu.html">xtn_inner.cu</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="xtn__overlap__inner_8cu.html">xtn_overlap_inner.cu</a>&quot;</code><br />
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
@@ -113,9 +113,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a6a62aecf3e02f35fed93860918198e87"><td class="memTemplItemLeft" align="right" valign="top">int **&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="xtn_8cu.html#a6a62aecf3e02f35fed93860918198e87">set_d2_offsets</a> (std::vector&lt; int *&gt; histograms, <a class="el" href="classD2Stream.html">D2Stream</a>&lt; T1 &gt; *s1, <a class="el" href="classD2Stream.html">D2Stream</a>&lt; T2 &gt; *s2, int *buffer, <a class="el" href="structMemoryContext.html">MemoryContext</a> ctx)</td></tr>
 <tr class="memdesc:a6a62aecf3e02f35fed93860918198e87"><td class="mdescLeft">&#160;</td><td class="mdescRight">apply precalculated bin packing offset to the given 2D buffers.  <a href="#a6a62aecf3e02f35fed93860918198e87">More...</a><br /></td></tr>
 <tr class="separator:a6a62aecf3e02f35fed93860918198e87"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac4c15174453debde83188f6ade529831"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xtn_8cu.html#ac4c15174453debde83188f6ade529831">xtn_perform</a> (<a class="el" href="structXTNArgs.html">XTNArgs</a> args, <a class="el" href="structInt3.html">Int3</a> *seq, <a class="el" href="structSeqInfo.html">SeqInfo</a> *seqInfo, void callback(<a class="el" href="structXTNOutput.html">XTNOutput</a>))</td></tr>
-<tr class="memdesc:ac4c15174453debde83188f6ade529831"><td class="mdescLeft">&#160;</td><td class="mdescRight">the main function for XT-neighbor algorithm.  <a href="#ac4c15174453debde83188f6ade529831">More...</a><br /></td></tr>
-<tr class="separator:ac4c15174453debde83188f6ade529831"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a64ad4e520934896c4f62f5b306e15eac"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xtn_8cu.html#a64ad4e520934896c4f62f5b306e15eac">xtn_perform</a> (<a class="el" href="structXTNArgs.html">XTNArgs</a> args, <a class="el" href="classSeqArray.html">SeqArray</a> *seqArr, <a class="el" href="structSeqInfo.html">SeqInfo</a> *seqInfo, void callback(<a class="el" href="structXTNOutput.html">XTNOutput</a>))</td></tr>
+<tr class="memdesc:a64ad4e520934896c4f62f5b306e15eac"><td class="mdescLeft">&#160;</td><td class="mdescRight">the main function for XT-neighbor algorithm.  <a href="#a64ad4e520934896c4f62f5b306e15eac">More...</a><br /></td></tr>
+<tr class="separator:a64ad4e520934896c4f62f5b306e15eac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
@@ -449,8 +449,8 @@ template&lt;typename T1 , typename T2 &gt; </div>
 
 </div>
 </div>
-<a id="ac4c15174453debde83188f6ade529831"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac4c15174453debde83188f6ade529831">&#9670;&nbsp;</a></span>xtn_perform()</h2>
+<a id="a64ad4e520934896c4f62f5b306e15eac"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a64ad4e520934896c4f62f5b306e15eac">&#9670;&nbsp;</a></span>xtn_perform()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -464,8 +464,8 @@ template&lt;typename T1 , typename T2 &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structInt3.html">Int3</a> *&#160;</td>
-          <td class="paramname"><em>seq</em>, </td>
+          <td class="paramtype"><a class="el" href="classSeqArray.html">SeqArray</a> *&#160;</td>
+          <td class="paramname"><em>seqArr</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -488,11 +488,10 @@ template&lt;typename T1 , typename T2 &gt; </div>
 </div><div class="memdoc">
 
 <p>the main function for XT-neighbor algorithm. </p>
-<p>the algorithm's API.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">args</td><td>all flags parsed from command line </td></tr>
-    <tr><td class="paramname">seq</td><td>sequence input </td></tr>
+    <tr><td class="paramname">seqArr</td><td>sequence input </td></tr>
     <tr><td class="paramname">seqInfo</td><td>information of each CDR3 sequence, only used in overlap mode </td></tr>
     <tr><td class="paramname">callback</td><td>function to be invoked once a chunk of output is ready </td></tr>
   </table>

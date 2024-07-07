@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['kernel_2ecu',['kernel.cu',['../kernel_8cu.html',1,'']]]
+  ['generate_5fcombination_2ecu',['generate_combination.cu',['../generate__combination_8cu.html',1,'']]]
 ];
