@@ -10,7 +10,8 @@ TEST(OverlapInit, {
 	char* allStr_d;
 
 	int seqLen = 4;
-	char allStr[] = "CAAACAADCAAA";
+	int totalLen = 16;
+	char allStr[] = "CAAACADACAAACDKD";
 	unsigned int offsets[] = {0, 4, 8, 12, 16};
 	SeqInfo info[] = {
 		{.frequency = 3, .repertoire = 0, .originalIndex = 0},
@@ -22,7 +23,7 @@ TEST(OverlapInit, {
 	cudaMalloc(&buffer, sizeof(int));
 	info_d = host_to_device(info, seqLen);
 	offsets_d = host_to_device(offsets, seqLen + 1);
-	allStr_d = host_to_device(allStr, seqLen);
+	allStr_d = host_to_device(allStr, totalLen);
 
 	int uniqueLen = overlap_mode_init(allStr_d, offsets_d, seqOut, info_d, infoOffsetOut,
 	                                  allOutputs, seqLen, buffer);
