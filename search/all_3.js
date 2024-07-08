@@ -1,7 +1,7 @@
 var searchData=
 [
   ['cal_5fcombination_5flen',['cal_combination_len',['../kernel_8cu.html#a93d49fad6792ec769fe2bb828157b765',1,'kernel.cu']]],
-  ['cal_5fdistance',['cal_distance',['../kernel_8cu.html#a26f9ace65a68cd113327fbc0bd14c306',1,'kernel.cu']]],
+  ['cal_5fdistance',['cal_distance',['../kernel_8cu.html#a2732531d5cabaae299a52c9a4069e087',1,'cal_distance(char *allStr, unsigned int *offsets, Int2 *index, SeqInfo *seqInfo, int *seqOffset, int distance, char measure, char *distanceOutput, char *flagOutput, int n, int seqLen):&#160;kernel.cu'],['../kernel_8cu.html#a26f9ace65a68cd113327fbc0bd14c306',1,'cal_distance(char *allStr, unsigned int *offsets, Int2 *index, int distance, char measure, char *distanceOutput, char *flagOutput, int n, int seqLen):&#160;kernel.cu']]],
   ['cal_5fhistogram',['cal_histogram',['../cub_8cu.html#ac2063d7c650f9c95f6df719787bab6ca',1,'cub.cu']]],
   ['cal_5flowerbounds',['cal_lowerbounds',['../xtn_8cu.html#af2c4111a60fff7b15b9949f19627903d',1,'xtn.cu']]],
   ['cal_5fmax_5fexponent',['cal_max_exponent',['../xtn_8cu.html#a58ffefc80374afdd72996e5591505bae',1,'xtn.cu']]],
@@ -23,5 +23,6 @@ var searchData=
   ['codec_2ecu',['codec.cu',['../codec_8cu.html',1,'']]],
   ['codec_5fdef',['CODEC_DEF',['../codec_8cu.html#a060b0252834abbe6572360ddffcc4a9a',1,'codec.cu']]],
   ['concat_5fhistograms',['concat_histograms',['../xtn_8cu.html#a5eea7f1abc6071de2cf67347acc642b9',1,'xtn.cu']]],
+  ['convertstring',['convertString',['../xtn__inner_8cu.html#ab7a49c3ca0778b87b9fff10921eaaf4a',1,'xtn_inner.cu']]],
   ['cub_2ecu',['cub.cu',['../cub_8cu.html',1,'']]]
 ];

@@ -117,8 +117,10 @@ Functions</h2></td></tr>
 <tr class="memitem:a24f7088f65ecf1180e1fbaa6ece69c1e"><td class="memItemLeft" align="right" valign="top">__device__ char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#a24f7088f65ecf1180e1fbaa6ece69c1e">hamming</a> (char *allStr, unsigned int start1, unsigned int start2, int len1, int len2)</td></tr>
 <tr class="memdesc:a24f7088f65ecf1180e1fbaa6ece69c1e"><td class="mdescLeft">&#160;</td><td class="mdescRight">calculate Hamming distance of 2 strings in GPU.  <a href="#a24f7088f65ecf1180e1fbaa6ece69c1e">More...</a><br /></td></tr>
 <tr class="separator:a24f7088f65ecf1180e1fbaa6ece69c1e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2732531d5cabaae299a52c9a4069e087"><td class="memItemLeft" align="right" valign="top">__global__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#a2732531d5cabaae299a52c9a4069e087">cal_distance</a> (char *allStr, unsigned int *offsets, <a class="el" href="structInt2.html">Int2</a> *index, <a class="el" href="structSeqInfo.html">SeqInfo</a> *seqInfo, int *seqOffset, int distance, char measure, char *distanceOutput, char *flagOutput, int n, int seqLen)</td></tr>
+<tr class="memdesc:a2732531d5cabaae299a52c9a4069e087"><td class="mdescLeft">&#160;</td><td class="mdescRight">calculate distances of strings from given pairs and flag ones exceeding the threshold.  <a href="#a2732531d5cabaae299a52c9a4069e087">More...</a><br /></td></tr>
+<tr class="separator:a2732531d5cabaae299a52c9a4069e087"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a26f9ace65a68cd113327fbc0bd14c306"><td class="memItemLeft" align="right" valign="top">__global__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#a26f9ace65a68cd113327fbc0bd14c306">cal_distance</a> (char *allStr, unsigned int *offsets, <a class="el" href="structInt2.html">Int2</a> *index, int distance, char measure, char *distanceOutput, char *flagOutput, int n, int seqLen)</td></tr>
-<tr class="memdesc:a26f9ace65a68cd113327fbc0bd14c306"><td class="mdescLeft">&#160;</td><td class="mdescRight">calculate distances of strings from given pairs and flag ones exceeding the threshold.  <a href="#a26f9ace65a68cd113327fbc0bd14c306">More...</a><br /></td></tr>
 <tr class="separator:a26f9ace65a68cd113327fbc0bd14c306"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4051473b65887a419392736f59a7b2ab"><td class="memItemLeft" align="right" valign="top">__global__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="kernel_8cu.html#a4051473b65887a419392736f59a7b2ab">pair2rep</a> (<a class="el" href="structInt2.html">Int2</a> *pairs, <a class="el" href="structInt2.html">Int2</a> *indexOut, size_t *freqOut, <a class="el" href="structSeqInfo.html">SeqInfo</a> *seqInfo, int *inputOffsets, int *outputOffsets, int n)</td></tr>
 <tr class="memdesc:a4051473b65887a419392736f59a7b2ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">turning pairs and frequencies from sequence format to repertoire format.  <a href="#a4051473b65887a419392736f59a7b2ab">More...</a><br /></td></tr>
@@ -243,8 +245,108 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a id="a2732531d5cabaae299a52c9a4069e087"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2732531d5cabaae299a52c9a4069e087">&#9670;&nbsp;</a></span>cal_distance() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">__global__ void cal_distance </td>
+          <td>(</td>
+          <td class="paramtype">char *&#160;</td>
+          <td class="paramname"><em>allStr</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int *&#160;</td>
+          <td class="paramname"><em>offsets</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structInt2.html">Int2</a> *&#160;</td>
+          <td class="paramname"><em>index</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structSeqInfo.html">SeqInfo</a> *&#160;</td>
+          <td class="paramname"><em>seqInfo</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *&#160;</td>
+          <td class="paramname"><em>seqOffset</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>distance</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char&#160;</td>
+          <td class="paramname"><em>measure</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char *&#160;</td>
+          <td class="paramname"><em>distanceOutput</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char *&#160;</td>
+          <td class="paramname"><em>flagOutput</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>n</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>seqLen</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>calculate distances of strings from given pairs and flag ones exceeding the threshold. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">allStr</td><td>container of all sequences </td></tr>
+    <tr><td class="paramname">offsets</td><td>start/end position of each sequence </td></tr>
+    <tr><td class="paramname">index</td><td>pairs of sequence to calculate </td></tr>
+    <tr><td class="paramname">seqInfo</td><td>info to lookup originalIndex </td></tr>
+    <tr><td class="paramname">seqOffset</td><td>offset to lookup seqInfo </td></tr>
+    <tr><td class="paramname">distance</td><td>Levenshtein/Hamming distance threshold </td></tr>
+    <tr><td class="paramname">measure</td><td>enum representing Levenshtein/Hamming </td></tr>
+    <tr><td class="paramname">distanceOutput</td><td>output distance, maybe null </td></tr>
+    <tr><td class="paramname">flagOutput</td><td>array output flag </td></tr>
+    <tr><td class="paramname">n</td><td>array length of index </td></tr>
+    <tr><td class="paramname">seqLen</td><td>array length of seq </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="a26f9ace65a68cd113327fbc0bd14c306"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a26f9ace65a68cd113327fbc0bd14c306">&#9670;&nbsp;</a></span>cal_distance()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a26f9ace65a68cd113327fbc0bd14c306">&#9670;&nbsp;</a></span>cal_distance() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -310,22 +412,6 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-
-<p>calculate distances of strings from given pairs and flag ones exceeding the threshold. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">allStr</td><td>container of all sequences </td></tr>
-    <tr><td class="paramname">offsets</td><td>start/end position of each sequence </td></tr>
-    <tr><td class="paramname">index</td><td>pairs of sequence to calculate </td></tr>
-    <tr><td class="paramname">distance</td><td>Levenshtein/Hamming distance threshold </td></tr>
-    <tr><td class="paramname">measure</td><td>enum representing Levenshtein/Hamming </td></tr>
-    <tr><td class="paramname">distanceOutput</td><td>output distance, maybe null </td></tr>
-    <tr><td class="paramname">flagOutput</td><td>array output flag </td></tr>
-    <tr><td class="paramname">n</td><td>array length of index </td></tr>
-    <tr><td class="paramname">seqLen</td><td>array length of seq </td></tr>
-  </table>
-  </dd>
-</dl>
 
 </div>
 </div>

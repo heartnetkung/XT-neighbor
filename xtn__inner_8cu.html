@@ -129,6 +129,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a6fafd0e15edeeb40e3fe7826bbc16c7b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xtn__inner_8cu.html#a6fafd0e15edeeb40e3fe7826bbc16c7b">stream_handler4_nn</a> (<a class="el" href="classChunk.html">Chunk</a>&lt; <a class="el" href="structInt2.html">Int2</a> &gt; pairInput, <a class="el" href="structXTNOutput.html">XTNOutput</a> &amp;output, char *allStr, unsigned int *allStrOffsets, int seqLen, int distance, char measure, int *buffer)</td></tr>
 <tr class="memdesc:a6fafd0e15edeeb40e3fe7826bbc16c7b"><td class="mdescLeft">&#160;</td><td class="mdescRight">handle all GPU operations in stream 4 nn mode.  <a href="#a6fafd0e15edeeb40e3fe7826bbc16c7b">More...</a><br /></td></tr>
 <tr class="separator:a6fafd0e15edeeb40e3fe7826bbc16c7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab7a49c3ca0778b87b9fff10921eaaf4a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xtn__inner_8cu.html#ab7a49c3ca0778b87b9fff10921eaaf4a">convertString</a> (char *allStr, unsigned int *allStrOffsets, <a class="el" href="structInt3.html">Int3</a> *output, int seqLen)</td></tr>
+<tr class="memdesc:ab7a49c3ca0778b87b9fff10921eaaf4a"><td class="mdescLeft">&#160;</td><td class="mdescRight">convert all sequences to int3 form  <a href="#ab7a49c3ca0778b87b9fff10921eaaf4a">More...</a><br /></td></tr>
+<tr class="separator:ab7a49c3ca0778b87b9fff10921eaaf4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
@@ -245,6 +248,57 @@ Variables</h2></td></tr>
 </div><div class="memdoc">
 
 <p>private function. </p>
+
+</div>
+</div>
+<a id="ab7a49c3ca0778b87b9fff10921eaaf4a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab7a49c3ca0778b87b9fff10921eaaf4a">&#9670;&nbsp;</a></span>convertString()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void convertString </td>
+          <td>(</td>
+          <td class="paramtype">char *&#160;</td>
+          <td class="paramname"><em>allStr</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int *&#160;</td>
+          <td class="paramname"><em>allStrOffsets</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structInt3.html">Int3</a> *&#160;</td>
+          <td class="paramname"><em>output</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>seqLen</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>convert all sequences to int3 form </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">allStr</td><td>all CDR3 sequences </td></tr>
+    <tr><td class="paramname">allStrOffsets</td><td>offset of CDR3 sequences </td></tr>
+    <tr><td class="paramname">output</td><td>sequence outputs </td></tr>
+    <tr><td class="paramname">seqLen</td><td>number of input CDR3 sequences </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
