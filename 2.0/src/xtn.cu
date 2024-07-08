@@ -249,13 +249,10 @@ void xtn_perform(XTNArgs args, SeqArray* seqArr, SeqInfo* seqInfo, void callback
 	//=====================================
 
 	if (overlapMode) {
-		Int3* seqDedup;
 		seqInfoDevice = host_to_device(seqInfo, seqLen);
 		seqLen = overlap_mode_init(seqArr->getSeqs_d(), seqArr->getOffsets_d(),
-		                           seqDedup, seqInfoDevice, seqOffset,
+		                           seqDevice, seqInfoDevice, seqOffset,
 		                           allOverlapOutputs, seqLen, deviceInt);
-		cudaFree(seqDevice); gpuerr();
-		seqDevice = seqDedup;
 	} else
 		convertString(seqArr->getSeqs_d(), seqArr->getOffsets_d(), seqDevice, seqLen);
 	print_v("0A");
