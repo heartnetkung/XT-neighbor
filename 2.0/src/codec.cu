@@ -210,7 +210,7 @@ int SeqArray::getItemCPU(int index, char* &result) {
 
 void SeqArray::toDevice() {
 	offsets_d = host_to_device(offsets, size + 1);
-	cudaFree(offsets);
+	cudaFreeHost(offsets); gpuerr();
 	cudaMalloc(&seqs_d, sizeof(char)*seqs.size()); gpuerr();
 	cudaMemcpy(seqs_d, seqs.data(), sizeof(char)*seqs.size(), cudaMemcpyHostToDevice); gpuerr();
 	seqs.clear();
