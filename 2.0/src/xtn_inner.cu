@@ -33,7 +33,6 @@ int NUM_BLOCK(int len) {
 int cal_offsets(Int3* inputKeys, int* &inputOffsets, int* &outputLengths, int n, int* buffer) {
 	// cal inputOffsets
 	cudaMalloc(&inputOffsets, sizeof(int)*n); gpuerr();
-	//FIXME double check
 	unique_counts(inputKeys, inputOffsets, buffer, n);
 	int nUnique = transfer_last_element(buffer, 1);
 
@@ -51,7 +50,6 @@ int cal_offsets_lowerbound(Int3* inputKeys, int* inputValues, int* &inputOffsets
                            int* &outputLengths, int lowerbound, int n, int* buffer) {
 	// cal inputOffsets
 	cudaMalloc(&inputOffsets, sizeof(int)*n); gpuerr();
-	//FIXME double check
 	unique_counts(inputKeys, inputOffsets, buffer, n);
 	int nUnique = transfer_last_element(buffer, 1);
 	inclusive_sum(inputOffsets, nUnique);
@@ -450,4 +448,18 @@ void stream_handler4_nn(Chunk<Int2> pairInput, XTNOutput &output, char* allStr, 
 	                   uniqueLen, buffer, seqLen);
 	make_output(pairOut, distanceOut, outputLen, output);
 	_cudaFree(uniquePairs, pairOut, distanceOut);
+}
+
+/**
+ * convert all sequences to int3 form
+ *
+ * @param allStr all CDR3 sequences
+ * @param allStrOffsets offset of CDR3 sequences
+ * @param output sequence outputs
+ * @param seqLen number of input CDR3 sequences
+*/
+void convertString(char* allStr, unsigned int* allStrOffsets, Int3* output, int seqLen) {
+	cudaMalloc(&output, sizeof(Int3)*seqLen); gpuerr();
+	toInt3 <<< NUM_BLOCK(seqLen), NUM_THREADS>>>(
+	    allStr, allStrOffsets, output, seqLen); gpuerr();
 }

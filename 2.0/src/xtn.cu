@@ -212,11 +212,11 @@ int** set_d2_offsets(std::vector<int*> histograms, D2Stream<T1> *s1, D2Stream<T2
  * the main function for XT-neighbor algorithm.
  *
  * @param args all flags parsed from command line
- * @param seq sequence input
+ * @param seqArr sequence input
  * @param seqInfo information of each CDR3 sequence, only used in overlap mode
  * @param callback function to be invoked once a chunk of output is ready
 */
-void xtn_perform(XTNArgs args, Int3* seq, SeqInfo* seqInfo, void callback(XTNOutput)) {
+void xtn_perform(XTNArgs args, SeqArray* seqArr, SeqInfo* seqInfo, void callback(XTNOutput)) {
 	clock_start();
 
 	// normal variables
@@ -243,8 +243,6 @@ void xtn_perform(XTNArgs args, Int3* seq, SeqInfo* seqInfo, void callback(XTNOut
 	int* b1valueOut;
 
 	cudaMalloc(&deviceInt, sizeof(int)); gpuerr();
-	seqDevice = host_to_device(seq, seqLen);
-	print_v("0A");
 
 	//=====================================
 	// overlap mode input preparation
@@ -253,11 +251,14 @@ void xtn_perform(XTNArgs args, Int3* seq, SeqInfo* seqInfo, void callback(XTNOut
 	if (overlapMode) {
 		Int3* seqDedup;
 		seqInfoDevice = host_to_device(seqInfo, seqLen);
-		seqLen = overlap_mode_init(seqDevice, seqDedup, seqInfoDevice, seqOffset,
+		seqLen = overlap_mode_init(seqArr->getSeqs_d(), seqArr->getOffsets_d(),
+		                           seqDedup, seqInfoDevice, seqOffset,
 		                           allOverlapOutputs, seqLen, deviceInt);
 		cudaFree(seqDevice); gpuerr();
 		seqDevice = seqDedup;
-	}
+	} else
+		convertString(seqArr->getSeqs_d(), seqArr->getOffsets_d(), seqDevice, seqLen);
+	print_v("0A");
 
 	//=====================================
 	// stream 1: generate deletions
@@ -284,6 +285,7 @@ void xtn_perform(XTNArgs args, Int3* seq, SeqInfo* seqInfo, void callback(XTNOut
 		print_v("1B");
 	}
 
+	cudaFree(seqDevice); gpuerr();
 	print_tl("1", b1key->get_total_len());
 
 	//=====================================
@@ -378,13 +380,13 @@ void xtn_perform(XTNArgs args, Int3* seq, SeqInfo* seqInfo, void callback(XTNOut
 			print_bandwidth(b3Chunk.len, ctx4.bandwidth1, "4");
 
 			if (overlapMode) {
-				stream_handler4_overlap(b3Chunk, allOverlapOutputs, seqDevice, seqInfoDevice,
-				                        seqOffset, seqLen, distance, args.measure, deviceInt, ctx4);
+				stream_handler4_overlap(b3Chunk, allOverlapOutputs, seqArr->getSeqs_d(), seqArr->getOffsets_d(),
+				                        seqInfoDevice, seqOffset, seqLen, distance, args.measure, deviceInt, ctx4);
 				totalLen4 += allOverlapOutputs.back().len;
 			} else {
 				XTNOutput finalOutput;
-				stream_handler4_nn(b3Chunk, finalOutput, seqDevice, seqLen,
-				                   distance, args.measure, deviceInt);
+				stream_handler4_nn(b3Chunk, finalOutput, seqArr->getSeqs_d(), seqArr->getOffsets_d(),
+				                   seqLen, distance, args.measure, deviceInt);
 				callback(finalOutput);
 				_cudaFreeHost(finalOutput.indexPairs, finalOutput.pairwiseDistances);
 				totalLen4 += finalOutput.len;
@@ -409,7 +411,7 @@ void xtn_perform(XTNArgs args, Int3* seq, SeqInfo* seqInfo, void callback(XTNOut
 	// boilerplate: deallocalte
 	//=====================================
 	cudaFreeHost(lowerbounds); gpuerr();
-	_cudaFree(deviceInt, seqDevice);
+	cudaFree(deviceInt); gpuerr();
 	b2key->deconstruct();
 	b2value->deconstruct();
 	if (verboseGlobal)
