@@ -458,7 +458,7 @@ void stream_handler4_nn(Chunk<Int2> pairInput, XTNOutput &output, char* allStr, 
  * @param output sequence outputs
  * @param seqLen number of input CDR3 sequences
 */
-void convertString(char* allStr, unsigned int* allStrOffsets, Int3* output, int seqLen) {
+void convertString(char* allStr, unsigned int* allStrOffsets, Int3* &output, int seqLen) {
 	cudaMalloc(&output, sizeof(Int3)*seqLen); gpuerr();
 	toInt3 <<< NUM_BLOCK(seqLen), NUM_THREADS>>>(
 	    allStr, allStrOffsets, output, seqLen); gpuerr();
