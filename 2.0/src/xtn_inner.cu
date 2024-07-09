@@ -13,6 +13,7 @@
 
 const int NUM_THREADS = 256;
 const unsigned int UINT_MIN = 0;
+size_t pairsAfterDup = 0;
 
 //=====================================
 // Private Functions
@@ -443,6 +444,7 @@ void stream_handler4_nn(Chunk<Int2> pairInput, XTNOutput &output, char* allStr, 
 
 	cudaMalloc(&uniquePairs, sizeof(Int2)*pairInput.len); gpuerr();
 	int uniqueLen = deduplicate(pairInput.ptr, uniquePairs, pairInput.len, buffer);
+	pairsAfterDup += uniqueLen;
 	int outputLen =
 	    postprocessing(allStr, allStrOffsets, uniquePairs, distance, measure, pairOut, distanceOut,
 	                   uniqueLen, buffer, seqLen);
