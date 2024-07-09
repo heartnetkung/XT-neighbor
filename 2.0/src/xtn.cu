@@ -397,14 +397,15 @@ void xtn_perform(XTNArgs args, SeqArray* seqArr, SeqInfo* seqInfo, void callback
 
 			print_v("4B");
 		}
-		if (!overlapMode)
-			print_tl("4 afterdup", pairsAfterDup);
 
 		b3->deconstruct();
 		_cudaFreeHost2D(offsets, offsetLen);
 		print_tl("4", totalLen4);
 		end_stream4.push_back(get_time());
 	}
+
+	if (!overlapMode)
+		print_tl("4 afterdup", pairsAfterDup);
 
 	if (overlapMode) {
 		_cudaFree(seqOffset, seqInfoDevice);
