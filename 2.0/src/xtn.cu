@@ -217,7 +217,10 @@ int** set_d2_offsets(std::vector<int*> histograms, D2Stream<T1> *s1, D2Stream<T2
  * @param callback function to be invoked once a chunk of output is ready
 */
 void xtn_perform(XTNArgs args, SeqArray* seqArr, SeqInfo* seqInfo, void callback(XTNOutput)) {
-	clock_start();
+	// timing variables
+	float start_stream1, start_stream2, start_stream3;
+	std::vector<float> end_stream3, end_stream4;
+	start_stream1 = clock_start();
 
 	// normal variables
 	int* deviceInt, *lowerbounds, *seqOffset = NULL;
@@ -289,6 +292,7 @@ void xtn_perform(XTNArgs args, SeqArray* seqArr, SeqInfo* seqInfo, void callback
 	// stream 2: group key values
 	//=====================================
 
+	start_stream2 = get_time();
 	MemoryContext ctx2 = cal_memory_stream2(seqLen);
 	int offsetLen;
 	size_t totalLen2B = 0;
@@ -321,6 +325,7 @@ void xtn_perform(XTNArgs args, SeqArray* seqArr, SeqInfo* seqInfo, void callback
 	// loop: lower bound
 	//=====================================
 
+	start_stream3 = get_time();
 	size_t totalLen3B = 0;
 	lowerboundsLen = cal_lowerbounds(histograms, lowerbounds, seqLen, deviceInt);
 	histograms.clear();
@@ -359,6 +364,7 @@ void xtn_perform(XTNArgs args, SeqArray* seqArr, SeqInfo* seqInfo, void callback
 		print_tl("3.1", b2key->get_total_len());
 		print_tl("3.2", b3->get_total_len());
 		totalLen3B += b3->get_total_len();
+		end_stream3.push_back(get_time());
 
 		//=====================================
 		// stream 4: postprocessing
@@ -391,12 +397,13 @@ void xtn_perform(XTNArgs args, SeqArray* seqArr, SeqInfo* seqInfo, void callback
 
 			print_v("4B");
 		}
-		if(!overlapMode)
+		if (!overlapMode)
 			print_tl("4 afterdup", pairsAfterDup);
 
 		b3->deconstruct();
 		_cudaFreeHost2D(offsets, offsetLen);
 		print_tl("4", totalLen4);
+		end_stream4.push_back(get_time());
 	}
 
 	if (overlapMode) {
@@ -416,4 +423,21 @@ void xtn_perform(XTNArgs args, SeqArray* seqArr, SeqInfo* seqInfo, void callback
 	if (verboseGlobal)
 		printf("totalLen 3B: %'lu\n", totalLen3B);
 	print_v("5");
+
+	if (verboseGlobal) {
+		float stream3Duration = end_stream4.back() - start_stream3, stream4Duration = 0;
+		for (auto& it : end_stream3) {
+			stream3Duration += it;
+			stream4Duration -= it;
+		}
+		for (auto& it : end_stream4) {
+			stream3Duration -= it;
+			stream4Duration += it;
+		}
+
+		printf("stream1 duration:  %'.1f\n", start_stream2 - start_stream1);
+		printf("stream2 duration:  %'.1f\n", start_stream3 - start_stream2);
+		printf("stream3 duration:  %'.1f\n", stream3Duration);
+		printf("stream4 duration:  %'.1f\n", stream4Duration);
+	}
 }

@@ -23,9 +23,18 @@ int print_err_line(const char* str, int line) {
 
 float startTime = 0;
 
-void clock_start() {
-	if (verboseGlobal)
+float clock_start() {
+	if (verboseGlobal) {
 		startTime = (float)clock() / CLOCKS_PER_SEC;
+		return startTime;
+	}
+	return 0;
+}
+
+float get_time() {
+	if (verboseGlobal)
+		return (float)clock() / CLOCKS_PER_SEC;
+	return 0;
 }
 
 void print_args(XTNArgs args) {
@@ -154,7 +163,7 @@ T* host_to_device(T* arr, int n) {
 }
 
 template <typename T>
-T* shrink(T* arr, int n){
+T* shrink(T* arr, int n) {
 	T* temp;
 	size_t tempBytes = sizeof(T) * n;
 	cudaMalloc(&temp, tempBytes); gpuerr();
@@ -249,9 +258,8 @@ void print_tl(const char* stream, size_t tl) {
 void print_bandwidth(int chunkLen, int bandwidth, const char* process) {
 	if (!verboseGlobal)
 		return;
-	float endTime = (float)clock() / CLOCKS_PER_SEC;
-	printf("process %s started with bandwidth %'d / %'d %'.0f\n",
-	       process, chunkLen, bandwidth, endTime - startTime);
+	printf("process %s started with bandwidth %'d / %'d\n",
+	       process, chunkLen, bandwidth);
 }
 
 void print_v(const char* message) {
