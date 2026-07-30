@@ -1,0 +1,16 @@
+name: symdel
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  - numpy
+  - scipy
+  - scikit-learn
+  - matplotlib
+  - ipykernel
+  - ipywidgets
+  - pytest
+  - pip
+  - pip:
+    - pyrepseq[full]
+    - symscan
