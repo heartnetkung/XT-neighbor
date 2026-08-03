@@ -271,6 +271,7 @@ int main(int argc, char **argv) {
 		xtn_perform(args, seqArr, seqInfo, null_handler);
 	}
 
-	printf("total output length: %'lu\n", totalOutputLen);
+	if (verboseGlobal)
+		printf("total output length: %'lu\n", totalOutputLen);
 	return exit(seqArr, seqInfo, returnCode, NULL);
 }

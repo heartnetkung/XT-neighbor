@@ -158,6 +158,7 @@ int main(int argc, char **argv) {
 	// 6. clean up
 	cudaFreeHost(seq1);
 	xtn_free(&output);
-	printf("Success! Number of triplet: %'zu\n", output.len);
+	if (args.verbose)
+		printf("Success! Number of triplet: %'zu\n", output.len);
 	return 0;
 }
