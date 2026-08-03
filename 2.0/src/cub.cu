@@ -2,7 +2,6 @@
 #include <cub/device/device_merge_sort.cuh>
 #include <cub/device/device_run_length_encode.cuh>
 #include <cub/device/device_select.cuh>
-#include <cub/device/device_histogram.cuh>
 #include <cub/device/device_reduce.cuh>
 #include "codec.cu"
 
@@ -173,16 +172,44 @@ void flag(T1* input1, char* flags, T1* output1, int* outputLen, int n) {
 	cudaFree(buffer); gpuerr();
 }
 
+/**
+ * per-thread bucketing kernel backing cal_histogram.
+ * Used instead of cub::DeviceHistogram::HistogramEven, which has confirmed
+ * scale-dependent correctness problems with integer sample/level types:
+ * silent sample loss when both bin count and sample count are large
+ * (NVIDIA/cub#479, NVIDIA/cub#489), and separately, float-cast workarounds
+ * for that lose precision once index values exceed 2^24. Plain size_t
+ * integer arithmetic here has neither limitation.
+*/
+template <typename T>
+__global__
+void histogram_kernel(T* input, int* output, T minValue, T maxValue, int nLevel, int n) {
+	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
+	if (tid >= n)
+		return;
+
+	T value = input[tid];
+	if ((value < minValue) || (value >= maxValue))
+		return;
+
+	size_t range = (size_t)maxValue - (size_t)minValue;
+	size_t offset = (size_t)value - (size_t)minValue;
+	size_t bin = (offset * (size_t)nLevel) / range;
+	if (bin >= (size_t)nLevel)
+		bin = nLevel - 1;
+
+	atomicAdd(&output[bin], 1);
+}
+
 template <typename T>
 void cal_histogram(T* input, int* output, int nLevel, T minValue, T maxValue, int n) {
-	void *buffer = NULL;
-	size_t bufferSize = 0;
-	cub::DeviceHistogram::HistogramEven(buffer, bufferSize,
-	                                    input, output, nLevel + 1, minValue, maxValue, n); gpuerr();
-	cudaMalloc(&buffer, bufferSize); gpuerr(); /*5-10% memory*/
-	cub::DeviceHistogram::HistogramEven(buffer, bufferSize,
-	                                    input, output, nLevel + 1, minValue, maxValue, n); gpuerr();
-	cudaFree(buffer); gpuerr();
+	cudaMemset(output, 0, sizeof(int) * nLevel); gpuerr();
+
+	int nThreads = 256;
+	int nBlocks = divide_ceil(n, nThreads);
+	if (nBlocks == 0)
+		nBlocks = 1;
+	histogram_kernel <<< nBlocks, nThreads >>>(input, output, minValue, maxValue, nLevel, n); gpuerr();
 }
 
 template <typename T>
