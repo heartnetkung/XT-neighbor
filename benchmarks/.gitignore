@@ -2,3 +2,4 @@
 *.tsv
 *.csv
 compairr/
+tmp/
