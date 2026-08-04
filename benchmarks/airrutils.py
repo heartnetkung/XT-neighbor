@@ -11,7 +11,7 @@ from scipy.sparse import csr_matrix
 # repo root, assumed to be the parent directory of this file (benchmarks/)
 repo_path = Path(__file__).resolve().parent.parent
 
-def _idx_to_repoverlap(i_arr, j_arr, useqs=None, useq_ids=None, dup_counts=None, rep_sizes=None):
+def _idx_to_repoverlap(i_arr, j_arr, useqs=None, useq_ids=None, dup_counts=None, rep_sizes=None, chunk_size=5_000_000):
     dup_counts = np.asarray(dup_counts, dtype=np.int64)
     rep_sizes = np.asarray(rep_sizes)
     n_rep, n_useq = len(rep_sizes), len(useqs)
@@ -19,14 +19,17 @@ def _idx_to_repoverlap(i_arr, j_arr, useqs=None, useq_ids=None, dup_counts=None,
     rep_ids = np.repeat(np.arange(n_rep), rep_sizes)
     rep_profile = csr_matrix((dup_counts, (useq_ids, rep_ids)), shape=(n_useq, n_rep))
 
-    if len(i_arr):
-        cross = rep_profile[i_arr].T @ rep_profile[j_arr]
-    else:
-        cross = 0
+    # chunked to avoid scipy's int32 indptr overflow in rep_profile[i_arr] when
+    # i_arr/j_arr have hundreds of millions of entries (large edit-distance neighbor sets)
+    cross = np.zeros((n_rep, n_rep), dtype=np.int64)
+    for start in range(0, len(i_arr), chunk_size):
+        end = start + chunk_size
+        chunk = rep_profile[i_arr[start:end]].T @ rep_profile[j_arr[start:end]]
+        cross += np.asarray(chunk.todense())
 
     # the "sequence overlaps itself" diagonal term
     self_term = rep_profile.T @ rep_profile
-    return np.asarray((cross + self_term).todense())
+    return cross + np.asarray(self_term.todense())
 
 def symdel_overlap(distance, is_hamming, seqs=None, dup_counts=None, rep_sizes=None):
   measure = 'hamming' if is_hamming else None
