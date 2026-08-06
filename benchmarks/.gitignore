@@ -1,6 +1,7 @@
 *.txt
 *.tsv
 *.csv
+*.log
 compairr/
 tmp/
 __pycache__/
