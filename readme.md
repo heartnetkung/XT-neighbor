@@ -1,23 +1,30 @@
-## Description
+# Lightning-fast adaptive immune receptor similarity search by symmetric deletion lookup
 
-XTNeighbor is a fast scalable method for nearest neighbor search of adaptive immune receptors (AIRs) using GPU. In simple terms, our inputs are CDR3 regions of AIRs represented as a string of amino acids and the algorithm finds all pairs of AIRs such that their similarity is within a specified Levenshtein distance threshold. XTNeighbor is orders of magnitude faster than current methods thanks to a symmetric deletion algorithmic approach, GPU acceleration, and memory optimization. A detailed description of the method is provide in our [arXiv preprint](https://doi.org/10.48550/arXiv.2403.09010).
+This repository allows reproduction of the results reported in our [arXiv preprint](https://doi.org/10.48550/arXiv.2403.09010).
+
+## Benchmarking and Reproducibility
+- Source code for producing figures in the preprint is provided in the `/pub` folder.
+- Source code for the benchmarking scripts is provided in the `/benchmarks` folder.
+- A `snakemake` workflow can be used to control the overall code execution.
 
 ## Quick Usage
 
-This is [the Google Colab Notebook](https://colab.research.google.com/drive/1JbRLtRrmUv9zZollSfT9xp6WqOy7LB7q) that allows user to quickly use this tool from web browser without setting up the GPU environment.
+Please see [SymScan](github.com/yutanagano/symscan) for quickstart examples.
 
-## Installation
+## XTNeighbor
+
+This repository also provides XTNeighbor, our GPU-accelerated neighbor search tool.
 
 XTNeighbor has been tested with the following environment:
 - CUDA SDK version 11.0+
-- Nvidia T4 GPU, Nvidia V100 GPU (see Google Colab demo below)
+- Nvidia RTX4090, T4 GPU, V100 GPU
 - Linux OS or Google Colab runtime
 
 Detailed installation instructions, examples, and testing code are provided via a [Google Colab demo](https://colab.research.google.com/drive/1UrTLHNcW0XAp_6jL2ys1FVNutaoJOX9K).
 
 For advanced tutorial in compiling XT-neighbor on bare-bone Linux, read this [tutorial.](https://github.com/heartnetkung/XT-neighbor/wiki/Bare%E2%80%90Bone-Installation-on-Linux)
 
-## Usage
+### Usage
 
 ```txt
 xt_neighbor: perform either nearest neighbor search for CDR3 sequences or immune repertoire overlap using GPU-based xt_neighbor algorithm.
@@ -45,31 +52,12 @@ xt_neighbor: perform either nearest neighbor search for CDR3 sequences or immune
 	 -N or --info-length [number] (required): number of repertoires given in the info file
 ```
 
-## Benchmarking and Reproducibility
-- Benchmarking code on nearest neighbor search is provided via [Google Colab Notebook](https://colab.research.google.com/drive/1j-DO11k2NQPlNJF966BNjRKhHPY94sJJ).
-- Benchmarking code on immune repertoire comparison is provided via [Google Colab Notebook](https://colab.research.google.com/drive/19Qh1cgw-Zgs2aWQRIV-WkbzdGJBi0zGg).
-- Source code for producing figures in the preprint is provided in the `/pub` folder.
-
-## Deduplication Warning
-- A major factor in runtime of the program is duplication in the input. Please drop all duplicates before using it as input. If duplication matters, you should deduplicate, give it to XT-neighbor, then recombine it with your original input.
-- Without deduplication, the number of output triplets usually grow at least quadratically to the input size, thus the runtime also grows quadratically.
-- The reason is that, assume your data contains a cluster of size `N`, any additional member to these clusters add `N` more redundant results, thus introduce quadratic scaling. In real datasets, TCRs are distributed in clusters.
-
-## Documentation
+### Documentation
 - [link to auto generated documentation](https://heartnetkung.github.io/XT-neighbor/files.html)
 
-## Note on 1.0 and 2.0 Version of the Algorithm
-- The code in this repo contains both 1.0 and 2.0 versions which is named XTNeighbor and XTNeighbor-streaming in the paper.
-- All users are adviced to use the 2.0 version since 1.0 version won't be maintained. It is implemented to help explaining the algorithm in the paper.
-- In addition, 1.0 has several limitations including cdr3-length restriction, AIR compatibility, and no documentation.
-
-## FAQ
-- Is multiple GPU supported?
-  - No, but contribution is welcomed.
-- Is there a CPU version?
-  - Yes. The CPU version (also implemented by the same author) is included in a Python package called [XT-neighbor-cpu](https://github.com/heartnetkung/XT-neighbor-cpu). In fact for average-load task, it is more convenient to use that package since it's pip-installable, whereas this package requires GPU, CUDA driver/SDK installation.
-- How can I be confident about the correctness of this approach coming from biology background?
-  - We provide this [Colab Notebook](https://colab.research.google.com/drive/1Tsv5Yiinj6PPJdp58-fch_gCm_AbQ5vs#scrollTo=FKQHIC8J4L1c) to present the correctness of our approach by showing that our approach produce the same correct result as the one produce by simple for-loop approach. In addition, if you find a bug or mistake, you can use that code as a template for bug report as well.
+### Note on versions of XTNeighbor
+- The code in this repo contains XTNeighbor-streaming (the default) and a non-streaming variant simply called XTNeighbor.
+- All users are adviced to use the XTNeighbor-streaming implementation only. The non-streaming variant is only provided for pedagogical purposes. It only works on sequences of restricted length and is not compatible with AIRR compliant inputs.
 
 ## Citation
 ```bibtex

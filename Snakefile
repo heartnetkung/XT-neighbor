@@ -1,8 +1,10 @@
 # Benchmark and figure pipeline for the SymScan paper.
 #
 #   sudo benchmarks/bench_mode.sh on
+#   tmux new -s bench
 #   conda activate symdel
 #   snakemake -j1 --keep-going --rerun-incomplete 2>&1 | tee bench.log
+#   # Ctrl-b d to detach; ssh back in later and: tmux attach -t bench
 #   sudo benchmarks/bench_mode.sh off
 #
 # Always -j1: the timing rules must never run concurrently with anything else.
