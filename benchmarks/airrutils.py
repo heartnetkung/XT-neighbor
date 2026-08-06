@@ -112,14 +112,14 @@ def sample_repertoire(data,info,n,random_state=0,max_seqs=None):
       chunk = chunk.sample(max_seqs, random_state=random_state)
     reps.append(chunk)
     rep_col += [i]*len(chunk)
-  ans = pd.concat(reps,ignore_index=True)
+  ans = pd.concat(reps, ignore_index=True)
   ans.rename(columns={'count':'duplicate_count','cdr3':'cdr3_aa'},inplace=True)
   ans['repertoire_id'] = rep_col
   info_subset = info_subset.copy()
   info_subset['count'] = pd.Series(rep_col).value_counts().sort_index().to_numpy()
   return ans, info_subset
 
-def prepare(reps,info_subset):
+def prepare(reps, info_subset):
   reps.to_csv('tmp/compairr_input1.txt',index=False,sep='\t')
   reps.to_csv('tmp/xt_input1.txt',index=False,columns=['cdr3_aa','duplicate_count'])
   info_subset['count'].to_csv('tmp/xt_input2.txt',index=False)
