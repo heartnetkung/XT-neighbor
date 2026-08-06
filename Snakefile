@@ -220,6 +220,7 @@ rule bench_antibody:
 
 rule fig_scaling:
     input:
+        f"{PUB}/scaling_plots.ipynb",
         "data/cpu_benchmark.csv",
         "data/cpu_dist_benchmark.csv",
         "data/gpu_benchmark.csv",
@@ -234,6 +235,7 @@ rule fig_scaling:
 
 rule fig_compairr:
     input:
+        f"{PUB}/compairr_benchmark.ipynb",
         "data/compairr_benchmark.csv",
     output:
         "pub/figs/compairr_benchmark.pdf",
@@ -244,6 +246,7 @@ rule fig_compairr:
 
 rule fig_ncpu:
     input:
+        f"{PUB}/symscan_ncpu_scaling.ipynb",
         "data/symscan_ncpu_benchmark.csv",
     output:
         "pub/figs/symscan_ncpu_scaling.pdf",
@@ -256,6 +259,7 @@ rule fig_ncpu:
 
 rule fig_memory:
     input:
+        f"{PUB}/symscan_memory_scaling.ipynb",
         "data/symscan_memory_benchmark.csv",
     output:
         "pub/figs/symscan_memory_scaling.pdf",
@@ -270,6 +274,7 @@ rule fig_applications:
     """Draws all four panels of the applications figure: TCRdist in the top row,
     antibody lineages in the bottom, so it reads both datasets."""
     input:
+        f"{PUB}/applications.ipynb",
         "data/tcrdist_benchmark.csv",
         "data/antibody_benchmark_results.json",
     output:
