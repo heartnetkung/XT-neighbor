@@ -1,5 +1,3 @@
-# per-measurement timeout: any algorithm that runs longer than this is aborted
-# (SIGALRM) and simply skipped, so the benchmark loop keeps going.
 import os
 import platform
 import signal
@@ -78,6 +76,30 @@ def _read_first_line(path):
     return text.splitlines()[0].strip() if text else None
 
 
+def affinity_list():
+    """CPUs this process may run on, or None where the platform exposes no
+    affinity mask (anything other than Linux)."""
+    try:
+        return sorted(os.sched_getaffinity(0))
+    except AttributeError:
+        return None
+
+
+def available_cpus():
+    """Number of CPUs this process may actually run on. Use instead of
+    os.cpu_count(), which reports the whole machine and so ignores a taskset
+    pin or a cgroup quota -- sizing a thread pool with it under a pin
+    oversubscribes the cores and measures contention rather than scaling.
+
+    Counts logical CPUs: pin to one CPU per physical core (SMT siblings share
+    execution ports and L1/L2), or this over-counts by the SMT factor."""
+    cpus = affinity_list()
+    if cpus is not None:
+        return len(cpus)
+    count = getattr(os, 'process_cpu_count', os.cpu_count)()
+    return count or 1
+
+
 def describe_env(extra=None):
     """Snapshot of everything a timing measurement depends on, to be saved
     next to the results so numbers can be attributed to a machine and a set of
@@ -103,10 +125,7 @@ def describe_env(extra=None):
     except OSError:
         git_sha = None
 
-    try:
-        affinity = sorted(os.sched_getaffinity(0))
-    except AttributeError:  # not Linux
-        affinity = None
+    affinity = affinity_list()
 
     cpu_model = next((line.split(':', 1)[1].strip()
                       for line in (_read_text('/proc/cpuinfo') or '').splitlines()
