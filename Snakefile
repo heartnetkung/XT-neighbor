@@ -110,6 +110,7 @@ rule compairr:
 rule correctness:
     """01: all algorithms must return identical neighbour sets. No data output."""
     input:
+        f"{BENCH}/01_correctness.ipynb",
         rules.xtneighbor.output,
         rules.xtneighbor_streaming.output,
         "data/emerson1.zip",
@@ -122,6 +123,7 @@ rule correctness:
 rule bench_algorithms:
     """02: runtime vs input size and vs edit distance, CPU and GPU. Needs a GPU."""
     input:
+        f"{BENCH}/02_algorithms.ipynb",
         rules.xtneighbor.output,
         rules.xtneighbor_streaming.output,
         expand("data/emerson{i}.zip", i=range(1, 7)),
@@ -138,6 +140,7 @@ rule bench_algorithms:
 rule bench_ncpu:
     """02B: SymScan runtime sweeping 1..N threads over the pinned cores."""
     input:
+        f"{BENCH}/02B_symscan_ncpu_scaling.ipynb",
         "data/emerson1.zip",
     output:
         "data/symscan_ncpu_benchmark.csv",
@@ -149,6 +152,7 @@ rule bench_ncpu:
 rule bench_memory:
     """02C: peak RSS of SymScan vs SymDel, measured per subprocess."""
     input:
+        f"{BENCH}/02C_symscan_memory_scaling.ipynb",
         expand("data/emerson_rep{i}.zip", i=range(1, 15)),
     output:
         "data/symscan_memory_benchmark.csv",
@@ -160,6 +164,7 @@ rule bench_memory:
 rule bench_airr_overlap:
     """03: repertoire overlap against CompAIRR and XT-neighbor. Needs a GPU."""
     input:
+        f"{BENCH}/03_airr_overlap.ipynb",
         rules.xtneighbor_streaming.output,
         rules.compairr.output,
         "data/info.csv",
@@ -174,6 +179,7 @@ rule bench_airr_overlap:
 rule airr_overlap_correctness:
     """03B: overlap counts must agree across implementations. No data output."""
     input:
+        f"{BENCH}/03B_airr_overlap_correctness.ipynb",
         rules.xtneighbor_streaming.output,
         rules.compairr.output,
         "data/info.csv",
@@ -187,6 +193,7 @@ rule airr_overlap_correctness:
 rule bench_tcrdist:
     """04: SymScan as a pre-filter for TCRdist neighbour search."""
     input:
+        f"{BENCH}/04_tcrdist.ipynb",
         "data/emerson_HIP00110.tsv.gz",
     output:
         "data/tcrdist_benchmark.csv",
@@ -198,6 +205,7 @@ rule bench_tcrdist:
 rule bench_antibody:
     """05: SymScan on a CDR3 k-mer as a candidate generator for lineages."""
     input:
+        f"{BENCH}/05_antibody_lineages.ipynb",
         "data/briney_316188.tsv.gz",
     output:
         "data/antibody_benchmark_results.json",
