@@ -12,8 +12,7 @@ for p in s.split(','):
 print(c)")
 
 export RAYON_NUM_THREADS=$N OMP_NUM_THREADS=$N MKL_NUM_THREADS=$N \
-       OPENBLAS_NUM_THREADS=$N NUMEXPR_NUM_THREADS=$N NUMBA_NUM_THREADS=$N \
-       OMP_PROC_BIND=close OMP_PLACES=cores
+       OPENBLAS_NUM_THREADS=$N NUMEXPR_NUM_THREADS=$N NUMBA_NUM_THREADS=$N
 
 TURBO=$(cat /sys/devices/system/cpu/intel_pstate/no_turbo 2>/dev/null || echo n/a)
 GOV=$(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor 2>/dev/null || echo n/a)
