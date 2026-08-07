@@ -354,8 +354,8 @@ void xtn_perform(XTNArgs args, SeqArray* seqArr, SeqInfo* seqInfo, void callback
 		b3 = new D2Stream<Int2>();
 		print_v("3A");
 
-		while ((b2keyChunk = b2key->read()).not_null()) {
-			b2valueChunk = b2value->read();
+		while ((b2keyChunk = b2key->read(ctx3.bandwidth1)).not_null()) {
+			b2valueChunk = b2value->read(ctx3.bandwidth1);
 			print_bandwidth(b2keyChunk.len, ctx3.bandwidth1, "3");
 			stream_handler3(b2keyChunk, b2valueChunk, write_b3, histograms,
 			                lowerbound, seqLen, deviceInt, ctx3);

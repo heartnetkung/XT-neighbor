@@ -12,18 +12,25 @@ TEST(RAMSwapStream, {
 	stream->write(input_d, len);
 	stream->swap();
 
-	int expectedData[][6] = {{1, 2, 3, 4, 5, 6}};
-	int expectedLen2[] = {6};
-	int expectedLen = 1;
+	// a single write() larger than max_readable_size(4) is split across reads rather than
+	// growing the device buffer to fit it whole, so this comes back as two chunks
+	int expectedData[][6] = {{1, 2, 3, 4}, {5, 6}};
+	int expectedLen2[] = {4, 2};
+	int expectedLen = 2;
 
 	Chunk<int> data;
 	int count = 0;
-	while ((data = stream->read()).not_null()) {
+	while ((data = stream->read(4)).not_null()) {
 		check(data.len == expectedLen2[count]);
 		check_device_arr(data.ptr, expectedData[count], data.len);
 		count++;
 	}
 	check(count == expectedLen);
+
+	// fresh stream/budget so this case (coalescing several small writes into one read) is
+	// self-contained instead of depending on whatever budget the previous case left behind
+	RAMSwapStream<int> *stream2 = new RAMSwapStream<int>();
+	stream2->set_max_readable_size(6);
 
 	int input2[][4] = {{10, 11}, {12}, {13, 14}, {15, 16, 17, 18}};
 	int len22[] = {2, 1, 2, 4};
@@ -31,16 +38,18 @@ TEST(RAMSwapStream, {
 
 	for (int i = 0; i < len2; i++) {
 		input_d = host_to_device(input2[i], len22[i]);
-		stream->write(input_d, len22[i]);
+		stream2->write(input_d, len22[i]);
 	}
-	stream->swap();
+	stream2->swap();
 
-	int expectedData2[][5] = {{10, 11, 12, 13, 14}, {15, 16, 17, 18}};
-	int expectedLen22[] = {5, 4};
+	// reads now pack each chunk fully to the budget by splitting entries at element
+	// granularity (rather than only taking whole entries), so this packs tighter than before
+	int expectedData2[][6] = {{10, 11, 12, 13, 14, 15}, {16, 17, 18}};
+	int expectedLen22[] = {6, 3};
 	int expectedLen21 = 2;
 
 	count = 0;
-	while ((data = stream->read()).not_null()) {
+	while ((data = stream2->read(6)).not_null()) {
 		check(data.len == expectedLen22[count]);
 		check_device_arr(data.ptr, expectedData2[count], data.len);
 		count++;
