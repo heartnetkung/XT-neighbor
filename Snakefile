@@ -66,7 +66,7 @@ rule all:
         # publication figures
         "pub/figs/cpu_benchmark.pdf",
         "pub/figs/gpu_benchmark.pdf",
-        "pub/figs/compairr_benchmark.pdf",
+        "pub/figs/airr_overlap.pdf",
         "pub/figs/symscan_ncpu_scaling.pdf",
         "pub/figs/symscan_memory_scaling.pdf",
         "pub/figs/applications.pdf",
@@ -170,7 +170,7 @@ rule bench_airr_overlap:
         "data/info.csv",
         expand("data/emerson_rep{i}.zip", i=range(1, 6)),
     output:
-        "data/compairr_benchmark.csv",
+        "data/airr_overlap.csv",
         f"{RUNS}/03_airr_overlap.executed.ipynb",
     shell:
         bench_nb("03_airr_overlap")
@@ -233,15 +233,15 @@ rule fig_scaling:
         fig_nb("scaling_plots")
 
 
-rule fig_compairr:
+rule fig_airr_overlap:
     input:
-        f"{PUB}/compairr_benchmark.ipynb",
-        "data/compairr_benchmark.csv",
+        f"{PUB}/airr_overlap.ipynb",
+        "data/airr_overlap.csv",
     output:
-        "pub/figs/compairr_benchmark.pdf",
-        f"{RUNS}/compairr_benchmark.executed.ipynb",
+        "pub/figs/airr_overlap.pdf",
+        f"{RUNS}/airr_overlap.executed.ipynb",
     shell:
-        fig_nb("compairr_benchmark")
+        fig_nb("airr_overlap")
 
 
 rule fig_ncpu:
