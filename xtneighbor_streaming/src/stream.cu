@@ -76,6 +76,7 @@ private:
 	std::vector<int> _writing_len2, _reading_len2;
 	size_t _totalLen = 0;
 	int _maxReadableSize = 0;
+	int _readOffset = 0; /*elements already consumed from _reading_data.back()*/
 	T* _deviceBuffer = NULL;
 
 	void check_readable_input(int maxReadableSize) {
@@ -102,7 +103,14 @@ public:
 			printf("====size grow %'d\n", maxReadableSize);
 	}
 
-	Chunk<T> read() {
+	// maxReadableSize is the budget for this call (typically a MemoryContext.bandwidth
+	// freshly recomputed from currently-free GPU memory by the caller); it may be smaller
+	// than a previous call's, since memory pressure can grow over a long-running pipeline,
+	// so it's taken fresh each call rather than remembered across calls the way the buffer
+	// capacity set by set_max_readable_size is. A row (a past write() call) larger than
+	// maxReadableSize is transparently split across multiple read() calls instead of
+	// forcing the device buffer to grow to fit it whole.
+	Chunk<T> read(int maxReadableSize) {
 		Chunk<T> ans;
 		if (_reading_data.empty())
 			return ans;
@@ -110,38 +118,27 @@ public:
 			print_err("RAMSwapStream: _deviceBuffer == NULL");
 			return ans;
 		}
+		if (maxReadableSize > _maxReadableSize)
+			maxReadableSize = _maxReadableSize; /*can't exceed the allocated buffer's capacity*/
 
 		int totalLen = 0;
 		T* ptr = _deviceBuffer;
-		while (true) {
-			if (_reading_data.empty())
-				break;
+		while (!_reading_data.empty() && (totalLen < maxReadableSize)) {
+			int remaining = _reading_len2.back() - _readOffset;
+			int len = remaining < (maxReadableSize - totalLen) ? remaining : (maxReadableSize - totalLen);
 
-			int len = _reading_len2.back();
-			if (totalLen + len > _maxReadableSize)
-				break;
-
-			T* dataHost = _reading_data.back();
+			T* dataHost = _reading_data.back() + _readOffset;
 			cudaMemcpy(ptr, dataHost, sizeof(T)*len , cudaMemcpyHostToDevice); gpuerr();
-			_reading_data.pop_back();
-			_reading_len2.pop_back();
-
-			cudaFreeHost(dataHost); gpuerr();
 			ptr += len;
 			totalLen += len;
-		}
+			_readOffset += len;
 
-		// when len exceed _maxReadableSize, enlarge the readable size, and faithfully read with warning
-		if ((totalLen == 0) && !_reading_data.empty()) {
-			totalLen = _reading_len2.back();
-			set_max_readable_size(totalLen);
-
-			T* dataHost = _reading_data.back();
-			cudaMemcpy(_deviceBuffer, dataHost, sizeof(T)*totalLen , cudaMemcpyHostToDevice); gpuerr();
-			_reading_data.pop_back();
-			_reading_len2.pop_back();
-
-			cudaFreeHost(dataHost); gpuerr();
+			if (_readOffset == _reading_len2.back()) {
+				cudaFreeHost(_reading_data.back()); gpuerr();
+				_reading_data.pop_back();
+				_reading_len2.pop_back();
+				_readOffset = 0;
+			}
 		}
 
 		ans.ptr = _deviceBuffer;
@@ -166,6 +163,7 @@ public:
 		std::reverse(_reading_data.begin(), _reading_data.end());
 		std::reverse(_reading_len2.begin(), _reading_len2.end());
 		_totalLen = 0;
+		_readOffset = 0;
 	}
 
 	void deconstruct() {
