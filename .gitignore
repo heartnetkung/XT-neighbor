@@ -4,7 +4,9 @@
 *.ptx
 *.cubin
 *.fatbin
+bench.log
 
+.snakemake/
 pub/.ipynb_checkpoints/**
 _runs/
 
