@@ -11,6 +11,10 @@
 
 D2Stream<Int2> *b3 = NULL; /*global variable for callback*/
 const int MAX_PROCESSING = 1 << 30;
+// CUB DeviceMergeSort temp-storage overhead, in multiples of the sorted data size
+// (see the "Nx memory" comments on sort_key_values/sort_key_values2/sort_int2 in cub.cu)
+const int SORT_PAIRS_OVERHEAD = 16;
+const int SORT_KEYS_OVERHEAD = 8;
 
 //=====================================
 // Private Memory Functions
@@ -63,7 +67,7 @@ MemoryContext cal_memory_stream1(int seqLen, int distance) {
 
 	int multiplier =
 	    //bottleneck: Int3* &deletionsOutput int* &indexOutput sort_key_values
-	    deletionMultiplier * (2 * sizeof(Int3) + 2 * sizeof(int));
+	    deletionMultiplier * SORT_PAIRS_OVERHEAD * (sizeof(Int3) + sizeof(int));
 
 	size_t temp = ans.gpuSize / multiplier; /*safety factor is included in deletionMultiplier*/
 	ans.bandwidth1 = (temp > MAX_PROCESSING) ? MAX_PROCESSING : temp;
@@ -80,7 +84,7 @@ MemoryContext cal_memory_stream2(int seqLen) {
 	    //bottleneck: input sort_key_values
 	    2 * sizeof(Int3) + 2 * sizeof(int);
 
-	size_t temp = ans.gpuSize / (2 * multiplier);
+	size_t temp = ans.gpuSize / (SORT_PAIRS_OVERHEAD * multiplier);
 	ans.bandwidth1 = (temp > MAX_PROCESSING) ? MAX_PROCESSING : temp;
 	ans.bandwidth2 = (temp > MAX_PROCESSING) ? MAX_PROCESSING : temp;
 	ans.maxThroughputExponent = cal_max_exponent(ans.bandwidth1);
@@ -96,7 +100,7 @@ MemoryContext cal_memory_stream3(int seqLen) {
 	    2 * sizeof(int) + // int* &inputOffsets, int* &outputLengths
 	    sizeof(char) + sizeof(Int3) + sizeof(int); //char* flags Int3* keyOut int* valueOut;
 
-	size_t temp = ans.gpuSize / (2 * multiplier);
+	size_t temp = ans.gpuSize / (SORT_KEYS_OVERHEAD * multiplier);
 	ans.bandwidth1 = (temp > MAX_PROCESSING) ? MAX_PROCESSING : temp;
 	ans.bandwidth2 = (temp > MAX_PROCESSING) ? MAX_PROCESSING : temp;
 	return ans;
@@ -111,11 +115,12 @@ MemoryContext cal_memory_stream4(int seqLen, bool overlapMode) {
 	if (overlapMode) {
 		multiplier = 2 * sizeof(Int2) + // pairOut3, *uniquePairs
 		             sizeof(char); //flags
-		size_t temp =  ans.gpuSize / (3 * multiplier);
+		size_t temp =  ans.gpuSize / (SORT_PAIRS_OVERHEAD * multiplier);
 		ans.bandwidth1 = (temp > MAX_PROCESSING) ? MAX_PROCESSING : temp;
 		ans.bandwidth2 = (temp > MAX_PROCESSING) ? MAX_PROCESSING : temp;
 	} else {
-		multiplier = 3 * sizeof(Int2) + //Int2* uniquePairs, sorting, pairOutput
+		multiplier = 2 * sizeof(Int2) + //Int2* uniquePairs, pairOutput
+		             SORT_KEYS_OVERHEAD * sizeof(Int2) + //sorting
 		             3 * sizeof(char); //char* uniqueDistances, *flags, distanceOutput
 		size_t temp = (8 * ans.gpuSize) / (10 * multiplier);
 		ans.bandwidth1 = (temp > MAX_PROCESSING) ? MAX_PROCESSING : temp;
