@@ -64,8 +64,7 @@ def fig_nb(name):
 rule all:
     input:
         # publication figures
-        "pub/figs/cpu_benchmark.pdf",
-        "pub/figs/gpu_benchmark.pdf",
+        "pub/figs/scaling_benchmark.pdf",
         "pub/figs/airr_overlap.pdf",
         "pub/figs/symscan_ncpu_scaling.pdf",
         "pub/figs/symscan_memory_scaling.pdf",
@@ -226,8 +225,7 @@ rule fig_scaling:
         "data/gpu_benchmark.csv",
         "data/gpu_dist_benchmark.csv",
     output:
-        "pub/figs/cpu_benchmark.pdf",
-        "pub/figs/gpu_benchmark.pdf",
+        "pub/figs/scaling_benchmark.pdf",
         f"{RUNS}/scaling_plots.executed.ipynb",
     shell:
         fig_nb("scaling_plots")
