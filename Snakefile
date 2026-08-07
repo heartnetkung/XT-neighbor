@@ -41,7 +41,7 @@ REQUIRE_BENCH_MODE = (
 )
 
 
-def bench_nb(name):
+def bench_nb(name, cpus=CPUS):
     """Run a benchmark notebook on the pinned cores, from its own directory so
     the notebook's relative paths (tmp/, ../data/) keep working."""
     return (
@@ -50,7 +50,7 @@ def bench_nb(name):
         "jupyter nbconvert --to notebook --execute "
         "--ExecutePreprocessor.timeout=-1 "
         "--output-dir=../{runs} --output {name}.executed {name}.ipynb"
-    ).format(bench=BENCH, cpus=CPUS, runs=RUNS, name=name)
+    ).format(bench=BENCH, cpus=cpus, runs=RUNS, name=name)
 
 
 def fig_nb(name):
@@ -119,21 +119,36 @@ rule correctness:
         bench_nb("01_correctness")
 
 
+# These are all run on a single CPU
+
 rule bench_algorithms:
-    """02: runtime vs input size and vs edit distance, CPU and GPU. Needs a GPU."""
+    """02: algorithm comparison, runtime vs input size and vs edit distance, on
+    medium-sized data (up to 100k sequences). CPU only."""
     input:
         f"{BENCH}/02_algorithms.ipynb",
-        rules.xtneighbor.output,
-        rules.xtneighbor_streaming.output,
         expand("data/emerson{i}.zip", i=range(1, 7)),
     output:
         "data/cpu_benchmark.csv",
         "data/cpu_dist_benchmark.csv",
-        "data/gpu_benchmark.csv",
-        "data/gpu_dist_benchmark.csv",
         f"{RUNS}/02_algorithms.executed.ipynb",
     shell:
-        bench_nb("02_algorithms")
+        bench_nb("02_algorithms", cpus="4")
+
+
+rule bench_symdel_large:
+    """02D: symdel implementation comparison, runtime vs input size and vs edit
+    distance, at large scale (up to 30M sequences). Needs a GPU."""
+    input:
+        f"{BENCH}/02D_symdel_large_scale.ipynb",
+        rules.xtneighbor.output,
+        rules.xtneighbor_streaming.output,
+        expand("data/emerson{i}.zip", i=range(1, 7)),
+    output:
+        "data/gpu_benchmark.csv",
+        "data/gpu_dist_benchmark.csv",
+        f"{RUNS}/02D_symdel_large_scale.executed.ipynb",
+    shell:
+        bench_nb("02D_symdel_large_scale")
 
 
 rule bench_ncpu:
