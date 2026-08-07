@@ -221,6 +221,7 @@ int solve_bin_packing_lowerbounds(int* histograms, int* &lowerboundsOutput,
 	size_t* histogramIntermediate;
 
 	int nLevel = ctx.histogramSize, len2d = n * nLevel;
+	check_gpu_capacity((sizeof(int)+sizeof(size_t))*len2d, "solve_bin_packing_lowerbounds");
 	_cudaMalloc(output, key, value, nLevel);
 	_cudaMalloc(rowIndex, histogramIntermediate, len2d);
 
@@ -254,6 +255,7 @@ int solve_bin_packing_offsets(int* histograms, int** &offsetOutput,
 	int offsetLen;
 
 	int nLevel = ctx.histogramSize, len2d = n * nLevel;
+	check_gpu_capacity(3*sizeof(int)*len2d, "solve_bin_packing_offsets");
 	_cudaMalloc(rowIndex, assignment, output1d, len2d);
 	cudaMallocHost(&offsetOutput, sizeof(int*) * n); gpuerr();
 

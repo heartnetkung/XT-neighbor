@@ -273,6 +273,16 @@ size_t get_gpu_memory() {
 	return mf;
 }
 
+/** abort with a clear message instead of letting an oversized cudaMalloc fail and
+ * cascade into unrelated cudaErrorIllegalAddress noise everywhere else. */
+void check_gpu_capacity(size_t bytesNeeded, const char* context) {
+	size_t freeBytes = get_gpu_memory();
+	if (bytesNeeded > freeBytes) {
+		fprintf(stderr, "Fatal: %s needs %'lu bytes, only %'lu free on GPU.\n", context, bytesNeeded, freeBytes);
+		exit(1);
+	}
+}
+
 size_t get_main_memory() {
 	struct sysinfo si;
 	sysinfo (&si);
