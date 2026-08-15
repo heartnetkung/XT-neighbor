@@ -173,13 +173,46 @@ void flag(T1* input1, char* flags, T1* output1, int* outputLen, int n) {
 }
 
 /**
- * per-thread bucketing kernel backing cal_histogram.
- * Used instead of cub::DeviceHistogram::HistogramEven, which has confirmed
- * scale-dependent correctness problems with integer sample/level types:
- * silent sample loss when both bin count and sample count are large
- * (NVIDIA/cub#479, NVIDIA/cub#489), and separately, float-cast workarounds
- * for that lose precision once index values exceed 2^24. Plain size_t
- * integer arithmetic here has neither limitation.
+ * per-thread bucketing kernel backing cal_histogram. Bins are computed in size_t so
+ * that offset * nLevel is exact for every nLevel and range we use.
+ *
+ * Used instead of cub::DeviceHistogram::HistogramEven, for a reason that is about the
+ * shape of our workload rather than about any CUB version. CUB privatizes bins into
+ * shared memory only while the bin count is <= MAX_PRIVATIZED_SMEM_BINS, which is 256
+ * (an enum on DispatchHistogram itself, not part of the tuning policy, so no GPU
+ * generation changes it). Above 256 bins that strategy is switched off and CUB issues
+ * the same global atomics this kernel does, except into numThreadBlocks separate
+ * copies of the histogram, plus an init pass to zero them and an aggregation pass to
+ * sum them. Once those copies stop fitting in L2 it loses badly. We run
+ * histogramSize = 65536, or 1048576 when seqLen > 10M (see initMemory), i.e. 256x to
+ * 4096x past the regime CUB's histogram is built for -- its API speaks in pixels,
+ * rows, and RGBA channels, where 256 bins is the natural maximum.
+ *
+ * Measured on CUB 2.3.2, 2M samples, MX250 (3 SMs, 512 KiB L2), ms/call:
+ *
+ *   bins        cub    this     bins        cub    this
+ *   64        0.308   1.237     16384     4.127   0.820  <- cub scratch > L2
+ *   256       0.987   0.993     65536    11.087   0.787
+ *   1024      0.992   0.989     262144   13.259   9.621
+ *   4096      0.926   0.985     1048576  15.240  12.578
+ *
+ * The crossover is the privatized working set (numThreadBlocks * nLevel * 4 bytes)
+ * passing L2, and it moves the wrong way on bigger GPUs: the copy count scales with SM
+ * count while this kernel always touches one histogram. Concentrated input does not
+ * rescue CUB either -- across uniform, sorted, run-length, single-hot-bin and
+ * heavy-tail inputs it stays 1.2x-3.3x slower at 1048576 bins. Same-address atomics
+ * cost this kernel at most ~1.6x, since a warp's collisions are aggregated before they
+ * reach L2. See benchmark/histogram_bench.cu to reproduce, including on newer
+ * hardware (only sm_90 gets its own histogram tuning; sm_50 through sm_89 all share
+ * Policy500).
+ *
+ * Correctness was the historical reason and still rules out old CUB: before 2.0.0
+ * HistogramEven derived its bin width with a truncating integer division, so any range
+ * that is not an exact multiple of the bin count sized every bin wrong and samples
+ * above the last boundary were incremented out of range (NVIDIA/cub#489, #479; fixed
+ * by #487). Passing the levels as float to dodge that loses precision above 2^24,
+ * which the seqLen > 10M configuration reaches. CUB >= 2.0.0 computes bins with the
+ * same integer formula used here and is exact; it is simply slower.
 */
 template <typename T>
 __global__
