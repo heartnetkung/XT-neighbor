@@ -76,12 +76,19 @@ private:
 	std::vector<int> _writing_len2, _reading_len2;
 	size_t _totalLen = 0;
 	int _maxReadableSize = 0;
-	int _readOffset = 0; /*elements already consumed from _reading_data.back()*/
 	T* _deviceBuffer = NULL;
 
-	void check_readable_input(int maxReadableSize) {
-		if (maxReadableSize <= 0)
-			print_err("RAMSwapStream: maxReadableSize <= 0");
+	/*(re)allocate the device buffer to hold exactly newCapacity elements*/
+	void resize_buffer(int newCapacity) {
+		if (newCapacity == _maxReadableSize)
+			return;
+		if (_deviceBuffer != NULL) {
+			cudaFree(_deviceBuffer); gpuerr();
+		}
+		if (verboseGlobal)
+			printf("====size %s %'d\n", newCapacity > _maxReadableSize ? "grow" : "shrink", newCapacity);
+		_maxReadableSize = newCapacity;
+		cudaMalloc(&_deviceBuffer, sizeof(T)*newCapacity); gpuerr();
 	}
 
 public:
@@ -89,27 +96,70 @@ public:
 		return _totalLen;
 	}
 
-	void set_max_readable_size(int maxReadableSize) {
-		check_readable_input(maxReadableSize);
-		if (maxReadableSize <= _maxReadableSize)
-			return;
-
-		_maxReadableSize = maxReadableSize;
-		if (_deviceBuffer != NULL) {
-			cudaFree(_deviceBuffer); gpuerr();
-		}
-		cudaMalloc(&_deviceBuffer, sizeof(T)*maxReadableSize); gpuerr();
-		if (verboseGlobal)
-			printf("====size grow %'d\n", maxReadableSize);
+	int get_max_readable_size() {
+		return _maxReadableSize;
 	}
 
-	// maxReadableSize is the budget for this call (typically a MemoryContext.bandwidth
-	// freshly recomputed from currently-free GPU memory by the caller); it may be smaller
-	// than a previous call's, since memory pressure can grow over a long-running pipeline,
-	// so it's taken fresh each call rather than remembered across calls the way the buffer
-	// capacity set by set_max_readable_size is. A row (a past write() call) larger than
-	// maxReadableSize is transparently split across multiple read() calls instead of
-	// forcing the device buffer to grow to fit it whole.
+	/**
+	 * size the device buffer for the round that is about to be read.
+	 *
+	 * maxReadableSize is the caller's budget for the round (typically a MemoryContext.bandwidth
+	 * freshly recomputed from currently-free GPU memory). The buffer is sized to that budget,
+	 * except that it is never smaller than the longest row still queued for reading, since
+	 * read() never splits a row, and never larger than the whole queue, since anything beyond
+	 * it can never be filled. Unlike before, the buffer may also shrink: a single oversized row
+	 * used to enlarge it permanently for the remainder of the run, which is what made the
+	 * footprint ratchet upwards.
+	 *
+	 * Must be called after swap(), so that the reading queue it measures is the one to be read.
+	*/
+	void set_max_readable_size(int maxReadableSize) {
+		if (maxReadableSize <= 0) {
+			print_err("RAMSwapStream: maxReadableSize <= 0");
+			return;
+		}
+		if (_reading_len2.empty())
+			return; /*nothing to read, so leave the buffer alone rather than size it to zero*/
+
+		size_t totalQueued = 0;
+		int longestRow = 0;
+		for (int len : _reading_len2) {
+			totalQueued += len;
+			if (len > longestRow)
+				longestRow = len;
+		}
+
+		/*late lower bound rounds leave only a handful of entries queued. a full budget-sized
+		  buffer would then stay resident for the rest of stream 3 and all of stream 4, since
+		  deconstruct only runs at the end of the run, shrinking the free memory that
+		  cal_memory_stream4 measures for no benefit.*/
+		int capacity = maxReadableSize;
+		if (totalQueued < (size_t)capacity)
+			capacity = (int)totalQueued;
+		if (capacity < longestRow)
+			capacity = longestRow;
+		if (verboseGlobal && (capacity > maxReadableSize))
+			printf("====size row of %'d exceeds the budget %'d, buffer sized to the row\n",
+			       capacity, maxReadableSize);
+		resize_buffer(capacity);
+	}
+
+	/**
+	 * read the next chunk, packing whole rows only.
+	 *
+	 * maxReadableSize is the budget for this call (typically a MemoryContext.bandwidth freshly
+	 * recomputed from currently-free GPU memory by the caller); it may be smaller than a
+	 * previous call's, since memory pressure can grow over a long-running pipeline, so it is
+	 * taken fresh each call rather than remembered the way the buffer capacity is.
+	 *
+	 * A row is never cut. Stream 3 groups equal deletion keys purely by adjacency within the
+	 * chunk it is handed (unique_counts in cal_offsets_lowerbound), and the upstream hash-bin
+	 * packing guarantees that equal keys share a row; cutting a row mid-group would therefore
+	 * split one group into two and silently drop every pair that crosses the cut. A chunk is
+	 * consequently returned short of the budget whenever the next row does not fit, and a row
+	 * longer than the budget is still returned whole - set_max_readable_size has already sized
+	 * the buffer for it.
+	*/
 	Chunk<T> read(int maxReadableSize) {
 		Chunk<T> ans;
 		if (_reading_data.empty())
@@ -123,22 +173,30 @@ public:
 
 		int totalLen = 0;
 		T* ptr = _deviceBuffer;
-		while (!_reading_data.empty() && (totalLen < maxReadableSize)) {
-			int remaining = _reading_len2.back() - _readOffset;
-			int len = remaining < (maxReadableSize - totalLen) ? remaining : (maxReadableSize - totalLen);
+		while (!_reading_data.empty()) {
+			int len = _reading_len2.back();
 
-			T* dataHost = _reading_data.back() + _readOffset;
+			if (totalLen == 0) {
+				/*the first row is always taken so that the stream cannot stall. it only fails
+				  to fit when set_max_readable_size was not called after the swap, in which case
+				  grow to honour it - nothing has been copied yet, and the growth is no longer
+				  permanent now that the buffer can shrink again.*/
+				if (len > _maxReadableSize) {
+					printf("RAMSwapStream: row of %'d exceeds buffer capacity %'d, growing\n",
+					       len, _maxReadableSize);
+					resize_buffer(len);
+					ptr = _deviceBuffer;
+				}
+			} else if (totalLen + len > maxReadableSize)
+				break;
+
+			T* dataHost = _reading_data.back();
 			cudaMemcpy(ptr, dataHost, sizeof(T)*len , cudaMemcpyHostToDevice); gpuerr();
+			cudaFreeHost(dataHost); gpuerr();
+			_reading_data.pop_back();
+			_reading_len2.pop_back();
 			ptr += len;
 			totalLen += len;
-			_readOffset += len;
-
-			if (_readOffset == _reading_len2.back()) {
-				cudaFreeHost(_reading_data.back()); gpuerr();
-				_reading_data.pop_back();
-				_reading_len2.pop_back();
-				_readOffset = 0;
-			}
 		}
 
 		ans.ptr = _deviceBuffer;
@@ -163,11 +221,25 @@ public:
 		std::reverse(_reading_data.begin(), _reading_data.end());
 		std::reverse(_reading_len2.begin(), _reading_len2.end());
 		_totalLen = 0;
-		_readOffset = 0;
+	}
+
+	/**
+	 * free the device buffer while keeping the queued rows.
+	 *
+	 * meant to be called between rounds, right before the caller measures free GPU memory to
+	 * derive the next round's budget: the buffer is about to be replaced anyway, and counting it
+	 * as in-use makes every round's budget smaller than the previous one's. Safe at that point
+	 * because read() has already copied every consumed row out of the buffer and write() copies
+	 * to pinned host memory, so nothing points into it between rounds.
+	*/
+	void release_buffer() {
+		cudaFree(_deviceBuffer); gpuerr();
+		_deviceBuffer = NULL;
+		_maxReadableSize = 0;
 	}
 
 	void deconstruct() {
-		cudaFree(_deviceBuffer); gpuerr();
+		release_buffer();
 	}
 };
 

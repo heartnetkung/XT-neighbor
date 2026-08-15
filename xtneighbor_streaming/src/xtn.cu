@@ -157,6 +157,23 @@ MemoryContext cal_memory_stream4(int seqLen, bool overlapMode) {
 }
 
 /**
+ * write a chunk to the key/value swap streams as one row per entry of rowLengths instead of one
+ * row for the whole chunk, so that no row exceeds stream 3's budget while equal keys still share
+ * a row. rowLengths comes from stream_handler2, which cuts only where the key changes.
+*/
+void write_rows(RAMSwapStream<Int3>* keyStream, RAMSwapStream<int>* valueStream,
+                Chunk<Int3> keyChunk, Chunk<int> valueChunk, std::vector<int> &rowLengths) {
+	Int3* keyPtr = keyChunk.ptr;
+	int* valuePtr = valueChunk.ptr;
+	for (int rowLength : rowLengths) {
+		keyStream->write(keyPtr, rowLength);
+		valueStream->write(valuePtr, rowLength);
+		keyPtr += rowLength;
+		valuePtr += rowLength;
+	}
+}
+
+/**
  * calculate RAM constraint for lower bound calculation.
 */
 MemoryContext cal_memory_lowerbound(int seqLen) {
@@ -336,13 +353,22 @@ void xtn_perform(XTNArgs args, SeqArray* seqArr, SeqInfo* seqInfo, void callback
 	b2value = new RAMSwapStream<int>();
 	print_v("2A");
 
+	// what is written here is read back by stream 3, and read() never splits a row, so a row is
+	// what bounds stream 3's chunk size. size the rows to stream 3's budget: writing one row per
+	// chunk let a single oversized hash bin hand stream 3 a chunk its memory model never sized
+	// for. stream 3 keeps the bound inductively afterwards, since it writes back at most what it
+	// read. measured here rather than per chunk so the row size stays uniform, and it errs small
+	// because b1key/b1value are still holding device memory at this point.
+	int maxRowSize = cal_memory_stream3(seqLen).bandwidth1;
+	std::vector<int> rowSplit;
+
 	while ((b1keyChunk = b1key->read()).not_null()) {
 		b1valueChunk = b1value->read();
 		print_bandwidth(b1keyChunk.len, ctx2.bandwidth1, "2");
+		rowSplit.clear();
 		stream_handler2(b1keyChunk, b1valueChunk, histograms, totalLen2B,
-		                distance, seqLen, deviceInt, ctx2);
-		b2key->write(b1keyChunk.ptr, b1keyChunk.len);
-		b2value->write(b1valueChunk.ptr, b1valueChunk.len);
+		                distance, seqLen, deviceInt, ctx2, rowSplit, maxRowSize);
+		write_rows(b2key, b2value, b1keyChunk, b1valueChunk, rowSplit);
 		print_v("2B");
 	}
 
@@ -372,9 +398,17 @@ void xtn_perform(XTNArgs args, SeqArray* seqArr, SeqInfo* seqInfo, void callback
 		// stream 3: generate pairs
 		//=====================================
 
-		MemoryContext ctx3 = cal_memory_stream3(seqLen);
+		// release last round's read buffers before measuring free memory. they are about to be
+		// replaced, so counting them as in-use shrinks the budget round over round(they hold
+		// 16 of the 44 bytes/element the model budgets for, so each round would measure ~29%
+		// less free memory than the last, converging to ~0.77 of the true bandwidth). worse,
+		// the budget would then fall below rows already queued, which pins the buffer at the
+		// high water mark and hands stream 3 chunks larger than the ctx3 it is sized against.
 		b2key->swap();
 		b2value->swap();
+		b2key->release_buffer();
+		b2value->release_buffer();
+		MemoryContext ctx3 = cal_memory_stream3(seqLen);
 		b2key->set_max_readable_size(ctx3.bandwidth1);
 		b2value->set_max_readable_size(ctx3.bandwidth1);
 		b3 = new D2Stream<Int2>();

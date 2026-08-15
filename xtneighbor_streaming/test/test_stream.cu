@@ -7,16 +7,18 @@ TEST(RAMSwapStream, {
 
 	int* input_d = host_to_device(input, len);
 	RAMSwapStream<int> *stream = new RAMSwapStream<int>();
-	stream->set_max_readable_size(4);
 
 	stream->write(input_d, len);
 	stream->swap();
+	stream->set_max_readable_size(4);
 
-	// a single write() larger than max_readable_size(4) is split across reads rather than
-	// growing the device buffer to fit it whole, so this comes back as two chunks
-	int expectedData[][6] = {{1, 2, 3, 4}, {5, 6}};
-	int expectedLen2[] = {4, 2};
-	int expectedLen = 2;
+	// a row is never split, so a row larger than the budget(4) still comes back whole. the
+	// buffer is sized up to the longest queued row to make that possible.
+	check(stream->get_max_readable_size() == 6);
+
+	int expectedData[][6] = {{1, 2, 3, 4, 5, 6}};
+	int expectedLen2[] = {6};
+	int expectedLen = 1;
 
 	Chunk<int> data;
 	int count = 0;
@@ -30,7 +32,6 @@ TEST(RAMSwapStream, {
 	// fresh stream/budget so this case (coalescing several small writes into one read) is
 	// self-contained instead of depending on whatever budget the previous case left behind
 	RAMSwapStream<int> *stream2 = new RAMSwapStream<int>();
-	stream2->set_max_readable_size(6);
 
 	int input2[][4] = {{10, 11}, {12}, {13, 14}, {15, 16, 17, 18}};
 	int len22[] = {2, 1, 2, 4};
@@ -41,11 +42,13 @@ TEST(RAMSwapStream, {
 		stream2->write(input_d, len22[i]);
 	}
 	stream2->swap();
+	stream2->set_max_readable_size(6);
 
-	// reads now pack each chunk fully to the budget by splitting entries at element
-	// granularity (rather than only taking whole entries), so this packs tighter than before
-	int expectedData2[][6] = {{10, 11, 12, 13, 14, 15}, {16, 17, 18}};
-	int expectedLen22[] = {6, 3};
+	// regression guard: the first chunk stops at 5 of the 6 budgeted elements rather than
+	// taking one element of the 4-row to pack tighter. splitting a row there would cut a
+	// deletion key group in half and silently lose the pairs that cross the cut.
+	int expectedData2[][5] = {{10, 11, 12, 13, 14}, {15, 16, 17, 18}};
+	int expectedLen22[] = {5, 4};
 	int expectedLen21 = 2;
 
 	count = 0;
@@ -55,6 +58,74 @@ TEST(RAMSwapStream, {
 		count++;
 	}
 	check(count == expectedLen21);
+
+	// the buffer shrinks back once a later round needs less, instead of staying at the high
+	// water mark(6) for the rest of the run
+	int input3[][1] = {{20}, {21}};
+	for (int i = 0; i < 2; i++) {
+		input_d = host_to_device(input3[i], 1);
+		stream2->write(input_d, 1);
+	}
+	stream2->swap();
+	stream2->set_max_readable_size(2);
+	check(stream2->get_max_readable_size() == 2);
+
+	int expectedData3[] = {20, 21};
+	count = 0;
+	while ((data = stream2->read(2)).not_null()) {
+		check(data.len == 2);
+		check_device_arr(data.ptr, expectedData3, data.len);
+		count++;
+	}
+	check(count == 1);
+
+	// the buffer is capped at what is actually queued, not at the budget. the budget grows as
+	// the pipeline frees memory while the queue drains, and the excess could never be filled
+	int input4[][1] = {{30}, {31}, {32}};
+	for (int i = 0; i < 3; i++) {
+		input_d = host_to_device(input4[i], 1);
+		stream2->write(input_d, 1);
+	}
+	stream2->swap();
+	stream2->set_max_readable_size(1000);
+	check(stream2->get_max_readable_size() == 3);
+
+	int expectedData4[] = {30, 31, 32};
+	count = 0;
+	while ((data = stream2->read(1000)).not_null()) {
+		check(data.len == 3);
+		check_device_arr(data.ptr, expectedData4, data.len);
+		count++;
+	}
+	check(count == 1);
+
+	// an empty reading queue leaves the buffer as it is rather than sizing it to zero
+	stream2->swap();
+	stream2->set_max_readable_size(1000);
+	check(stream2->get_max_readable_size() == 3);
+
+	// release_buffer drops the device buffer without touching the queued rows, so that the
+	// caller can measure free GPU memory without last round's buffer counted against it
+	int input5[][2] = {{40, 41}, {42, 43}};
+	for (int i = 0; i < 2; i++) {
+		input_d = host_to_device(input5[i], 2);
+		stream2->write(input_d, 2);
+	}
+	stream2->release_buffer();
+	check(stream2->get_max_readable_size() == 0);
+
+	stream2->swap();
+	stream2->set_max_readable_size(4);
+	check(stream2->get_max_readable_size() == 4);
+
+	int expectedData5[] = {40, 41, 42, 43};
+	count = 0;
+	while ((data = stream2->read(4)).not_null()) {
+		check(data.len == 4);
+		check_device_arr(data.ptr, expectedData5, data.len);
+		count++;
+	}
+	check(count == 1);
 })
 
 

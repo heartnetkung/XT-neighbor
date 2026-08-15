@@ -64,6 +64,33 @@ int cal_offsets_lowerbound(Int3* inputKeys, int* inputValues, int* &inputOffsets
 
 /**
  * private function.
+ *
+ * greedily pack sorted key groups into rows of at most maxRowSize elements, cutting only where
+ * the key changes. groupEnds is the cumulative end offset of each group, i.e. cal_offsets'
+ * inputOffsets copied to the host.
+ *
+ * RAMSwapStream::read never splits a row, so a row is the unit that bounds stream 3's chunk
+ * size; writing one row per input chunk let a single oversized hash bin blow ctx3's memory
+ * model. A group larger than maxRowSize still gets a row to itself: splitting it would break
+ * the adjacency grouping cal_offsets_lowerbound relies on and silently drop pairs.
+*/
+void cal_row_split(int* groupEnds, int nGroup, int maxRowSize, std::vector<int> &output) {
+	int rowLen = 0, prevEnd = 0;
+	for (int i = 0; i < nGroup; i++) {
+		int groupLen = groupEnds[i] - prevEnd;
+		prevEnd = groupEnds[i];
+		if ((rowLen > 0) && (rowLen + groupLen > maxRowSize)) {
+			output.push_back(rowLen);
+			rowLen = 0;
+		}
+		rowLen += groupLen;
+	}
+	if (rowLen > 0)
+		output.push_back(rowLen);
+}
+
+/**
+ * private function.
 */
 int gen_pairs(int* input, int* inputOffsets, int* outputLengths, Int2* &output,
               int* &lesserIndex, int lowerbound, int carry, int n, int seqLen) {
@@ -341,10 +368,13 @@ void stream_handler1(Chunk<Int3> input, Int3* &deletionsOutput, int* &indexOutpu
  * @param seqLen number of input CDR3 sequences
  * @param buffer integer buffer
  * @param ctx memory context
+ * @param rowSplitOutput lengths of the rows the caller should write the chunk out as
+ * @param maxRowSize element budget of a single row, i.e. stream 3's bandwidth1
 */
 void stream_handler2(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, std::vector<int*> &histogramOutput,
-                     size_t &throughput2B, int distance, int seqLen, int* buffer, MemoryContext ctx) {
-	int* inputOffsets, *valueLengths, *indexes, *valueLengthsHost, *histogram;
+                     size_t &throughput2B, int distance, int seqLen, int* buffer, MemoryContext ctx,
+                     std::vector<int> &rowSplitOutput, int maxRowSize) {
+	int* inputOffsets, *valueLengths, *indexes, *valueLengthsHost, *inputOffsetsHost, *histogram;
 
 	sort_key_values(keyInOut.ptr, valueInOut.ptr, keyInOut.len);
 	int offsetLen =
@@ -353,6 +383,12 @@ void stream_handler2(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, std::vector<
 	int start = 0, carry = 0, nChunk;
 	int* inputOffsetsPtr = inputOffsets, *valueLengthsPtr = valueLengths;
 	valueLengthsHost = device_to_host(valueLengths, offsetLen);
+
+	// the keys are sorted and grouped now, which is the only place the row split can be
+	// calculated without a second pass over the chunk
+	inputOffsetsHost = device_to_host(inputOffsets, offsetLen);
+	cal_row_split(inputOffsetsHost, offsetLen, maxRowSize, rowSplitOutput);
+	cudaFreeHost(inputOffsetsHost); gpuerr();
 
 	//histogram loop
 	while ((nChunk = solve_next_bin(valueLengthsHost, start, ctx.bandwidth2, offsetLen)) > 0) {
@@ -394,6 +430,15 @@ void stream_handler3(Chunk<Int3> &keyInOut, Chunk<int> &valueInOut, void callbac
                      int* buffer, MemoryContext ctx) {
 	int* inputOffsets, *valueLengths, *valueLengthsHost, *lesserIndex, *histogram;
 	Int2* pairOutput;
+
+	// the chunk can still exceed ctx.bandwidth1 when a single key group does not fit the budget,
+	// since read() never splits a group. the pair loop below absorbs that by shrinking its bins,
+	// but these allocations scale with keyInOut.len and cannot be chunked any further, so check
+	// them up front rather than failing deep inside a kernel.
+	size_t incompressible = (size_t)keyInOut.len *
+	                        (2 * sizeof(int) + // inputOffsets, outputLengths
+	                         sizeof(char) + sizeof(Int3) + sizeof(int)); // gen_next_chunk
+	check_gpu_capacity(incompressible, "stream 3 chunk");
 
 	int offsetLen = cal_offsets_lowerbound(
 	                    keyInOut.ptr, valueInOut.ptr, inputOffsets,

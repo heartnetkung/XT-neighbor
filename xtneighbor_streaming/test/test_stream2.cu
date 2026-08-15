@@ -10,6 +10,7 @@ TEST(Stream2, {
 	int values[] =  {0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3};
 	int* deviceInt;
 	std::vector<int*> histogramOutput;
+	std::vector<int> rowSplit;
 	MemoryContext ctx;
 	int* histogramOutputHost = (int*)calloc(ctx.histogramSize, sizeof(int));
 	size_t dummy = 0;
@@ -23,7 +24,7 @@ TEST(Stream2, {
 	Chunk<Int3> keyInOut = {.ptr = host_to_device(keysInt3, len), .len = len};
 	Chunk<int> valueInOut = {.ptr = host_to_device(values, len), .len = len};
 	stream_handler2(keyInOut, valueInOut, histogramOutput, dummy,
-	                distance, seqLen, deviceInt, ctx);
+	                distance, seqLen, deviceInt, ctx, rowSplit, 8);
 
 	int expectedLen = 20;
 	char expectedPairs[][5] = {
@@ -40,4 +41,16 @@ TEST(Stream2, {
 		checkstr(expectedPairs[i], str_decode(keyOut[i]));
 	check_device_arr(valueInOut.ptr, expectedIndex, valueInOut.len);
 	check_device_arr(histogramOutput[0], expectedHistogram, ctx.histogramSize);
+
+	// the chunk is handed to the caller as rows of at most 8, cut only where the key changes so
+	// that a group of equal keys is never straddled - stream 3 groups by adjacency alone:
+	// AAA(2) ADA(1) | CAA(7) | CAAA(2) CAD CADA CDA CDD CDKD | CKD(2) DKD
+	int expectedRowSplit[] = {3, 7, 7, 3};
+	int expectedRowCount = 4, rowSplitTotal = 0;
+	check((int)rowSplit.size() == expectedRowCount);
+	for (int i = 0; i < expectedRowCount; i++) {
+		check(rowSplit[i] == expectedRowSplit[i]);
+		rowSplitTotal += rowSplit[i];
+	}
+	check(rowSplitTotal == expectedLen);
 })
