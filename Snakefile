@@ -241,6 +241,11 @@ rule fig_scaling:
         "data/gpu_dist_benchmark.csv",
     output:
         "pub/figs/scaling_benchmark.pdf",
+        "pub/figs/scaling_benchmark.png",
+        "pub/figs/scaling_benchmark.svg",
+        # \input-ready bodies of Tables tab:scalability{,_gpu}
+        "pub/figs/scaling_exponents_cpu.tex",
+        "pub/figs/scaling_exponents_gpu.tex",
         f"{RUNS}/scaling_plots.executed.ipynb",
     shell:
         fig_nb("scaling_plots")
