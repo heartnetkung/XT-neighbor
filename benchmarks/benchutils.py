@@ -172,3 +172,27 @@ def _describe_gpu():
     fields = [f.strip() for f in out.splitlines()[0].split(',')]
     keys = ['name', 'memory_total', 'clocks_max_sm', 'clocks_applications_gr']
     return dict(zip(keys, fields))
+
+
+def filter_combos(df):
+    """Filter a DataFrame of benchmark results to only the algorithm/input_size/distance
+    combinations that have the maximum number of runs"""
+    nmax = (df.groupby(["algorithm", "input_size", "distance"])
+     .size()
+     .max()
+    )
+    good_combos = (
+    df
+    .groupby(["algorithm", "input_size", "distance"])
+    .size()
+    .reset_index(name="n")
+    .query(f"n == {nmax}")
+    )
+
+    good_rows = df.merge(
+        good_combos[["algorithm", "input_size", "distance"]],
+        on=["algorithm", "input_size", "distance"],
+        how="inner"
+    ).sort_values(["algorithm", "input_size", "distance"])
+
+    return good_rows
