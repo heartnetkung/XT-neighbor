@@ -62,6 +62,18 @@ def symscan_overlap(distance, is_hamming, seqs=None, dup_counts=None, rep_sizes=
 
   return _idx_to_repoverlap(i_arr, j_arr, useqs=useqs, useq_ids=useq_ids, dup_counts=dup_counts, rep_sizes=rep_sizes)
 
+def symscan_airr(distance, is_hamming, seqs=None, dup_counts=None, rep_sizes=None, return_matrix=False):
+  n, N = len(seqs), len(rep_sizes)
+  symscan_airr_bin = repo_path / 'symscan-airr'
+  cmd = [str(symscan_airr_bin), 'tmp/compairr_input1.txt', '-d', str(distance), '--junction-col', 'cdr3_aa']
+  if is_hamming:
+    cmd += ['--hamming']
+  with open("tmp/symscan_output.tsv", "w") as f:
+    subprocess.run(cmd, check=True, stdout=f)
+  if return_matrix:
+    return read_pair_file_to_matrix('tmp/symscan_output.tsv', N, sep='\t')
+  else:
+    return None
 
 def read_pair_file_to_matrix(filename, n_rep, sep, comment=None):
   df = pd.read_csv(filename, sep=sep, header=None, comment=comment, thousands=',')
