@@ -64,7 +64,7 @@ def symscan_overlap(distance, is_hamming, seqs=None, dup_counts=None, rep_sizes=
 
 def symscan_airr(distance, is_hamming, seqs=None, dup_counts=None, rep_sizes=None, return_matrix=False):
   n, N = len(seqs), len(rep_sizes)
-  symscan_airr_bin = repo_path / 'symscan-airr'
+  symscan_airr_bin = 'symscan-airr'
   cmd = [str(symscan_airr_bin), 'tmp/compairr_input1.txt', '-d', str(distance), '--junction-col', 'cdr3_aa']
   if is_hamming:
     cmd += ['--hamming']
