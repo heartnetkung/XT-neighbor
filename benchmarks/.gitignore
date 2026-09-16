@@ -3,5 +3,6 @@
 *.csv
 *.log
 compairr/
+symscan/
 tmp/
 __pycache__/
