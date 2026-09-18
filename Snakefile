@@ -103,6 +103,79 @@ rule compairr:
 
 
 # --------------------------------------------------------------------------
+# raw data
+#
+# The tracked data/emerson*.zip, emerson_rep*.zip, info.csv and
+# emerson_HIP00110.tsv.gz were built by data/preprocess{,2,3}.py from an
+# external, machine-specific folder using os.listdir() order, so they can't be
+# regenerated deterministically. These rules instead download the published
+# Emerson et al. 2017 archive directly and derive equivalent (but not
+# byte-identical) "_dl"-suffixed inputs from it via preprocess_emerson.py, in
+# sorted-filename order. The original tracked files are left in place; the
+# benchmark rules below point at the "_dl" files instead.
+# --------------------------------------------------------------------------
+
+rule download_emerson_raw:
+    """Full-cohort archive from Emerson et al., Nature Genetics 2017 (8.3 GB,
+    786 per-subject TSVs)."""
+    output:
+        "data/raw/emerson-2017-natgen.zip",
+    shell:
+        "mkdir -p data/raw && "
+        "curl -L --fail --retry 5 -C - -o {output}.tmp "
+        "https://s3-us-west-2.amazonaws.com/publishedproject-supplements/emerson-2017-natgen/emerson-2017-natgen.zip "
+        "&& mv {output}.tmp {output}"
+
+
+rule emerson_global_clones:
+    """Cohort-wide amino_acid -> summed-template table, chunked into 10M-row
+    files (mirrors data/preprocess2.py)."""
+    input:
+        archive=rules.download_emerson_raw.output,
+        script="data/preprocess_emerson.py",
+    output:
+        expand("data/emerson{i}_dl.zip", i=range(1, 7)),
+    shell:
+        "python {input.script} global {input.archive} data"
+
+
+rule emerson_repertoires:
+    """Per-subject CDR3 tables in batches of 50 subjects, plus the matching
+    per-subject row counts (mirrors data/preprocess3.py)."""
+    input:
+        archive=rules.download_emerson_raw.output,
+        script="data/preprocess_emerson.py",
+    output:
+        expand("data/emerson_rep{i}_dl.zip", i=range(1, 15)),
+        "data/info_dl.csv",
+    shell:
+        "python {input.script} repertoires {input.archive} data"
+
+
+rule emerson_hip00110:
+    """Single subject's raw per-rearrangement TSV, unmodified, for the
+    TCRdist benchmark."""
+    input:
+        archive=rules.download_emerson_raw.output,
+        script="data/preprocess_emerson.py",
+    output:
+        "data/emerson_HIP00110_dl.tsv.gz",
+    shell:
+        "python {input.script} hip00110 {input.archive} data"
+
+
+rule emerson_data:
+    """Download and preprocess all Emerson inputs, without running any
+    benchmark:  snakemake emerson_data -j1
+    Run this before `bench_mode.sh on`; preprocessing needs no pinned CPUs."""
+    input:
+        expand("data/emerson{i}_dl.zip", i=range(1, 7)),
+        expand("data/emerson_rep{i}_dl.zip", i=range(1, 15)),
+        "data/info_dl.csv",
+        "data/emerson_HIP00110_dl.tsv.gz",
+
+
+# --------------------------------------------------------------------------
 # benchmarks
 # --------------------------------------------------------------------------
 
@@ -112,7 +185,7 @@ rule correctness:
         f"{BENCH}/01_correctness.ipynb",
         rules.xtneighbor.output,
         rules.xtneighbor_streaming.output,
-        "data/emerson1.zip",
+        "data/emerson1_dl.zip",
     output:
         f"{RUNS}/01_correctness.executed.ipynb",
     shell:
@@ -126,7 +199,7 @@ rule bench_algorithms:
     medium-sized data (up to 100k sequences). CPU only."""
     input:
         f"{BENCH}/02_algorithms.ipynb",
-        expand("data/emerson{i}.zip", i=range(1, 7)),
+        expand("data/emerson{i}_dl.zip", i=range(1, 7)),
     output:
         "data/cpu_benchmark.csv",
         "data/cpu_dist_benchmark.csv",
@@ -142,7 +215,7 @@ rule bench_symdel_large:
         f"{BENCH}/02D_symdel_large_scale.ipynb",
         rules.xtneighbor.output,
         rules.xtneighbor_streaming.output,
-        expand("data/emerson{i}.zip", i=range(1, 7)),
+        expand("data/emerson{i}_dl.zip", i=range(1, 7)),
     output:
         "data/gpu_benchmark.csv",
         "data/gpu_dist_benchmark.csv",
@@ -155,7 +228,7 @@ rule bench_ncpu:
     """02B: SymScan runtime sweeping 1..N threads over the pinned cores."""
     input:
         f"{BENCH}/02B_symscan_ncpu_scaling.ipynb",
-        "data/emerson1.zip",
+        "data/emerson1_dl.zip",
     output:
         "data/symscan_ncpu_benchmark.csv",
         f"{RUNS}/02B_symscan_ncpu_scaling.executed.ipynb",
@@ -167,7 +240,7 @@ rule bench_memory:
     """02C: peak RSS of SymScan vs SymDel, measured per subprocess."""
     input:
         f"{BENCH}/02C_symscan_memory_scaling.ipynb",
-        expand("data/emerson_rep{i}.zip", i=range(1, 15)),
+        expand("data/emerson_rep{i}_dl.zip", i=range(1, 15)),
     output:
         "data/symscan_memory_benchmark.csv",
         f"{RUNS}/02C_symscan_memory_scaling.executed.ipynb",
@@ -181,8 +254,8 @@ rule bench_airr_overlap:
         f"{BENCH}/03_airr_overlap.ipynb",
         rules.xtneighbor_streaming.output,
         rules.compairr.output,
-        "data/info.csv",
-        expand("data/emerson_rep{i}.zip", i=range(1, 6)),
+        "data/info_dl.csv",
+        expand("data/emerson_rep{i}_dl.zip", i=range(1, 6)),
     output:
         "data/airr_overlap.csv",
         f"{RUNS}/03_airr_overlap.executed.ipynb",
@@ -196,8 +269,8 @@ rule airr_overlap_correctness:
         f"{BENCH}/03B_airr_overlap_correctness.ipynb",
         rules.xtneighbor_streaming.output,
         rules.compairr.output,
-        "data/info.csv",
-        expand("data/emerson_rep{i}.zip", i=range(1, 6)),
+        "data/info_dl.csv",
+        expand("data/emerson_rep{i}_dl.zip", i=range(1, 6)),
     output:
         f"{RUNS}/03B_airr_overlap_correctness.executed.ipynb",
     shell:
@@ -208,7 +281,7 @@ rule bench_tcrdist:
     """04: SymScan as a pre-filter for TCRdist neighbour search."""
     input:
         f"{BENCH}/04_tcrdist.ipynb",
-        "data/emerson_HIP00110.tsv.gz",
+        "data/emerson_HIP00110_dl.tsv.gz",
     output:
         "data/tcrdist_benchmark.csv",
         f"{RUNS}/04_tcrdist.executed.ipynb",
