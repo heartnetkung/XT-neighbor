@@ -262,7 +262,7 @@ char levenshtein_static(char* allStr, unsigned int start1, unsigned int start2, 
 __device__
 char levenshtein(char* allStr, unsigned int start1, unsigned int start2, int len1, int len2) {
 	char x, y, lastdiag, olddiag;
-	char* column = new char[(len1 > len2) ? len1 : len2];
+	char* column = new char[((len1 > len2) ? len1 : len2) + 1];
 
 	for (y = 1; y <= len1; y++)
 		column[y] = y;
@@ -275,8 +275,9 @@ char levenshtein(char* allStr, unsigned int start1, unsigned int start2, int len
 			lastdiag = olddiag;
 		}
 	}
+	char ans = column[len1];
 	free(column);
-	return column[len1];
+	return ans;
 }
 
 /**
