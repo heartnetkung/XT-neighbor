@@ -9,11 +9,13 @@ This repository allows reproduction of the results reported in our [arXiv prepri
 
 ## Quick Usage
 
-Please see [SymScan](github.com/yutanagano/symscan) for quickstart examples.
+Please see [SymScan](https://github.com/yutanagano/symscan) for quickstart examples.
 
 ## XTNeighbor
 
 This repository also provides XTNeighbor, our GPU-accelerated neighbor search tool.
+
+In practice, we recommend [SymScan](https://github.com/yutanagano/symscan) as the default: it runs on CPUs, can be used from Python, and was faster in our benchmarks on datasets of up to about a million sequences. XTNeighbor is preferable for the largest workloads when a GPU is available and where its streaming design keeps memory use constant.
 
 XTNeighbor has been tested with the following environment:
 - CUDA SDK version 11.0+
