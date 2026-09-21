@@ -8,5 +8,6 @@ bench.log
 
 .snakemake/
 pub/.ipynb_checkpoints/**
-_runs/
+_runs/*
+!_runs/*correctness.executed.ipynb
 
