@@ -9,8 +9,9 @@ global       emerson{1..6}_dl.zip      every subject summed into one
 repertoires  emerson_rep{1..14}_dl.zip one file per batch of 50 subjects, each
                                        subject's CDR3s listed separately, plus
                                        info_dl.csv with the rows per subject.
-                                       Subjects without template counts are
-                                       skipped (see has_templates)
+                                       Subjects without template counts, or
+                                       with counts <= 0, are skipped (see
+                                       has_templates, iter_subjects)
 hip00110     emerson_HIP00110_dl.tsv.gz  one subject's raw TSV, unmodified
 
 Subjects are taken in sorted filename order, so the output is reproducible.
@@ -55,14 +56,22 @@ def has_templates(zf, member):
     return not df['templates'].isnull().any()
 
 
-def iter_subjects(archive, members):
+def iter_subjects(archive, members, drop_negative=False):
     """Yield (member, templates) for each subject, where templates is the
-    summed template count per valid CDR3 (a Series indexed by CDR3)."""
+    summed template count per valid CDR3 (a Series indexed by CDR3).
+
+    With `drop_negative`, subjects with any template count <= 0 are skipped
+    (a few Emerson files, e.g. HIP04958 and HIP14092, contain -1 counts, which
+    downstream tools reject)."""
     with zipfile.ZipFile(archive) as zf:
         for member in members:
             with zf.open(member) as handle:
                 df = pd.read_csv(handle, sep='\t', usecols=['amino_acid', 'templates'],
                                  compression='gzip' if member.endswith('.gz') else None)
+            if drop_negative and (df['templates'] <= 0).any():
+                print(f'  skipping {Path(member).name}: '
+                      f'{(df["templates"] <= 0).sum()} rows with template count <= 0')
+                continue
             df = df.dropna()
             df = df[df['amino_acid'].str.fullmatch(CDR3_RE)]
             yield member, df.groupby('amino_acid')['templates'].sum()
@@ -117,12 +126,14 @@ def build_repertoires(archive, out_dir, n_batches=14, batch_size=50):
     if len(kept) < n_batches * batch_size:
         raise RuntimeError(f'{len(kept)} subjects with template counts, '
                            f'need {n_batches * batch_size}')
-    members = kept[:n_batches * batch_size]
 
+    # kept has spare subjects, so ones skipped for negative counts are replaced
+    # by the next in sorted order; stop once n_batches * batch_size are written
+    n_subjects = n_batches * batch_size
     start = time.time()
     subject_counts = []
     batch_rows = []
-    for i, (member, templates) in enumerate(iter_subjects(archive, members), start=1):
+    for i, (member, templates) in enumerate(iter_subjects(archive, kept, drop_negative=True), start=1):
         batch_rows.extend(templates.items())
         subject_counts.append((Path(member).name, len(templates)))
 
@@ -132,6 +143,10 @@ def build_repertoires(archive, out_dir, n_batches=14, batch_size=50):
             print(f'batch {batch_i}/{n_batches}: {len(batch_rows):,} rows  '
                   f'{time.time() - start:,.0f}s')
             batch_rows = []
+        if i == n_subjects:
+            break
+    else:
+        raise RuntimeError(f'only {len(subject_counts)} usable subjects, need {n_subjects}')
 
     pd.DataFrame(subject_counts, columns=['file', 'count']).to_csv(
         out_dir / 'info_dl.csv', index=False)
