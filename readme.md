@@ -5,7 +5,7 @@ This repository allows reproduction of the results reported in our [arXiv prepri
 ## Benchmarking and Reproducibility
 - Source code for producing figures in the preprint is provided in the `/pub` folder.
 - Source code for the benchmarking scripts is provided in the `/benchmarks` folder.
-- A `snakemake` workflow can be used to control the overall code execution.
+- A `snakemake` workflow can be used to download benchmarking data and to control the overall code execution.
 
 ## Quick Usage
 
@@ -22,7 +22,7 @@ XTNeighbor has been tested with the following environment:
 - Nvidia RTX4090, T4 GPU, V100 GPU
 - Linux OS or Google Colab runtime
 
-Detailed installation instructions, examples, and testing code are provided via a [Google Colab demo](https://colab.research.google.com/drive/1UrTLHNcW0XAp_6jL2ys1FVNutaoJOX9K).
+Additional installation instructions, examples, and testing code are provided via a [Google Colab demo](https://colab.research.google.com/drive/1UrTLHNcW0XAp_6jL2ys1FVNutaoJOX9K).
 
 For advanced tutorial in compiling XT-neighbor on bare-bone Linux, read this [tutorial.](https://github.com/heartnetkung/XT-neighbor/wiki/Bare%E2%80%90Bone-Installation-on-Linux)
 

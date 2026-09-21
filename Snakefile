@@ -105,14 +105,15 @@ rule compairr:
 # --------------------------------------------------------------------------
 # raw data
 #
-# The tracked data/emerson*.zip, emerson_rep*.zip, info.csv and
-# emerson_HIP00110.tsv.gz were built by data/preprocess{,2,3}.py from an
-# external, machine-specific folder using os.listdir() order, so they can't be
-# regenerated deterministically. These rules instead download the published
-# Emerson et al. 2017 archive directly and derive equivalent (but not
-# byte-identical) "_dl"-suffixed inputs from it via preprocess_emerson.py, in
-# sorted-filename order. The original tracked files are left in place; the
-# benchmark rules below point at the "_dl" files instead.
+# Earlier versions of this repository tracked data/emerson*.zip,
+# emerson_rep*.zip, info.csv and emerson_HIP00110.tsv.gz, built by the former
+# data/preprocess{,2,3}.py scripts from an external, machine-specific folder
+# using os.listdir() order, so they can't be regenerated deterministically.
+# These data files and scripts have been removed; they remain available in the
+# git history (last present in commit 3ea1930). These rules instead download
+# the published Emerson et al. 2017 archive directly and derive equivalent (but
+# not byte-identical) "_dl"-suffixed inputs from it via preprocess_emerson.py,
+# in sorted-filename order. The benchmark rules below use the "_dl" files.
 # --------------------------------------------------------------------------
 
 rule download_emerson_raw:
@@ -129,7 +130,7 @@ rule download_emerson_raw:
 
 rule emerson_global_clones:
     """Cohort-wide amino_acid -> summed-template table, chunked into 10M-row
-    files (mirrors data/preprocess2.py)."""
+    files (mirrors the former data/preprocess2.py)."""
     input:
         archive=rules.download_emerson_raw.output,
         script="data/preprocess_emerson.py",
@@ -141,7 +142,7 @@ rule emerson_global_clones:
 
 rule emerson_repertoires:
     """Per-subject CDR3 tables in batches of 50 subjects, plus the matching
-    per-subject row counts (mirrors data/preprocess3.py)."""
+    per-subject row counts (mirrors the former data/preprocess3.py)."""
     input:
         archive=rules.download_emerson_raw.output,
         script="data/preprocess_emerson.py",
