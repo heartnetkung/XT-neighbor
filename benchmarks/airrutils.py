@@ -113,12 +113,14 @@ def compairr_overlap(distance, is_hamming, seqs=None, dup_counts=None, rep_sizes
     return None
 
 def sample_repertoire(data,info,n,random_state=0,max_seqs=None):
-  info_subset = info.sample(n, random_state=random_state)
+  # data may hold only the first few rep files, so sample only subjects that lie fully inside it
+  info_subset = info[info['end'] <= len(data)].sample(n, random_state=random_state)
   reps = []
   rep_col = []
   for i in range(len(info_subset)):
     row = info_subset.iloc[i,:]
     chunk = data[row['start']:row['end']]
+    assert len(chunk) > 0, f"repertoire {row['file']} has no sequences (rows {row['start']}:{row['end']} of {len(data)})"
     if max_seqs is not None and len(chunk) > max_seqs:
       chunk = chunk.sample(max_seqs, random_state=random_state)
     reps.append(chunk)
