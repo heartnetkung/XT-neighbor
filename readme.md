@@ -64,7 +64,7 @@ xt_neighbor: perform either nearest neighbor search for CDR3 sequences or immune
 
 ### Note on versions of XTNeighbor
 - The code in this repo contains XTNeighbor-streaming (the default) and a non-streaming variant simply called XTNeighbor.
-- All users are adviced to use the XTNeighbor-streaming implementation only. The non-streaming variant is only provided for pedagogical purposes. It only works on sequences of up to 18 characters and does not provide support for AIRR compliant inputs.
+- All users are advised to use the XTNeighbor-streaming implementation only. The non-streaming variant is only provided for pedagogical purposes. It only works on sequences of up to 18 characters and does not provide support for AIRR compliant inputs.
 
 ## Citation
 ```bibtex
