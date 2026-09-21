@@ -113,8 +113,7 @@ def compairr_overlap(distance, is_hamming, seqs=None, dup_counts=None, rep_sizes
     return None
 
 def sample_repertoire(data,info,n,random_state=0,max_seqs=None):
-  corrupted_files = ['HIP14092.tsv.gz','HIP04958.tsv.gz']
-  info_subset = info[~info['file'].isin(corrupted_files)][:220-len(corrupted_files)].sample(n, random_state=random_state)
+  info_subset = info.sample(n, random_state=random_state)
   reps = []
   rep_col = []
   for i in range(len(info_subset)):

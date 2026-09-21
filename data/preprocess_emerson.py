@@ -8,7 +8,9 @@ global       emerson{1..6}_dl.zip      every subject summed into one
                                        cdr3 -> templates table, in 10M-row files
 repertoires  emerson_rep{1..14}_dl.zip one file per batch of 50 subjects, each
                                        subject's CDR3s listed separately, plus
-                                       info_dl.csv with the rows per subject
+                                       info_dl.csv with the rows per subject.
+                                       Subjects without template counts are
+                                       skipped (see has_templates)
 hip00110     emerson_HIP00110_dl.tsv.gz  one subject's raw TSV, unmodified
 
 Subjects are taken in sorted filename order, so the output is reproducible.
@@ -39,6 +41,18 @@ def list_members(archive):
     with zipfile.ZipFile(archive) as zf:
         return sorted(m for m in zf.namelist()
                       if m.endswith(('.tsv', '.tsv.gz')) and not m.startswith('__MACOSX'))
+
+
+def has_templates(zf, member):
+    """False for subjects whose `templates` column is null (older Adaptive
+    exports without template counts). The column is either null for every row
+    or for none, so the first row decides.
+    Same filter as in https://github.com/andim/paper-tcellimprint/ in file
+    preprocess_emerson_filter.py."""
+    with zf.open(member) as handle:
+        df = pd.read_csv(handle, sep='\t', usecols=['templates'], nrows=1,
+                         compression='gzip' if member.endswith('.gz') else None)
+    return not df['templates'].isnull().any()
 
 
 def iter_subjects(archive, members):
@@ -96,9 +110,14 @@ def build_repertoires(archive, out_dir, n_batches=14, batch_size=50):
     CDR3s after another (a CDR3 in two subjects appears twice), and record
     each subject's row count in info_dl.csv in the same order."""
     members = list_members(archive)
-    if len(members) < n_batches * batch_size:
-        raise RuntimeError(f'{len(members)} subjects, need {n_batches * batch_size}')
-    members = members[:n_batches * batch_size]
+    with zipfile.ZipFile(archive) as zf:
+        kept = [m for m in members if has_templates(zf, m)]
+    print(f'{len(members)} subjects, skipping {len(members) - len(kept)} '
+          f'with missing template counts')
+    if len(kept) < n_batches * batch_size:
+        raise RuntimeError(f'{len(kept)} subjects with template counts, '
+                           f'need {n_batches * batch_size}')
+    members = kept[:n_batches * batch_size]
 
     start = time.time()
     subject_counts = []
