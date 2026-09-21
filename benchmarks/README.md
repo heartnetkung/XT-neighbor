@@ -1,4 +1,4 @@
-Run the notebooks as follows:
+Run the notebooks as follows (or use the snakemake workflow):
 
 conda activate symdel
 
@@ -18,3 +18,7 @@ nohup ./bench_pinned.sh "0,2,4,6,8,10,12,14" \
   > bench.log 2>&1 &
 
 sudo ./bench_mode.sh off
+
+The symscan-airr binary can be installed using:
+
+cargo install symscan-airr --version 0.1.0
