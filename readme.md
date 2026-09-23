@@ -70,7 +70,7 @@ xt_neighbor: perform either nearest neighbor search for CDR3 sequences or immune
 ```bibtex
 @misc{chotisorayuth2024lightningfast,
       title={Lightning-fast adaptive immune receptor similarity search by symmetric deletion lookup}, 
-      author={Touchchai Chotisorayuth and Andreas Tiffeau-Mayer},
+      author={Touchchai Chotisorayuth and Yuta Nagano and Andreas Tiffeau-Mayer},
       year={2024},
       eprint={2403.09010},
       archivePrefix={arXiv},
